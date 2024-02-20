@@ -6,7 +6,7 @@ This repo distributes the [Aiuta Digital Try On](https://developer.aiuta.com/pro
 
 ### Swift Package Manager
 
-A AiutaSdk as a dependency the `dependencies` value of your `Package.swift`.
+Add AiutaSdk as a dependency the `dependencies` value of your `Package.swift`.
 
 ```swift
 dependencies: [
@@ -75,7 +75,7 @@ This protocol defines the delegate methods for receiving callbacks from the Aiut
 
 ```swift
 // Setup the Aiuta SDK with your API key
-Aiuta.setup(apiKey: "your\_api\_key")
+Aiuta.setup(apiKey: "your_api_key")
 
 // Define a delegate for handling Aiuta SDK callbacks
 class MyAiutaDelegate: AiutaSdkDelegate {
