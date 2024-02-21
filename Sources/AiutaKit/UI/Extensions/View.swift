@@ -73,6 +73,7 @@ public extension UIView {
         }
     }
 
+    @available(iOS 13.0, *)
     var cornerCurve: CALayerCornerCurve {
         get { layer.cornerCurve }
         set { layer.cornerCurve = newValue }

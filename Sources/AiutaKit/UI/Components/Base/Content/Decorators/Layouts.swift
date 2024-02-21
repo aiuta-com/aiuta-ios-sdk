@@ -161,12 +161,14 @@ import UIKit
         view.center = CGPoint(x: rect.midX, y: rect.midY)
         if let radius = maker.radius {
             view.cornerRadius = radius
-            if let curve = maker.curve {
-                view.cornerCurve = curve
-            } else if rect.size.width == 2 * radius && rect.size.height == 2 * radius {
-                view.cornerCurve = .circular
-            } else {
-                view.cornerCurve = .continuous
+            if #available(iOS 13.0, *) {
+                if let curve = maker.curve {
+                    view.cornerCurve = curve
+                } else if rect.size.width == 2 * radius && rect.size.height == 2 * radius {
+                    view.cornerCurve = .circular
+                } else {
+                    view.cornerCurve = .continuous
+                }
             }
         }
     }

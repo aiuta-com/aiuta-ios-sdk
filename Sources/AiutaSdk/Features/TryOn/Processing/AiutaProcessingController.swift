@@ -17,6 +17,7 @@ import Kingfisher
 import Resolver
 import UIKit
 
+@available(iOS 13.0, *)
 final class AiutaProcessingController: ComponentController<AiutaTryOnView> {
     @Injected private var model: AiutaSdkModel
 
@@ -90,6 +91,7 @@ final class AiutaProcessingController: ComponentController<AiutaTryOnView> {
     }
 }
 
+@available(iOS 13.0, *)
 private extension AiutaProcessingController {
     func downsampleImageAndStart(_ image: UIImage) async {
         let loader = showBulletin(LoadingBulletin())
@@ -132,6 +134,7 @@ private extension AiutaProcessingController {
     }
 }
 
+@available(iOS 13.0, *)
 private extension AiutaProcessingController {
     func startTryOn(_ image: Aiuta.UploadedImage) async {
         ui.mode = .loading

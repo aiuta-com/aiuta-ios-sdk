@@ -6,7 +6,7 @@ This repo distributes the [Aiuta Digital Try On](https://developer.aiuta.com/pro
 
 ### Swift Package Manager
 
-Add AiutaSdk as a dependency the `dependencies` value of your `Package.swift`.
+A AiutaSdk as a dependency the `dependencies` value of your `Package.swift`.
 
 ```swift
 dependencies: [
@@ -75,7 +75,9 @@ This protocol defines the delegate methods for receiving callbacks from the Aiut
 
 ```swift
 // Setup the Aiuta SDK with your API key
-Aiuta.setup(apiKey: "your_api_key")
+if #available(iOS 13.0.0, *) {
+    Aiuta.setup(apiKey: "your_api_key")
+}
 
 // Define a delegate for handling Aiuta SDK callbacks
 class MyAiutaDelegate: AiutaSdkDelegate {
@@ -98,7 +100,9 @@ class MyViewController: UIViewController {
 
     func tryOnFeature() {
         let sku = Aiuta.SkuInfo(skuId: "123", skuCatalog: "catalog1", imageUrls: ["url1", "url2"], localizedTitle: "Title", localizedBrand: "Brand", localizedPrice: "$12.99")
-        Aiuta.tryOn(sku: sku, in: self, delegate: delegate)
+        if #available(iOS 13.0.0, *) {
+            Aiuta.tryOn(sku: sku, in: self, delegate: delegate)
+        }
     }
 }
 \```

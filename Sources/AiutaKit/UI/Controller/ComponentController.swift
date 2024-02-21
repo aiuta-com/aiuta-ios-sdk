@@ -19,6 +19,7 @@ open class ComponentController<ViewContent>: ComponentControllerBase where ViewC
     public fileprivate(set) weak var vc: UIViewController?
 
     open func setup() {}
+    @available(iOS 13.0.0, *)
     open func start() async {}
 }
 
@@ -31,6 +32,7 @@ public extension ComponentControllerBase {
         vc?.present(viewController)
     }
 
+    @available(iOS 13.0.0, *)
     @discardableResult
     func showBulletin<T>(_ content: ResultBulletin<T>, untilDismissed: Bool = false, overrideVc: UIViewController? = nil) async -> T {
         guard let presenter = overrideVc ?? vc else { return content.defaultResult }
@@ -44,10 +46,6 @@ public extension ComponentControllerBase {
 
     func showBulletin(_ content: Bulletin) {
         vc?.bulletinManager.showBulletin(content)
-    }
-
-    func showToast(_ title: String, subTitle: String? = nil, displayTime: TimeInterval = 1, attachTo view: UIView? = nil) {
-        vc?.showToast(title, subTitle: subTitle, displayTime: displayTime, attachTo: view)
     }
 
     @discardableResult
@@ -64,7 +62,9 @@ public extension UIViewController {
 
         componentController.vc = self
         componentController.setup()
-        Task { await componentController.start() }
+        if #available(iOS 13.0, *) {
+            Task { await componentController.start() }
+        }
 
         if componentControllers.isNil { componentControllers = [componentController] }
         else { componentControllers?.append(componentController) }

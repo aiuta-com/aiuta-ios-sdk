@@ -52,7 +52,9 @@ open class ViewController<ViewContent>: UIViewController where ViewContent: Cont
 
     override open func viewDidLoad() {
         setup()
-        Task { await start() }
+        if #available(iOS 13.0, *) {
+            Task { await start() }
+        }
     }
 
     override open func viewWillAppear(_ animated: Bool) {

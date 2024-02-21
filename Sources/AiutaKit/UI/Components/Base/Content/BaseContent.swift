@@ -66,7 +66,11 @@ open class Content<ViewType>: ContentBase where ViewType: UIView {
     }
 
     func sizeToFit() {}
-    func setupInternal() { container.cornerCurve = .continuous }
+    func setupInternal() {
+        if #available(iOS 13.0, *) {
+            container.cornerCurve = .continuous
+        }
+    }
     func updateLayoutInternal() {}
     func inspectChild(_ child: Any) -> Bool { false }
 }

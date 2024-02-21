@@ -12,7 +12,7 @@ extension UIViewController {
 
         static var willTransitInteractive: Bool = false
         static var hasTransitionUpdates: Bool = false
-        static var statusBarStyle: UIStatusBarStyle = .darkContent
+        static var statusBarStyle: Void?
 
         static var bulletinManager: Void?
         static var backstackController: Void?
@@ -20,7 +20,13 @@ extension UIViewController {
     }
 
     public var statusBarStyle: UIStatusBarStyle {
-        get { getAssociatedProperty(&Property.statusBarStyle, defaultValue: Property.statusBarStyle) }
+        get {
+            if #available(iOS 13.0, *) {
+                getAssociatedProperty(&Property.statusBarStyle, defaultValue: .darkContent)
+            } else {
+                getAssociatedProperty(&Property.statusBarStyle, defaultValue: .default)
+            }
+        }
         set {
             guard newValue != statusBarStyle else { return }
             setAssociatedProperty(&Property.statusBarStyle, newValue: newValue)

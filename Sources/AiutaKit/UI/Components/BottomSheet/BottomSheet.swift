@@ -20,7 +20,9 @@ open class BottomSheet: Scroll {
             if isPulledDown {
                 didPullDown.fire()
                 isPulledUp = false
-                haptic(impact: .soft)
+                if #available(iOS 13.0, *) {
+                    haptic(impact: .soft)
+                }
             }
         }
     }
@@ -31,7 +33,9 @@ open class BottomSheet: Scroll {
             if isPulledUp {
                 didPullUp.fire()
                 isPulledDown = false
-                haptic(impact: .soft)
+                if #available(iOS 13.0, *) {
+                    haptic(impact: .soft)
+                }
             }
         }
     }
@@ -97,7 +101,9 @@ public final class BottomSheetSubstrate: Plane {
     override public func setup() {
         appearance.make { make in
             make.cornerRadius = 24
-            make.cornerCurve = .continuous
+            if #available(iOS 13.0, *) {
+                make.cornerCurve = .continuous
+            }
             make.backgroundColor = ds.color.item
         }
     }
