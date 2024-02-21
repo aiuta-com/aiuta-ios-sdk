@@ -16,7 +16,7 @@ dependencies: [
 
 Add dependency to your target
 ```swift
-    .product(name: "AiutaSdk", package: "AiutaSdk")
+    .product(name: "AiutaSdk", package: "aiuta-ios-sdk")
 ```
 
 ## Enums and Structures
