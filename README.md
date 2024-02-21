@@ -74,6 +74,8 @@ This protocol defines the delegate methods for receiving callbacks from the Aiut
 ## Example Usage
 
 ```swift
+import AiutaSdk
+
 // Setup the Aiuta SDK with your API key
 if #available(iOS 13.0.0, *) {
     Aiuta.setup(apiKey: "your_api_key")
@@ -105,6 +107,6 @@ class MyViewController: UIViewController {
         }
     }
 }
-\```
+```
 
 This documentation provides a concise overview of the Aiuta Swift SDK's core functionalities, allowing developers to integrate Aiuta's features into their iOS applications effectively.
