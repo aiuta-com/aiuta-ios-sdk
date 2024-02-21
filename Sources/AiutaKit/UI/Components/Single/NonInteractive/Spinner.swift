@@ -19,7 +19,9 @@ public final class Spinner: Content<UIActivityIndicatorView> {
 
     public convenience init(_ builder: (_ it: Spinner, _ ds: DesignSystem) -> Void) {
         self.init()
-        view.style = .medium
+        if #available(iOS 13.0, *) {
+            view.style = .medium
+        }
         builder(self, ds)
     }
 

@@ -12,6 +12,7 @@ extension UIViewController {
     @objc open func setup() {}
 
     // on viewDidLoad()
+    @available(iOS 13.0.0, *)
     @objc open func start() async {}
 
     // on first viewWillAppear()

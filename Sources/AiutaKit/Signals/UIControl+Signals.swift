@@ -197,8 +197,8 @@ public extension UIControl {
     }
 }
 
-//extension UIControl.Event: Hashable {
-//    public var hashValue: Int {
-//        return Int(rawValue)
-//    }
-//}
+extension UIControl.Event: Hashable {
+    public var hashValue: Int {
+        return Int(rawValue)
+    }
+}

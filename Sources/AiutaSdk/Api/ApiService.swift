@@ -16,6 +16,7 @@ import AiutaKit
 import Alamofire
 import Foundation
 
+@available(iOS 13.0.0, *)
 final class ApiService {
     enum ApiError: Error, LocalizedError {
         case afError(AFError?)
@@ -152,6 +153,7 @@ final class ApiService {
     }
 }
 
+@available(iOS 13.0.0, *)
 private extension ApiService {
     func buildUrl(_ request: ApiRequest) -> String {
         let urlString = "\(baseUrl)/\(request.urlPath)"

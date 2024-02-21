@@ -4,7 +4,6 @@
 
 import Foundation
 import Resolver
-import Toast
 import UIKit
 
 open class ImagePickerController<ViewContent>: UIImagePickerController where ViewContent: ContentBase {

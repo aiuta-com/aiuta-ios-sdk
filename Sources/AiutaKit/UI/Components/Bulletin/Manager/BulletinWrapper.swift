@@ -21,7 +21,9 @@ final class BulletinWrapper: Plane {
 
         contentView.appearance.make { make in
             make.cornerRadius = 24
-            make.cornerCurve = .continuous
+            if #available(iOS 13.0, *) {
+                make.cornerCurve = .continuous
+            }
             make.backgroundColor = ds.color.popup
         }
 

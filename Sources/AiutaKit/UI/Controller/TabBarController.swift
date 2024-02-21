@@ -4,7 +4,6 @@
 
 import Foundation
 import Resolver
-import Toast
 import UIKit
 
 open class TabBarController<ViewContent>: UITabBarController where ViewContent: ContentBase {

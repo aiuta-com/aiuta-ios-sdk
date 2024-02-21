@@ -30,6 +30,7 @@ open class PlainBulletin: Plane {
         true
     }
 
+    @available(iOS 13.0.0, *)
     public func dismiss() async {
         wantsDismiss.fire()
         await withCheckedContinuation { continuation in

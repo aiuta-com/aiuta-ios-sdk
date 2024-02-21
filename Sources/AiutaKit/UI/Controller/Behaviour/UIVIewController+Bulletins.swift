@@ -6,7 +6,6 @@ import MessageUI
 import Photos
 import PhotosUI
 import SafariServices
-import Toast
 import UIKit
 
 public extension UIViewController {
@@ -14,6 +13,7 @@ public extension UIViewController {
         bulletinManager.currentBulletin.isSome
     }
 
+    @available(iOS 13.0.0, *)
     @discardableResult
     func showBulletin<T>(_ content: ResultBulletin<T>, untilDismissed: Bool = false, overrideVc: UIViewController? = nil) async -> T {
         if let overrideVc {
@@ -44,12 +44,7 @@ public extension UIViewController {
     func showBulletin(_ content: Bulletin) {
         bulletinManager.showBulletin(content)
     }
-
-    func showToast(_ title: String, subTitle: String? = nil, displayTime: TimeInterval = 1, attachTo view: UIView? = nil) {
-        let builder = ToastBuilder(title, subTitle: subTitle, displayTime: displayTime, attachTo: view)
-        Toast(view: builder.view, config: builder.configuration).show()
-    }
-
+    
     func share(_ items: [Any]?) {
         guard let items else { return }
         let activityViewController = UIActivityViewController(activityItems: items, applicationActivities: nil)

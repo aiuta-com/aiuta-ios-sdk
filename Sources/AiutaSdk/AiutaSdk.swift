@@ -46,12 +46,14 @@ public enum Aiuta {
         }
     }
 
+    @available(iOS 13.0.0, *)
     public static func setup(apiKey: String) {
         Resolver.register { ApiService(baseUrl: "https://api.aiuta.com", apiKey: apiKey) }
         Resolver.register { AiutaSdkDesignSystem() }.implements(DesignSystem.self)
         Resolver.register { AiutaSdkModelImpl() }.implements(AiutaSdkModel.self)
     }
 
+    @available(iOS 13.0.0, *)
     public static func tryOn(sku: SkuInfo,
                              withMoreToTryOn relatedSkus: [SkuInfo] = [],
                              in viewController: UIViewController,

@@ -15,6 +15,7 @@
 import AiutaKit
 import UIKit
 
+@available(iOS 13.0.0, *)
 final class AiutaTryOnResultViewController: ComponentController<AiutaTryOnView> {
     var moreToTryOn: [Aiuta.SkuInfo]?
     let skuBulletin = AiutaSkuBulletin()

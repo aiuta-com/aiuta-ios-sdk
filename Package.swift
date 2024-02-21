@@ -6,26 +6,26 @@ import PackageDescription
 let package = Package(
     name: "AiutaSdk",
     platforms: [
-        .iOS(.v13),
+        .iOS(.v12),
     ],
     products: [
         .library(
             name: "AiutaSdk",
-            targets: ["AiutaSdk"]),
+            targets: ["AiutaSdk"]
+        ),
         .library(
             name: "AiutaKit",
-            targets: ["AiutaKit"]),
+            targets: ["AiutaKit"]
+        ),
         .library(
             name: "Hero",
-            targets: ["Hero"]),
+            targets: ["Hero"]
+        ),
     ],
     dependencies: [
         .package(url: "https://github.com/Alamofire/Alamofire.git", from: "5.0.0"),
         .package(url: "https://github.com/onevcat/Kingfisher.git", from: "7.6.1"),
         .package(url: "https://github.com/hmlongco/Resolver.git", from: "1.0.0"),
-        .package(url: "https://github.com/BastiaanJansen/toast-swift", exact: "1.2.0"),
-        .package(url: "https://github.com/JohnSundell/CollectionConcurrencyKit.git", from: "0.2.0"),
-        .package(url: "https://github.com/efremidze/Haptica.git", from: "3.0.0"),
     ],
     targets: [
         .target(name: "Hero"),
@@ -34,17 +34,15 @@ let package = Package(
             dependencies: [
                 "Kingfisher",
                 "Resolver",
-                "CollectionConcurrencyKit",
-                "Haptica",
                 .target(name: "Hero"),
-                .product(name: "Toast", package: "toast-swift"),
             ]
         ),
         .target(
             name: "AiutaSdk",
             dependencies: [
+                "Alamofire",
                 .target(name: "AiutaKit"),
-                .product(name: "Alamofire", package: "Alamofire")],
+            ],
             resources: [.process("Resources")]
         )
     ]
