@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import AiutaKit
 import Resolver
 import UIKit
 
@@ -47,7 +46,8 @@ public enum Aiuta {
     }
 
     @available(iOS 13.0.0, *)
-    public static func setup(apiKey: String) {
+    public static func setup(apiKey: String, isDebug: Bool = false) {
+        trace(isEnabled: isDebug)
         Resolver.register { ApiService(baseUrl: "https://api.aiuta.com", apiKey: apiKey) }
         Resolver.register { AiutaSdkDesignSystem() }.implements(DesignSystem.self)
         Resolver.register { AiutaSdkModelImpl() }.implements(AiutaSdkModel.self)

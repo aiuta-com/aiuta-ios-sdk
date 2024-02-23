@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import AiutaKit
+
 import UIKit
 
 final class AiutaPhotoSelectorBulletin: PlainBulletin {
@@ -94,7 +94,7 @@ final class AiutaPhotoInputButton: PlainButton {
         }
     }
 
-    public convenience init(_ builder: (_ it: AiutaPhotoInputButton, _ ds: DesignSystem) -> Void) {
+    convenience init(_ builder: (_ it: AiutaPhotoInputButton, _ ds: DesignSystem) -> Void) {
         self.init()
         builder(self, ds)
     }

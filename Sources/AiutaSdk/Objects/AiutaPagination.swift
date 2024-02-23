@@ -15,7 +15,7 @@
 import Foundation
 
 extension Aiuta {
-    public class Pagination<Item: Codable>: Codable {
+    class Pagination<Item: Codable>: Codable {
         let result: [Item]
         let before: String
         let after: String

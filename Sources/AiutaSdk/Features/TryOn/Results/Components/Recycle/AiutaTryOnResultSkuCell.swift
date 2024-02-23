@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import AiutaKit
+
 
 final class AiutaTryOnResultSkuCell: AiutaGalleryItemView<String> {
     final class ContentView: Plane {

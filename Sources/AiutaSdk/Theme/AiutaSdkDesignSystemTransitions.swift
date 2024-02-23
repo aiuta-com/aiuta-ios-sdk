@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import AiutaKit
+
 
 extension DesignSystemTransitions {
     func sdk(_ ref: AiutaSdkDesignSystemTransitions) -> TransitionRef { ref }
 }
 
-public enum AiutaSdkDesignSystemTransitions: TransitionRef {
+enum AiutaSdkDesignSystemTransitions: TransitionRef {
     case aiutaLogo
 }

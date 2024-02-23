@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import AiutaKit
+
 
 final class AiutaSkuBulletin: PlainBulletin {
     var sku: Aiuta.SkuInfo? {

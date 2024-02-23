@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import AiutaKit
+
 import Alamofire
 import Foundation
 
@@ -184,7 +184,7 @@ private extension ApiService {
     }
 }
 
-public extension HTTPHeader {
+extension HTTPHeader {
     static func ifNoneMatch(_ value: String) -> HTTPHeader {
         HTTPHeader(name: "if-none-match", value: value)
     }
