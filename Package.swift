@@ -13,14 +13,6 @@ let package = Package(
             name: "AiutaSdk",
             targets: ["AiutaSdk"]
         ),
-        .library(
-            name: "AiutaKit",
-            targets: ["AiutaKit"]
-        ),
-        .library(
-            name: "Hero",
-            targets: ["Hero"]
-        ),
     ],
     dependencies: [
         .package(url: "https://github.com/Alamofire/Alamofire.git", from: "5.0.0"),
@@ -28,20 +20,12 @@ let package = Package(
         .package(url: "https://github.com/hmlongco/Resolver.git", from: "1.0.0"),
     ],
     targets: [
-        .target(name: "Hero"),
-        .target(
-            name: "AiutaKit",
-            dependencies: [
-                "Kingfisher",
-                "Resolver",
-                .target(name: "Hero"),
-            ]
-        ),
         .target(
             name: "AiutaSdk",
             dependencies: [
                 "Alamofire",
-                .target(name: "AiutaKit"),
+                "Kingfisher",
+                "Resolver",
             ],
             resources: [.process("Resources")]
         )

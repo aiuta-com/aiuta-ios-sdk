@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import Alamofire
-import AiutaKit
+
 
 extension Aiuta {
     struct TryOnStart: Codable {
@@ -62,7 +62,7 @@ extension Aiuta.TryOnOperation {
 }
 
 extension Aiuta.TryOnOperation.Status: Codable {
-    public init(from decoder: Decoder) throws {
+    init(from decoder: Decoder) throws {
         self = try Self(rawValue: decoder.singleValueContainer().decode(RawValue.self)) ?? .unknown
     }
 }

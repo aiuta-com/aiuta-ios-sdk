@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import AiutaKit
+
 import UIKit
 
 struct AiutaSdkDesignSystem: DesignSystem, DesignSystemImages, DesignSystemTransitions, DesignSystemStyles, DesignSystemDimensions {

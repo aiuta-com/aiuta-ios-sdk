@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import AiutaKit
+import Kingfisher
 import Resolver
 import UIKit
 
@@ -33,6 +33,8 @@ final class AiutaTryOnViewController: ViewController<AiutaTryOnView> {
     convenience init(session: Aiuta.TryOnSession) {
         self.init()
         self.session = session
+        preload(lastUploadedImage?.url)
+        preload(session.tryOnSku.imageUrls.first)
     }
 
     override func setup() {
@@ -131,5 +133,22 @@ final class AiutaTryOnViewController: ViewController<AiutaTryOnView> {
         delay(.thirdOfSecond) { [delegate] in
             delegate.aiuta(addToWishlist: skuId)
         }
+    }
+
+    private func preload(_ urlString: String?) {
+        print(urlString)
+        guard let url = URL(string: urlString) else { return }
+        KingfisherManager.shared.retrieveImage(with: url,
+                                               options: [
+                                                   .downloadPriority(URLSessionTask.highPriority),
+                                                   .retryStrategy(DelayRetryStrategy(maxRetryCount: 3)),
+                                                   .processor(DownsamplingImageProcessor(size: .init(square: 1500))),
+                                                   .memoryCacheExpiration(.seconds(360)),
+                                                   .diskCacheExpiration(.days(7)),
+                                                   .diskCacheAccessExtendingExpiration(.cacheTime),
+                                                   .backgroundDecode,
+                                               ],
+                                               completionHandler: nil
+        )
     }
 }

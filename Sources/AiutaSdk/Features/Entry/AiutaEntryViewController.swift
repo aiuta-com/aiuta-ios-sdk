@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import AiutaKit
-
 @available(iOS 13.0.0, *)
 final class AiutaEntryViewController: ViewController<AiutaEntryView> {
     private var session: Aiuta.TryOnSession?
@@ -40,9 +38,7 @@ final class AiutaEntryViewController: ViewController<AiutaEntryView> {
             return
         }
         let tryOn = AiutaTryOnViewController(session: session)
-        tryOn.loadViewIfNeeded()
         await asleep(.oneSecond)
-
         if tryOn.lastUploadedImage.isSome {
             replace(with: tryOn)
         } else {

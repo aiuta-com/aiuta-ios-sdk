@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import AiutaKit
+
 import UIKit
 
-open class AiutaGalleryView<DataType, ItemView: AiutaGalleryItemView<DataType>>: Plane {
-    public var data: DataProvider<DataType>? {
+class AiutaGalleryView<DataType, ItemView: AiutaGalleryItemView<DataType>>: Plane {
+    var data: DataProvider<DataType>? {
         didSet {
             guard let data else {
                 pageCount = 0
@@ -27,11 +27,11 @@ open class AiutaGalleryView<DataType, ItemView: AiutaGalleryItemView<DataType>>:
         }
     }
 
-    public let galleryView = HScroll()
+    let galleryView = HScroll()
 
-    public var galleryViewInset: CGFloat = 92
+    var galleryViewInset: CGFloat = 92
 
-    public var pageIndex: Int = 0 {
+    var pageIndex: Int = 0 {
         didSet {
             guard oldValue != pageIndex else { return }
             swapPages(from: oldValue, to: pageIndex)
@@ -56,11 +56,11 @@ open class AiutaGalleryView<DataType, ItemView: AiutaGalleryItemView<DataType>>:
         pages.first(where: { $0.index == pageIndex })
     }
 
-    public var pages: [ItemView] {
+    var pages: [ItemView] {
         galleryView.findChildren()
     }
 
-    override open func setup() {
+    override func setup() {
         galleryView.isLayoutEnabled = false
         galleryView.appearance.make { make in
             make.bounces = true
@@ -91,7 +91,7 @@ open class AiutaGalleryView<DataType, ItemView: AiutaGalleryItemView<DataType>>:
         }
     }
 
-    override open func updateLayout() {
+    override func updateLayout() {
         galleryView.layout.make { make in
             make.size = layout.size
         }
@@ -108,7 +108,7 @@ open class AiutaGalleryView<DataType, ItemView: AiutaGalleryItemView<DataType>>:
         galleryView.contentOffset = .init(x: CGFloat(pageIndex) * (layout.width - galleryViewInset), y: 0)
     }
 
-    public func scroll(to index: Int) {
+    func scroll(to index: Int) {
         galleryView.view.setContentOffset(.init(x: CGFloat(index) * (layout.width - galleryViewInset), y: 0), animated: true)
     }
 }
@@ -156,7 +156,7 @@ private extension AiutaGalleryView {
     }
 }
 
-open class AiutaGalleryItemView<DataType>: Plane {
+class AiutaGalleryItemView<DataType>: Plane {
     private(set) var index: Int = 0
 
     func setIndex(_ newIndex: Int, relativeTo currentIndex: Int) {
@@ -166,5 +166,5 @@ open class AiutaGalleryItemView<DataType>: Plane {
         }
     }
 
-    open func update(_ data: DataType?) { }
+    func update(_ data: DataType?) { }
 }

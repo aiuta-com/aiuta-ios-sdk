@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import AiutaKit
+
 
 final class AiutaGenerationsHistorySnackbar: Plane {
     let deleteButton = OptionButton { it, ds in
@@ -101,7 +101,7 @@ extension AiutaGenerationsHistorySnackbar {
             }
         }
 
-        public convenience init(_ builder: (_ it: OptionButton, _ ds: DesignSystem) -> Void) {
+        convenience init(_ builder: (_ it: OptionButton, _ ds: DesignSystem) -> Void) {
             self.init()
             builder(self, ds)
         }
