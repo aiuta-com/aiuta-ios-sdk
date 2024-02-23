@@ -10,7 +10,7 @@ A AiutaSdk as a dependency the `dependencies` value of your `Package.swift`.
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/aiuta-com/ios-sdk.git", branch: "main")
+    .package(url: "https://github.com/aiuta-com/aiuta-ios-sdk.git", branch: "main")
 ]
 ```
 
@@ -74,8 +74,6 @@ This protocol defines the delegate methods for receiving callbacks from the Aiut
 ## Example Usage
 
 ```swift
-import AiutaSdk
-
 // Setup the Aiuta SDK with your API key
 if #available(iOS 13.0.0, *) {
     Aiuta.setup(apiKey: "your_api_key")

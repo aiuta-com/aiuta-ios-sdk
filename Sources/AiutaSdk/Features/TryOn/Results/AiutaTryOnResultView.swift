@@ -13,7 +13,7 @@
 // limitations under the License.
 
 
-
+import Hero
 import UIKit
 
 final class AiutaTryOnResultView: Scroll {

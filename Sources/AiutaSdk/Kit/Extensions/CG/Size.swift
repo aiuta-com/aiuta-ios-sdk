@@ -4,7 +4,7 @@
 
 import UIKit
 
-extension CGSize {
+public extension CGSize {
     init(square: CGFloat) {
         self.init(width: square, height: square)
     }
@@ -23,7 +23,7 @@ extension CGSize {
     }
 }
 
-extension CGSize {
+public extension CGSize {
     func fill(_ other: CGSize?) -> CGSize {
         guard let other else { return self }
         let hScale = other.height / height
@@ -39,7 +39,7 @@ extension CGSize {
     }
 }
 
-extension CGSize {
+public extension CGSize {
     var isZero: Bool {
         width == 0 && height == 0
     }
@@ -56,6 +56,10 @@ extension CGSize {
         max(width, height)
     }
 
+    var center: CGPoint {
+        CGPoint(x: width / 2, y: height / 2)
+    }
+
     var ceiled: CGSize {
         CGSize(width: ceil(width), height: ceil(height))
     }
@@ -65,7 +69,7 @@ extension CGSize {
     }
 }
 
-extension CGSize {
+public extension CGSize {
     static func + (left: CGSize, right: CGSize) -> CGSize {
         CGSize(width: left.width + right.width,
                height: left.height + right.height)
@@ -77,7 +81,7 @@ extension CGSize {
     }
 }
 
-extension CGSize /* UIEdgeInsets */ {
+public extension CGSize /* UIEdgeInsets */ {
     static func + (_ left: CGSize, _ right: UIEdgeInsets) -> CGSize {
         CGSize(width: left.width + right.horizontalInsetsSum,
                height: left.height + right.verticalInsetsSum)
@@ -89,7 +93,7 @@ extension CGSize /* UIEdgeInsets */ {
     }
 }
 
-extension CGSize /* CGFloat */ {
+public extension CGSize /* CGFloat */ {
     static func + (_ left: CGSize, _ right: CGFloat) -> CGSize {
         CGSize(width: left.width + right,
                height: left.height + right)
@@ -98,6 +102,11 @@ extension CGSize /* CGFloat */ {
     static func - (_ left: CGSize, _ right: CGFloat) -> CGSize {
         CGSize(width: left.width - right,
                height: left.height - right)
+    }
+
+    static func * (_ left: CGSize, _ right: CGFloat) -> CGSize {
+        CGSize(width: left.width * right,
+               height: left.height * right)
     }
 
     static func / (_ left: CGSize, _ right: CGFloat) -> CGSize {

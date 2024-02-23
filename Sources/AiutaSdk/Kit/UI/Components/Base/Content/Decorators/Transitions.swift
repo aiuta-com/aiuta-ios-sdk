@@ -2,7 +2,7 @@
 // Created by nGrey on 28.02.2023.
 //
 
-
+import Hero
 import UIKit
 
 final class Transitions {
