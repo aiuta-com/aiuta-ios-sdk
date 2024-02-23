@@ -10,7 +10,7 @@ A AiutaSdk as a dependency the `dependencies` value of your `Package.swift`.
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/aiuta-com/ios-sdk.git", branch: "main")
+    .package(url: "https://github.com/aiuta-com/aiuta-ios-sdk.git", branch: "main")
 ]
 ```
 
