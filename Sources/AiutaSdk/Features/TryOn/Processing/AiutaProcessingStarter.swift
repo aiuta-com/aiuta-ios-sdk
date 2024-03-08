@@ -12,31 +12,33 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
-
 final class AiutaProcessingStarter: Plane {
+    let blur = Blur { it, _ in
+        it.style = .extraLight
+    }
+
     let go = LabelButton { it, ds in
         it.font = ds.font.button
         it.color = ds.color.accent
         it.text = "Try on"
     }
-    
-    override func setup() {
-        view.backgroundColor = .white
-    }
-    
+
     override func updateLayout() {
         layout.make { make in
             make.width = layout.boundary.width
             make.height = layout.safe.insets.bottom + 72
             make.bottom = 0
         }
-        
+
         go.layout.make { make in
             make.leftRight = 16
             make.top = 10
             make.height = 50
             make.radius = 8
+        }
+
+        blur.layout.make { make in
+            make.inset = 0
         }
     }
 }

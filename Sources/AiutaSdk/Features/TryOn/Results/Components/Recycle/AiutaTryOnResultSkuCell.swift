@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
-
 final class AiutaTryOnResultSkuCell: AiutaGalleryItemView<String> {
     final class ContentView: Plane {
         let skuImage = Image { it, _ in
@@ -37,6 +35,11 @@ final class AiutaTryOnResultSkuCell: AiutaGalleryItemView<String> {
     override func update(_ data: String?) {
         contentView.skuImage.imageUrl = data
         contentView.view.isVisible = data.isSome
+    }
+
+    override func setIndex(_ newIndex: Int, relativeTo currentIndex: Int) {
+        super.setIndex(newIndex, relativeTo: currentIndex)
+        contentView.swipeForMore.canBeVisible = newIndex == currentIndex
     }
 
     override func updateLayout() {

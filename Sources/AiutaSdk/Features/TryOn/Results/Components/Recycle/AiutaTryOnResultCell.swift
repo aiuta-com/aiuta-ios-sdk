@@ -12,11 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 import UIKit
 
-final class AiutaTryOnResultCell: Recycle<AiutaTryOnResult> {
-    final class ScrollRecycler: Recycler<AiutaTryOnResultCell, AiutaTryOnResult> {
+final class AiutaTryOnResultCell: Recycle<Aiuta.SessionResult> {
+    final class ScrollRecycler: Recycler<AiutaTryOnResultCell, Aiuta.SessionResult> {
         override func setup() {
             contentInsets = .init(vertical: 8)
             contentSpace = .init(square: 8)
@@ -48,7 +47,7 @@ final class AiutaTryOnResultCell: Recycle<AiutaTryOnResult> {
 
     let skuGallery = AiutaGalleryView<String, AiutaTryOnResultSkuCell>()
 
-    override func update(_ data: AiutaTryOnResult?, at index: ItemIndex) {
+    override func update(_ data: Aiuta.SessionResult?, at index: ItemIndex) {
         generatedImage.view.isVisible = false
         skuGallery.view.isVisible = false
         shareView.view.isVisible = false
@@ -62,7 +61,7 @@ final class AiutaTryOnResultCell: Recycle<AiutaTryOnResult> {
         }
 
         switch data {
-            case let .generatedImage(img):
+            case let .output(img):
                 generatedImage.transitions.reference = img
                 generatedImage.imageUrl = img.imageUrl
                 generatedImage.view.isVisible = true
@@ -73,7 +72,19 @@ final class AiutaTryOnResultCell: Recycle<AiutaTryOnResult> {
                 generatedImage.transitions.reference = nil
                 generatedImage.imageUrl = nil
                 skuGallery.data = DataProvider(sku.imageUrls)
+                skuGallery.galleryView.scroll(to: 0, animated: true)
                 skuGallery.view.isVisible = true
+            case let .input(source, _):
+                switch source {
+                    case let .capturedImage(uIImage):
+                        generatedImage.image = uIImage
+                    case let .uploadedImage(uploadedImage):
+                        generatedImage.imageUrl = uploadedImage.url
+                }
+                generatedImage.view.isVisible = true
+                shareView.view.isVisible = true
+                shareView.transitions.isActive = true
+                skuGallery.data = nil
         }
     }
 

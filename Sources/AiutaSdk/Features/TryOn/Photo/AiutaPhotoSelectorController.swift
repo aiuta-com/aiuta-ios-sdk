@@ -12,29 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
+import Resolver
 import UIKit
 
+@available(iOS 13.0, *)
 final class AiutaPhotoSelectorController: ComponentController<AiutaTryOnView> {
-    var didPickPhoto: Signal<UIImage> {
-        imagePickerDelegate.didPickPhoto
-    }
-    
-    var lastUploadedImage: Aiuta.UploadedImage? {
+    @Injected private var model: AiutaSdkModel
+    @Injected private var config: Aiuta.Configuration
+
+    private var inputs: Aiuta.Inputs? {
         didSet {
-            if let lastUploadedImage {
-                ui.processingLoader.preview.imageView.imageUrl = lastUploadedImage.url
-                ui.photoSelector.source = .uploadedImage(lastUploadedImage)
-                ui.starter.view.isVisible = true
-            } else {
-                ui.photoSelector.source = .placeholder
-                ui.starter.view.isVisible = false
-            }
+            guard oldValue != inputs else { return }
+            ui.processingLoader.preview.imageView.inputs = inputs
+            ui.photoSelector.inputs = inputs
+            ui.starter.view.isVisible = inputs.isSome && model.state <= .photoSelecting
         }
     }
 
     private let changePhotoBulletin = AiutaPhotoSelectorBulletin()
+    private let photoHistoryBulletin = AiutaPhotoHistoryBulletin()
     private let imagePickerDelegate = ImagePickerControllerDelegate()
+    private var photoPicker: AiutaPhotoPicker?
+    private var lock: LoadingBulletin?
 
     override func setup() {
         changePhotoBulletin.takeNewPhoto.onTouchUpInside.subscribe(with: self) { [unowned self] in
@@ -42,15 +41,86 @@ final class AiutaPhotoSelectorController: ComponentController<AiutaTryOnView> {
         }
 
         changePhotoBulletin.chooseFromLibrary.onTouchUpInside.subscribe(with: self) { [unowned self] in
-            chooseFromLibrary()
+            if #available(iOS 14.0, *) {
+                photoPicker?.pick(max: clamp(config.behavior.photoSelectionLimit, min: 1, max: 10))
+            } else {
+                chooseFromLibrary()
+            }
         }
 
-        ui.photoSelector.changePhoto.onTouchUpInside.subscribe(with: self) { [unowned self] in
+        ui.photoSelector.onChangePhoto.subscribe(with: self) { [unowned self] in
+            if model.uploadsHistory.count > 1 {
+                showBulletin(photoHistoryBulletin)
+            } else {
+                showBulletin(changePhotoBulletin)
+            }
+        }
+
+        photoHistoryBulletin.newPhotosButton.onTouchUpInside.subscribe(with: self) { [unowned self] in
             showBulletin(changePhotoBulletin)
         }
+
+        photoPicker = AiutaPhotoPicker(vc: vc, anchor: changePhotoBulletin.chooseFromLibrary)
+
+        photoPicker?.willPick.subscribe(with: self) { [unowned self] in
+            lock = showBulletin(LoadingBulletin(empty: false, isDismissable: true))
+        }
+
+        photoPicker?.didPick.subscribe(with: self) { [unowned self] photos in
+            lock?.dismiss()
+            if photos.isEmpty { return }
+            pickPhotos(photos)
+        }
+
+        imagePickerDelegate.didPickPhoto.subscribe(with: self) { [unowned self] image in
+            pickPhotos([image])
+        }
+
+        photoHistoryBulletin.onSelectPack.subscribe(with: self) { [unowned self] images in
+            photoHistoryBulletin.dismiss()
+            inputs = .uploadedImages(images)
+            startProcessing()
+        }
+
+        photoHistoryBulletin.onDeletePack.subscribe(with: self) { [unowned self] images in
+            model.uploadsHistory.removeAll(where: { $0 == images })
+            photoHistoryBulletin.history = model.uploadsHistory.reversed()
+        }
+
+        ui.starter.go.onTouchUpInside.subscribe(with: self) { [unowned self] in
+            startProcessing()
+        }
+
+        if let lastUploads = model.uploadsHistory.last {
+            inputs = .uploadedImages(lastUploads)
+        }
+
+        model.onChangeUploads.subscribe(with: self) { [unowned self] uploads in
+            inputs = .uploadedImages(uploads)
+        }
+
+        model.onChangeUploads.subscribe(with: self) { [unowned self] _ in
+            photoHistoryBulletin.history = model.uploadsHistory.reversed()
+        }
+
+        photoHistoryBulletin.history = model.uploadsHistory.reversed()
+    }
+
+    private func pickPhotos(_ photos: [UIImage]) {
+        inputs = .capturedImages(photos)
+        Task {
+            await changePhotoBulletin.dismiss()
+            startProcessing()
+        }
+    }
+
+    private func startProcessing() {
+        guard let inputs else { return }
+        model.startTryOn(inputs)
     }
 }
 
+@available(iOS 13.0, *)
 private extension AiutaPhotoSelectorController {
     func takeNewPhoto() {
         let picker = UIImagePickerController()

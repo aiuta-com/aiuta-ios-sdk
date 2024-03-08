@@ -263,6 +263,7 @@ private extension Recycler {
         let itemSize = contentFraction.calculateItemSize(availableSize: availableSize, withSpacer: contentSpace)
         let bufferSize = Int(availableSize.square / itemSize.square) + Int(availableSize.width / itemSize.width)
         let bufferItemRect = CGRect(origin: .init(x: 0, y: -layout.screen.size.height), size: itemSize)
+        guard bufferSize > 0 else { return }
         for i in 0 ..< bufferSize {
             let item = recycleItem(withRect: bufferItemRect)
             item.index = .init(i, of: 0)

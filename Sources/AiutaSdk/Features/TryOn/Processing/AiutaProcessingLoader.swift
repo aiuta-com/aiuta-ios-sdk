@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 import UIKit
 
 final class AiutaProcessingLoader: Plane {
@@ -24,37 +23,27 @@ final class AiutaProcessingLoader: Plane {
     }
 
     override func updateLayout() {
-        let s = layout.boundary.width / 350
-        
         layout.make { make in
-            make.width = 269 * s
-            make.height = 130 + 349 * s
             make.radius = 24
         }
 
         preview.layout.make { make in
-            make.width = 195 * s
-            make.height = 349 * s
-            make.radius = 8
-            make.top = 37
-            make.centerX = 0
+            make.inset = 0
         }
 
         status.layout.make { make in
-            make.top = preview.layout.bottomPin + 33
+            make.bottom = 24
+            make.centerX = 0
         }
     }
 }
 
 final class AiutaPreviewWithLoader: Plane {
-    let imageView = Image { it, _ in
-        it.contentMode = .scaleAspectFill
-        it.isAutoSize = false
-        it.view.isHiRes = true
-    }
+    let imageView = AiutaCollageView()
 
     let loader = Image { it, ds in
         it.image = ds.image.sdk(.aiutaLoader)
+        it.tint = ds.color.accent
         it.view.isVisible = false
     }
 
@@ -95,30 +84,60 @@ final class AiutaPreviewWithLoader: Plane {
 }
 
 final class AiutaPreviewStatus: Plane {
-    let spinner = Spinner()
+    final class LabelWithSpinner: Plane {
+        let spinner = Spinner { it, _ in
+            it.view.color = .black
+        }
 
-    let label = Label { it, ds in
-        it.font = ds.font.secondary
-        it.text = "Uploading image"
+        let label = Label { it, ds in
+            it.font = ds.font.secondary
+            it.color = .black
+            it.text = "Uploading image"
+        }
+
+        override func updateLayout() {
+            layout.make { make in
+                make.height = spinner.layout.height
+            }
+
+            spinner.layout.make { make in
+                make.centerY = 0
+            }
+
+            label.layout.make { make in
+                make.left = spinner.layout.rightPin + 8
+                make.centerY = 0
+            }
+
+            layout.make { make in
+                make.width = label.layout.rightPin
+                make.centerX = 0
+            }
+        }
     }
+
+    let blur = Blur { it, _ in
+        it.style = .extraLight
+        it.intensity = 0.5
+    }
+
+    let status = LabelWithSpinner()
+
+    var label: Label { status.label }
 
     override func updateLayout() {
         layout.make { make in
-            make.height = spinner.layout.height
+            make.width = 200
+            make.height = 40
+            make.radius = 8
         }
 
-        spinner.layout.make { make in
-            make.centerY = 0
+        blur.layout.make { make in
+            make.inset = 0
         }
 
-        label.layout.make { make in
-            make.left = spinner.layout.rightPin + 8
-            make.centerY = -2
-        }
-
-        layout.make { make in
-            make.width = label.layout.rightPin
-            make.centerX = 0
+        status.layout.make { make in
+            make.center = .zero
         }
     }
 }

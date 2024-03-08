@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 import UIKit
 
 final class AiutaTryOnResultNavigationView: Scroll {
@@ -20,8 +19,8 @@ final class AiutaTryOnResultNavigationView: Scroll {
     var items = AiutaTryOnResultNavigationItemView.ScrollRecycler()
 }
 
-final class AiutaTryOnResultNavigationItemView: Recycle<AiutaTryOnResult> {
-    final class ScrollRecycler: Recycler<AiutaTryOnResultNavigationItemView, AiutaTryOnResult> {
+final class AiutaTryOnResultNavigationItemView: Recycle<Aiuta.SessionResult> {
+    final class ScrollRecycler: Recycler<AiutaTryOnResultNavigationItemView, Aiuta.SessionResult> {
         override func setup() {
             contentInsets = .init(top: 20, bottom: 20)
             contentSpace = .init(width: 0, height: 10)
@@ -33,8 +32,15 @@ final class AiutaTryOnResultNavigationItemView: Recycle<AiutaTryOnResult> {
         findChildren()
     }
 
+    let toner = Stroke { it, ds in
+        it.color = ds.color.item.withAlphaComponent(0.5)
+    }
+
+    let spinner = Spinner()
+
     var imageUrls: [String] = [] {
         didSet {
+            guard oldValue != imageUrls else { return }
             imageViews.indexed.forEach { i, v in
                 guard i < imageUrls.count else {
                     v.imageUrl = nil
@@ -46,7 +52,23 @@ final class AiutaTryOnResultNavigationItemView: Recycle<AiutaTryOnResult> {
                 v.imageUrl = imageUrls[i]
                 v.view.isVisible = true
             }
-            updateLayout()
+        }
+    }
+
+    var images: [UIImage] = [] {
+        didSet {
+            guard oldValue != images else { return }
+            imageViews.indexed.forEach { i, v in
+                guard i < images.count else {
+                    v.imageUrl = nil
+                    v.image = nil
+                    v.view.isVisible = false
+                    return
+                }
+
+                v.image = images[i]
+                v.view.isVisible = true
+            }
         }
     }
 
@@ -69,24 +91,49 @@ final class AiutaTryOnResultNavigationItemView: Recycle<AiutaTryOnResult> {
                 it.view.clipsToBounds = true
             })
         }
+
+        toner.bringToFront()
+        spinner.bringToFront()
     }
 
-    override func update(_ data: AiutaTryOnResult?, at index: ItemIndex) {
+    override func update(_ data: Aiuta.SessionResult?, at index: ItemIndex) {
         guard let data else {
+            images = []
             imageUrls = []
+            spinner.isSpinning = false
+            updateLayout()
             return
         }
 
         switch data {
-            case let .generatedImage(img):
+            case let .output(img):
+                images = []
                 imageUrls = [img.imageUrl]
+                toner.view.isVisible = false
+                spinner.isSpinning = false
             case let .sku(sku):
+                images = []
                 imageUrls = sku.imageUrls
+                toner.view.isVisible = false
+                spinner.isSpinning = false
+            case let .input(input, _):
+                toner.view.isVisible = true
+                spinner.isSpinning = true
+                switch input {
+                    case let .uploadedImage(uploadedImage):
+                        images = []
+                        imageUrls = [uploadedImage.url]
+                    case let .capturedImage(capturedImage):
+                        imageUrls = []
+                        images = [capturedImage]
+                }
         }
+
+        updateLayout()
     }
 
     override func updateLayout() {
-        switch imageUrls.count {
+        switch max(imageUrls.count, images.count) {
             case 0 ... 1: layout1()
             case 2: layout2()
             case 3: layout3()
@@ -96,12 +143,20 @@ final class AiutaTryOnResultNavigationItemView: Recycle<AiutaTryOnResult> {
         layout.make { make in
             make.radius = 16
         }
+
+        toner.layout.make { make in
+            make.inset = 0
+        }
+
+        spinner.layout.make { make in
+            make.center = .zero
+        }
     }
 
     private func layout1() {
         imageViews.indexed.forEach { _, v in
             v.layout.make { make in
-                make.size = layout.size
+                make.inset = 0
             }
         }
     }

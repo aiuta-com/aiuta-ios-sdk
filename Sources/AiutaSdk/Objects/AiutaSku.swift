@@ -42,3 +42,9 @@ extension Aiuta.Sku: Equatable {
         lhs.id == rhs.id
     }
 }
+
+extension Aiuta.SkuInfo: Equatable {
+    public static func == (lhs: Aiuta.SkuInfo, rhs: Aiuta.SkuInfo) -> Bool {
+        lhs.skuId == rhs.skuId && lhs.skuCatalog == rhs.skuCatalog
+    }
+}

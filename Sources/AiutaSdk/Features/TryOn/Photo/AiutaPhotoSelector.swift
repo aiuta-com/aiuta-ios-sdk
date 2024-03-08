@@ -12,85 +12,101 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 import UIKit
 
 final class AiutaPhotoSelector: Plane {
-    enum Source: Equatable {
-        case placeholder
-        case capturedImage(UIImage)
-        case uploadedImage(Aiuta.UploadedImage)
-    }
+    let onChangePhoto = Signal<Void>()
 
-    var source: Source = .placeholder {
+    var inputs: Aiuta.Inputs? {
         didSet {
-            guard source != oldValue else { return }
-            switch source {
-                case .placeholder:
-                    preview.image = ds.image.sdk(.aiutaPlaceholder)
-                    hasPreview = false
-                case let .capturedImage(capturedImage):
-                    preview.image = capturedImage
-                    hasPreview = true
-                case let .uploadedImage(uploadedImage):
-                    preview.imageUrl = uploadedImage.url
-                    hasPreview = true
-            }
+            hasInputs = inputs.isSome
+            preview.inputs = inputs
         }
     }
 
-    var hasPreview = false {
+    private var hasInputs = false {
         didSet {
-            guard oldValue != hasPreview else { return }
-            changePhoto.color = hasPreview ? .white : ds.color.accent
-            changePhoto.font = hasPreview ? ds.font.secondary : ds.font.button
-            changePhoto.text = hasPreview ? "Change photo" : "Upload a photo of you"
-            changePhoto.view.borderWidth = hasPreview ? 2 : 0
-            preview.contentMode = hasPreview ? .scaleAspectFill : .scaleAspectFit
+            guard oldValue != hasInputs else { return }
+            newPhotoButton.view.isVisible = !hasInputs
+            changePhotoButton.view.isVisible = hasInputs
         }
     }
 
-    let preview = Image { it, ds in
-        it.isAutoSize = false
-        it.view.isHiRes = true
-        it.contentMode = .scaleAspectFit
-        it.image = ds.image.sdk(.aiutaPlaceholder)
-    }
+    private let preview = AiutaCollageView()
 
-    let changePhoto = LabelButton { it, ds in
+    let newPhotoButton = LabelButton { it, ds in
         it.font = ds.font.button
         it.color = ds.color.accent
         it.text = "Upload a photo of you"
-        it.view.borderColor = 0xCCCCCCFF.uiColor
+    }
+
+    let changePhotoButton = ChangePhotoButton { it, _ in
+        it.view.isVisible = false
     }
 
     override func setup() {
         view.backgroundColor = ds.color.item
+
+        newPhotoButton.onTouchUpInside.subscribe(with: self) { [unowned self] in
+            onChangePhoto.fire()
+        }
+
+        changePhotoButton.onTouchUpInside.subscribe(with: self) { [unowned self] in
+            onChangePhoto.fire()
+        }
     }
 
     override func updateLayout() {
-        let s = layout.boundary.width / 350
-
         layout.make { make in
-            make.width = 269 * s
-            make.height = 130 + 349 * s
             make.radius = 24
         }
 
         preview.layout.make { make in
-            make.width = 195 * s
-            make.height = 349 * s
+            make.inset = 0
+        }
+
+        newPhotoButton.layout.make { make in
+            make.width = 200
+            make.height = 42
             make.radius = 8
-            make.top = 37
+            make.bottom = 20
             make.centerX = 0
         }
 
-        changePhoto.layout.make { make in
-            make.width = 180 * s
-            make.height = 37
-            make.radius = 8
-            make.top = preview.layout.bottomPin + 26
+        changePhotoButton.layout.make { make in
+            make.bottom = 24
             make.centerX = 0
+        }
+    }
+}
+
+extension AiutaPhotoSelector {
+    final class ChangePhotoButton: PlainButton {
+        let blur = Blur { it, _ in
+            it.style = .extraLight
+            it.intensity = 0.5
+        }
+
+        let label = Label { it, ds in
+            it.font = ds.font.secondary
+            it.color = .black
+            it.text = "Change photo"
+        }
+
+        override func updateLayout() {
+            layout.make { make in
+                make.width = 200
+                make.height = 40
+                make.radius = 8
+            }
+
+            blur.layout.make { make in
+                make.inset = 0
+            }
+
+            label.layout.make { make in
+                make.center = .zero
+            }
         }
     }
 }

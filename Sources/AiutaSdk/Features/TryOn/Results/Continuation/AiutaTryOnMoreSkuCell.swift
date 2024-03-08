@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
-
 final class AiutaTryOnMoreSkuCell: Recycle<Aiuta.SkuInfo> {
     final class ScrollRecycler: Recycler<AiutaTryOnMoreSkuCell, Aiuta.SkuInfo> {
         override func setup() {
@@ -51,7 +49,7 @@ final class AiutaTryOnMoreSkuCell: Recycle<Aiuta.SkuInfo> {
         it.view.isUserInteractionEnabled = false
         it.labelInsets = .init(horizontal: 4, vertical: 1)
         it.font = ds.font.skuBarDiscount
-        it.color = ds.color.red
+        it.color = ds.color.highlight
     }
 
     override func setup() {
@@ -66,10 +64,12 @@ final class AiutaTryOnMoreSkuCell: Recycle<Aiuta.SkuInfo> {
         if (data?.localizedOldPrice).isSome {
             skuPrice.font = ds.font.skuBarOldPrice
             skuPrice.text = data?.localizedOldPrice
+            skuPrice2.color = ds.color.highlight
             skuPrice2.text = data?.localizedPrice
         } else {
             skuPrice.font = ds.font.skuBarPrice
             skuPrice.text = data?.localizedPrice
+            skuPrice2.text = nil
         }
         skuDiscount.text = data?.localizedDiscount
         skuDiscount.view.isVisible = skuDiscount.text.isSome
@@ -95,7 +95,7 @@ final class AiutaTryOnMoreSkuCell: Recycle<Aiuta.SkuInfo> {
 
         skuPrice2.layout.make { make in
             make.left = skuPrice.layout.rightPin + 4
-            make.centerY = skuPrice.layout.centerY - 1
+            make.centerY = skuPrice.layout.centerY
         }
 
         skuDiscount.layout.make { make in

@@ -19,7 +19,58 @@ Add dependency to your target
     .product(name: "AiutaSdk", package: "aiuta-ios-sdk")
 ```
 
-## Enums and Structures
+## Methods
+
+### `Aiuta.setup(apiKey:configuration:)`
+
+This function configures the Aiuta SDK with the necessary API key and sets up the required services.
+
+See [Getting Started](https://developer.aiuta.com/docs/start) for instructions to obtain your API KEY.
+See [Digital Try On](https://developer.aiuta.com/products/digital-try-on/Documentation) Api Reference.
+
+#### Parameters
+
+- `apiKey: String`: The API key provided by Aiuta for accessing its services.
+- `configuration: Aiuta.Configuration`: Custom SDK configurations.
+
+### `Aiuta.tryOn(sku:withMoreToTryOn:in:delegate:)`
+
+This function presents a UI component that allows users to virtually try on a SKU or related SKUs.
+
+#### Parameters
+
+- `sku: SkuInfo`: The primary SKU that users will try on.
+- `withMoreToTryOn relatedSkus: [SkuInfo]`: Related SKUs that the user can try on, defaulting to an empty array.
+- `in viewController: UIViewController`: The view controller from which the Aiuta UI will be presented.
+- `delegate: AiutaSdkDelegate`: The delegate that will receive callbacks from the Aiuta SDK.
+
+
+## Structures
+
+### `Aiuta.Configuration`
+
+This structure provides customizable configurations for the Aiuta SDK, allowing you to tailor the SDK to your needs. All parameters are optional.
+
+#### Substructures
+
+- `Appearance`: Customizes the look and feel of the SDK's UI components.
+- `Behavior`: Adjusts the SDK's behavior, such as the photo selection limit and debug log output.
+
+##### `Appearance` Properties
+
+- `brandColor: UIColor?`: Your brand's primary color, used for significant interface elements like the main action button and progress bars.
+- `accentColor: UIColor?`: An extra special attention color for elements like discounted price labels and discount percentage backgrounds.
+- `backgroundTint: UIColor?`: The background tint color for all screens, which will be diluted by an extraLight UIBlurEffect.
+
+##### `Appearance.NavigationBar` Properties
+
+- `logoImage: UIImage?`: A small image of your logo to display in the navigation bar.
+- `foregroundColor: UIColor?`: The color of navigation bar elements where the logo isn't displayed, such as back and action buttons or screen headers.
+
+##### `Behavior` Properties
+
+- `photoSelectionLimit: Int`: The maximum number of photos a user can select for virtual try-on, defaulting to 10.
+- `isDebugLogsEnabled: Bool`: Controls the output of SDK debug logs, defaulting to false.
 
 ### `Aiuta.SkuInfo`
 
@@ -37,29 +88,7 @@ This structure represents the information about a SKU in the Aiuta platform.
 - `localizedDiscount: String?`: The discount on the SKU, if available.
 
 
-### `Aiuta.setup(apiKey:)`
-
-This function configures the Aiuta SDK with the necessary API key and sets up the required services.
-
-See [Getting Started](https://developer.aiuta.com/docs/start) for instructions to obtain your API KEY.
-See [Digital Try On](https://developer.aiuta.com/products/digital-try-on/Documentation) Api Reference.
-
-#### Parameters
-
-- `apiKey: String`: The API key provided by Aiuta for accessing its services.
-
-### `Aiuta.tryOn(sku:withMoreToTryOn:in:delegate:)`
-
-This function presents a UI component that allows users to virtually try on a SKU or related SKUs.
-
-#### Parameters
-
-- `sku: SkuInfo`: The primary SKU that users will try on.
-- `withMoreToTryOn relatedSkus: [SkuInfo]`: Related SKUs that the user can try on, defaulting to an empty array.
-- `in viewController: UIViewController`: The view controller from which the Aiuta UI will be presented.
-- `delegate: AiutaSdkDelegate`: The delegate that will receive callbacks from the Aiuta SDK.
-
-## Protocol
+## Protocols
 
 ### `AiutaSdkDelegate`
 
@@ -74,11 +103,15 @@ This protocol defines the delegate methods for receiving callbacks from the Aiut
 ## Example Usage
 
 ```swift
-import AiutaSdk
-
-// Setup the Aiuta SDK with your API key
+// Setup the Aiuta SDK with your API key and custom configuration
 if #available(iOS 13.0.0, *) {
-    Aiuta.setup(apiKey: "your_api_key")
+    var configuration = Aiuta.Configuration()
+    configuration.appearance.brandColor = .red
+    configuration.appearance.accentColor = .green
+    configuration.appearance.navigationBar.logoImage = UIImage(named: "your_logo")
+    configuration.behavior.photoSelectionLimit = 4
+    
+    Aiuta.setup(apiKey: "your_api_key", configuration: configuration)
 }
 
 // Define a delegate for handling Aiuta SDK callbacks

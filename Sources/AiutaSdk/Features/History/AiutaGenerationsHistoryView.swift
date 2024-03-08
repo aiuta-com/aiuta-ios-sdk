@@ -12,9 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
-
 final class AiutaGenerationsHistoryView: Scroll {
+    let blur = Blur { it, _ in
+        it.style = .extraLight
+    }
+
     let swipeEdge = SwipeEdge()
     let navBar = AiutaNavBar { it, _ in
         it.header.logo.transitions.isReferenceActive = false
@@ -28,9 +30,19 @@ final class AiutaGenerationsHistoryView: Scroll {
 
     let selectionSnackbar = Snackbar<AiutaGenerationsHistorySnackbar>()
 
+    override func setup() {
+        blur.sendToBack()
+    }
+
     override func updateLayout() {
         scrollView.contentInset = .init(top: navBar.layout.bottomPin, bottom: layout.safe.insets.bottom)
 
         scrollView.addContent(selectionSnackbar.placeholder)
+
+        blur.layout.make { make in
+            make.top = navBar.layout.bottomPin
+            make.leftRight = 0
+            make.bottom = 0
+        }
     }
 }

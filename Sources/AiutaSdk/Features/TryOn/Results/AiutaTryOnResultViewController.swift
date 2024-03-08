@@ -12,23 +12,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
+import Resolver
 import UIKit
 
 @available(iOS 13.0.0, *)
 final class AiutaTryOnResultViewController: ComponentController<AiutaTryOnView> {
-    var moreToTryOn: [Aiuta.SkuInfo]?
+    @Injected private var model: AiutaSdkModel
+
     let skuBulletin = AiutaSkuBulletin()
 
-    var results = [AiutaTryOnResult]() {
-        didSet {
-            ui.resultView.data = DataProvider(results)
-        }
+    var generatedImages: [Aiuta.GeneratedImage] {
+        ui.resultView.data?.items.compactMap { result in
+            switch result {
+                case let .output(generatedImage): return generatedImage
+                default: return nil
+            }
+        } ?? []
     }
 
-    var generatedImages = [Aiuta.GeneratedImage]()
-
     override func setup() {
+        model.onChangeResults.subscribe(with: self) { [unowned self] _, _ in
+            updateResults()
+        }
+
+        model.onChangeSku.subscribePast(with: self) { [unowned self] _ in
+            let moreToTryOn = model.moreToTryOn
+            ui.resultView.moreToTryOn.data = nil
+            ui.resultView.moreToTryOn.data = PartialDataProvider(moreToTryOn)
+            ui.resultView.moreToTryOn.updateItems()
+            ui.resultView.moreHeader.isVisible = !moreToTryOn.isEmpty
+        }
+
         ui.resultView.moreToTryOn.onTapItem.subscribe(with: self) { [unowned self] cell in
             guard let sku = cell.data else { return }
             skuBulletin.sku = sku
@@ -37,9 +51,10 @@ final class AiutaTryOnResultViewController: ComponentController<AiutaTryOnView> 
 
         ui.resultView.results.onRegisterItem.subscribe(with: self) { [unowned self] cell in
             cell.onTouchUpInside.subscribe(with: self) { [unowned self, weak cell] in
-                guard case let .generatedImage(generatedImage) = cell?.data else { return }
-                let index = generatedImages.firstIndex(where: { $0 == generatedImage }) ?? 0
-                present(AiutaGeneratedGalleryViewController(DataProvider(generatedImages), start: index))
+                guard case let .output(generatedImage) = cell?.data else { return }
+                let images = generatedImages
+                let index = images.firstIndex(where: { $0 == generatedImage }) ?? 0
+                present(AiutaGeneratedGalleryViewController(DataProvider(images), start: index))
             }
 
             cell.shareButton.onTouchUpInside.subscribe(with: self) { [unowned self, weak cell] in
@@ -50,39 +65,21 @@ final class AiutaTryOnResultViewController: ComponentController<AiutaTryOnView> 
 
         skuBulletin.primaryButton.onTouchUpInside.subscribe(with: self) { [unowned self] in
             guard let sku = skuBulletin.sku else { return }
-            (vc as? AiutaTryOnViewController)?.changeSku(sku)
             skuBulletin.dismiss()
+            model.tryOnSku = sku
         }
 
         skuBulletin.secondaryButton.onTouchUpInside.subscribe(with: self) { [unowned self] in
             guard let sku = skuBulletin.sku,
-                  let delegate = (vc as? AiutaTryOnViewController)?.session?.delegate
+                  let delegate = model.delegate
             else { return }
-            vc?.dismiss()
-            delay(.thirdOfSecond) { [delegate] in
-                delegate.aiuta(showSku: sku.skuId)
+            vc?.dismiss(animated: true) {
+                delay(.moment) { delegate.aiuta(showSku: sku.skuId) }
             }
         }
     }
 
-    func showResult(_ operation: Aiuta.TryOnOperation, sku: Aiuta.SkuInfo?, original: Aiuta.UploadedImage?) {
-        let offset = ui.resultView.offset(fromIndex: results.count)
-
-        generatedImages.append(contentsOf: operation.generatedImages)
-        results.append(contentsOf: operation.generatedImages.map { .generatedImage($0) })
-        if let sku { results.append(.sku(sku)) }
-
-        if let moreToTryOn {
-            ui.resultView.moreToTryOn.data = DataProvider(moreToTryOn)
-            ui.resultView.moreHeader.isVisible = !moreToTryOn.isEmpty
-        } else {
-            ui.resultView.moreHeader.isVisible = false
-        }
-
-        guard let url = operation.generatedImages.first?.imageUrl else { return }
-        ui.sample.view.loadImage(url) { [weak self] in
-            self?.ui.resultView.scrollView.contentOffset = .init(x: 0, y: offset)
-            self?.ui.mode = .result
-        }
+    func updateResults() {
+        ui.resultView.data = DataProvider(model.generationResults.reversed())
     }
 }

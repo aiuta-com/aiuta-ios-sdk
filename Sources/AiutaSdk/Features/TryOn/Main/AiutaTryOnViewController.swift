@@ -20,49 +20,31 @@ import UIKit
 final class AiutaTryOnViewController: ViewController<AiutaTryOnView> {
     @Injected private var model: AiutaSdkModel
 
-    private(set) var session: Aiuta.TryOnSession?
-    private var sku: Aiuta.SkuInfo?
-
     private var selector: AiutaPhotoSelectorController?
     private var processor: AiutaProcessingController?
     private var results: AiutaTryOnResultViewController?
 
-    @defaults(key: "lastUploadedImage", defaultValue: nil)
-    var lastUploadedImage: Aiuta.UploadedImage?
+    var hasUploads: Bool {
+        !model.uploadsHistory.isEmpty
+    }
 
     convenience init(session: Aiuta.TryOnSession) {
         self.init()
-        self.session = session
-        preload(lastUploadedImage?.url)
+        model.startSession(session)
         preload(session.tryOnSku.imageUrls.first)
+        model.uploadsHistory.last?.forEach { lastUploadedImage in
+            preload(lastUploadedImage.url)
+        }
     }
 
     override func setup() {
         ui.navBar.onDismiss.subscribe(with: self) { [unowned self] in
-            guard ui.mode != .result else {
-                ui.mode = .photoSelecting
-                return
-            }
             dismiss()
         }
 
         selector = addComponent(AiutaPhotoSelectorController(ui))
         processor = addComponent(AiutaProcessingController(ui))
         results = addComponent(AiutaTryOnResultViewController(ui))
-
-        if let sku = session?.tryOnSku { changeSku(sku) }
-
-        selector?.didPickPhoto.subscribe(with: self) { [unowned self] image in
-            processor?.startTryOn(selectedImage: image)
-        }
-
-        processor?.didUploadImage.subscribe(with: self) { [unowned self] image in
-            lastUploadedImage = image
-        }
-
-        processor?.didCompleteProcessing.subscribe(with: self) { [unowned self] operation in
-            results?.showResult(operation, sku: sku, original: lastUploadedImage)
-        }
 
         ui.poweredBy.onTouchUpInside.subscribe(with: self) { [unowned self] in
             openUrl("https://aiuta.com", anchor: ui.poweredBy, inApp: true)
@@ -92,63 +74,41 @@ final class AiutaTryOnViewController: ViewController<AiutaTryOnView> {
             showBulletin(ui.skuBulletin)
         }
 
+        model.onChangeState.subscribePast(with: self) { [unowned self] state in
+            ui.mode = state
+        }
+
         model.onChangeHistory.subscribe(with: self) { [unowned self] _ in
             updateHistory()
         }
         updateHistory()
 
-        enableInteractiveDismiss(withTarget: ui.swipeEdge)
-    }
+        model.onChangeSku.subscribePast(with: self) { [unowned self] sku in
+            ui.skuBar.sku = sku
+            ui.skuBulletin.sku = sku
+        }
 
-    override func whenDidAppear() {
-        _ = processor?.checkIsReady()
+        ui.skuBar.sku = model.tryOnSku
+        ui.skuBulletin.sku = model.tryOnSku
+
+        enableInteractiveDismiss(withTarget: ui.swipeEdge)
     }
 
     func updateHistory() {
         ui.navBar.isActionAvailable = !model.generationHistory.isEmpty
     }
 
-    func changeSku(_ sku: Aiuta.SkuInfo) {
-        self.sku = sku
-        processor?.sku = sku
-        ui.skuBar.sku = sku
-        ui.skuBulletin.sku = sku
-        results?.moreToTryOn = session?.moreToTryOn.filter { $0 != sku }
-        selector?.lastUploadedImage = lastUploadedImage
-        processor?.lastUploadedImage = lastUploadedImage
-        ui.mode = .photoSelecting
-    }
-
     private func addToCart() {
-        guard let skuId = sku?.skuId, let delegate = session?.delegate else { return }
-        dismiss()
-        delay(.thirdOfSecond) { [delegate] in
-            delegate.aiuta(addToCart: skuId)
-        }
+        guard let skuId = model.tryOnSku?.skuId, let delegate = model.delegate else { return }
+        dismiss(animated: true) { delay(.moment) { delegate.aiuta(addToCart: skuId) } }
     }
 
     private func addToWishlist() {
-        guard let skuId = sku?.skuId, let delegate = session?.delegate else { return }
-        dismiss()
-        delay(.thirdOfSecond) { [delegate] in
-            delegate.aiuta(addToWishlist: skuId)
-        }
+        guard let skuId = model.tryOnSku?.skuId, let delegate = model.delegate else { return }
+        dismiss(animated: true) { delay(.moment) { delegate.aiuta(addToWishlist: skuId) } }
     }
 
     private func preload(_ urlString: String?) {
-        print(urlString)
-        guard let url = URL(string: urlString) else { return }
-        KingfisherManager.shared.retrieveImage(with: url,
-                                               options: [
-                                                   .downloadPriority(URLSessionTask.highPriority),
-                                                   .retryStrategy(DelayRetryStrategy(maxRetryCount: 3)),
-                                                   .processor(DownsamplingImageProcessor(size: .init(square: 1500))),
-                                                   .memoryCacheExpiration(.seconds(360)),
-                                                   .diskCacheExpiration(.days(7)),
-                                                   .diskCacheAccessExtendingExpiration(.cacheTime),
-                                                   .backgroundDecode,
-                                               ],
-                                               completionHandler: nil
-        )
+        model.preloadImage(urlString)
     }
 }

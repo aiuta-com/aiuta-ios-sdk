@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 import UIKit
 
 struct AiutaSdkDesignSystem: DesignSystem, DesignSystemImages, DesignSystemTransitions, DesignSystemStyles, DesignSystemDimensions {
@@ -22,15 +21,27 @@ struct AiutaSdkDesignSystem: DesignSystem, DesignSystemImages, DesignSystemTrans
     var color: DesignSystemColors { self }
     var dimensions: DesignSystemDimensions { self }
     var transition: DesignSystemTransitions { self }
+
+    let configuration: Aiuta.Configuration.Appearance
+
+    init(_ configuration: Aiuta.Configuration.Appearance) {
+        self.configuration = configuration
+    }
+}
+
+extension DesignSystem {
+    var config: Aiuta.Configuration.Appearance? {
+        (self as? AiutaSdkDesignSystem)?.configuration
+    }
 }
 
 extension AiutaSdkDesignSystem: DesignSystemColors {
-    var ground: UIColor { 0xEFF0F1FF.uiColor }
+    var ground: UIColor { configuration.backgroundTint ?? .white }
     var popup: UIColor { 0xEEEEEEFF.uiColor }
     var item: UIColor { .white }
-    var accent: UIColor { 0x4000FFFF.uiColor }
+    var accent: UIColor { configuration.brandColor ?? 0x4000FFFF.uiColor }
     var tint: UIColor { .black }
-    var highlight: UIColor { 0xD4C8FAFF.uiColor }
+    var highlight: UIColor { configuration.accentColor ?? .red }
     var error: UIColor { 0xEF5754FF.uiColor }
 }
 

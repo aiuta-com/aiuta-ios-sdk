@@ -31,6 +31,28 @@ final class AiutaTryOnMoreFooterView: Plane {
         it.text = "Swipe up for more"
     }
     
+    var canBeVisible = false {
+        didSet {
+            guard oldValue != canBeVisible else { return }
+            updateVisibility()
+        }
+    }
+    
+    var shouldBeVisible = false {
+        didSet {
+            guard oldValue != shouldBeVisible else { return }
+            updateVisibility()
+        }
+    }
+    
+    private func updateVisibility() {
+        animations.visibleTo(canBeVisible && shouldBeVisible)
+    }
+    
+    override func setup() {
+        view.isVisible = false
+    }
+    
     override func updateLayout() {
         layout.make { make in
             make.width = layout.boundary.width

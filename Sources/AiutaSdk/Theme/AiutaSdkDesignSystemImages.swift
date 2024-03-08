@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 import UIKit
 
 extension DesignSystemImages {
@@ -33,7 +32,12 @@ enum AiutaSdkDesignSystemImages: String {
     case aiutaLoader
     case aiutaDown
     case aiutaUp
-    case aiutaOnBoard1
+    case aiutaOnBoard1l1
+    case aiutaOnBoard1l2
+    case aiutaOnBoard1l3
+    case aiutaOnBoard1s1
+    case aiutaOnBoard1s2
+    case aiutaOnBoard1s3
     case aiutaOnBoard2
     case aiutaSelection
     case aiutaSelected

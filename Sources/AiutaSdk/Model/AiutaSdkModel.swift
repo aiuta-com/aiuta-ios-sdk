@@ -12,9 +12,50 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
+import UIKit
 
 protocol AiutaSdkModel {
-    var generationHistory: [Aiuta.GeneratedImage] { get set }
+    var onChangeState: Signal<Aiuta.SessionState> { get }
+    var onChangeSku: Signal<Aiuta.SkuInfo> { get }
+    var onChangeResults: Signal<([Aiuta.GeneratedImage], Aiuta.SkuInfo)> { get }
     var onChangeHistory: Signal<[Aiuta.GeneratedImage]> { get }
+    var onChangeUploads: Signal<[Aiuta.UploadedImage]> { get }
+    var onStatus: Signal<String> { get }
+    var onError: Signal<String> { get }
+
+    var state: Aiuta.SessionState { get }
+    var tryOnSku: Aiuta.SkuInfo? { get set }
+    var moreToTryOn: [Aiuta.SkuInfo] { get }
+    var uploadsHistory: [[Aiuta.UploadedImage]] { get set }
+    var generationHistory: [Aiuta.GeneratedImage] { get set }
+    var generationResults: [Aiuta.SessionResult] { get }
+
+    var delegate: AiutaSdkDelegate? { get }
+
+    func startSession(_ session: Aiuta.TryOnSession)
+    func startTryOn(_ input: Aiuta.Inputs)
+
+    func preloadImage(_ url: String?)
+}
+
+extension Aiuta {
+    enum ProcessingState: Comparable {
+        case uploadingImage
+        case scanningBody
+        case generatingOutfit
+        case failed
+    }
+
+    enum SessionState: Comparable {
+        case initial
+        case photoSelecting
+        case processing(ProcessingState)
+        case result
+    }
+    
+    enum SessionResult: Equatable {
+        case input(Aiuta.Input, Aiuta.SkuInfo)
+        case output(Aiuta.GeneratedImage)
+        case sku(Aiuta.SkuInfo)
+    }
 }

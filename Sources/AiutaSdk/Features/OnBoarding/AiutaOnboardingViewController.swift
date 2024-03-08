@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
+import Hero
 import UIKit
 
 final class AiutaOnboardingViewController: ViewController<AiutaOnboardingView> {
@@ -28,11 +28,25 @@ final class AiutaOnboardingViewController: ViewController<AiutaOnboardingView> {
             dismiss()
         }
 
-        ui.footer.go.onTouchUpInside.subscribe(with: self) { [unowned self] in
-            guard let forwardVc else { return }
-            replace(with: forwardVc)
+        ui.startButton.onTouchUpInside.subscribe(with: self) { [unowned self] in
+            if ui.isFinal {
+                forward()
+            } else {
+                ui.scrollView.scrollToNext()
+            }
+        }
+
+        ui.onOverScroll.subscribe(with: self) { [unowned self] in
+            forward()
         }
 
         enableInteractiveDismiss(withTarget: ui.swipeEdge)
+    }
+
+    private func forward() {
+        guard let forwardVc else { return }
+        forwardVc.hero.modalAnimationType = .selectBy(presenting: .slide(direction: .left),
+                                                      dismissing: .pull(direction: .right))
+        replace(with: forwardVc)
     }
 }

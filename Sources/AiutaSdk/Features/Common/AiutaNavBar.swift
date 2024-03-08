@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 import UIKit
 
 final class AiutaNavBar: Plane {
@@ -34,6 +33,21 @@ final class AiutaNavBar: Plane {
         didSet {
             header.action.view.isMaxOpaque = isActionAvailable
             header.action.view.isUserInteractionEnabled = isActionAvailable
+        }
+    }
+
+    var isMinimal = false {
+        didSet {
+            guard oldValue != isMinimal else { return }
+            blur.view.isVisible = !isMinimal
+            stroke.view.isVisible = !isMinimal
+            if isMinimal {
+                isActionAvailable = false
+                header.title.view.isVisible = false
+                header.logo.view.isVisible = false
+                header.logo.transitions.isActive = false
+                header.logo.transitions.isReferenceActive = false
+            }
         }
     }
 
@@ -69,19 +83,26 @@ final class AiutaNavBar: Plane {
 final class AiutaNavHeader: Plane {
     let back = ImageButton { it, ds in
         it.image = ds.image.sdk(.aiutaBack)
+        it.tint = ds.config?.navigationBar.foregroundColor ?? .black
+        it.transitions.reference = ds.transition.sdk(.navBack)
     }
 
     let logo = Image { it, ds in
-        it.image = ds.image.sdk(.aiutaLogo)
+        it.image = ds.config?.navigationBar.logoImage ?? ds.image.sdk(.aiutaLogo)
         it.transitions.reference = ds.transition.sdk(.aiutaLogo)
+        it.transitions.make { make in
+            make.opacity = 0
+        }
     }
 
     let title = Label { it, ds in
         it.font = ds.font.navBar
+        it.color = ds.config?.navigationBar.foregroundColor ?? .black
     }
 
     let action = LabelButton { it, ds in
         it.font = ds.font.navAction
+        it.label.color = ds.config?.navigationBar.foregroundColor ?? .black
         it.view.minOpacity = 0.5
     }
 
@@ -89,11 +110,6 @@ final class AiutaNavHeader: Plane {
         back.layout.make { make in
             make.left = 0
             make.centerY = 0
-        }
-
-        logo.layout.make { make in
-            make.centerX = 0
-            make.centerY = -6
         }
 
         title.layout.make { make in
@@ -104,6 +120,11 @@ final class AiutaNavHeader: Plane {
         action.layout.make { make in
             make.right = -2
             make.centerY = 0
+        }
+
+        logo.layout.make { make in
+            make.centerX = 0
+            make.centerY = (ds.config?.navigationBar.logoImage).isSome ? action.layout.centerY + 1 : -6
         }
     }
 }
