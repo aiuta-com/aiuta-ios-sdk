@@ -35,7 +35,6 @@ final class AiutaPhotoSelectorBulletin: PlainBulletin {
         view.backgroundColor = ds.color.item
         let lastIndex = buttons.count - 1
         buttons.indexed.forEach { i, button in
-            button.icon.tint = ds.color.tint
             button.divider.view.isVisible = i < lastIndex
         }
     }

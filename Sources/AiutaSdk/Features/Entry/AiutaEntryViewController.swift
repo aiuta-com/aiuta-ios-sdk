@@ -39,7 +39,7 @@ final class AiutaEntryViewController: ViewController<AiutaEntryView> {
         }
         let tryOn = AiutaTryOnViewController(session: session)
         await asleep(.oneSecond)
-        if tryOn.lastUploadedImage.isSome {
+        if tryOn.hasUploads {
             replace(with: tryOn)
         } else {
             replace(with: AiutaOnboardingViewController(forward: tryOn))

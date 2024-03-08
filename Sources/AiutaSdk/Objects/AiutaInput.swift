@@ -12,9 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import Foundation
+import UIKit
 
-enum AiutaTryOnResult: Equatable {
-    case generatedImage(Aiuta.GeneratedImage)
-    case sku(Aiuta.SkuInfo)
+extension Aiuta {
+    typealias CapturedImages = [UIImage]
+    typealias UploadedImages = [Aiuta.UploadedImage]
+
+    enum Inputs: Equatable {
+        case capturedImages(CapturedImages)
+        case uploadedImages(UploadedImages)
+    }
+
+    enum Input: Equatable {
+        case capturedImage(UIImage)
+        case uploadedImage(Aiuta.UploadedImage)
+    }
 }

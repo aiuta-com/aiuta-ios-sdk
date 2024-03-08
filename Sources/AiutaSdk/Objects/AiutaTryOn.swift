@@ -22,10 +22,6 @@ extension Aiuta {
         let errors: [String]
     }
 
-    struct GeneratedImage: Codable, Equatable {
-        let imageUrl: String
-    }
-
     struct TryOnOperation: Codable, Equatable {
         enum Status: String {
             case created = "CREATED"
@@ -65,8 +61,4 @@ extension Aiuta.TryOnOperation.Status: Codable {
     init(from decoder: Decoder) throws {
         self = try Self(rawValue: decoder.singleValueContainer().decode(RawValue.self)) ?? .unknown
     }
-}
-
-extension Aiuta.GeneratedImage: TransitionRef {
-    var transitionId: String { imageUrl }
 }

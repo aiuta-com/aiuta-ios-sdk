@@ -20,4 +20,5 @@ extension DesignSystemTransitions {
 
 enum AiutaSdkDesignSystemTransitions: TransitionRef {
     case aiutaLogo
+    case navBack
 }

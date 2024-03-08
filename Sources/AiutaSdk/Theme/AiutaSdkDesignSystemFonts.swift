@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 import UIKit
 
 extension AiutaSdkDesignSystem: DesignSystemFonts {
@@ -22,17 +21,19 @@ extension AiutaSdkDesignSystem: DesignSystemFonts {
 }
 
 extension DesignSystemFonts {
-    var poweredBy: FontRef { SFPro(size: 12, kern: -0.24, lineHeightMultiple: 1.26, color: 0x484848FF.uiColor, underline: .single) }
+    var poweredBy: FontRef { SFPro(style: .medium, size: 13, kern: -0.13, lineHeightMultiple: 1.06, color: 0x4000FFFF.uiColor) }
 
     var button: FontRef { SFPro(style: .bold, size: 14, kern: -0.28, lineHeightMultiple: 1.1, color: .white) }
-    var secondary: FontRef { SFPro(style: .medium, size: 13, kern: -0.26, lineHeightMultiple: 1.16, color: 0x484848FF.uiColor) }
     var buttonBig: FontRef { SFPro(style: .medium, size: 17, kern: -0.17, lineHeightMultiple: 1.1, color: .white) }
+    var secondary: FontRef { SFPro(style: .medium, size: 13, kern: -0.26, color: 0x484848FF.uiColor) }
 
     var menu: FontRef { SFPro(style: .medium, size: 17, kern: -0.89, lineHeightMultiple: 1.1, color: .black) }
     var header: FontRef { SFPro(style: .bold, size: 26, kern: -0.52, color: .black) }
     var footer: FontRef { SFPro(style: .medium, size: 14, kern: -0.49, lineHeightMultiple: 1.06, color: .white) }
     var navBar: FontRef { SFPro(style: .medium, size: 18, kern: -0.4, lineHeightMultiple: 1.08, color: .black) }
-    var navAction: FontRef { SFPro(style: .medium, size: 17, kern: -0.4, lineHeightMultiple: 1.08, color: 0x4000FFFF.uiColor) }
+    var navAction: FontRef { SFPro(style: .medium, size: 17, kern: -0.4, lineHeightMultiple: 1.08, color: .black) }
+
+    var historyBulletinTitle: FontRef { SFPro(style: .medium, size: 20, kern: -0.4, color: .black) }
 
     var skuCellTitle: FontRef { SFPro(size: 12, kern: -0.12, color: .black) }
     var skuCellStore: FontRef { SFPro(style: .medium, size: 12, kern: -0.12, color: 0x9F9F9FFF.uiColor) }
@@ -47,8 +48,8 @@ extension DesignSystemFonts {
     var skuBarNewPrice: FontRef { SFPro(style: .bold, size: 16, color: 0xFB0000FF.uiColor) }
     var skuBarDiscount: FontRef { SFPro(style: .bold, size: 12, lineHeightMultiple: 1.1, color: .white) }
 
-    var boardingHeader: FontRef { SFPro(style: .bold, size: 24, kern: -0.48, color: .black) }
-    var boardingText: FontRef { SFPro(style: .medium, size: 18, kern: -0.36, color: 0x484848FF.uiColor) }
+    var boardingHeader: FontRef { SFPro(style: .bold, size: 24, color: .black) }
+    var boardingText: FontRef { SFPro(style: .medium, size: 17, kern: -0.51, lineHeightMultiple: 1.08, color: 0x484848FF.uiColor) }
 
     var snackbar: FontRef { SFPro(style: .medium, size: 14, kern: -0.35, lineHeightMultiple: 1.08, color: .white) }
 }

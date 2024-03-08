@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 import Hero
 import UIKit
 
@@ -26,27 +25,34 @@ final class AiutaTryOnResultView: Scroll {
     @scrollable
     var moreToTryOn = AiutaTryOnMoreSkuCell.ScrollRecycler()
 
-    let stroke = Stroke { it, ds in
-        it.color = ds.color.gray.withAlphaComponent(0.3)
-    }
-
     let navigation = AiutaTryOnResultNavigationView()
 
     let footer = AiutaTryOnResultFooterView()
 
-    var data: DataProvider<AiutaTryOnResult>? {
+    private var oldDataFocus: Aiuta.SessionResult?
+    var data: DataProvider<Aiuta.SessionResult>? {
+        willSet {
+            oldDataFocus = currentData
+        }
         didSet {
-            results.data = data
+            if let data {
+                results.data = FilterDataProvider(input: data, filter: { switch $0 {
+                    case .input: return false
+                    default: return true
+                } })
+            } else {
+                results.data = nil
+            }
             navigation.items.data = data
-            currentItemIndex = 0
+            if let oldDataFocus, let index = results.data?.items.firstIndex(of: oldDataFocus) {
+                scrollView.scroll(to: offset(fromIndex: index), animated: false)
+            }
         }
     }
 
     private var startIndex: Int = 0
 
     override func setup() {
-        view.backgroundColor = ds.color.item
-
         scrollView.appearance.make { make in
             make.decelerationRate = .fast
         }
@@ -85,22 +91,22 @@ final class AiutaTryOnResultView: Scroll {
 
         navigation.items.onRegisterItem.subscribe(with: self) { [unowned self] item in
             item.onTouchUpInside.subscribe(with: self) { [unowned self, weak item] in
-                guard let item else { return }
-                scrollView.scroll(to: offset(fromIndex: item.index.item), animated: true)
+                guard let data = item?.data, let index = results.data?.items.firstIndex(of: data) else { return }
+                scrollView.scroll(to: offset(fromIndex: index), animated: true)
             }
         }
 
         navigation.items.onUpdateItem.subscribe(with: self) { [unowned self] item in
-            item.isSelected = item.index.item == currentItemIndex
+            item.isSelected = item.data == currentData
         }
 
         results.onUpdateItem.subscribe(with: self) { [unowned self] cell in
             cell.skuGallery.pages.forEach { skuCell in
                 guard cell.index.isLast else {
-                    skuCell.contentView.swipeForMore.view.isVisible = false
+                    skuCell.contentView.swipeForMore.shouldBeVisible = false
                     return
                 }
-                skuCell.contentView.swipeForMore.animations.visibleTo(!isContinuationMode && moreHeader.isVisible)
+                skuCell.contentView.swipeForMore.shouldBeVisible = !isContinuationMode && moreHeader.isVisible
             }
         }
 
@@ -119,9 +125,15 @@ final class AiutaTryOnResultView: Scroll {
         didSet {
             guard oldValue != currentItemIndex else { return }
             navigation.items.updateItems()
-            let offset = CGFloat(currentItemIndex * 106)
-            navigation.scrollView.scroll(to: offset, animated: true)
+            if let currentData, let navIindex = navigation.items.data?.items.firstIndex(of: currentData) {
+                let offset = CGFloat(navIindex * 106)
+                navigation.scrollView.scroll(to: offset, animated: true)
+            }
         }
+    }
+
+    private var currentData: Aiuta.SessionResult? {
+        results.data?.items[safe: currentItemIndex]
     }
 
     var isContinuationMode = false {
@@ -141,7 +153,7 @@ final class AiutaTryOnResultView: Scroll {
     }
 
     var maxItemIndex: Int {
-        (data?.items.count ?? 1) - 1
+        (results.data?.items.count ?? 1) - 1
     }
 
     var topInset: CGFloat = 0 {
@@ -175,12 +187,6 @@ final class AiutaTryOnResultView: Scroll {
     override func updateLayout() {
         scrollView.contentInset = .init(top: topInset + 10, bottom: footer.layout.height + 10)
         results.contentFraction = .init(width: .fraction(1), height: .constant(contenHeight - 8))
-
-        stroke.layout.make { make in
-            make.width = layout.width
-            make.height = 0.5
-            make.top = (parent as? AiutaTryOnView)?.skuBar.layout.bottomPin ?? topInset
-        }
 
         navigation.layout.make { make in
             make.width = 54

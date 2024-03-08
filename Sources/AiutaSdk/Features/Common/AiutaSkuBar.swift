@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 import UIKit
 
 final class AiutaSkuBar: PlainButton {
@@ -48,11 +47,15 @@ final class AiutaSkuBar: PlainButton {
         it.view.isUserInteractionEnabled = false
         it.labelInsets = .init(horizontal: 4, vertical: 1)
         it.font = ds.font.skuBarDiscount
-        it.color = ds.color.red
+        it.color = ds.color.highlight
     }
 
     let next = Image { it, ds in
         it.image = ds.image.sdk(.aiutaNext)
+    }
+
+    let stroke = Stroke { it, ds in
+        it.color = ds.color.gray.withAlphaComponent(0.5)
     }
 
     var sku: Aiuta.SkuInfo? {
@@ -64,10 +67,12 @@ final class AiutaSkuBar: PlainButton {
             if (sku?.localizedOldPrice).isSome {
                 skuPrice.font = ds.font.skuBarOldPrice
                 skuPrice.text = sku?.localizedOldPrice
+                skuPrice2.color = ds.color.highlight
                 skuPrice2.text = sku?.localizedPrice
             } else {
                 skuPrice.font = ds.font.skuBarPrice
                 skuPrice.text = sku?.localizedPrice
+                skuPrice2.text = nil
             }
             skuDiscount.text = sku?.localizedDiscount
             skuDiscount.view.isVisible = skuDiscount.text.isSome
@@ -116,13 +121,19 @@ final class AiutaSkuBar: PlainButton {
 
         skuPrice2.layout.make { make in
             make.left = skuPrice.layout.rightPin + 4
-            make.centerY = skuPrice.layout.centerY - 1
+            make.centerY = skuPrice.layout.centerY
         }
 
         skuDiscount.layout.make { make in
             make.left = skuPrice2.layout.rightPin + 8
             make.centerY = skuPrice.layout.centerY
             make.radius = 4
+        }
+
+        stroke.layout.make { make in
+            make.leftRight = 0
+            make.height = 0.5
+            make.bottom = 0
         }
     }
 }

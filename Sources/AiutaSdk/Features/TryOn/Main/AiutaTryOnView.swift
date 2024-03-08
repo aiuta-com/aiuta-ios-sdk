@@ -12,14 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 import UIKit
 
 final class AiutaTryOnView: Plane {
-    enum Mode: Equatable {
-        case photoSelecting
-        case loading
-        case result
+    let blur = Blur { it, _ in
+        it.style = .extraLight
     }
 
     let resultView = AiutaTryOnResultView()
@@ -33,10 +30,7 @@ final class AiutaTryOnView: Plane {
     let photoSelector = AiutaPhotoSelector()
     let processingLoader = AiutaProcessingLoader()
 
-    let poweredBy = LabelButton { it, ds in
-        it.font = ds.font.poweredBy
-        it.text = "Powered by Aiuta"
-    }
+    let poweredBy = AiutaPoweredButton()
 
     let sample = Image { it, _ in
         it.view.isHiRes = true
@@ -55,7 +49,7 @@ final class AiutaTryOnView: Plane {
         it.secondaryButton.text = "Add to wishlist"
     }
 
-    var mode: Mode = .photoSelecting {
+    var mode: Aiuta.SessionState = .photoSelecting {
         didSet {
             guard oldValue != mode else { return }
             updateMode()
@@ -76,21 +70,21 @@ final class AiutaTryOnView: Plane {
     private func updateMode() {
         hasSkuBar = true
         switch mode {
-            case .photoSelecting:
+            case .initial, .photoSelecting:
                 photoSelector.view.isVisible = true
                 processingLoader.view.isVisible = false
                 resultView.view.isVisible = false
                 poweredBy.view.isVisible = true
-                starter.view.isVisible = photoSelector.source != .placeholder
+                starter.view.isVisible = photoSelector.inputs.isSome
                 resultView.data = nil
-                resultView.moreToTryOn.data = nil
-            case .loading:
+            case .processing:
                 photoSelector.view.isVisible = false
                 processingLoader.view.isVisible = true
                 resultView.view.isVisible = false
                 starter.view.isVisible = false
                 poweredBy.view.isVisible = true
             case .result:
+                resultView.scrollView.scrollToTop(animated: false)
                 resultView.isContinuationMode = false
                 photoSelector.view.isVisible = false
                 processingLoader.view.isVisible = false
@@ -113,18 +107,20 @@ final class AiutaTryOnView: Plane {
             }
         }
 
-        photoSelector.layout.make { make in
+        poweredBy.layout.make { make in
             make.centerX = 0
-            make.centerY = 50
+            make.bottom = layout.safe.insets.bottom + 24
+        }
+
+        photoSelector.layout.make { make in
+            make.top = skuBar.layout.bottomPin + 24
+            make.leftRight = 24
+            make.bottom = poweredBy.layout.topPin + 42
+            make.fit(.init(width: 9, height: 16))
         }
 
         processingLoader.layout.make { make in
-            make.center = photoSelector.layout.center
-        }
-
-        poweredBy.layout.make { make in
-            make.centerX = 0
-            make.bottom = layout.safe.insets.bottom + 41
+            make.frame = photoSelector.layout.frame
         }
 
         resultView.layout.make { make in
@@ -137,6 +133,12 @@ final class AiutaTryOnView: Plane {
             make.circle = 5
             make.top = layout.height + 5
             make.centerX = 0
+        }
+
+        blur.layout.make { make in
+            make.leftRight = 0
+            make.top = skuBar.layout.bottomPin
+            make.bottom = 0
         }
     }
 }

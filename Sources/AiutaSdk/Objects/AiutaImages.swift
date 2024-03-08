@@ -20,6 +20,10 @@ extension Aiuta {
         let id: String
         let url: String
     }
+
+    struct GeneratedImage: Codable, Equatable {
+        let imageUrl: String
+    }
 }
 
 extension Aiuta.UploadedImage {
@@ -40,4 +44,8 @@ extension Aiuta.UploadedImage: Equatable {
     static func == (lhs: Aiuta.UploadedImage, rhs: Aiuta.UploadedImage) -> Bool {
         lhs.id == rhs.id
     }
+}
+
+extension Aiuta.GeneratedImage: TransitionRef {
+    var transitionId: String { imageUrl }
 }

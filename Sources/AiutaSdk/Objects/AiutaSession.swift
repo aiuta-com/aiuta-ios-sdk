@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
+import UIKit
 
 extension Aiuta {
     final class TryOnSession {
@@ -25,11 +25,5 @@ extension Aiuta {
             self.moreToTryOn = moreToTryOn
             self.delegate = delegate
         }
-    }
-}
-
-extension Aiuta.SkuInfo: Equatable {
-    public static func == (lhs: Aiuta.SkuInfo, rhs: Aiuta.SkuInfo) -> Bool {
-        lhs.skuId == rhs.skuId && lhs.skuCatalog == rhs.skuCatalog
     }
 }

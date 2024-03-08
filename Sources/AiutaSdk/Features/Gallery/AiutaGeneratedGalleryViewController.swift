@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
-
 final class AiutaGeneratedGalleryViewController: ViewController<AiutaGeneratedGalleryView> {
     var data: DataProvider<Aiuta.GeneratedImage>?
     var index: Int = 0
@@ -41,6 +39,12 @@ final class AiutaGeneratedGalleryViewController: ViewController<AiutaGeneratedGa
         ui.galleryView.gestures.onTap(with: self) { [unowned self] tap in
             guard tap.state == .ended else { return }
             dismiss()
+        }
+
+        ui.pages.forEach { cell in
+            cell.zoomView.onDismiss.subscribe(with: self) { [unowned self] in
+                dismiss()
+            }
         }
 
         ui.data = data
