@@ -1,0 +1,98 @@
+// Copyright 2024 Aiuta USA, Inc
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+import Foundation
+import Resolver
+import UIKit
+
+@_spi(Aiuta) open class PagesController<ViewContent>: UIPageViewController where ViewContent: ContentBase {
+    @Injected
+    public private(set) var ds: DesignSystem
+    public var ui: ViewContent { _ui }
+    private var _ui: ViewContent!
+    
+    @notification(UIResponder.keyboardWillShowNotification)
+    private var keyboardWillShow: Signal<Void>
+
+    @notification(UIResponder.keyboardWillHideNotification)
+    private var keyboardWillHide: Signal<Void>
+
+    @notification(UIResponder.keyboardWillChangeFrameNotification)
+    private var keyboardWillChangeFrame: Signal<Void>
+
+
+    convenience init() {
+        self.init(transitionStyle: .scroll,
+                  navigationOrientation: .horizontal,
+                  options: [UIPageViewController.OptionsKey.interPageSpacing: 4])
+        customizeLoading()
+        prepare()
+    }
+
+    override public func loadView() {
+        _ui = ViewContent()
+        super.loadView()
+        ui.isRoot = true
+        view.backgroundColor = ds.color.ground
+        ui.container.backgroundColor = ds.color.ground
+        view.addSubview(ui.container)
+        ui.addChildren(to: ui.container)
+    }
+
+    override open func viewDidLoad() {
+        super.viewDidLoad()
+        setup()
+    }
+
+    override open func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        customizeAppearing()
+        if !isAppearing {
+            whenWillAppear()
+        }
+        viewControllers?.forEach { sub in
+            sub.viewAsUI?.updateLayoutRecursive()
+        }
+        watchKeyboard()
+    }
+
+    override open func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        customizeAppearing()
+        isAttached = true
+        isAppearing = true
+    }
+
+    override open func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        isAppearing = false
+    }
+    
+    open override func viewWillLayoutSubviews() {
+        ui.updateLayoutRecursive()
+    }
+    
+    private func watchKeyboard() {
+        guard keyboardWillShow.observers.isEmpty else { return }
+        
+        let keyboardHandler = { [unowned self] in
+            guard isAppearing, isViewLoaded else { return }
+            ui.updateLayoutRecursive()
+        }
+
+        keyboardWillShow.subscribe(with: self, callback: keyboardHandler)
+        keyboardWillHide.subscribe(with: self, callback: keyboardHandler)
+        keyboardWillChangeFrame.subscribe(with: self, callback: keyboardHandler)
+    }
+}

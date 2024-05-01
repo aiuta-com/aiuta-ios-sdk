@@ -70,6 +70,8 @@ This structure provides customizable configurations for the Aiuta SDK, allowing 
 ##### `Behavior` Properties
 
 - `photoSelectionLimit: Int`: The maximum number of photos a user can select for virtual try-on, defaulting to 10.
+- `isHistoryAvailable: Bool`: Controls the availability of generation history to the user.
+- `watermark.image: UIImage?`: Optional watermark image that will be applied to share generated image.
 - `isDebugLogsEnabled: Bool`: Controls the output of SDK debug logs, defaulting to false.
 
 ### `Aiuta.SkuInfo`
@@ -83,9 +85,10 @@ This structure represents the information about a SKU in the Aiuta platform.
 - `imageUrls: [String]`: A list of URLs pointing to the images of the SKU.
 - `localizedTitle: String`: The title of the SKU.
 - `localizedBrand: String`: The brand of the SKU.
-- `localizedPrice: String`: The price of the SKU.
-- `localizedOldPrice: String?`: The old price of the SKU, if available.
+- `localizedPrice: String`: The price of the SKU. Should be formatted with a currency symbol.
+- `localizedOldPrice: String?`: The old price of the SKU, if available. Should be formatted with a currency symbol.
 - `localizedDiscount: String?`: The discount on the SKU, if available.
+- `additionalShareInfo: String?` Additional information that will be passed to the share along with the generated image.
 
 
 ## Protocols
@@ -99,6 +102,7 @@ This protocol defines the delegate methods for receiving callbacks from the Aiut
 - `aiuta(addToWishlist skuId: String)`: Called when a user adds an SKU to their wishlist.
 - `aiuta(addToCart skuId: String)`: Called when a user adds an SKU to their cart.
 - `aiuta(showSku skuId: String)`: Called when a user selects to view more details about an SKU.
+- `aiuta(eventOccurred event: Aiuta.SdkEvent)`: Called when significant event occurred in SDK.
 
 ## Example Usage
 
@@ -110,6 +114,7 @@ if #available(iOS 13.0.0, *) {
     configuration.appearance.accentColor = .green
     configuration.appearance.navigationBar.logoImage = UIImage(named: "your_logo")
     configuration.behavior.photoSelectionLimit = 4
+    configuration.behavior.watermark.image = UIImage(named: "your_watermark")
     
     Aiuta.setup(apiKey: "your_api_key", configuration: configuration)
 }
@@ -127,6 +132,10 @@ class MyAiutaDelegate: AiutaSdkDelegate {
     func aiuta(showSku skuId: String) {
         print("Show SKU details: \(skuId)")
     }
+    
+    func aiuta(eventOccurred event: Aiuta.SdkEvent) {
+        print("SDK event: \(skuId)")
+    }
 }
 
 // Use Aiuta's try-on feature in your view controller
@@ -134,7 +143,9 @@ class MyViewController: UIViewController {
     let delegate = MyAiutaDelegate()
 
     func tryOnFeature() {
-        let sku = Aiuta.SkuInfo(skuId: "123", skuCatalog: "catalog1", imageUrls: ["url1", "url2"], localizedTitle: "Title", localizedBrand: "Brand", localizedPrice: "$12.99")
+        let sku = Aiuta.SkuInfo(skuId: "123", skuCatalog: "catalog1", imageUrls: ["url1", "url2"], 
+                                localizedTitle: "Title", localizedBrand: "Brand", localizedPrice: "$12.99"
+                                additionalShareInfo: "Love this look? Get more on aiuta.com!")
         if #available(iOS 13.0.0, *) {
             Aiuta.tryOn(sku: sku, in: self, delegate: delegate)
         }
