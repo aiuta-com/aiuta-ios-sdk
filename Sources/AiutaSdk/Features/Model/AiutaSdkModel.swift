@@ -37,6 +37,8 @@ protocol AiutaSdkModel {
     func startTryOn(_ input: Aiuta.Inputs, origin: AnalyticEvent.TryOn.Origin)
 
     func preloadImage(_ url: String?)
+
+    func eraseHistoryIfNeeded()
 }
 
 extension Aiuta {

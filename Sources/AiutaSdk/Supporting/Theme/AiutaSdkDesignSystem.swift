@@ -16,6 +16,8 @@
 import UIKit
 
 struct AiutaSdkDesignSystem: DesignSystem, DesignSystemImages, DesignSystemTransitions, DesignSystemStyles, DesignSystemDimensions {
+    fileprivate static var config: Aiuta.Configuration = .default
+
     var image: DesignSystemImages { self }
     var style: DesignSystemStyles { self }
     var font: DesignSystemFonts { self }
@@ -23,26 +25,24 @@ struct AiutaSdkDesignSystem: DesignSystem, DesignSystemImages, DesignSystemTrans
     var dimensions: DesignSystemDimensions { self }
     var transition: DesignSystemTransitions { self }
 
-    let configuration: Aiuta.Configuration.Appearance
-
-    init(_ configuration: Aiuta.Configuration.Appearance) {
-        self.configuration = configuration
+    init(_ configuration: Aiuta.Configuration) {
+        AiutaSdkDesignSystem.config = configuration
     }
 }
 
 extension DesignSystem {
-    var config: Aiuta.Configuration.Appearance? {
-        (self as? AiutaSdkDesignSystem)?.configuration
+    var config: Aiuta.Configuration {
+        AiutaSdkDesignSystem.config
     }
 }
 
 extension AiutaSdkDesignSystem: DesignSystemColors {
-    var ground: UIColor { configuration.backgroundTint ?? .white }
+    var ground: UIColor { config.appearance.backgroundTint ?? .white }
     var popup: UIColor { 0xEEEEEEFF.uiColor }
     var item: UIColor { .white }
-    var accent: UIColor { configuration.brandColor ?? 0x4000FFFF.uiColor }
+    var accent: UIColor { config.appearance.brandColor ?? 0x4000FFFF.uiColor }
     var tint: UIColor { .black }
-    var highlight: UIColor { configuration.accentColor ?? .red }
+    var highlight: UIColor { config.appearance.accentColor ?? .red }
     var error: UIColor { 0xEF5754FF.uiColor }
 }
 

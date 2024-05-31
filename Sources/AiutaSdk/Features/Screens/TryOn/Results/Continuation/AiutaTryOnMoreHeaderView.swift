@@ -23,7 +23,7 @@ final class AiutaTryOnMoreHeaderView: Plane {
 
     let title = Label { it, ds in
         it.font = ds.font.header
-        it.text = "More for you to try on"
+        it.text = L.generationResultMoreTitle
     }
 
     var isVisible = true {

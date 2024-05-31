@@ -208,7 +208,7 @@ extension AiutaCollageView {
         var count: Int = 0 {
             didSet {
                 guard oldValue != count else { return }
-                label.text = "\(count) photos"
+                label.text = L.imageSelectorPhotos(count)
                 updateVisibility()
             }
         }

@@ -95,12 +95,12 @@ final class AiutaNavBar: Plane {
 final class AiutaNavHeader: Plane {
     let back = ImageButton { it, ds in
         it.image = ds.image.sdk(.aiutaBack)
-        it.tint = ds.config?.navigationBar.foregroundColor ?? .black
+        it.tint = ds.config.appearance.navigationBar.foregroundColor ?? .black
         it.transitions.reference = ds.transition.sdk(.navBack)
     }
 
     let logo = Image { it, ds in
-        it.image = ds.config?.navigationBar.logoImage
+        it.image = ds.config.appearance.navigationBar.logoImage
         it.transitions.reference = ds.transition.sdk(.aiutaLogo)
         it.transitions.make { make in
             make.opacity = 0
@@ -109,12 +109,12 @@ final class AiutaNavHeader: Plane {
 
     let title = Label { it, ds in
         it.font = ds.font.navBar
-        it.color = ds.config?.navigationBar.foregroundColor ?? .black
+        it.color = ds.config.appearance.navigationBar.foregroundColor ?? .black
     }
 
     let action = LabelButton { it, ds in
         it.font = ds.font.navAction
-        it.label.color = ds.config?.navigationBar.foregroundColor ?? .black
+        it.label.color = ds.config.appearance.navigationBar.foregroundColor ?? .black
         it.view.minOpacity = 0.5
     }
 
@@ -136,7 +136,7 @@ final class AiutaNavHeader: Plane {
 
         logo.layout.make { make in
             make.centerX = 0
-            make.centerY = (ds.config?.navigationBar.logoImage).isSome ? action.layout.centerY + 1 : -6
+            make.centerY = (ds.config.appearance.navigationBar.logoImage).isSome ? action.layout.centerY + 1 : -6
         }
     }
 }

@@ -18,12 +18,12 @@ final class AiutaPoweredButton: PlainButton {
     let poweredBy = Label { it, ds in
         it.font = ds.font.poweredBy
         it.color = .black
-        it.text = "Powered by"
+        it.text = L.poweredBy
     }
 
     let aiuta = Label { it, ds in
         it.font = ds.font.poweredBy
-        it.text = "Aiuta"
+        it.text = L.aiuta
     }
 
     override func setup() {

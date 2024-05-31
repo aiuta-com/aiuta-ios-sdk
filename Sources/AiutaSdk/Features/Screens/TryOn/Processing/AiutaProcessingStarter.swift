@@ -19,10 +19,11 @@ final class AiutaProcessingStarter: Plane {
         it.style = .extraLight
     }
 
-    let go = LabelButton { it, ds in
+    let go = AiutaTryOnButton { it, ds in
+        it.icon.image = ds.image.sdk(.aiutaMagic)
         it.font = ds.font.button
         it.color = ds.color.accent
-        it.text = "Try on"
+        it.text = L.tryOn
     }
 
     override func updateLayout() {

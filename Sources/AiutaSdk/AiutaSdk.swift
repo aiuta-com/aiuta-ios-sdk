@@ -16,7 +16,7 @@ import UIKit
 
 public enum Aiuta {
     /// Aiuta SDK Version
-    public static let sdkVersion = "1.1.1"
+    public static let sdkVersion = "1.1.3"
 
     /// This function configures the Aiuta SDK with the necessary API key and sets up the required services.
     /// You can call this method as many times as you like to update the configuration.
@@ -51,7 +51,8 @@ public enum Aiuta {
     /// - Parameters:
     ///   - in: The view controller from which the Aiuta UI will be presented.
     @available(iOS 13.0.0, *)
-    public static func showHistory(in viewController: UIViewController) {
+    @discardableResult
+    public static func showHistory(in viewController: UIViewController) -> Bool {
         SdkPresenter.showHistory(in: viewController)
     }
 }
@@ -63,6 +64,10 @@ extension Aiuta {
     /// All parameters are optional, you can only change the parts you are interested in.
     public struct Configuration {
         public static let `default` = Configuration()
+
+        public enum Language {
+            case English, Turkish, Russian
+        }
 
         public struct Appearance {
             /// Your brand's primary color.
@@ -91,7 +96,13 @@ extension Aiuta {
             public var navigationBar = NavigationBar()
 
             /// Controls whether the Power by Aiuta link is displayed during the generation process.
-            public var showPoweredByLink = true
+            @available(*, deprecated, message: "Resolves automatically, this setting is ignored.")
+            public var showPoweredByLink = false
+
+            /// The language in which the SDK interface will be displayed.
+            /// If not specified, the first preferred system language will be used
+            /// if it is supported, otherwise English will be used.
+            public var language: Language?
         }
 
         public struct Behavior {
@@ -105,6 +116,9 @@ extension Aiuta {
             /// all previous generation history will be deleted.
             public var isHistoryAvailable: Bool = true
 
+            /// Controls the availability of the add to wishlist button when viewing SKU information.
+            public var isWishlistAvailable: Bool = true
+
             public struct Watermark {
                 /// Optional watermark image that will be applied to share generated image.
                 /// Watermark will fit within the (x: 0.5, y: 0.82, w: 0.45, h: 0.14) area of the generated image,
@@ -112,6 +126,8 @@ extension Aiuta {
                 public var image: UIImage? = nil
             }
 
+            /// Watermark configuration.
+            /// Defined as structure for possible further extension of the watermark placement.
             public var watermark = Watermark()
 
             /// Controls the output of SDK debug logs.
@@ -134,7 +150,7 @@ extension Aiuta {
     /// This structure represents the information about a SKU in the Aiuta platform.
     public struct SkuInfo {
         public let skuId: String
-        public let skuCatalog: String
+        public let skuCatalog: String?
         public let imageUrls: [String]
         public let localizedTitle: String
         public let localizedBrand: String
@@ -148,6 +164,11 @@ extension Aiuta {
         ///   - skuCatalog: The catalog identifier the SKU belongs to.
         ///                 See [Digital Try On](https://developer.aiuta.com/products/digital-try-on/Documentation) Api Reference
         ///                 to learn how to find out the catalog name of your SKU.
+        ///
+        ///                 **Since SDK version 1.1.3 this parameter is optional.**
+        ///                 *If not specified the default catalog will be used.*
+        ///                 ** (!) It is recommended not to specify a skuCatalog unless it is explicitly necessary.**
+        ///
         ///   - imageUrls: A list of URLs pointing to the images of the SKU.
         ///   - localizedTitle: The title of the SKU.
         ///   - localizedBrand: The brand of the SKU.
@@ -159,7 +180,7 @@ extension Aiuta {
         ///                          *As we find out, such apps will be blacklisted in the next SDK updates.*
         ///                          *Only the image is sent to apps on this list.*
         public init(skuId: String,
-                    skuCatalog: String,
+                    skuCatalog: String? = nil,
                     imageUrls: [String],
                     localizedTitle: String,
                     localizedBrand: String,

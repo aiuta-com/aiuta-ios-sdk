@@ -28,10 +28,11 @@ enum SdkPresenter {
         viewController.present(startVc, animated: true)
     }
 
-    public static func showHistory(in viewController: UIViewController) {
-        guard SdkRegister.insureConfigured() else { return }
+    public static func showHistory(in viewController: UIViewController) -> Bool {
+        guard SdkRegister.insureConfigured() else { return false }
         @injected var configuration: Aiuta.Configuration
-        guard configuration.behavior.isHistoryAvailable else { return }
+        guard configuration.behavior.isHistoryAvailable else { return false }
         viewController.present(AiutaGenerationsHistoryViewController(), animated: true)
+        return true
     }
 }

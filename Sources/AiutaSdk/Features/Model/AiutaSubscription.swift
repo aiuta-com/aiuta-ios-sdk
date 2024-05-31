@@ -12,11 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import UIKit
+@_spi(Aiuta) import AiutaKit
+import Foundation
 
-@_spi(Aiuta) public final class FailFetcher: BaseFetcher {
-    override public init() {
-        super.init()
-        onImage.fire(nil)
-    }
+protocol AiutaSubscription {
+    var didResolveDetails: Signal<Void> { get }
+
+    var shouldDisplayPoweredBy: Bool { get }
+    var powerdByLink: String? { get }
+
+    func load()
 }

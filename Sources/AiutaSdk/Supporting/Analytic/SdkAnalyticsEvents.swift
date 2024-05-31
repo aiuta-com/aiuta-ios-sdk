@@ -35,23 +35,30 @@ extension AnalyticEvent {
             case skuPopup, resultsScreen, moreToTry, mainScreen
         }
 
-        case configure(hasCustomConfiguration: Bool, photoSelectionLimit: Int)
+        case configure(hasCustomConfiguration: Bool, configuration: Aiuta.Configuration)
         case start(sku: Aiuta.SkuInfo, relatedCount: Int)
         case finish(action: Action, origin: Origin, sku: Aiuta.SkuInfo?)
 
         var event: AnalyticEvent {
             switch self {
-                case let .configure(hasCustomConfiguration, photoSelectionLimit):
+                case let .configure(hasCustomConfiguration, configuration):
                     return AnalyticEvent("Configure", [
                         "has_custom_configuration": hasCustomConfiguration,
-                        "photo_selection_limit": photoSelectionLimit,
+                        "photo_selection_limit": configuration.behavior.photoSelectionLimit,
+                        "is_watermark_provided": configuration.behavior.watermark.image.isSome,
+                        "is_logo_provided": configuration.appearance.navigationBar.logoImage.isSome,
+                        "is_history_enable": configuration.behavior.isHistoryAvailable,
                     ], level: .significant)
 
                 case let .start(sku, relatedCount):
                     return AnalyticEvent("StartSession", [
                         "sku_id": sku.skuId,
-                        "sku_catalog_name": sku.skuCatalog,
+                        "sku_catalog_name": sku.skuCatalog ?? "",
                         "related_sku_count": relatedCount,
+                        "price": sku.localizedOldPrice.isSome ? sku.localizedOldPrice! : sku.localizedPrice,
+                        "price_discounted": sku.localizedOldPrice.isSome ? sku.localizedPrice : "",
+                        "store": sku.localizedBrand,
+                        "additional_share_info": sku.additionalShareInfo ?? "",
                     ], level: .significant)
 
                 case let .finish(action, origin, sku):
@@ -139,27 +146,27 @@ extension AnalyticEvent {
                     return AnalyticEvent("StartUITryOn", [
                         "origin": origin.rawValue.firstCapitalized,
                         "sku_id": sku.skuId,
-                        "sku_catalog_name": sku.skuCatalog,
+                        "sku_catalog_name": sku.skuCatalog ?? "",
                         "photos_count": photosCount,
                     ])
 
                 case let .generate(sku):
                     return AnalyticEvent("StartTryOn", [
                         "sku_id": sku.skuId,
-                        "sku_catalog_name": sku.skuCatalog,
+                        "sku_catalog_name": sku.skuCatalog ?? "",
                     ])
 
                 case let .finish(sku, time):
                     return AnalyticEvent("FinishTryOn", [
                         "sku_id": sku.skuId,
-                        "sku_catalog_name": sku.skuCatalog,
+                        "sku_catalog_name": sku.skuCatalog ?? "",
                         "generation_time": Int(time.seconds),
                     ])
 
                 case let .error(sku, type):
                     return AnalyticEvent("TryOnError", [
                         "sku_id": sku.skuId,
-                        "sku_catalog_name": sku.skuCatalog,
+                        "sku_catalog_name": sku.skuCatalog ?? "",
                         "type": type.rawValue.firstCapitalized,
                     ])
             }
@@ -183,7 +190,7 @@ extension AnalyticEvent {
                 case let .open(sku, time, generatedCount, processingCount, relatedCount):
                     return AnalyticEvent("OpenResultsScreen", [
                         "sku_id": sku.skuId,
-                        "sku_catalog_name": sku.skuCatalog,
+                        "sku_catalog_name": sku.skuCatalog ?? "",
                         "elapsed_time": Int(time.seconds),
                         "generated_photos": generatedCount,
                         "photos_in_progress": processingCount,
@@ -193,7 +200,7 @@ extension AnalyticEvent {
                 case let .view(sku, index, navigation):
                     return AnalyticEvent("ViewGeneratedImage", [
                         "sku_id": sku.skuId,
-                        "sku_catalog_name": sku.skuCatalog,
+                        "sku_catalog_name": sku.skuCatalog ?? "",
                         "image_number": index + 1,
                         "navigation_type": navigation.rawValue.firstCapitalized,
                     ])
@@ -201,7 +208,7 @@ extension AnalyticEvent {
                 case let .update(sku, generatedCount):
                     return AnalyticEvent("UpdateResultsScreen", [
                         "sku_id": sku.skuId,
-                        "sku_catalog_name": sku.skuCatalog,
+                        "sku_catalog_name": sku.skuCatalog ?? "",
                         "generated_photos": generatedCount,
                     ])
 
@@ -211,13 +218,13 @@ extension AnalyticEvent {
                 case let .tapRelated(sku):
                     return AnalyticEvent("TapMoreToTryOn", [
                         "sku_id": sku.skuId,
-                        "sku_catalog_name": sku.skuCatalog,
+                        "sku_catalog_name": sku.skuCatalog ?? "",
                     ])
 
                 case let .selectRelated(sku):
                     return AnalyticEvent("SelectMoreToTryOn", [
                         "sku_id": sku.skuId,
-                        "sku_catalog_name": sku.skuCatalog,
+                        "sku_catalog_name": sku.skuCatalog ?? "",
                     ])
             }
         }
@@ -238,25 +245,26 @@ extension AnalyticEvent {
             case resultsScreen, resultsFullScreen, history
         }
 
-        case start(origin: Origin, count: Int, hasText: Bool)
-        case success(origin: Origin, count: Int, activity: String?)
+        case start(origin: Origin, count: Int, text: String?)
+        case success(origin: Origin, count: Int, activity: String?, text: String?)
         case cancelled(origin: Origin, count: Int, activity: String?)
         case failed(origin: Origin, count: Int, activity: String?, error: Error?)
 
         var event: AnalyticEvent {
             switch self {
-                case let .start(origin, count, hasText):
+                case let .start(origin, count, text):
                     return AnalyticEvent("ShareGeneratedImage", [
                         "origin": origin.rawValue.firstCapitalized,
                         "count": count,
-                        "has_text": hasText,
+                        "additional_share_info": text ?? "",
                     ])
 
-                case let .success(origin, count, activity):
+                case let .success(origin, count, activity, text):
                     return AnalyticEvent("ShareSuccessfully", [
                         "origin": origin.rawValue.firstCapitalized,
                         "count": count,
                         "target": activity ?? "",
+                        "additional_share_info": text ?? "",
                     ])
 
                 case let .cancelled(origin, count, activity):

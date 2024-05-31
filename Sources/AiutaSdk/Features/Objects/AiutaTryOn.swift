@@ -45,7 +45,7 @@ extension Aiuta.TryOnStart {
 
         let uploadedImageId: String
         let skuId: String
-        let skuCatalogName: String
+        let skuCatalogName: String?
     }
 }
 

@@ -12,11 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+@_spi(Aiuta) import AiutaKit
 import UIKit
 
-@_spi(Aiuta) public final class FailFetcher: BaseFetcher {
-    override public init() {
-        super.init()
-        onImage.fire(nil)
+final class AiutaFeedbackViewController: ViewController<AiutaFeedbackView> {
+    override func setup() {
+        ui.close.onTouchUpInside.subscribe(with: self) { [unowned self] in
+            dismiss()
+        }
+    }
+}
+
+@available(iOS 13.0.0, *)
+extension AiutaFeedbackViewController: UIPopoverPresentationControllerDelegate {
+    func presentationControllerShouldDismiss(_ presentationController: UIPresentationController) -> Bool {
+        return false
     }
 }

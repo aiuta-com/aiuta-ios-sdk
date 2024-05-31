@@ -25,8 +25,8 @@ import UIKit
             gotImage.fire()
             if isAutoSize, let size = newValue?.size {
                 view.frame = CGRect(size: size)
-                parent?.updateLayoutRecursive()
             }
+            parent?.updateLayoutRecursive()
         }
     }
 

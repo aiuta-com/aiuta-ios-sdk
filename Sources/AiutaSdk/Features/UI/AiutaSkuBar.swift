@@ -114,11 +114,13 @@ final class AiutaSkuBar: PlainButton {
             make.right = 16
             make.centerY = 0
         }
+        
+        let hasPrices = skuPrice.hasText || skuPrice2.hasText || skuDiscount.label.hasText
 
         storeTitle.layout.make { make in
             make.left = preview.layout.rightPin + 8
             make.right = next.layout.leftPin + 16
-            make.top = 8
+            make.top = hasPrices ? 8 : 18
         }
 
         skuTitle.layout.make { make in

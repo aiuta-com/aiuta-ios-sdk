@@ -34,13 +34,13 @@ final class AiutaOnboardingView: Plane {
     let startButton = LabelButton { it, ds in
         it.font = ds.font.buttonBig
         it.color = ds.color.accent
-        it.text = "Next"
+        it.text = L.next
     }
 
     private(set) var isFinal = false {
         didSet {
             guard oldValue != isFinal else { return }
-            startButton.text = isFinal ? "Start" : "Next"
+            startButton.text = isFinal ? L.start : L.next
             startButton.animations.transition(.transitionCrossDissolve, duration: .quarterOfSecond)
         }
     }
@@ -172,14 +172,14 @@ extension AiutaOnboardingView {
 
         let title = Label { it, ds in
             it.font = ds.font.boardingHeader
-            it.text = "Try on before buying"
+            it.text = L.onboardingTryonTitle
         }
 
         let description = Label { it, ds in
             it.font = ds.font.boardingText
             it.isMultiline = true
             it.alignment = .center
-            it.text = "Just upload your photo\nand see how it looks"
+            it.text = L.onboardingTryonDescription
         }
 
         final class Contents: Plane {
@@ -211,6 +211,7 @@ extension AiutaOnboardingView {
 
             description.layout.make { make in
                 make.top = title.layout.bottomPin + 18
+                make.leftRight = 4
                 make.centerX = 0
             }
 
@@ -384,14 +385,14 @@ extension AiutaOnboardingView {
     final class FinalSlide: Plane {
         let title = Label { it, ds in
             it.font = ds.font.boardingHeader
-            it.text = "For best results"
+            it.text = L.onboardingBestResultsTitle
         }
 
         let description = Label { it, ds in
             it.font = ds.font.boardingText
             it.isMultiline = true
             it.alignment = .center
-            it.text = "Use a photo with good lighting,\nstand straight a plain background"
+            it.text = L.onboardingBestResultsDescription
         }
 
         let image = Image { it, ds in
@@ -406,6 +407,7 @@ extension AiutaOnboardingView {
 
             description.layout.make { make in
                 make.top = title.layout.bottomPin + 18
+                make.leftRight = 4
                 make.centerX = 0
             }
 

@@ -14,10 +14,10 @@
 
 import UIKit
 
-struct DefaultImageTraits: ImageTraits {
-    static let `default` = DefaultImageTraits()
+@_spi(Aiuta) public struct DefaultImageTraits: ImageTraits {
+    public static let `default` = DefaultImageTraits()
     
-    func largestSize(for quality: ImageQuality) -> CGFloat {
+    public func largestSize(for quality: ImageQuality) -> CGFloat {
         switch quality {
             case .thumbnails: return 400
             case .hiResImage: return 2000

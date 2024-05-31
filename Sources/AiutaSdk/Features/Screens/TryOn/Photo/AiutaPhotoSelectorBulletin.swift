@@ -18,12 +18,12 @@ import UIKit
 final class AiutaPhotoSelectorBulletin: PlainBulletin {
     let takeNewPhoto = AiutaPhotoInputButton { it, ds in
         it.icon.image = ds.image.sdk(.aiutaIconCamera)
-        it.title.text = "Take a photo"
+        it.title.text = L.pickerSheetTakePhoto
     }
 
     let chooseFromLibrary = AiutaPhotoInputButton { it, ds in
         it.icon.image = ds.image.sdk(.aiutaIconGallery)
-        it.title.text = "Choose from library"
+        it.title.text = L.pickerSheetChooseLibrary
     }
 
     var buttons: [AiutaPhotoInputButton] {

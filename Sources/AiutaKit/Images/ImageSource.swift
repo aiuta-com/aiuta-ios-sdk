@@ -36,7 +36,13 @@ import UIKit
 
 @available(iOS 13.0.0, *)
 @_spi(Aiuta) public extension ImageSource {
-    func fetch(_ quality: ImageQuality = .hiResImage) async throws -> UIImage {
+    @MainActor func fetch(_ quality: ImageQuality = .hiResImage) async throws -> UIImage {
         try await ImageLoader.Cached(self).fetch(quality)
+    }
+
+    @MainActor func prefetch(_ quality: ImageQuality = .hiResImage) async throws -> ImageLoader {
+        let loader = ImageLoader.Cached(self)
+        _ = try await loader.fetch(quality)
+        return loader
     }
 }

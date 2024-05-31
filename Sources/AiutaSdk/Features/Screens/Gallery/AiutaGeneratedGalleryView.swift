@@ -30,7 +30,7 @@ final class AiutaGeneratedGalleryView: AiutaGalleryView<Aiuta.GeneratedImage, Ai
     let shareButton = LabelButton { it, ds in
         it.font = ds.font.navAction.changing(size: 15)
         it.label.color = ds.color.item
-        it.text = "Share"
+        it.text = L.share
 
         it.transitions.make { make in
             make.scale(0)
