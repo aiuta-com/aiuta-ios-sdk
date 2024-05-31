@@ -15,12 +15,14 @@
 @_spi(Aiuta) import AiutaKit
 import Kingfisher
 import Resolver
+import StoreKit
 import UIKit
 
 @available(iOS 13.0.0, *)
 final class AiutaTryOnViewController: ViewController<AiutaTryOnView> {
     @injected private var model: AiutaSdkModel
     @injected private var configuration: Aiuta.Configuration
+    @injected private var subscription: AiutaSubscription
     @injected private var tracker: AnalyticTracker
 
     private var selector: AiutaPhotoSelectorController?
@@ -54,7 +56,7 @@ final class AiutaTryOnViewController: ViewController<AiutaTryOnView> {
         results = addComponent(AiutaTryOnResultViewController(ui))
 
         ui.poweredBy.onTouchUpInside.subscribe(with: self) { [unowned self] in
-            openUrl("https://aiuta.com", anchor: ui.poweredBy, inApp: true)
+            openPoweredBy()
         }
 
         ui.resultView.footer.addToCart.onTouchUpInside.subscribe(with: self) { [unowned self] in
@@ -100,7 +102,7 @@ final class AiutaTryOnViewController: ViewController<AiutaTryOnView> {
         ui.navBar.isActionEnabled = configuration.behavior.isHistoryAvailable
 
         enableInteractiveDismiss(withTarget: ui.swipeEdge)
-        
+
         tracker.track(.mainScreen(.open(lastPhotosCount: model.uploadsHistory.last?.count ?? 0)))
     }
 
@@ -121,21 +123,47 @@ final class AiutaTryOnViewController: ViewController<AiutaTryOnView> {
     func updateHistory() {
         ui.navBar.isActionAvailable = !model.generationHistory.isEmpty
     }
+}
 
-    private func addToCart(_ origin: AnalyticEvent.Session.Origin) {
+@available(iOS 13.0.0, *)
+private extension AiutaTryOnViewController {
+    func addToCart(_ origin: AnalyticEvent.Session.Origin) {
         guard let sku = model.tryOnSku, let delegate = model.delegate else { return }
         dismiss(animated: true) { delay(.moment) { delegate.aiuta(addToCart: sku.skuId) } }
         tracker.track(.session(.finish(action: .addToCart, origin: origin, sku: sku)))
     }
 
-    private func addToWishlist(_ origin: AnalyticEvent.Session.Origin) {
+    func addToWishlist(_ origin: AnalyticEvent.Session.Origin) {
         guard let sku = model.tryOnSku, let delegate = model.delegate else { return }
         dismiss(animated: true) { delay(.moment) { delegate.aiuta(addToWishlist: sku.skuId) } }
         tracker.track(.session(.finish(action: .addToWishlist, origin: origin, sku: sku)))
     }
 
-    private func preload(_ urlString: String?) {
+    func preload(_ urlString: String?) {
         model.preloadImage(urlString)
+    }
+
+    func openPoweredBy() {
+        guard let link = subscription.powerdByLink,
+              let url = URLComponents(string: link) else { return }
+        if url.host == "apps.apple.com" {
+            guard let id = url.path.components(separatedBy: "/id").last else {
+                openUrl(link, anchor: ui.poweredBy, inApp: true)
+                return
+            }
+            let query = url.queryItems
+            let pt = query?.first(where: { $0.name == "pt" })?.value
+            let ct = query?.first(where: { $0.name == "ct" })?.value
+            let storeViewController = SKStoreProductViewController()
+            storeViewController.delegate = self
+            present(storeViewController, animated: true)
+            var parameters = [SKStoreProductParameterITunesItemIdentifier: id]
+            if let pt { parameters[SKStoreProductParameterProviderToken] = pt }
+            if let ct { parameters[SKStoreProductParameterCampaignToken] = ct }
+            Task { try? await storeViewController.loadProduct(withParameters: parameters) }
+        } else {
+            openUrl(link, anchor: ui.poweredBy, inApp: true)
+        }
     }
 }
 
@@ -143,5 +171,12 @@ final class AiutaTryOnViewController: ViewController<AiutaTryOnView> {
 extension AiutaTryOnViewController: UIPopoverPresentationControllerDelegate {
     func presentationControllerShouldDismiss(_ presentationController: UIPresentationController) -> Bool {
         return false
+    }
+}
+
+@available(iOS 13.0.0, *)
+extension AiutaTryOnViewController: SKStoreProductViewControllerDelegate {
+    func productViewControllerDidFinish(_ viewController: SKStoreProductViewController) {
+        viewController.dismiss(animated: true)
     }
 }

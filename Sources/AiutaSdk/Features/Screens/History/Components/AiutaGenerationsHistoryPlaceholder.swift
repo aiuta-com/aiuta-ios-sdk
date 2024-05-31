@@ -24,7 +24,7 @@ final class AiutaGenerationsHistoryPlaceholder: Plane {
         it.font = ds.font.historyPlaceholder
         it.isMultiline = true
         it.alignment = .center
-        it.text = "Once you try on first item your\ntry-on history would be stored here"
+        it.text = L.historyEmptyDescription
     }
 
     override func updateLayout() {
@@ -37,7 +37,7 @@ final class AiutaGenerationsHistoryPlaceholder: Plane {
         }
 
         title.layout.make { make in
-            make.leftRight = 16
+            make.leftRight = 32
             make.top = image.layout.bottomPin + 36
         }
 

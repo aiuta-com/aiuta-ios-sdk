@@ -34,12 +34,13 @@ final class AiutaPhotoHistoryBulletin: PlainBulletin {
                     }
                 }
             }
+            gallery.update()
         }
     }
 
     let title = Label { it, ds in
         it.font = ds.font.historyBulletinTitle
-        it.text = "Previously used photos"
+        it.text = L.uploadHistorySheetPreviously
     }
 
     let gallery = HScroll { it, _ in
@@ -50,7 +51,7 @@ final class AiutaPhotoHistoryBulletin: PlainBulletin {
     let newPhotosButton = LabelButton { it, ds in
         it.font = ds.font.buttonBig
         it.color = ds.color.accent
-        it.text = "Upload new photo"
+        it.text = L.uploadHistorySheetUploadNewButton
     }
 
     override func updateLayout() {

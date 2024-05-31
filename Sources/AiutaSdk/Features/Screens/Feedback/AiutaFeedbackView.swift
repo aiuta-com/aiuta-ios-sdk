@@ -12,11 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+@_spi(Aiuta) import AiutaKit
 import UIKit
 
-@_spi(Aiuta) public final class FailFetcher: BaseFetcher {
-    override public init() {
-        super.init()
-        onImage.fire(nil)
+final class AiutaFeedbackView: Plane {
+    let close = LabelButton { it, ds in
+        it.font = ds.font.navAction
+        it.text = L.cancel
+    }
+    
+    override func updateLayout() {
+        close.layout.make { make in
+            make.top = 4
+        }
     }
 }

@@ -63,13 +63,13 @@ final class AiutaTryOnResultViewController: ComponentController<AiutaTryOnView> 
                     let sku = findSku(for: generatedImage)
                     Task {
                         guard let image = try? await generatedImage.fetch() else { return }
-                        tracker.track(.share(.start(origin: .resultsFullScreen, count: 1, hasText: false)))
+                        tracker.track(.share(.start(origin: .resultsFullScreen, count: 1, text: sku?.additionalShareInfo)))
                         model.delegate?.aiuta(eventOccurred: .shareGeneratedImages(photosCount: 1))
                         let result = await gallery.share(image: watermarker.watermark(image),
                                                          additions: [sku?.additionalShareInfo].compactMap { $0 })
                         switch result {
                             case let .succeeded(activity):
-                                tracker.track(.share(.success(origin: .resultsFullScreen, count: 1, activity: activity)))
+                                tracker.track(.share(.success(origin: .resultsFullScreen, count: 1, activity: activity, text: sku?.additionalShareInfo)))
                             case let .canceled(activity):
                                 tracker.track(.share(.cancelled(origin: .resultsFullScreen, count: 1, activity: activity)))
                             case let .failed(activity, error):
@@ -84,13 +84,13 @@ final class AiutaTryOnResultViewController: ComponentController<AiutaTryOnView> 
                 guard case let .output(generatedImage, sku) = cell?.data else { return }
                 Task {
                     guard let image = try? await generatedImage.fetch() else { return }
-                    tracker.track(.share(.start(origin: .resultsScreen, count: 1, hasText: sku.additionalShareInfo.isSomeAndNotEmpty)))
+                    tracker.track(.share(.start(origin: .resultsScreen, count: 1, text: sku.additionalShareInfo)))
                     model.delegate?.aiuta(eventOccurred: .shareGeneratedImages(photosCount: 1))
                     let result = await share(image: watermarker.watermark(image),
                                              additions: [sku.additionalShareInfo].compactMap { $0 })
                     switch result {
                         case let .succeeded(activity):
-                            tracker.track(.share(.success(origin: .resultsScreen, count: 1, activity: activity)))
+                            tracker.track(.share(.success(origin: .resultsScreen, count: 1, activity: activity, text: sku.additionalShareInfo)))
                         case let .canceled(activity):
                             tracker.track(.share(.cancelled(origin: .resultsScreen, count: 1, activity: activity)))
                         case let .failed(activity, error):

@@ -44,7 +44,10 @@ import Foundation
         let url = try await buildUrl(request)
         let shortUrl = try await shortenUrl(url)
         let headers = try await buildHeaders(request)
-        let timeOut: Session.RequestModifier = { $0.timeoutInterval = 10 }
+        let timeOut: Session.RequestModifier = { urlRequest in
+            urlRequest.timeoutInterval = 10
+            urlRequest.cachePolicy = .reloadIgnoringLocalCacheData
+        }
 
         return try await withCheckedThrowingContinuation { [self] continuation in
             let dataRequest: DataRequest
@@ -76,26 +79,34 @@ import Foundation
             }
 
             dataRequest.responseString { [self] response in
+                let code = response.response?.statusCode
                 plainResponse = response.value
 
-                switch request.type {
-                    case .plain:
-                        trace(i: "◂", "PLAIN Response",
-                              "\n\n ▸", request.method.rawValue, shortUrl,
-                              "\n ◂", response.response?.statusCode, shortenString(response.value) ?? response.error,
-                              "\n")
+                if code == 304 {
+                    trace(i: "◁", "Response",
+                          "\n\n ▷", request.method.rawValue, shortUrl, request.hasBody ? request : "",
+                          "\n ◁", code,
+                          "\n")
+                } else {
+                    switch request.type {
+                        case .plain:
+                            trace(i: "◂", "PLAIN Response",
+                                  "\n\n ▸", request.method.rawValue, shortUrl,
+                                  "\n ◂", code, shortenString(response.value) ?? response.error,
+                                  "\n")
 
-                    case .json:
-                        trace(i: "◁", "JSON Response",
-                              "\n\n ▷", request.method.rawValue, shortUrl, request.hasBody ? request : "",
-                              "\n ◁", response.response?.statusCode, shortenString(response.value) ?? response.error,
-                              "\n")
+                        case .json:
+                            trace(i: "◁", "JSON Response",
+                                  "\n\n ▷", request.method.rawValue, shortUrl, request.hasBody ? request : "",
+                                  "\n ◁", code, shortenString(response.value) ?? response.error,
+                                  "\n")
 
-                    case .upload:
-                        trace(i: "◂", "UPLOAD Response",
-                              "\n\n ▸", request.method.rawValue, shortUrl,
-                              "\n ◂", response.response?.statusCode, shortenString(response.value) ?? response.error,
-                              "\n")
+                        case .upload:
+                            trace(i: "◂", "UPLOAD Response",
+                                  "\n\n ▸", request.method.rawValue, shortUrl,
+                                  "\n ◂", code, shortenString(response.value) ?? response.error,
+                                  "\n")
+                    }
                 }
 
             }.responseDecodable(of: Response.self, decoder: responseDecoder) { response in

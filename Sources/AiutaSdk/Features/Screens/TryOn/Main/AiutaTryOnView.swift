@@ -16,6 +16,8 @@
 import UIKit
 
 final class AiutaTryOnView: Plane {
+    @injected private var subscription: AiutaSubscription
+
     let blur = Blur { it, _ in
         it.style = .extraLight
     }
@@ -25,7 +27,7 @@ final class AiutaTryOnView: Plane {
     let swipeEdge = SwipeEdge()
     let skuBar = AiutaSkuBar()
     let navBar = AiutaNavBar { it, _ in
-        it.header.action.text = "History"
+        it.header.action.text = L.history
     }
 
     let photoSelector = AiutaPhotoSelector()
@@ -44,9 +46,10 @@ final class AiutaTryOnView: Plane {
     let errorSnackbar = Snackbar<AiutaErrorSnackbar>()
 
     @bulletin
-    var skuBulletin = AiutaSkuBulletin { it, _ in
-        it.primaryButton.text = "Add to cart"
-        it.secondaryButton.text = "Add to wishlist"
+    var skuBulletin = AiutaSkuBulletin { it, ds in
+        it.primaryButton.text = L.addToCart
+        it.secondaryButton.text = L.addToWishlist
+        it.secondaryButton.view.isVisible = ds.config.behavior.isWishlistAvailable
     }
 
     var mode: Aiuta.SessionState = .photoSelecting {
@@ -74,7 +77,7 @@ final class AiutaTryOnView: Plane {
                 photoSelector.view.isVisible = true
                 processingLoader.view.isVisible = false
                 resultView.view.isVisible = false
-                poweredBy.view.isVisible = ds.config?.showPoweredByLink ?? true
+                poweredBy.view.isVisible = subscription.shouldDisplayPoweredBy
                 starter.view.isVisible = photoSelector.inputs.isSome
                 resultView.data = nil
             case .processing:
@@ -82,7 +85,7 @@ final class AiutaTryOnView: Plane {
                 processingLoader.view.isVisible = true
                 resultView.view.isVisible = false
                 starter.view.isVisible = false
-                poweredBy.view.isVisible = ds.config?.showPoweredByLink ?? true
+                poweredBy.view.isVisible = subscription.shouldDisplayPoweredBy
             case .result:
                 resultView.scrollView.scrollToTop(animated: false)
                 resultView.isContinuationMode = false
@@ -97,6 +100,10 @@ final class AiutaTryOnView: Plane {
 
     override func setup() {
         updateMode()
+
+        subscription.didResolveDetails.subscribe(with: self) { [unowned self] in
+            poweredBy.animations.visibleTo(subscription.shouldDisplayPoweredBy && mode != .result)
+        }
     }
 
     override func updateLayout() {

@@ -29,6 +29,7 @@ enum AiutaSdkDesignSystemImages: String {
     case aiutaIconCamera
     case aiutaIconGallery
     case aiutaLoader
+    case aiutaMagic
     case aiutaDown
     case aiutaUp
     case aiutaOnBoard1l1

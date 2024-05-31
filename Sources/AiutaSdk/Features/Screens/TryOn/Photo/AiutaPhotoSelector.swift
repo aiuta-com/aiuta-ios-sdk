@@ -47,7 +47,7 @@ final class AiutaPhotoSelector: Plane {
     let newPhotoButton = LabelButton { it, ds in
         it.font = ds.font.button
         it.color = ds.color.accent
-        it.text = "Upload a photo of you"
+        it.text = L.imageSelectorUploadButton
     }
 
     let changePhotoButton = ChangePhotoButton { it, _ in
@@ -100,7 +100,7 @@ extension AiutaPhotoSelector {
         let label = Label { it, ds in
             it.font = ds.font.secondary
             it.color = .black
-            it.text = "Change photo"
+            it.text = L.imageSelectorChangeButton
         }
 
         override func updateLayout() {

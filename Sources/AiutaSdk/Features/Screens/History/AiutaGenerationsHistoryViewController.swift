@@ -98,6 +98,7 @@ final class AiutaGenerationsHistoryViewController: ViewController<AiutaGeneratio
         didSet {
             guard oldValue != isEditMode else { return }
             ui.selectionSnackbar.isVisible = isEditMode
+            ui.navBar.header.action.text = isEditMode ? L.cancel : L.select
             ui.history.updateItems()
             if !isEditMode { selection.removeAll() }
         }
@@ -128,7 +129,7 @@ final class AiutaGenerationsHistoryViewController: ViewController<AiutaGeneratio
         ui.selectionSnackbar.bar.deleteButton.isEnabled = !selection.isEmpty
         ui.selectionSnackbar.bar.shareButton.isEnabled = !selection.isEmpty
 
-        ui.selectionSnackbar.bar.toggleSeletionButton.text = isSelectedAll ? "Select none" : "Select all"
+        ui.selectionSnackbar.bar.toggleSeletionButton.text = isSelectedAll ? L.selectNone : L.selectAll
         ui.selectionSnackbar.bar.view.layoutSubviews()
     }
 
@@ -143,7 +144,7 @@ final class AiutaGenerationsHistoryViewController: ViewController<AiutaGeneratio
     }
 
     func shareSelection() async {
-        tracker.track(.share(.start(origin: .history, count: selection.count, hasText: false)))
+        tracker.track(.share(.start(origin: .history, count: selection.count, text: nil)))
         let imagesToShare: [UIImage] = await selection.concurrentCompactMap { [watermarker] in
             guard let image = try? await $0.fetch() else { return nil }
             return watermarker.watermark(image)
@@ -159,7 +160,7 @@ final class AiutaGenerationsHistoryViewController: ViewController<AiutaGeneratio
         }
         switch result {
             case let .succeeded(activity):
-                tracker.track(.share(.success(origin: .history, count: imagesToShare.count, activity: activity)))
+                tracker.track(.share(.success(origin: .history, count: imagesToShare.count, activity: activity, text: nil)))
             case let .canceled(activity):
                 tracker.track(.share(.cancelled(origin: .history, count: imagesToShare.count, activity: activity)))
             case let .failed(activity, error):
@@ -172,12 +173,12 @@ final class AiutaGenerationsHistoryViewController: ViewController<AiutaGeneratio
         gallery.willShare.subscribe(with: self) { [unowned self] generatedImage, gallery in
             Task {
                 guard let image = try? await generatedImage.fetch() else { return }
-                tracker.track(.share(.start(origin: .history, count: 1, hasText: false)))
+                tracker.track(.share(.start(origin: .history, count: 1, text: nil)))
                 model.delegate?.aiuta(eventOccurred: .shareGeneratedImages(photosCount: 1))
                 let result = await gallery.share(image: watermarker.watermark(image))
                 switch result {
                     case let .succeeded(activity):
-                        tracker.track(.share(.success(origin: .history, count: 1, activity: activity)))
+                        tracker.track(.share(.success(origin: .history, count: 1, activity: activity, text: nil)))
                     case let .canceled(activity):
                         tracker.track(.share(.cancelled(origin: .history, count: 1, activity: activity)))
                     case let .failed(activity, error):

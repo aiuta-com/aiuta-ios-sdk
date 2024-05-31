@@ -23,7 +23,7 @@ final class AiutaErrorSnackbar: Plane {
     let label = Label { it, ds in
         it.font = ds.font.snackbar
         it.isMultiline = true
-        it.text = "Something went wrong.\nPlease try again later"
+        it.text = L.tryAgain
     }
 
     let close = ImageButton { it, ds in

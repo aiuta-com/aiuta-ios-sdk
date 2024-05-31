@@ -28,7 +28,7 @@ final class AiutaTryOnMoreFooterView: Plane {
     
     let title = Label { it, ds in
         it.font = ds.font.footer
-        it.text = "Swipe up for more"
+        it.text = L.generationResultSwipeUp
     }
     
     var canBeVisible = false {

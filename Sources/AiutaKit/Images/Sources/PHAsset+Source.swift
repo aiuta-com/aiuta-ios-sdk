@@ -12,11 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import UIKit
+import PhotosUI
 
-@_spi(Aiuta) public final class FailFetcher: BaseFetcher {
-    override public init() {
-        super.init()
-        onImage.fire(nil)
+@_spi(Aiuta) extension PHAsset: ImageSource {
+    public var knownRemoteId: String? { nil }
+
+    public func fetcher(for quality: ImageQuality) -> ImageFetcher {
+        AssetFetcher(self, quality: quality)
     }
 }

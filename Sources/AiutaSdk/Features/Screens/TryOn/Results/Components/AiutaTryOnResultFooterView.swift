@@ -23,16 +23,17 @@ final class AiutaTryOnResultFooterView: Plane {
     let addToCart = LabelButton { it, ds in
         it.font = ds.font.buttonBig
         it.color = ds.color.accent
-        it.text = "Add to cart"
+        it.text = L.addToCart
     }
 
     let addToWishlist = LabelButton { it, ds in
         it.font = ds.font.buttonBig
         it.color = ds.color.item
-        it.text = "Add to wishlist"
+        it.text = L.addToWishlist
         it.label.color = ds.color.tint
         it.view.borderColor = 0xCCCCCCFF.uiColor
         it.view.borderWidth = 2
+        it.view.isVisible = ds.config.behavior.isWishlistAvailable
     }
 
     override func updateLayout() {
@@ -56,7 +57,11 @@ final class AiutaTryOnResultFooterView: Plane {
         }
 
         addToCart.layout.make { make in
-            make.width = buttonWidth
+            if addToWishlist.view.isVisible {
+                make.width = buttonWidth
+            } else {
+                make.left = 16
+            }
             make.height = 50
             make.right = 16
             make.top = 10

@@ -26,8 +26,8 @@ final class AiutaGenerationsHistoryView: Scroll {
     let navBar = AiutaNavBar { it, _ in
         it.header.logo.transitions.isReferenceActive = false
         it.header.logo.view.isVisible = false
-        it.header.action.text = "Select"
-        it.header.title.text = "History"
+        it.header.action.text = L.select
+        it.header.title.text = L.history
     }
 
     @scrollable

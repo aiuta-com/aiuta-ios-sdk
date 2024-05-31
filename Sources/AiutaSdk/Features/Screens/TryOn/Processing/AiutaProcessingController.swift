@@ -42,17 +42,17 @@ final class AiutaProcessingController: ComponentController<AiutaTryOnView> {
             switch state {
                 case let .processing(proc):
                     switch proc {
-                        case .uploadingImage: ui.processingLoader.status.label.text = "Uploading image"
-                        case .generatingOutfit: ui.processingLoader.status.label.text = "Generating outfit"
-                        case .scanningBody: ui.processingLoader.status.label.text = "Scanning your body"
-                        case .failed: ui.processingLoader.status.label.text = "Something went wrong"
+                        case .uploadingImage: ui.processingLoader.status.label.text = L.generatingUpload
+                        case .generatingOutfit: ui.processingLoader.status.label.text = L.generatingOutfit
+                        case .scanningBody: ui.processingLoader.status.label.text = L.generatingScanBody
+                        case .failed: ui.processingLoader.status.label.text = L.somethingWrong
                     }
                 default: break
             }
         }
     }
 
-    func showError(_ text: String = "Something went wrong.\nPlease try again later") {
+    func showError(_ text: String) {
         ui.errorSnackbar.bar.label.text = text
         ui.errorSnackbar.isVisible = true
     }

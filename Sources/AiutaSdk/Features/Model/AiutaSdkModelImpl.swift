@@ -70,16 +70,10 @@ final class AiutaSdkModelImpl: AiutaSdkModel {
     @defaults(key: "uploadsHistory", defaultValue: [])
     var uploadsHistory: [[Aiuta.UploadedImage]]
 
-    @defaults(key: "lastUploadedImage", defaultValue: nil)
-    var lastUploadedImage: Aiuta.UploadedImage?
-
     private var sessionUuid = UUID()
     private let downsampler = DownsamplingImageProcessor(size: .init(square: 1500))
 
-    init() {
-        if uploadsHistory.isEmpty, let lastUploadedImage {
-            uploadsHistory = [[lastUploadedImage]]
-        }
+    func eraseHistoryIfNeeded() {
         if !config.behavior.isHistoryAvailable {
             generationHistory = []
         }
@@ -105,7 +99,7 @@ final class AiutaSdkModelImpl: AiutaSdkModel {
         }
     }
 
-    func reportError(_ text: String = "Something went wrong.\nPlease try again later", forSku sku: Aiuta.SkuInfo, uuid: UUID) {
+    func reportError(_ text: String = L.tryAgain, forSku sku: Aiuta.SkuInfo, uuid: UUID) {
         guard sku == tryOnSku, uuid == sessionUuid else { return }
         onError.fire(text)
     }
@@ -268,18 +262,6 @@ private extension AiutaSdkModelImpl {
 
             checkCount += 1
         } while true
-    }
-}
-
-@available(iOS 13.0, *)
-private extension AiutaSdkModelImpl {
-    @MainActor func checkSku(_ sku: Aiuta.SkuInfo) async -> Bool {
-        do {
-            let test: Aiuta.Sku = try await api.request(Aiuta.Sku.Get(skuId: sku.skuId, skuCatalogName: sku.skuCatalog))
-            return test.isReady
-        } catch {
-            return false
-        }
     }
 }
 

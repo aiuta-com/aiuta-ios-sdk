@@ -77,13 +77,13 @@ final class AiutaSkuBulletin: PlainBulletin {
     let primaryButton = LabelButton { it, ds in
         it.font = ds.font.buttonBig
         it.color = ds.color.accent
-        it.text = "Try on"
+        it.text = L.tryOn
     }
 
     let secondaryButton = LabelButton { it, ds in
         it.font = ds.font.buttonBig
         it.color = ds.color.item
-        it.text = "More details"
+        it.text = L.moreDetails
         it.label.color = ds.color.tint
         it.view.borderColor = 0xCCCCCCFF.uiColor
         it.view.borderWidth = 2
@@ -132,9 +132,13 @@ final class AiutaSkuBulletin: PlainBulletin {
         }
 
         primaryButton.layout.make { make in
-            make.width = buttonWidth
-            make.height = 50
+            if secondaryButton.view.isVisible {
+                make.width = buttonWidth
+            } else {
+                make.left = 16
+            }
             make.right = 16
+            make.height = 50
             make.top = secondaryButton.layout.top
             make.radius = 8
         }

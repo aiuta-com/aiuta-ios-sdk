@@ -39,11 +39,12 @@ final class SdkRegister {
     private func setup(apiKey: String, configuration: Aiuta.Configuration?) {
         let config = configuration ?? .default
         trace(isEnabled: config.behavior.isDebugLogsEnabled)
+        setLocalization(language: config.appearance.language)
         setDefaults(apiKey: apiKey)
         scope.reset()
 
         AiutaKit.register(
-            ds: { AiutaSdkDesignSystem(config.appearance) },
+            ds: { AiutaSdkDesignSystem(config) },
             heroic: { VanilaHero.capture() },
             imageTraits: { SdkImageTraits() }
         )
@@ -51,11 +52,20 @@ final class SdkRegister {
         resolver.register { config }.scope(scope)
         resolver.register { RestService(SdkApiProvider(apiKey: apiKey)) }.implements(ApiService.self).scope(scope)
         resolver.register { SdkWatermarker(config.behavior.watermark) }.implements(Watermarker.self).scope(scope)
+        resolver.register { SdkAnalyticsEnvImpl() }.implements(SdkAnalyticsEnv.self).scope(scope)
         resolver.register { AnalyticRouter(.ordinary(SdkAnalyticsTarget(apiKey))) }.implements(AnalyticTracker.self).scope(scope)
+        resolver.register { AiutaSubscriptionImpl() }.implements(AiutaSubscription.self).scope(scope)
         resolver.register { AiutaSdkModelImpl() }.implements(AiutaSdkModel.self).scope(scope)
 
         @injected var tracker: AnalyticTracker
-        tracker.track(.session(.configure(hasCustomConfiguration: configuration.isSome, photoSelectionLimit: config.behavior.photoSelectionLimit)))
+        tracker.track(.session(.configure(hasCustomConfiguration: configuration.isSome, configuration: config)))
+
+        @injected var subscription: AiutaSubscription
+        subscription.load()
+
+        @injected var model: AiutaSdkModel
+        model.eraseHistoryIfNeeded()
+
         isConfigured = true
     }
 }

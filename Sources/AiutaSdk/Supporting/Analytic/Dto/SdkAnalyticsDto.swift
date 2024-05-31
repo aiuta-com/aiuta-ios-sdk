@@ -39,13 +39,15 @@ struct SdkAnalyticDto: Encodable, ApiRequest {
     struct Env: Encodable {
         let platform = "ios"
         let sdkVersion = Aiuta.sdkVersion
-        let hostId = Bundle.main.bundleIdentifier
+        let hostId: String?
         let hostVersion: String
+        let installationId: String
 
         init() {
-            @bundle(key: "CFBundleShortVersionString")
-            var bundleVersion: String
-            hostVersion = bundleVersion
+            @injected var env: SdkAnalyticsEnv
+            hostId = env.hostId
+            hostVersion = env.hostVersion
+            installationId = env.installationId
         }
     }
 

@@ -26,14 +26,14 @@ final class AiutaGenerationsHistorySnackbar: Plane {
     let toggleSeletionButton = LabelButton { it, ds in
         it.font = ds.font.footer
         it.label.color = ds.color.item
-        it.text = "Select all"
+        it.text = L.selectAll
     }
 
     let cancelButton = LabelButton { it, ds in
         it.font = ds.font.footer
         it.color = ds.color.item
         it.label.color = ds.color.tint
-        it.text = "Cancel"
+        it.text = L.cancel
     }
 
     override func setup() {

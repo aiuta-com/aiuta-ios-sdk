@@ -14,7 +14,7 @@
 
 import UIKit
 
-final class ImageLoader {
+@_spi(Aiuta) public final class ImageLoader {
     let onImage = Signal<(UIImage, ImageQuality)>(retainLastData: true)
 
     let source: ImageSource
@@ -50,7 +50,7 @@ final class ImageLoader {
 }
 
 extension ImageLoader: Equatable {
-    static func == (lhs: ImageLoader, rhs: ImageLoader) -> Bool {
+    public static func == (lhs: ImageLoader, rhs: ImageLoader) -> Bool {
         lhs.source.isSame(as: rhs.source)
     }
 }
