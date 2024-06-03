@@ -23,11 +23,12 @@ struct SdkEnglishLanguage: SdkLanguage {
     let moreDetails = "More details" // More details
     let somethingWrong = "Something went wrong" // Something went wrong
     let tryAgain = "Something went wrong.\nPlease try again later" // Something went wrong. Please try again later
+    let cancel = "Cancel" // Cancel
+    let settings = "Settings" // Settings
 
     // App bar
     let history = "History" // History
     let select = "Select" // Select
-    let cancel = "Cancel" // Cancel
 
     // Onboarding
     let next = "Next" // Next
@@ -45,6 +46,7 @@ struct SdkEnglishLanguage: SdkLanguage {
     let poweredBy = "Powered by " // Powered by
     let aiuta = "Aiuta"
     let imageSelectorPhotos: Pluralize = { "\($0) photos" } // N photos
+    let imageSelectorCameraPermission = "Please allow access to the camera in the application settings." // Please allow access to the camera in the application settings.
 
     // Generation
     let generatingUpload = "Uploading image" // Uploading image

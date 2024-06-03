@@ -19,24 +19,25 @@ struct SdkTurkishLanguage: SdkLanguage {
     let tryOn = "Üzerinde Dene" // Try on
     let share = "Paylaş" // Share
     let addToCart = "Sepete ekle" // Add to cart
-    let addToWishlist = "Listelerine ekle" // Add to wishlist
+    let addToWishlist = "Listelerime ekle" // Add to wishlist
     let moreDetails = "Daha fazla detay" // More details
     let somethingWrong = "Bir şeyler yanlış gitti" // Something went wrong
     let tryAgain = "Bir şeyler yanlış gitti.\nLütfen daha sonra tekrar deneyin" // Something went wrong. Please try again later
     let poweredBy = "Tarafından desteklenmektedir" // Powered by
     let aiuta = "Aiuta"
+    let settings = "Ayarlar" // Settings
+    let cancel = "İptal" // Cancel
 
     // App bar
     let history = "Geçmiş" // History
     let select = "Seç" // Select
-    let cancel = "İptal" // Cancel
 
     // Onboarding
     let next = "Başla" // Next
     let start = "Devam Et" // Start
 
     let onboardingTryonTitle = "Satın almadan önce dene" // Try on before buying
-    let onboardingTryonDescription = "Sadece fotoğrafını yükle ve\nüzerinde nasıl göründüğüne bak" // Just upload your photo and see how it looks
+    let onboardingTryonDescription = "Fotoğrafını yükle ve\nüzerinde nasıl göründüğüne bak" // Just upload your photo and see how it looks
 
     let onboardingBestResultsTitle = "En iyi sonuçlar için" // For best results
     let onboardingBestResultsDescription = "İyi ışıklandırılmış, düz bir arka planı olan,\n dik durduğunuz bir fotoğraf kullanın" // Use a photo with good lighting, stand straight a plain background
@@ -45,16 +46,17 @@ struct SdkTurkishLanguage: SdkLanguage {
     let imageSelectorUploadButton = "Fotoğrafını yükle" // Upload a photo of you
     let imageSelectorChangeButton = "Fotoğrafını değiştir" // Change photo
     let imageSelectorPhotos: Pluralize = { "\($0) fotoğraflar" } // N photos
+    let imageSelectorCameraPermission = "Lütfen uygulama ayarlarından kameraya erişime izin verin." // Please allow access to the camera in the application settings.
 
     // Generation
     let generatingUpload = "Fotoğraf yükleniyor" // Uploading image
-    let generatingScanBody = "Vücudunuzu taramak" // Scanning your body
+    let generatingScanBody = "Fotoğrafınız taranıyor" // Scanning your body
     let generatingOutfit = "Ürün uygulanıyor" // Generating outfit
 
     // History
     let selectAll = "Tümünü seçin" // Select all
-    let selectNone = "Hiçbirini seçmeyin" // Select none
-    let historyEmptyDescription = "İlk öğeyi denediğinizde\ngeçmişiniz burada saklanacaktır" // Once you try on first item your try-on history would be stored here
+    let selectNone = "Tümünü Kaldır" // Select none
+    let historyEmptyDescription = "İlk ürün denemenizden sonra deneme\ngeçmişiniz burada saklanacaktır" // Once you try on first item your try-on history would be stored here
 
     // Generation Result
     let generationResultMoreTitle = "Denemeniz için daha fazlası" // More for you to try on
