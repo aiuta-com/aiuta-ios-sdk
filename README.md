@@ -10,7 +10,7 @@ Add AiutaSdk as a `dependencies` value of your `Package.swift`.
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/aiuta-com/aiuta-ios-sdk.git", from: "1.1.3")
+    .package(url: "https://github.com/aiuta-com/aiuta-ios-sdk.git", from: "1.1.4")
 ]
 ```
 
@@ -18,6 +18,12 @@ Add dependency to your target
 ```swift
     .product(name: "AiutaSdk", package: "aiuta-ios-sdk")
 ```
+
+
+## Permissions
+
+- `NSCameraUsageDescription`: *Required* Please provide NSCameraUsageDescription in your Info.plist so that Aiuta can request permission to use the camera from the user.
+- `NSPhotoLibraryAddUsageDescription`: Please provide NSPhotoLibraryAddUsageDescription in your Info.plist so that Aiuta can request permission to save the generated image to the Photo Gallery from the user.
 
 ## Methods
 

@@ -25,11 +25,12 @@ protocol SdkLanguage {
     var tryAgain: String { get }
     var poweredBy: String { get }
     var aiuta: String { get }
+    var settings: String { get }
+    var cancel: String { get }
     
     // App bar
     var history: String { get }
     var select: String { get }
-    var cancel: String { get }
 
     // Onboarding
     var next: String { get }
@@ -43,6 +44,7 @@ protocol SdkLanguage {
     var imageSelectorUploadButton: String { get }
     var imageSelectorChangeButton: String { get }
     var imageSelectorPhotos: Pluralize { get }
+    var imageSelectorCameraPermission: String { get }
     
     // Generation
     var generatingUpload: String { get }

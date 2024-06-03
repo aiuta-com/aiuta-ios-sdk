@@ -25,11 +25,12 @@ struct SdkRussianLanguage: SdkLanguage {
     let tryAgain = "Что-то пошло не так.\nПожалуйста, повторите попытку позже" // Something went wrong. Please try again later
     let poweredBy = "Powered by" // Powered by
     let aiuta = "Aiuta"
+    let cancel = "Отмена" // Cancel
+    let settings = "Настройки" // Settings
 
     // App bar
     let history = "История" // History
     let select = "Выбрать" // Select
-    let cancel = "Отмена" // Cancel
 
     // Onboarding
     let next = "Далее" // Next
@@ -45,6 +46,7 @@ struct SdkRussianLanguage: SdkLanguage {
     let imageSelectorUploadButton = "Загрузить своё фото" // Upload a photo of you
     let imageSelectorChangeButton = "Заменить фото" // Change photo
     let imageSelectorPhotos: Pluralize = { "\($0) фото" } // N photos
+    let imageSelectorCameraPermission = "Пожалуйста, предоставьте доступ к камере в настройках приложения." // Please allow access to the camera in the application settings.
 
     // Generation
     let generatingUpload = "Загружаем фото" // Uploading image

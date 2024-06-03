@@ -37,6 +37,8 @@ final class SdkRegister {
 
     @available(iOS 13.0.0, *)
     private func setup(apiKey: String, configuration: Aiuta.Configuration?) {
+        checkIfUsageDescriptionsProvided()
+
         let config = configuration ?? .default
         trace(isEnabled: config.behavior.isDebugLogsEnabled)
         setLocalization(language: config.appearance.language)
@@ -67,6 +69,22 @@ final class SdkRegister {
         model.eraseHistoryIfNeeded()
 
         isConfigured = true
+    }
+
+    private func checkIfUsageDescriptionsProvided() {
+        @bundle(key: "NSCameraUsageDescription")
+        var cameraUsageDescription: String?
+
+        if cameraUsageDescription.isNullOrEmpty {
+            fatalError("Please provide NSCameraUsageDescription in your Info.plist so that Aiuta can request permission to use the camera from the user.")
+        }
+
+        @bundle(key: "NSPhotoLibraryAddUsageDescription")
+        var photoLibraryAddUsageDescription: String?
+
+        if photoLibraryAddUsageDescription.isNullOrEmpty {
+            NSLog("Please provide NSPhotoLibraryAddUsageDescription in your Info.plist so that Aiuta can request permission to save the generated image to the Photo Gallery from the user.")
+        }
     }
 }
 

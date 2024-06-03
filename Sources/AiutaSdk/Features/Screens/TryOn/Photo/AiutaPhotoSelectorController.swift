@@ -13,6 +13,7 @@
 // limitations under the License.
 
 @_spi(Aiuta) import AiutaKit
+import AVFoundation
 import Resolver
 import UIKit
 
@@ -141,7 +142,32 @@ final class AiutaPhotoSelectorController: ComponentController<AiutaTryOnView> {
 
 @available(iOS 13.0, *)
 private extension AiutaPhotoSelectorController {
+    func checkCameraPermission() -> Bool {
+        switch AVCaptureDevice.authorizationStatus(for: .video) {
+            case .denied:
+                showPermissionAlert()
+                return false
+            case .restricted: return false
+            default: return true
+        }
+    }
+
+    func showPermissionAlert() {
+        let alert = UIAlertController(title: nil, message: L.imageSelectorCameraPermission, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: L.settings, style: .default, handler: { _ in
+            let app = UIApplication.shared
+            guard let settingsUrl = URL(string: UIApplication.openSettingsURLString),
+                  app.canOpenURL(settingsUrl)
+            else { return }
+            app.open(settingsUrl)
+        }))
+        alert.addAction(UIAlertAction(title: L.cancel, style: .cancel, handler: nil))
+        vc?.present(alert, animated: true, completion: nil)
+    }
+
     func takeNewPhoto() {
+        guard checkCameraPermission() else { return }
+
         let picker = UIImagePickerController()
         imagePickerDelegate = ImagePickerControllerDelegate(.camera)
         picker.delegate = imagePickerDelegate
