@@ -14,11 +14,11 @@
 
 import UIKit
 
-@_spi(Aiuta) public protocol ImageSource {
+@_spi(Aiuta) public protocol ImageSource: TransitionRef {
     var knownRemoteId: String? { get }
     var backgroundColor: UIColor? { get }
 
-    func fetcher(for quality: ImageQuality) -> ImageFetcher
+    func fetcher(for quality: ImageQuality, breadcrumbs: Breadcrumbs) -> ImageFetcher
 
     func isSame(as other: ImageSource) -> Bool
 }
@@ -36,13 +36,18 @@ import UIKit
 
 @available(iOS 13.0.0, *)
 @_spi(Aiuta) public extension ImageSource {
-    @MainActor func fetch(_ quality: ImageQuality = .hiResImage) async throws -> UIImage {
-        try await ImageLoader.Cached(self).fetch(quality)
+    @MainActor func fetch(_ quality: ImageQuality = .hiResImage, breadcrumbs: Breadcrumbs) async throws -> UIImage {
+        try await ImageLoader.Cached(self, expireAfter: .severalSeconds).fetch(quality, breadcrumbs: breadcrumbs)
     }
 
-    @MainActor func prefetch(_ quality: ImageQuality = .hiResImage) async throws -> ImageLoader {
-        let loader = ImageLoader.Cached(self)
-        _ = try await loader.fetch(quality)
+    @MainActor func prefetch(_ quality: ImageQuality = .hiResImage, breadcrumbs: Breadcrumbs) async throws -> ImageLoader {
+        let loader = ImageLoader.Cached(self, expireAfter: .severalSeconds)
+        _ = try await loader.fetch(quality, breadcrumbs: breadcrumbs)
         return loader
+    }
+
+    func prefetch(_ quality: ImageQuality = .hiResImage, breadcrumbs: Breadcrumbs) {
+        let loader = ImageLoader.Cached(self, expireAfter: .severalSeconds)
+        Task { _ = try? await loader.fetch(quality, breadcrumbs: breadcrumbs) }
     }
 }

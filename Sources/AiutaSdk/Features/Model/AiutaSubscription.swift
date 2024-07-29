@@ -20,6 +20,9 @@ protocol AiutaSubscription {
 
     var shouldDisplayPoweredBy: Bool { get }
     var powerdByLink: String? { get }
+    
+    var shouldDisplayFitDisclaimer: Bool { get }
+    var fitDisclaimer: Aiuta.SubscriptionDetails.Disclaimer? { get }
 
     func load()
 }

@@ -118,19 +118,22 @@ import UIKit
         Layouts.keyboardWatcher
     }
 
-    public var visible: CGRect {
-        guard let root = findRoot() else { return .zero }
-        return root.convert(root.bounds.intersection(view.convert(view.bounds, to: root)), to: view)
-    }
-
     public var screenFrame: CGRect {
         guard let root = findRoot() else { return .zero }
         return view.convert(view.bounds, to: root)
     }
 
-    public var visibleScreenFrame: CGRect {
+    public var visibleBounds: CGRect {
         guard let root = findRoot() else { return .zero }
-        return view.convert(visible, to: root)
+        return root.convert(root.bounds.intersection(view.convert(view.bounds, to: root)), to: view)
+    }
+
+    public func extendedBounds(extension size: CGSize) -> CGRect {
+        guard let root = findRoot() else { return .zero }
+        var bounds = root.bounds
+        bounds = .init(x: bounds.minX - size.width / 2, y: bounds.minY - size.height / 2,
+                       width: bounds.width + size.width, height: bounds.height + size.height)
+        return root.convert(bounds.intersection(view.convert(view.bounds, to: root)), to: view)
     }
 
     public var insets: UIEdgeInsets = .zero
@@ -166,7 +169,11 @@ import UIKit
             view.frame.size = rect.size
         }
         if let rotation = maker.rotation {
-            view.transform = CGAffineTransform(rotationAngle: rotation.radians)
+            if maker.scale.isSome {
+                view.transform = view.transform.rotated(by: rotation.radians)
+            } else {
+                view.transform = CGAffineTransform(rotationAngle: rotation.radians)
+            }
         }
         view.center = CGPoint(x: rect.midX, y: rect.midY)
         if let radius = maker.radius {
@@ -229,6 +236,10 @@ private let sharedAdjustments = SafeArea.Adjustments()
         } else {
             return false
         }
+    }
+
+    public var displayCornerRadius: CGFloat {
+        view.window?.screen.displayCornerRadius ?? 0
     }
 }
 
@@ -374,6 +385,14 @@ private let sharedAdjustments = SafeArea.Adjustments()
         }
     }
 
+    public var square: CGFloat? {
+        get { w == h ? w : nil }
+        set {
+            guard let newValue else { return }
+            size = .init(square: newValue)
+        }
+    }
+
     public var circle: CGFloat? {
         get {
             guard let radius else { return nil }
@@ -484,5 +503,19 @@ private let sharedAdjustments = SafeArea.Adjustments()
         keyboardWillShow.subscribe(with: self, callback: keyboardHandler)
         keyboardWillHide.subscribe(with: self, callback: keyboardHandler)
         keyboardWillChangeFrame.subscribe(with: self, callback: keyboardHandler)
+    }
+}
+
+extension UIScreen {
+    private static let cornerRadiusKey: String = {
+        let components = ["suidaR", "renroC", "yalpsid", "_"]
+        return components.reversed().map { String($0.reversed()) }.joined()
+    }()
+
+    public var displayCornerRadius: CGFloat {
+        guard let cornerRadius = value(forKey: Self.cornerRadiusKey) as? CGFloat else {
+            return 0
+        }
+        return cornerRadius
     }
 }

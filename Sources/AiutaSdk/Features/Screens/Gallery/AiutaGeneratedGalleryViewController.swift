@@ -21,6 +21,7 @@ final class AiutaGeneratedGalleryViewController: ViewController<AiutaGeneratedGa
     var index: Int = 0
 
     @injected private var watermarker: Watermarker
+    private let breadcrumbs = Breadcrumbs()
 
     convenience init(_ data: DataProvider<Aiuta.GeneratedImage>?, start index: Int) {
         self.init()
@@ -68,7 +69,7 @@ final class AiutaGeneratedGalleryViewController: ViewController<AiutaGeneratedGa
         }
         if #available(iOS 13.0, *) {
             Task {
-                guard let image = try? await generatedImage.fetch() else { return }
+                guard let image = try? await generatedImage.fetch(breadcrumbs: breadcrumbs) else { return }
                 await share(image: watermarker.watermark(image))
             }
         }

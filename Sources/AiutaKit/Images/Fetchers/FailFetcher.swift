@@ -15,8 +15,9 @@
 import UIKit
 
 @_spi(Aiuta) public final class FailFetcher: BaseFetcher {
-    override public init() {
+    public init(breadcrumbs: Breadcrumbs) {
         super.init()
         onImage.fire(nil)
+        breadcrumbs.fire(nil, label: "Fail fetcher used")
     }
 }

@@ -21,6 +21,7 @@ final class AiutaTryOnResultViewController: ComponentController<AiutaTryOnView> 
     @injected private var model: AiutaSdkModel
     @injected private var watermarker: Watermarker
     @injected private var tracker: AnalyticTracker
+    private let breadcrumbs = Breadcrumbs()
 
     let skuBulletin = AiutaSkuBulletin()
 
@@ -62,7 +63,7 @@ final class AiutaTryOnResultViewController: ComponentController<AiutaTryOnView> 
                 gallery.willShare.subscribe(with: self) { [unowned self] generatedImage, gallery in
                     let sku = findSku(for: generatedImage)
                     Task {
-                        guard let image = try? await generatedImage.fetch() else { return }
+                        guard let image = try? await generatedImage.fetch(breadcrumbs: breadcrumbs.fork()) else { return }
                         tracker.track(.share(.start(origin: .resultsFullScreen, count: 1, text: sku?.additionalShareInfo)))
                         model.delegate?.aiuta(eventOccurred: .shareGeneratedImages(photosCount: 1))
                         let result = await gallery.share(image: watermarker.watermark(image),
@@ -83,7 +84,7 @@ final class AiutaTryOnResultViewController: ComponentController<AiutaTryOnView> 
             cell.shareButton.onTouchUpInside.subscribe(with: self) { [unowned self, weak cell] in
                 guard case let .output(generatedImage, sku) = cell?.data else { return }
                 Task {
-                    guard let image = try? await generatedImage.fetch() else { return }
+                    guard let image = try? await generatedImage.fetch(breadcrumbs: breadcrumbs.fork()) else { return }
                     tracker.track(.share(.start(origin: .resultsScreen, count: 1, text: sku.additionalShareInfo)))
                     model.delegate?.aiuta(eventOccurred: .shareGeneratedImages(photosCount: 1))
                     let result = await share(image: watermarker.watermark(image),

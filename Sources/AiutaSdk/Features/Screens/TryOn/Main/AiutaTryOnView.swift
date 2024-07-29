@@ -30,6 +30,8 @@ final class AiutaTryOnView: Plane {
         it.header.action.text = L.history
     }
 
+    let disclaimerBar = AiutaFitDisclaimerBar()
+
     let photoSelector = AiutaPhotoSelector()
     let processingLoader = AiutaProcessingLoader()
 
@@ -71,9 +73,11 @@ final class AiutaTryOnView: Plane {
     }
 
     private func updateMode() {
+        disclaimerBar.title.text = L[subscription.fitDisclaimer?.title]
         hasSkuBar = true
         switch mode {
             case .initial, .photoSelecting:
+                disclaimerBar.isVisible = false
                 photoSelector.view.isVisible = true
                 processingLoader.view.isVisible = false
                 resultView.view.isVisible = false
@@ -81,12 +85,14 @@ final class AiutaTryOnView: Plane {
                 starter.view.isVisible = photoSelector.inputs.isSome
                 resultView.data = nil
             case .processing:
+                disclaimerBar.isVisible = false
                 photoSelector.view.isVisible = false
                 processingLoader.view.isVisible = true
                 resultView.view.isVisible = false
                 starter.view.isVisible = false
                 poweredBy.view.isVisible = subscription.shouldDisplayPoweredBy
             case .result:
+                disclaimerBar.isVisible = subscription.shouldDisplayFitDisclaimer
                 resultView.scrollView.scrollToTop(animated: false)
                 resultView.isContinuationMode = false
                 photoSelector.view.isVisible = false
@@ -134,7 +140,15 @@ final class AiutaTryOnView: Plane {
             make.size = layout.size
         }
 
-        resultView.topInset = navBar.layout.bottomPin + skuBar.layout.height
+        disclaimerBar.layout.make { make in
+            make.top = hasSkuBar ? skuBar.layout.bottomPin : navBar.layout.bottomPin
+        }
+
+        if disclaimerBar.isVisible {
+            resultView.topInset = navBar.layout.bottomPin + skuBar.layout.height + disclaimerBar.layout.height
+        } else {
+            resultView.topInset = navBar.layout.bottomPin + skuBar.layout.height
+        }
 
         sample.layout.make { make in
             make.circle = 5

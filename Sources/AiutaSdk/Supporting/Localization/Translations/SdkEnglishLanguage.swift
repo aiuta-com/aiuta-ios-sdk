@@ -15,6 +15,10 @@
 import Foundation
 
 struct SdkEnglishLanguage: SdkLanguage {
+    subscript(_ variants: Aiuta.StringVariants?) -> String? {
+        variants?.en
+    }
+
     // General
     let tryOn = "Try on" // Try on
     let share = "Share" // Share

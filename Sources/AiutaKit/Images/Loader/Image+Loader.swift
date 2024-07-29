@@ -20,7 +20,7 @@ import UIKit
         get { getAssociatedProperty(&Property.source, ofType: ImageSource.self) ?? image }
         set {
             setAssociatedProperty(&Property.source, newValue: newValue)
-            if let newValue { loader = ImageLoader.Cached(newValue) }
+            if let newValue { loader = ImageLoader.Cached(newValue, expireAfter: .instant) }
             else { loader = nil }
         }
     }
@@ -59,10 +59,10 @@ import UIKit
             setAssociatedProperty(&Property.loader, newValue: newValue)
 
             @Injected var heroic: Heroic
-            
+
             isAutoSize = false
             retrievedQuality = nil
-            if !keepCurrentImage { image = nil }
+            if !keepCurrentImage || loader.isNil { image = nil }
             if image.isNil, isAutoColor, let color = loader?.source.backgroundColor {
                 view.backgroundColor = color
             }
@@ -78,11 +78,11 @@ import UIKit
 
                 guard image != newImage else { return }
                 image = newImage
-                guard !heroic.isTransitioning else { return }
+                guard !heroic.isTransitioning, !layout.visibleBounds.size.isAnyZero else { return }
                 animations.transition(.transitionCrossDissolve, duration: .thirdOfSecond)
             }
 
-            newValue?.load(desiredQuality)
+            newValue?.load(desiredQuality, breadcrumbs: Breadcrumbs())
         }
     }
 

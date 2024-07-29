@@ -42,7 +42,9 @@ import UIKit
 
 @_spi(Aiuta) public final class CustomIntensityVisualEffectView: UIVisualEffectView {
     fileprivate var theEffect: UIVisualEffect = UIBlurEffect(style: .regular)
-    fileprivate var customIntensity: CGFloat = 1
+    fileprivate var customIntensity: CGFloat = 1 {
+        didSet { animator?.fractionComplete = customIntensity }
+    }
     private var animator: UIViewPropertyAnimator?
 
     init() {

@@ -17,7 +17,3 @@ import Foundation
 @_spi(Aiuta) public protocol TransitionRef {
     var transitionId: String { get }
 }
-
-@_spi(Aiuta) public extension TransitionRef {
-    var transitionId: String { String(reflecting: self) }
-}

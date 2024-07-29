@@ -24,10 +24,10 @@ import UIKit
         self.source = source
     }
 
-    func load(_ quality: ImageQuality) {
-        if quality > .thumbnails && fetchers[.thumbnails].isNil { load(.thumbnails) }
+    func load(_ quality: ImageQuality, breadcrumbs: Breadcrumbs) {
+        if quality > .thumbnails && fetchers[.thumbnails].isNil { load(.thumbnails, breadcrumbs: breadcrumbs) }
 
-        let fetcher: ImageFetcher = fetchers[quality] ?? source.fetcher(for: quality)
+        let fetcher: ImageFetcher = fetchers[quality] ?? source.fetcher(for: quality, breadcrumbs: breadcrumbs)
 
         fetchers[quality] = fetcher
         fetcher.onImage.cancelSubscription(for: self)
@@ -37,13 +37,13 @@ import UIKit
     }
 
     @available(iOS 13.0.0, *)
-    @MainActor func prefetch(_ quality: ImageQuality = .thumbnails) async throws {
-        _ = try await fetch(quality)
+    @MainActor func prefetch(_ quality: ImageQuality = .thumbnails, breadcrumbs: Breadcrumbs) async throws {
+        _ = try await fetch(quality, breadcrumbs: breadcrumbs)
     }
 
     @available(iOS 13.0.0, *)
-    @MainActor func fetch(_ quality: ImageQuality = .hiResImage) async throws -> UIImage {
-        let fetcher: ImageFetcher = fetchers[quality] ?? source.fetcher(for: quality)
+    @MainActor func fetch(_ quality: ImageQuality = .hiResImage, breadcrumbs: Breadcrumbs) async throws -> UIImage {
+        let fetcher: ImageFetcher = fetchers[quality] ?? source.fetcher(for: quality, breadcrumbs: breadcrumbs)
         fetchers[quality] = fetcher
         return try await fetcher.fetch()
     }
@@ -56,19 +56,39 @@ extension ImageLoader: Equatable {
 }
 
 extension ImageLoader {
-    private static var cache = [Expiring<ImageLoader>]()
-
-    static func Cached(_ source: ImageSource) -> ImageLoader {
-        cache.removeAll(where: { $0.expire(prolongUsed: true) })
-
+    static func Cached(_ source: ImageSource, expireAfter: AsyncDelayTime) -> ImageLoader {
         if let expiring = cache.first(where: { $0.value?.source.isSame(as: source) ?? false }),
            let cached = expiring.value {
-            expiring.prolong()
+            expiring.prolong(expireAfter)
             return cached
         }
 
         let loader = ImageLoader(source)
-        cache.append(Expiring(loader, expireAfter: .severalSeconds))
+        cache.append(Expiring(loader, expireAfter))
         return loader
+    }
+
+    private static var cache = {
+        startMemoryPressureMonitor()
+        interval(.oneSecond, execute: dropExpiredCache)
+        return [Expiring<ImageLoader>]()
+    }()
+
+    private static func startMemoryPressureMonitor() {
+        let memoryPressureMonitor = MemoryPressureMonitor.shared
+        memoryPressureMonitor.onAnyMemoryWarning.subscribe(
+            with: memoryPressureMonitor,
+            callback: dropUnusedCache
+        )
+    }
+
+    private static func dropExpiredCache() {
+        cache.removeAll(where: { $0.expire(prolongUsed: true) })
+    }
+
+    private static func dropUnusedCache() {
+        let was = cache.count
+        cache.removeAll(where: { $0.drop(prolongUsed: true) })
+        trace("Drop \(was - cache.count) of \(was) image loaders")
     }
 }

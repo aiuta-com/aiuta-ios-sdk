@@ -27,7 +27,11 @@ protocol ContentView {
     }
 
     override open func layoutSubviews() {
-        content?.updateLayoutRecursive()
+        guard let content, !content.willIgnoreNextLayout else {
+            content?.willIgnoreNextLayout = false
+            return
+        }
+        content.updateLayoutRecursive()
         updateShapeWithRoundedCorners()
     }
 

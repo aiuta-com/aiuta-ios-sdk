@@ -15,6 +15,10 @@
 import Foundation
 
 struct SdkTurkishLanguage: SdkLanguage {
+    subscript(_ variants: Aiuta.StringVariants?) -> String? {
+        variants?.tr
+    }
+
     // General
     let tryOn = "Üzerinde Dene" // Try on
     let share = "Paylaş" // Share

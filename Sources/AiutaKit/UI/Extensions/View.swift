@@ -44,7 +44,7 @@ import UIKit
     }
 
     var isMinOpaque: Bool {
-        get { opacity <= minOpacity }
+        get { opacity <= minOpacity + 0.01 }
         set { opacity = newValue ? minOpacity : maxOpacity }
     }
 
@@ -57,7 +57,7 @@ import UIKit
     }
 
     var isMaxOpaque: Bool {
-        get { opacity >= maxOpacity }
+        get { opacity >= maxOpacity - 0.01 }
         set { opacity = newValue ? maxOpacity : minOpacity }
     }
 

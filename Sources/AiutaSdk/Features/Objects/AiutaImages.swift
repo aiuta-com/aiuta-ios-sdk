@@ -54,15 +54,19 @@ extension Aiuta.GeneratedImage: TransitionRef {
 extension Aiuta.UploadedImage: ImageSource {
     var knownRemoteId: String? { id }
 
-    func fetcher(for quality: ImageQuality) -> ImageFetcher {
-        UrlFetcher(url, quality: quality)
+    func fetcher(for quality: ImageQuality, breadcrumbs: Breadcrumbs) -> ImageFetcher {
+        UrlFetcher(url, quality: quality, breadcrumbs: breadcrumbs)
     }
+}
+
+extension Aiuta.UploadedImage: TransitionRef {
+    var transitionId: String { url }
 }
 
 extension Aiuta.GeneratedImage: ImageSource {
     var knownRemoteId: String? { nil }
 
-    func fetcher(for quality: ImageQuality) -> ImageFetcher {
-        UrlFetcher(imageUrl, quality: quality)
+    func fetcher(for quality: ImageQuality, breadcrumbs: Breadcrumbs) -> ImageFetcher {
+        UrlFetcher(imageUrl, quality: quality, breadcrumbs: breadcrumbs)
     }
 }

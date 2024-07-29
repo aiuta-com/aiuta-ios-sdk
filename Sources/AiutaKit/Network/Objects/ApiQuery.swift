@@ -31,6 +31,11 @@ import Foundation
         items.append(item)
     }
 
+    func append(_ representable: QueryRepresentable?) {
+        guard let representable else { return }
+        append(representable.queryItems)
+    }
+
     func append(key: String, value: String?) {
         guard let value else { return }
         append(URLQueryItem(name: key, value: value))
@@ -53,4 +58,8 @@ import Foundation
     public func encode(to encoder: Encoder) throws {
         // TODO: nop?
     }
+}
+
+@_spi(Aiuta) public protocol QueryRepresentable {
+    var queryItems: [URLQueryItem] { get }
 }

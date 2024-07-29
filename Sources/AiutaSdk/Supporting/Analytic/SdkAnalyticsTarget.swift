@@ -32,7 +32,7 @@ final class SdkAnalyticsTarget: AnalyticTarget {
         let dto = SdkAnalyticDto(event)
         Task { await send(dto) }
         guard logsEnabled, let data = try? JSONEncoder().encode(dto) else { return }
-        trace(String(decoding: data, as: UTF8.self))
+        trace(event.name, "\n\n\(String(decoding: data, as: UTF8.self))\n")
     }
 
     func send(_ dto: SdkAnalyticDto, retry: Int = 0) async {

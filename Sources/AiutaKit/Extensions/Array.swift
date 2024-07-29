@@ -66,6 +66,12 @@ import Foundation
     }
 }
 
+@_spi(Aiuta) public extension Array where Element: Sequence {
+    func flattened() -> [Element.Element] {
+        return reduce([], +)
+    }
+}
+
 @_spi(Aiuta) public extension Array where Element == Int {
     func greatestCommonDivisor() -> Int? {
         guard !isEmpty else { return nil }

@@ -99,6 +99,11 @@ import UIKit
                 return
             }
             heroic.setModifiers(modifiers, for: view)
+            modifiers?.forEach { maker in
+                if maker.coordinateSpace == .global {
+                    view.tag = 100
+                }
+            }
         }
     }
 

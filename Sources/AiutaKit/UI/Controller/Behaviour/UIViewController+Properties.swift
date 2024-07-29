@@ -40,7 +40,7 @@ import UIKit
         set {
             guard newValue != statusBarStyle else { return }
             setAssociatedProperty(&Property.statusBarStyle, newValue: newValue)
-            animate { [self] in setNeedsStatusBarAppearanceUpdate() }
+            animate(time: .thirdOfSecond) { [self] in setNeedsStatusBarAppearanceUpdate() }
         }
     }
 
@@ -72,6 +72,8 @@ import UIKit
         get { getAssociatedProperty(&Property.backstackController, ofType: UIViewController.self) }
         set { setAssociatedProperty(&Property.backstackController, newValue: newValue) }
     }
+
+    public func dropBackstack() { backstackController = nil }
 
     var willTransitInteractive: Bool {
         get { getAssociatedProperty(&Property.willTransitInteractive, defaultValue: Property.willTransitInteractive) }

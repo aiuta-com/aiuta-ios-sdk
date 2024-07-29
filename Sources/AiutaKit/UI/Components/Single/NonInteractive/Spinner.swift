@@ -27,6 +27,11 @@ import UIKit
         set { view.style = newValue }
     }
 
+    public var color: UIColor {
+        get { view.color }
+        set { view.color = newValue }
+    }
+
     public convenience init(_ builder: (_ it: Spinner, _ ds: DesignSystem) -> Void) {
         self.init()
         if #available(iOS 13.0, *) {

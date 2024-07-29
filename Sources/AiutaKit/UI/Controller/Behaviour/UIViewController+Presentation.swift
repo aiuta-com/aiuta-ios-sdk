@@ -18,9 +18,11 @@ import UIKit
 
 @_spi(Aiuta) public extension UIViewController {
     func replace(with viewController: UIViewController, backstack: UIViewController? = nil) {
-        if let bctrl = viewController as? BulletinController, let bulletin = bctrl.bulletin {
+        if let bctrl = viewController as? BulletinController {
             bctrl.presenter = self
-            showBulletin(bulletin)
+            if let bulletin = bctrl.bulletin {
+                showBulletin(bulletin)
+            }
             return
         }
 
@@ -64,9 +66,11 @@ import UIKit
     }
 
     func present(_ viewController: UIViewController, attachedTo sender: ContentBase? = nil) {
-        if let bctrl = viewController as? BulletinController, let bulletin = bctrl.bulletin {
+        if let bctrl = viewController as? BulletinController {
             bctrl.presenter = self
-            showBulletin(bulletin)
+            if let bulletin = bctrl.bulletin {
+                showBulletin(bulletin)
+            }
             return
         }
 

@@ -41,6 +41,10 @@ import UIKit
         statusBarStyle
     }
 
+    override open var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
+        .fade
+    }
+
     override public func loadView() {
         _ui = ViewContent()
         ui.isRoot = true
@@ -90,7 +94,7 @@ import UIKit
 
     private func watchKeyboard() {
         guard keyboardWillShow.observers.isEmpty else { return }
-        
+
         let keyboardHandler = { [unowned self] in
             guard isAppearing, isViewLoaded else { return }
             ui.updateLayoutRecursive()

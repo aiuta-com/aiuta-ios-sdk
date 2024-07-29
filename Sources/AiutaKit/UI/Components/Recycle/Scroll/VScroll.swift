@@ -14,12 +14,15 @@
 
 import UIKit
 
-@_spi(Aiuta) open class VScroll: Content<UIScrollView> {
+@_spi(Aiuta) open class VScroll: Content<TapThroughScrollView> {
     public var didScroll: Signal<ScrollInfo> { proxy.didScroll }
     public var didChangeOffset: Signal<(offset: CGFloat, delta: CGFloat)> { proxy.didChangeOffset }
     public var didFinishScroll: Signal<Void> { proxy.didFinishScroll }
     public var willBeginDragging: Signal<Void> { proxy.willBeginDragging }
+    public var willScrollToTop: Signal<Void> { proxy.willScrollToTop }
     public var didEndDragging: Signal<(velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>)> { proxy.didEndDragging }
+    public var willScrollToOffset = Signal<CGFloat>()
+    public var didEndScrollingAnimation: Signal<Void> { proxy.didEndScrollingAnimation }
 
     public var topInset: CGFloat = 0 {
         didSet {
@@ -53,7 +56,7 @@ import UIKit
             view.contentSize = newValue
         }
     }
-    
+
     public var fastDeceleration: Bool {
         get { view.decelerationRate == .fast }
         set {
@@ -64,6 +67,11 @@ import UIKit
 
     public var itemSpace: CGFloat = 0 {
         didSet { updateLayoutInternal() }
+    }
+
+    public var tapThroughTopInset: CGFloat? {
+        get { view.tapThroughTopInset }
+        set { view.tapThroughTopInset = newValue }
     }
 
     public var isLayoutEnabled = true
@@ -79,13 +87,13 @@ import UIKit
         builder(self, ds)
     }
 
-    public required init(view: UIScrollView) {
+    public required init(view: TapThroughScrollView) {
         super.init(view: view)
         applyDefaultConfiguration()
     }
 
     public required init() {
-        super.init(view: UIScrollView())
+        super.init(view: TapThroughScrollView())
         applyDefaultConfiguration()
     }
 
@@ -97,15 +105,16 @@ import UIKit
         view.showsHorizontalScrollIndicator = false
     }
 
-    public func scroll(to sub: ContentBase, animated: Bool = false) {
-        view.setContentOffset(.init(x: 0, y: sub.container.frame.origin.y), animated: animated)
+    public func scroll(to focus: ContentBase, animated: Bool = true) {
+        scroll(to: .init(x: 0, y: focus.layout.top + focus.layout.height / 2 - layout.height / 2), animated: animated)
     }
 
     public func scroll(to point: CGPoint, animated: Bool = true) {
-        view.setContentOffset(point, animated: animated)
+        scroll(to: point.y, animated: animated)
     }
 
     public func scroll(to offset: CGFloat, animated: Bool = true) {
+        willScrollToOffset.fire(offset)
         view.setContentOffset(.init(x: 0, y: clamp(offset, min: view.verticalOffsetForTop, max: view.verticalOffsetForBottom)), animated: animated)
     }
 
@@ -173,9 +182,13 @@ import UIKit
 @_spi(Aiuta) public struct ScrollInfo {
     public let offset: CGFloat
     public let relativeOffet: CGFloat
+    public let startOffset: CGFloat
     public let delta: CGFloat
     public let pullDown: CGFloat
     public let withTouch: Bool
+    public let isAtTop: Bool
+    public let isAtBottom: Bool
+    public let maxScroll: CGFloat
 }
 
 private final class ScrollDelegate: NSObject, UIScrollViewDelegate {
@@ -183,7 +196,9 @@ private final class ScrollDelegate: NSObject, UIScrollViewDelegate {
     let didChangeOffset = Signal<(offset: CGFloat, delta: CGFloat)>(retainLastData: true)
     let didFinishScroll = Signal<Void>()
     let willBeginDragging = Signal<Void>()
+    let willScrollToTop = Signal<Void>()
     let didEndDragging = Signal<(velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>)>()
+    let didEndScrollingAnimation = Signal<Void>()
 
     private var prevOffset: CGFloat = 0
     private var startOffset: CGFloat = 0
@@ -199,9 +214,13 @@ private final class ScrollDelegate: NSObject, UIScrollViewDelegate {
         didScroll.fire(.init(
             offset: offset,
             relativeOffet: offset - startOffset,
+            startOffset: startOffset,
             delta: offset - prevOffset,
             pullDown: -offset,
-            withTouch: isTouching
+            withTouch: isTouching,
+            isAtTop: scrollView.isAtTop,
+            isAtBottom: scrollView.isAtBottom,
+            maxScroll: scrollView.contentSize.height + scrollView.contentInset.verticalInsetsSum - scrollView.bounds.height
         ))
         prevOffset = offset
     }
@@ -223,6 +242,15 @@ private final class ScrollDelegate: NSObject, UIScrollViewDelegate {
 
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         didFinishScroll.fire()
+    }
+
+    func scrollViewShouldScrollToTop(_ scrollView: UIScrollView) -> Bool {
+        willScrollToTop.fire()
+        return true
+    }
+
+    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+        didEndScrollingAnimation.fire()
     }
 }
 
@@ -246,5 +274,17 @@ private final class ScrollDelegate: NSObject, UIScrollViewDelegate {
         let bottomInset = contentInset.bottom
         let scrollViewBottomOffset = scrollContentSizeHeight + bottomInset - scrollViewHeight
         return max(scrollViewBottomOffset, -contentInset.top)
+    }
+}
+
+public final class TapThroughScrollView: UIScrollView {
+    public var tapThroughTopInset: CGFloat?
+
+    override public func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
+        guard let tapThroughTopInset, point.y < -tapThroughTopInset else {
+            return super.point(inside: point, with: event)
+        }
+
+        return false
     }
 }

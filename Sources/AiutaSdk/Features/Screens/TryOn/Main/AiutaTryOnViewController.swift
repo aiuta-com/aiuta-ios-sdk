@@ -83,6 +83,10 @@ final class AiutaTryOnViewController: ViewController<AiutaTryOnView> {
             showBulletin(ui.skuBulletin)
         }
 
+        ui.disclaimerBar.onTouchUpInside.subscribe(with: self) { [unowned self] in
+            showDisclaimerIfNeeded()
+        }
+
         model.onChangeState.subscribePast(with: self) { [unowned self] state in
             ui.mode = state
         }
@@ -164,6 +168,13 @@ private extension AiutaTryOnViewController {
         } else {
             openUrl(link, anchor: ui.poweredBy, inApp: true)
         }
+    }
+
+    func showDisclaimerIfNeeded() {
+        guard let text = L[subscription.fitDisclaimer?.text], !text.isEmpty else { return }
+        showBulletin(AiutaFitDisclaimerBulletin { it, _ in
+            it.label.text = text
+        })
     }
 }
 

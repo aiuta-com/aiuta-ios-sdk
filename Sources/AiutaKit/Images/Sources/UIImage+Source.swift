@@ -16,9 +16,10 @@ import UIKit
 
 @_spi(Aiuta) extension UIImage: ImageSource {
     public var knownRemoteId: String? { nil }
+    public var transitionId: String { uuid }
 
-    public func fetcher(for quality: ImageQuality) -> ImageFetcher {
-        Downsampler(self, quality: quality)
+    public func fetcher(for quality: ImageQuality, breadcrumbs: Breadcrumbs) -> ImageFetcher {
+        Downsampler(self, quality: quality, breadcrumbs: breadcrumbs)
     }
 }
 

@@ -15,6 +15,10 @@
 import Foundation
 
 struct SdkRussianLanguage: SdkLanguage {
+    subscript(_ variants: Aiuta.StringVariants?) -> String? {
+        variants?.ru
+    }
+    
     // General
     let tryOn = "Примерить" // Try on
     let share = "Поделиться" // Share
