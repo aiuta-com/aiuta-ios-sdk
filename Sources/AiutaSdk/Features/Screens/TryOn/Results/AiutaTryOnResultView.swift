@@ -128,7 +128,9 @@ final class AiutaTryOnResultView: Scroll {
         }
 
         heroic.didCompleteTransition.subscribe(with: self) { [unowned self] in
-            hasNavigation = true
+            delay(.sixthOfSecond) { [self] in
+                hasNavigation = true
+            }
         }
     }
 

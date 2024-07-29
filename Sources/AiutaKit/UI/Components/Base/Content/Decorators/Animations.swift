@@ -13,8 +13,10 @@
 // limitations under the License.
 
 import UIKit
+import Resolver
 
 @_spi(Aiuta) public final class Animations {
+    @Injected private var heroic: Heroic
     private let view: UIView
 
     init(target: UIView) {
@@ -41,7 +43,7 @@ import UIKit
     }
 
     public func animate(time duration: AsyncDelayTime = .quarterOfSecond, curve: UIView.AnimationOptions = .curveEaseInOut, changes: @escaping AsyncCallback, complete completion: AsyncCallback? = nil) {
-        if duration == .instant {
+        if duration == .instant || heroic.isTransitioning {
             changes()
             completion?()
             return
@@ -60,6 +62,10 @@ import UIKit
     }
 
     public func transition(_ options: UIView.AnimationOptions, duration: AsyncDelayTime = .oneSecond, complete completion: AsyncCallback? = nil) {
+        guard !heroic.isTransitioning else {
+            completion?()
+            return
+        }
         view.isUserInteractionEnabled = false
         UIView.transition(with: view, duration: duration.seconds, options: [options, .allowUserInteraction], animations: nil) { [weak view] _ in
             view?.isUserInteractionEnabled = true

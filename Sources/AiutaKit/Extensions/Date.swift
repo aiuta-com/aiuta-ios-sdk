@@ -14,12 +14,6 @@
 
 import Foundation
 
-@_spi(Aiuta) public extension DateFormatter {
-    func string(from timestamp: TimeInterval) -> String {
-        string(from: Date(timeIntervalSince1970: timestamp))
-    }
-}
-
 @_spi(Aiuta) public extension TimeInterval {
     static var now: TimeInterval { Date().timeIntervalSince1970 }
 

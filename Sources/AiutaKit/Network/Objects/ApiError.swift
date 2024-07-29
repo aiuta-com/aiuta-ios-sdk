@@ -16,23 +16,71 @@ import Alamofire
 import Foundation
 
 @available(iOS 13.0.0, *)
-@_spi(Aiuta) public enum ApiError: Error, LocalizedError {
-    case afError(AFError?)
-    case statusCode(Int, String?)
-    case failed(String?)
+@_spi(Aiuta) public enum ApiError: Error {
+    case notModified
 
+    case badRequest(String?)
+    case unauthorized(String?)
+    case paymentRequired(String?)
+    case notFound(String?)
+    case validationError(String?)
+    case highLoad(String?)
+
+    case failed(String?)
+    case alamofireError(Error)
+    case sessionError(String, Error?)
+}
+
+@available(iOS 13.0.0, *) extension ApiError {
+    init(_ statusCode: Int, with info: String?) {
+        switch statusCode {
+            case 304: self = .notModified
+            case 400: self = .badRequest(info)
+            case 401: self = .unauthorized(info)
+            case 402: self = .paymentRequired(info)
+            case 404: self = .notFound(info)
+            case 422: self = .validationError(info)
+            case 429: self = .highLoad(info)
+            default: self = .failed(info)
+        }
+    }
+
+    init(_ afError: AFError?) {
+        guard let afError else {
+            self = .failed(nil)
+            return
+        }
+
+        switch afError {
+            case let .sessionTaskFailed(error):
+                self = .sessionError(error.localizedDescription, error)
+            default: self = .alamofireError(afError)
+        }
+    }
+}
+
+@available(iOS 13.0.0, *) extension ApiError {
+    struct Info: Codable {
+        private let detail: String?
+
+        var error: String? { detail }
+    }
+}
+
+@available(iOS 13.0.0, *) extension ApiError: LocalizedError {
     public var errorDescription: String? {
         switch self {
-            case let .afError(afError):
-                if let afError { return afError.errorDescription }
-                else { return "Unknown error" }
-            case let .statusCode(code, rawResponse):
-                if let rawResponse { return "\(code): \(rawResponse)" }
-                else { return "Response code \(code)" }
-            case let .failed(description):
-                let reason: String
-                if let description { reason = "\(description)\n" } else { reason = "" }
-                return "\(reason)Please check your internet\nconnection or try again later."
+            case .notModified: return nil
+            case let .badRequest(info): return info ?? "Bad request"
+            case let .unauthorized(info): return info ?? "Please sign in"
+            case let .paymentRequired(info): return info ?? "Please subscribe"
+            case let .notFound(info): return info ?? "Not found"
+            case let .validationError(info): return info ?? "Incorrect request"
+            case let .highLoad(info): return info ?? "High load.\nPlease try again later."
+            case let .failed(info): return info ?? "Unknown error"
+            case let .alamofireError(afError): return afError.localizedDescription
+            case let .sessionError(info, _):
+                return "\(info)\nPlease check your internet\nconnection or try again later."
         }
     }
 }

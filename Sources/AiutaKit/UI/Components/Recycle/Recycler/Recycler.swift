@@ -21,7 +21,8 @@ import UIKit
 
     public var useSampler: Bool = false
     public var canInvalidateLayout: Bool = true
-    public var extendedRenderingHeightMultiplyer: CGFloat = 2
+    public var extendedRenderingHeight: CGFloat = 300
+    public var partialRenderingHeight: CGFloat = 100
     public var contentInsets: UIEdgeInsets = .zero
     public var contentSpace: CGSize = .zero
     public var contentFraction: SizeFractions = .init(width: .fraction(1), height: .widthMultiplyer(1)) {
@@ -34,12 +35,32 @@ import UIKit
         }
     }
 
+    public var hasLoadingIndicator = false {
+        didSet {
+            guard oldValue != hasLoadingIndicator else { return }
+            if hasLoadingIndicator { loadingIndicator = LoadingIndicator() }
+            else { loadingIndicator = nil }
+        }
+    }
+
+    private var loadingIndicator: LoadingIndicator? {
+        didSet {
+            oldValue?.removeFromParent()
+            if let loadingIndicator {
+                loadingIndicator.isVisible = data?.canUpdate ?? false
+                addContent(loadingIndicator)
+            }
+        }
+    }
+
     public var data: DataProvider<RecycleDataType>? {
         didSet {
             guard oldValue !== data else { return }
             oldValue?.onUpdate.cancelSubscription(for: self)
+            loadingIndicator?.isVisible = data?.canUpdate ?? false
             if canInvalidateLayout {
                 data?.onUpdate.subscribe(with: self, callback: { [unowned self] in
+                    loadingIndicator?.isVisible = data?.canUpdate ?? false
                     invalidateLayout()
                 })
             }
@@ -60,7 +81,9 @@ import UIKit
             }
         }
     }
-    
+
+    public var placeholderItems: Int = 0
+
     public var activeCells: [RecycleViewType] {
         items.filter { $0.isUsed }
     }
@@ -73,7 +96,30 @@ import UIKit
     private let sampler = RecycleViewType()
     private var oldFirstItem: RecycleDataType?
     private var calculatedWidth: CGFloat = 0
-    private weak var parentScroll: VScroll?
+    private var lastRenderPartial = Int.min
+
+    private weak var parentScroll: VScroll? {
+        didSet {
+            guard oldValue !== parentScroll else { return }
+            oldValue?.didChangeOffset.cancelSubscription(for: self)
+            parentScroll?.didChangeOffset.subscribePast(with: self) { [unowned self] offset, _ in
+                guard shouldLayout(offset) else {
+                    updateItemsInFocus()
+                    return
+                }
+                updateLayoutInternal()
+            }
+        }
+    }
+
+    public func scroll(to index: Int, animated: Bool = true) {
+        rects.batches.forEach { batch in
+            batch.forEachRect { i, rect in
+                guard i == index else { return }
+                parentScroll?.scroll(to: rect.minY - (layout.screen.height - rect.height) / 2, animated: animated)
+            }
+        }
+    }
 
     override open func attached() {
         sampler.appearance.make { make in
@@ -81,19 +127,26 @@ import UIKit
             make.isVisible = false
         }
         parentScroll = firstParentOfType()
-        parentScroll?.didChangeOffset.subscribePast(with: self, callback: { [unowned self] _, _ in
-            updateLayoutInternal()
-            // checkForUpdate()
-        })
         prefillRecycleBuffer()
     }
 
+    private func shouldLayout(_ offset: CGFloat) -> Bool {
+        let renderPartial = getRenderPartial(offset)
+        guard renderPartial != lastRenderPartial else { return false }
+        lastRenderPartial = renderPartial
+        return true
+    }
+
+    private func getRenderPartial(_ offset: CGFloat) -> Int {
+        return Int(offset / partialRenderingHeight)
+    }
+
     override func updateLayoutInternal() {
-        guard let data else { return }
+        let itemsCount = data?.items.count ?? placeholderItems
         guard layout.boundary.width > 0 else { return }
 
-        if oldFirstItem != data.items.first || data.items.count < rects.count {
-            oldFirstItem = data.items.first
+        if oldFirstItem != data?.items.first || itemsCount < rects.count {
+            oldFirstItem = data?.items.first
             rects.removeAll()
         }
 
@@ -109,16 +162,7 @@ import UIKit
         let itemWidth = itemSize.width
         let itemHeigh = itemSize.height
         var topInColumn = [CGFloat](repeating: contentInsets.top, count: countOfItemsInRow)
-        var visibleRect = layout.visible
-        var visibleNotExtendedRect = visibleRect
-        if let insets = parentScroll?.contentInset {
-            visibleNotExtendedRect.origin.y += insets.top
-            visibleNotExtendedRect.size.height -= insets.verticalInsetsSum
-        }
-
-        if extendedRenderingHeightMultiplyer > 1, visibleRect.size > .zero {
-            visibleRect = visibleRect.fill(.init(width: visibleRect.width, height: visibleRect.height * extendedRenderingHeightMultiplyer))
-        }
+        let renderRect = layout.extendedBounds(extension: .init(width: 0, height: extendedRenderingHeight))
 
         rects.batches.suffix(2).forEach { batch in
             batch.forEachRect { index, rect in
@@ -127,11 +171,11 @@ import UIKit
             }
         }
 
-        while rects.count < data.items.count {
+        while rects.count < itemsCount {
             let index = rects.count
             let col = index.roll(countOfItemsInRow)
             if useSampler {
-                sampler.update(data.items[safe: index], at: ItemIndex(index, of: data.items.count))
+                sampler.update(data?.items[safe: index], at: ItemIndex(index, of: itemsCount))
                 sampler.layout.make { make in
                     make.width = itemWidth
                     make.height = itemHeigh
@@ -158,25 +202,22 @@ import UIKit
         items.forEach { itemView in
             itemView.isVisited = false
             let frame = itemView.layout.frame
-            itemView.isUsed = itemView.data.isSome && frame.size > .zero && frame.intersects(visibleRect)
+            itemView.isUsed = itemView.data.isSome && frame.size > .zero && frame.intersects(renderRect)
         }
 
-        firstVisible = nil
         rects.batches.forEach { batch in
-            guard batch.frame.intersects(visibleRect) else { return }
+            guard batch.frame.intersects(renderRect) else { return }
             batch.forEachRect { i, rect in
-                guard rect.intersects(visibleRect) else { return }
-                let index = ItemIndex(i, of: data.items.count)
+                guard rect.intersects(renderRect) else { return }
+
+                let index = ItemIndex(i, of: itemsCount)
                 let item = recycleItemAtIndex(i, withRect: rect)
+                let itemData = data?.items[safe: i]
+
                 item.isVisited = true
-
-                let itemData = data.items[safe: i]
-                if firstVisible.isNil, visibleNotExtendedRect.intersects(rect) {
-                    firstVisible = itemData
+                if data.isNil {
+                    item.isUsed = true
                 }
-
-                let inFocus = visibleNotExtendedRect.intersects(rect)
-                item.subcontents.forEach { $0.transitions.isReferenceActive = inFocus }
 
                 if item.layout.size != rect.size {
                     item.layout.make { $0.frame = rect }
@@ -193,12 +234,13 @@ import UIKit
                 if item.index.item != i || item.data != itemData {
                     item.index = index
                     indexedItems[index.item] = item
-                    item.update(itemData, at: ItemIndex(i, of: data.items.count))
+                    item.update(itemData, at: ItemIndex(i, of: itemsCount))
                     item.data = itemData
                 } else {
                     item.index = index
                     indexedItems[index.item] = item
                 }
+
                 onUpdateItem.fire(item)
             }
         }
@@ -206,19 +248,46 @@ import UIKit
         items.forEach { itemView in
             if !itemView.isVisited {
                 itemView.isUsed = false
+                guard itemView.data.isSome else { return }
                 itemView.update(nil, at: itemView.index)
                 itemView.data = nil
             }
         }
 
+        updateItemsInFocus()
+
         layout.make { make in
             make.width = layout.boundary.width
             let contentHeight: CGFloat = rects.batches.last?.frame.maxY ?? 0
-            make.height = contentHeight + contentInsets.bottom
+            make.height = contentHeight + contentInsets.bottom + (loadingIndicator?.layout.height ?? 0)
+        }
+
+        loadingIndicator?.layout.make { make in
+            make.bottom = 0
         }
 
         parentScroll?.updateLayoutInternal()
         checkForUpdate()
+    }
+
+    private func updateItemsInFocus() {
+        firstVisible = nil
+        var firstVisibleIndex: Int = .max
+        let focusRect = layout.visibleBounds
+
+        items.forEach { item in
+            guard item.isUsed else { return }
+
+            let isIntersects = focusRect.intersects(item.layout.frame)
+            let isContains = focusRect.contains(item.layout.frame)
+            if isIntersects, firstVisible.isNil || item.index.item < firstVisibleIndex {
+                firstVisibleIndex = item.index.item
+                firstVisible = item.data
+            }
+            item.transitions.isReferenceActive = isIntersects
+            item.subcontents.forEach { $0.transitions.isReferenceActive = isIntersects }
+            item.setFocus(isPartialVisible: isIntersects, isFullVisible: isContains)
+        }
     }
 
     public func updateItems() {
@@ -256,7 +325,6 @@ private extension Recycler {
         newItem.layout.make { $0.size = rect.size }
         items.append(newItem)
         onRegisterItem.fire(newItem)
-        // trace("Create recycling \(RecycleViewType.self) #\(items.count)")
         newItem.didInvalidate.subscribe(with: self) { [unowned self] invalidData in
             invalidate(data: invalidData)
         }
@@ -264,6 +332,7 @@ private extension Recycler {
             guard let newItem else { return }
             onTapItem.fire(newItem)
         }
+        newItem.isUsed = true
         return newItem
     }
 
@@ -278,17 +347,15 @@ private extension Recycler {
             let item = recycleItem(withRect: bufferItemRect)
             item.index = .init(i, of: 0)
             indexedItems[i] = item
-            item.isUsed = true
         }
         items.forEach { $0.isUsed = false }
-        // trace("Recycle buffer filled", availableSize, itemSize, bufferSize)
     }
 }
 
 private extension Recycler {
     func checkForUpdate() {
         guard let data, data.canUpdate else { return }
-        let visibleRect = layout.visible
+        let visibleRect = layout.visibleBounds
         guard visibleRect.height > 0 else { return }
         let willRequestForUpdate = visibleRect.maxY >= layout.bounds.maxY - layout.screen.height
         if willRequestForUpdate { data.requestUpdate() }
@@ -299,6 +366,40 @@ private extension Recycler {
         // guard let index = data?.items.firstIndex(where: { $0 == invalidData }) else { return }
         rects.removeAll() // TODO: rects.removeLast(rects.count - index)
         parentScroll?.updateLayoutRecursive()
+    }
+}
+
+private extension Recycler {
+    final class LoadingIndicator: Plane {
+        let spinner = Spinner { it, _ in
+            it.isSpinning = false
+        }
+
+        var isVisible = false {
+            didSet {
+                guard oldValue != isVisible else { return }
+                spinner.isSpinning = isVisible
+                guard !isVisible else { return }
+                animations.animate { [self] in
+                    parentScroll?.update()
+                }
+            }
+        }
+
+        override func updateLayout() {
+            layout.make { make in
+                make.leftRight = 0
+                make.height = isVisible ? 80 : 0
+            }
+
+            spinner.layout.make { make in
+                make.center = .zero
+            }
+        }
+
+        var parentScroll: VScroll? {
+            firstParentOfType()
+        }
     }
 }
 

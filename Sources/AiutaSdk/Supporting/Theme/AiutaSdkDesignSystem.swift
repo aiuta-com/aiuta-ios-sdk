@@ -50,4 +50,5 @@ extension DesignSystemColors {
     var gray: UIColor { 0xB2B2B2FF.uiColor }
     var lightGray: UIColor { 0xEEEEEEFF.uiColor }
     var red: UIColor { 0xFB0000FF.uiColor }
+    var neutral: UIColor { 0xF2F2F7FF.uiColor }
 }

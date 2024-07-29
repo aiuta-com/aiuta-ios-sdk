@@ -21,7 +21,22 @@ extension Aiuta {
             let urlIos: String?
         }
 
+        struct Feedback: Codable {
+            let title: StringVariants?
+            let mainOptions: [StringVariants]?
+            let plaintextOption: StringVariants?
+            let plaintextTitle: StringVariants?
+            let gratitudeMessage: StringVariants?
+        }
+
+        struct Disclaimer: Codable {
+            let title: StringVariants?
+            let text: StringVariants?
+        }
+
         let poweredBySticker: PoweredBySticker?
+        let feedback: Feedback?
+        let sizeAndFitDisclaimer: Disclaimer?
     }
 }
 

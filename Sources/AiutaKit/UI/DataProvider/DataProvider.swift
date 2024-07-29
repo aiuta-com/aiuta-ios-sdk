@@ -49,7 +49,7 @@ import Foundation
     public init(_ items: [DataType]) {
         self.items = items
     }
-    
+
     public convenience init?(_ items: [DataType]?) {
         guard let items else { return nil }
         self.init(items)
@@ -61,6 +61,16 @@ import Foundation
     }
 
     open func implementUpdate() {}
+
+    public subscript(index: Int?) -> DataType? {
+        guard let index, items.indices.contains(index) else { return nil }
+        return items[index]
+    }
+
+    public subscript(index: ItemIndex?) -> DataType? {
+        guard let index else { return nil }
+        return self[index.item]
+    }
 
     public func remove(at index: ItemIndex) {
         items.remove(at: index.item)

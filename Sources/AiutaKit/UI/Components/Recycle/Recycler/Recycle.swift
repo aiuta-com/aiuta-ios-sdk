@@ -20,8 +20,9 @@ import UIKit
     internal var isVisited = false
     internal var isUsed = false {
         didSet {
-            view.isVisible = isUsed
+            guard view.isUserInteractionEnabled != isUsed else { return }
             view.isUserInteractionEnabled = isUsed
+            view.isVisible = isUsed
         }
     }
 
@@ -29,6 +30,8 @@ import UIKit
     public internal(set) var index: ItemIndex = .init(-1, of: 0)
 
     open func update(_ data: RecycleDataType?, at index: ItemIndex) {}
+
+    open func setFocus(isPartialVisible: Bool, isFullVisible: Bool) {}
 
     public func invalidate() {
         guard let data else { return }

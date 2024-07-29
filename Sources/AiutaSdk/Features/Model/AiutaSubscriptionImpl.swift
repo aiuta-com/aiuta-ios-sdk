@@ -28,23 +28,36 @@ final class AiutaSubscriptionImpl: AiutaSubscription {
         details?.poweredBySticker?.urlIos
     }
 
+    var shouldDisplayFitDisclaimer: Bool {
+        L[fitDisclaimer?.title].isSomeAndNotEmpty
+    }
+
+    var fitDisclaimer: Aiuta.SubscriptionDetails.Disclaimer? {
+        details?.sizeAndFitDisclaimer
+    }
+
     @defaults(key: "subscriptionDetails", defaultValue: nil)
     var details: Aiuta.SubscriptionDetails?
     @injected private var api: ApiService
+
+    @defaults(key: "subscriptionVersion", defaultValue: 1)
+    private var detailsVersion: Int
+    private var targetVersion = 2
 
     func load() {
         Task { await load() }
     }
 
     func load() async {
-        if details.isNil { $details.etag = nil }
+        if details.isNil || detailsVersion < targetVersion { $details.etag = nil }
         let (config, headers): (Aiuta.SubscriptionDetails, HTTPHeaders?)
         do {
             (config, headers) = try await api.request(Aiuta.SubscriptionDetails.Get(etag: $details.etag))
             $details.etag = headers?.etag
+            detailsVersion = targetVersion
             details = config
             trace(details)
-        } catch ApiError.statusCode(304, _) {
+        } catch ApiError.notModified {
             trace(details)
         } catch {
             await asleep(.severalSeconds)

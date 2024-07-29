@@ -21,23 +21,23 @@ import UIKit
     private let urlFetcher: UrlFetcher
     private var downsampler: Downsampler?
 
-    public init(_ string: String, quality: ImageQuality, isRounded: Bool = false) {
-        urlFetcher = UrlFetcher(string, quality: .hiResImage, isRounded: isRounded)
+    public init(_ string: String, quality: ImageQuality, isRounded: Bool = false, breadcrumbs: Breadcrumbs) {
+        urlFetcher = UrlFetcher(string, quality: .hiResImage, isRounded: isRounded, breadcrumbs: breadcrumbs)
         super.init()
-        load(quality)
+        load(quality, breadcrumbs: breadcrumbs)
     }
 
-    public init(_ url: URL, quality: ImageQuality, isRounded: Bool = false) {
-        urlFetcher = UrlFetcher(url, quality: .hiResImage, isRounded: isRounded)
+    public init(_ url: URL, quality: ImageQuality, isRounded: Bool = false, breadcrumbs: Breadcrumbs) {
+        urlFetcher = UrlFetcher(url, quality: .hiResImage, isRounded: isRounded, breadcrumbs: breadcrumbs)
         super.init()
-        load(quality)
+        load(quality, breadcrumbs: breadcrumbs)
     }
 }
 
 private extension ThumbFetcher {
-    func load(_ quality: ImageQuality) {
+    func load(_ quality: ImageQuality, breadcrumbs: Breadcrumbs) {
         switch quality {
-            case .thumbnails: waitOriginalAndDownsample()
+            case .thumbnails: waitOriginalAndDownsample(breadcrumbs: breadcrumbs)
             case .hiResImage: forwardOriginal()
         }
     }
@@ -48,13 +48,13 @@ private extension ThumbFetcher {
         }
     }
 
-    private func waitOriginalAndDownsample() {
+    private func waitOriginalAndDownsample(breadcrumbs: Breadcrumbs) {
         urlFetcher.onImage.subscribePast(with: self) { [unowned self] original in
             guard let original else {
                 onImage.fire(nil)
                 return
             }
-            downsampler = Downsampler(original, quality: .thumbnails)
+            downsampler = Downsampler(original, quality: .thumbnails, breadcrumbs: breadcrumbs)
             downsampler?.onImage.subscribePastOnce(with: self) { [unowned self] downsampledImage in
                 let resultImage = downsampledImage ?? original
                 onImage.fire(resultImage)

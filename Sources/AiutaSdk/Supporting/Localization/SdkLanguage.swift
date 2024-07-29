@@ -15,6 +15,8 @@
 import Foundation
 
 protocol SdkLanguage {
+    subscript(_ variants: Aiuta.StringVariants?) -> String? { get }
+
     // General
     var tryOn: String { get }
     var share: String { get }
@@ -27,7 +29,7 @@ protocol SdkLanguage {
     var aiuta: String { get }
     var settings: String { get }
     var cancel: String { get }
-    
+
     // App bar
     var history: String { get }
     var select: String { get }
@@ -45,7 +47,7 @@ protocol SdkLanguage {
     var imageSelectorChangeButton: String { get }
     var imageSelectorPhotos: Pluralize { get }
     var imageSelectorCameraPermission: String { get }
-    
+
     // Generation
     var generatingUpload: String { get }
     var generatingScanBody: String { get }

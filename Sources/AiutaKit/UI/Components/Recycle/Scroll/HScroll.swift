@@ -66,7 +66,7 @@ import UIKit
     }
 
     public required init() {
-        super.init(view: UIScrollView())
+        super.init(view: IndirectScrollView())
         applyDefaultConfiguration()
     }
 
@@ -83,8 +83,14 @@ import UIKit
         scroll(to: focus.layout.left + focus.layout.width / 2 - layout.width / 2, animated: animated)
     }
 
-    public func scroll(to offset: CGFloat, animated: Bool = true) {
-        view.setContentOffset(.init(x: clamp(offset, min: view.horizontalOffsetForLeft, max: view.horizontalOffsetForRight), y: 0), animated: animated)
+    public func scroll(to offset: CGFloat, animated: Bool = true, callback: (() -> Void)? = nil) {
+        let tagetOffset = clamp(offset, min: view.horizontalOffsetForLeft, max: view.horizontalOffsetForRight)
+        guard view.contentOffset.x != tagetOffset else {
+            callback?()
+            return
+        }
+        if let callback { proxy.didEndScrollingAnimation.subscribeOnce(with: self) { callback() } }
+        view.setContentOffset(.init(x: tagetOffset, y: 0), animated: animated)
     }
 
     public func update() {
@@ -133,6 +139,7 @@ private final class ScrollDelegate: NSObject, UIScrollViewDelegate {
     let didFinishScroll = Signal<Void>()
     let willBeginDragging = Signal<Void>()
     let didEndDragging = Signal<(velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>)>()
+    let didEndScrollingAnimation = Signal<Void>()
 
     private var prevOffset: CGFloat = 0
 
@@ -161,6 +168,10 @@ private final class ScrollDelegate: NSObject, UIScrollViewDelegate {
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         didFinishScroll.fire()
     }
+
+    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+        didEndScrollingAnimation.fire()
+    }
 }
 
 @_spi(Aiuta) public extension UIScrollView {
@@ -182,5 +193,22 @@ private final class ScrollDelegate: NSObject, UIScrollViewDelegate {
         let rightInset = contentInset.right
         let scrollViewRightOffset = scrollContentSizeWidth + rightInset - scrollViewWidth
         return max(scrollViewRightOffset, -contentInset.left)
+    }
+}
+
+public final class IndirectScrollView: UIScrollView, UIGestureRecognizerDelegate {
+    override public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        true
+    }
+
+    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        guard let pan = otherGestureRecognizer as? UIPanGestureRecognizer else { return false }
+        let direction = pan.translation(in: nil)
+        guard abs(direction.y) < abs(direction.x) else { return false }
+        if (direction.x > 0 && isAtLeft) || (direction.x < 0 && isAtRight) {
+            gestureRecognizer.cancel()
+            return true
+        }
+        return false
     }
 }

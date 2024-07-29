@@ -16,128 +16,181 @@ import Alamofire
 import Foundation
 
 @available(iOS 13.0.0, *)
-@_spi(Aiuta) public final class RestService {
+@_spi(Aiuta) public actor RestService {
     private let provider: ApiProvider
-
+    private let debugger: ApiDebugger?
     private let session = Session.default
-    private var responseDecoder = JSONDecoder()
-    private var parameterEncoder = JSONParameterEncoder()
+    private let responseDecoder = JSONDecoder()
+    private let parameterEncoder = JSONParameterEncoder()
+    private let requestModifier: Session.RequestModifier
 
-    public init(_ provider: ApiProvider) {
+    public init(_ provider: ApiProvider, debugger: ApiDebugger? = nil) {
         self.provider = provider
+        self.debugger = debugger
 
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
-        formatter.calendar = Calendar(identifier: .iso8601)
-        formatter.timeZone = TimeZone(secondsFromGMT: 0)
-        formatter.locale = Locale(identifier: "en_US_POSIX")
+        let dateFormatter = DateFormatter { it in
+            it.calendar = Calendar(identifier: .iso8601)
+            it.timeZone = TimeZone(secondsFromGMT: 0)
+            it.locale = Locale(identifier: .posix)
+        }
 
-        responseDecoder.dateDecodingStrategy = .formatted(formatter)
+        let supportedDateFormats = [
+            "yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX",
+            "yyyy-MM-dd'T'HH:mm:ssXXXXX",
+            "yyyy-MM-dd",
+        ]
+
+        responseDecoder.dateDecodingStrategy = .custom { decoder -> Date in
+            let container = try decoder.singleValueContainer()
+            let dateStr = try container.decode(String.self)
+
+            for dateFormat in supportedDateFormats {
+                dateFormatter.dateFormat = dateFormat
+                if let date = dateFormatter.date(from: dateStr) {
+                    return date
+                }
+            }
+
+            throw ApiError.failed("Unsupported date format")
+        }
+
         responseDecoder.keyDecodingStrategy = .convertFromSnakeCase
         parameterEncoder.encoder.keyEncodingStrategy = .convertToSnakeCase
+
+        requestModifier = { urlRequest in
+            urlRequest.cachePolicy = .reloadIgnoringLocalCacheData
+            urlRequest.timeoutInterval = 10
+        }
     }
 }
 
 @available(iOS 13.0.0, *)
 @_spi(Aiuta) extension RestService: ApiService {
-    public func request<Request: Encodable & ApiRequest, Response: Decodable>(_ request: Request) async throws -> (Response, HTTPHeaders?) {
-        let url = try await buildUrl(request)
-        let shortUrl = try await shortenUrl(url)
-        let headers = try await buildHeaders(request)
-        let timeOut: Session.RequestModifier = { urlRequest in
-            urlRequest.timeoutInterval = 10
-            urlRequest.cachePolicy = .reloadIgnoringLocalCacheData
-        }
+    @MainActor public func request<Request: ApiRequest & Encodable, Response: Decodable>(_ request: Request,
+                                                                                         debugger debugOperation: ApiDebuggerOperation?,
+                                                                                         breadcrumbs: Breadcrumbs?) async throws -> ApiResponse<Response> {
+        do {
+            let url = try await buildUrl(request)
+            let headers = try await buildHeaders(request)
 
-        return try await withCheckedThrowingContinuation { [self] continuation in
-            let dataRequest: DataRequest
-            var plainResponse: String?
-            switch request.type {
-                case .plain:
-                    trace(i: "▸", request.method.rawValue, url)
-                    dataRequest = session.request(url,
-                                                  method: request.method,
-                                                  headers: headers,
-                                                  requestModifier: timeOut)
-                case .json:
-                    trace(i: "▷", request.method.rawValue, url, request)
-                    dataRequest = session.request(url,
-                                                  method: request.method,
-                                                  parameters: request.hasBody ? request : nil,
-                                                  encoder: parameterEncoder,
-                                                  headers: headers,
-                                                  requestModifier: timeOut)
-                case .upload:
-                    trace(i: "▸", request.method.rawValue, url)
-                    dataRequest = session.upload(multipartFormData: { multipartFormData in
-                                                     request.multipartFormData(multipartFormData)
-                                                 },
-                                                 to: url,
-                                                 method: request.method,
-                                                 headers: headers,
-                                                 requestModifier: timeOut)
+            var shortUrl: String?
+            var requestBody: String?
+            var requestDebugger: ApiDebuggerRequest?
+            let isDebug = debugger?.isEnabled == true
+
+            if isDebug {
+                shortUrl = try await shortenUrl(url)
+                if request.hasBody { requestBody = String(decoding: try parameterEncoder.encoder.encode(request), as: UTF8.self) }
+                requestDebugger = await buildDebugger(request, body: requestBody, shortUrl: shortUrl, debugger: debugOperation)
             }
 
-            dataRequest.responseString { [self] response in
-                let code = response.response?.statusCode
-                plainResponse = response.value
+            return try await withCheckedThrowingContinuation { [self] continuation in
+                let dataRequest: DataRequest
 
-                if code == 304 {
-                    trace(i: "◁", "Response",
-                          "\n\n ▷", request.method.rawValue, shortUrl, request.hasBody ? request : "",
-                          "\n ◁", code,
-                          "\n")
-                } else {
-                    switch request.type {
-                        case .plain:
-                            trace(i: "◂", "PLAIN Response",
-                                  "\n\n ▸", request.method.rawValue, shortUrl,
-                                  "\n ◂", code, shortenString(response.value) ?? response.error,
-                                  "\n")
+                switch request.type {
+                    case .plain:
+                        if isDebug { trace(i: "▸", request.method.rawValue, shortUrl) }
+                        dataRequest = session.request(url, method: request.method, headers: headers, requestModifier: requestModifier)
+                    case .json:
+                        if isDebug { trace(i: "▷", request.method.rawValue, shortUrl, requestBody) }
+                        dataRequest = session.request(url, method: request.method,
+                                                      parameters: request.hasBody ? request : nil,
+                                                      encoder: parameterEncoder, headers: headers, requestModifier: requestModifier)
+                    case .upload:
+                        if isDebug { trace(i: "▸", request.method.rawValue, shortUrl) }
+                        dataRequest = session.upload(multipartFormData: { request.multipartFormData($0) },
+                                                     to: url, method: request.method, headers: headers, requestModifier: requestModifier)
+                }
 
-                        case .json:
-                            trace(i: "◁", "JSON Response",
-                                  "\n\n ▷", request.method.rawValue, shortUrl, request.hasBody ? request : "",
-                                  "\n ◁", code, shortenString(response.value) ?? response.error,
-                                  "\n")
-
-                        case .upload:
-                            trace(i: "◂", "UPLOAD Response",
-                                  "\n\n ▸", request.method.rawValue, shortUrl,
-                                  "\n ◂", code, shortenString(response.value) ?? response.error,
-                                  "\n")
+                dataRequest.responseString { [self] response in
+                    let statusCode = response.response?.statusCode
+                    let plainResponse = response.value
+                    var plainError: String?
+                    if isDebug, let error = response.error {
+                        plainError = String(describing: error)
                     }
-                }
 
-            }.responseDecodable(of: Response.self, decoder: responseDecoder) { response in
-                let statusCode = response.response?.statusCode ?? 200
+                    requestDebugger?.responseCode = statusCode
 
-                if let error = response.error {
-                    switch error {
-                        case let .sessionTaskFailed(error: sessionError):
-                            continuation.resume(throwing: ApiError.failed(sessionError.localizedDescription))
-                            return
-                        default: break
+                    if statusCode == 304 {
+                        if isDebug { trace(i: "◁", "Response",
+                                           "\n\n ▷", request.method.rawValue, shortUrl, requestBody,
+                                           "\n ◁", statusCode,
+                                           "\n") }
+
+                        requestDebugger?.responseBody = "<not modified>"
+                        continuation.resume(throwing: ApiError.notModified)
+                        return
                     }
-                }
 
-                guard statusCode == 200 else {
-                    continuation.resume(throwing: ApiError.statusCode(statusCode, plainResponse))
-                    return
-                }
+                    requestDebugger?.responseBody = plainResponse
+                    requestDebugger?.responseError = plainError
 
-                if let result = response.value {
-                    continuation.resume(returning: (result, response.response?.headers))
-                } else {
-                    continuation.resume(throwing: ApiError.afError(response.error))
+                    if isDebug {
+                        switch request.type {
+                            case .plain:
+                                trace(i: "◂", "PLAIN Response",
+                                      "\n\n ▸", request.method.rawValue, shortUrl,
+                                      "\n ◂", statusCode, shortenString(response.value) ?? response.error,
+                                      "\n")
+
+                            case .json:
+                                trace(i: "◁", "JSON Response",
+                                      "\n\n ▷", request.method.rawValue, shortUrl, requestBody,
+                                      "\n\n ◁", statusCode, shortenString(response.value) ?? response.error,
+                                      "\n")
+
+                            case .upload:
+                                trace(i: "◂", "UPLOAD Response",
+                                      "\n\n ▸", request.method.rawValue, shortUrl,
+                                      "\n ◂", statusCode, shortenString(response.value) ?? response.error,
+                                      "\n")
+                        }
+                    }
+
+                    guard let statusCode else {
+                        requestDebugger?.responseError = "<no response>"
+                        continuation.resume(throwing: ApiError(response.error))
+                        return
+                    }
+
+                    guard statusCode == 200 else {
+                        dataRequest.responseDecodable(of: ApiError.Info.self, decoder: responseDecoder) { [self] response in
+                            requestDebugger?.responseError = response.value?.error ?? plainError
+
+                            continuation.resume(throwing: ApiError(
+                                statusCode, with: response.value?.error ?? shortenString(plainResponse, maxLength: 200))
+                            )
+                        }
+
+                        return
+                    }
+
+                    dataRequest.responseDecodable(of: Response.self, decoder: responseDecoder) { response in
+                        if isDebug, let error = response.error {
+                            requestDebugger?.responseError = plainError ?? String(describing: error)
+                        }
+
+                        if let result = response.value {
+                            continuation.resume(returning: (response: result, headers: response.response?.headers))
+                        } else {
+                            continuation.resume(throwing: ApiError(response.error))
+                        }
+                    }
                 }
             }
+        } catch ApiError.notModified {
+            throw ApiError.notModified
+        } catch {
+            let source = String(reflecting: type(of: request))
+            (breadcrumbs ?? Breadcrumbs(on: source)).fire(error, label: error.localizedDescription, on: source)
+            throw error
         }
     }
 }
 
 @available(iOS 13.0.0, *)
-private extension RestService {
+@MainActor private extension RestService {
     func buildUrl(_ request: ApiRequest) async throws -> String {
         let urlString = "\(try await provider.baseUrl)/\(request.urlPath)"
         guard var urlComponents = URLComponents(string: urlString) else {
@@ -154,6 +207,21 @@ private extension RestService {
         var headers = request.headers
         try await provider.authorize(headers: &headers)
         return headers
+    }
+
+    func buildDebugger(_ request: ApiRequest, body: String?, shortUrl: String?,
+                       debugger debugOperation: ApiDebuggerOperation?) async -> ApiDebuggerRequest? {
+        var debugOperation = debugOperation
+        if debugOperation.isNil {
+            debugOperation = await debugger?.startOperation(id: request.idString,
+                                                            title: request.title,
+                                                            subtitle: request.subtitle)
+        }
+        return await debugOperation?.addRequest(
+            method: request.method.rawValue,
+            url: shortUrl,
+            body: body
+        )
     }
 
     func shortenUrl(_ urlString: String) async throws -> String {

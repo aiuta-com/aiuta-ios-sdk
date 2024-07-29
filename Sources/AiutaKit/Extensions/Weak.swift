@@ -49,32 +49,35 @@ import Foundation
     private var strongValue: T?
 
     private var expireAt: TimeInterval
-    private let expireAfter: AsyncDelayTime
+    private var expireAfter: AsyncDelayTime
 
     public var value: T? {
         strongValue ?? weakValue
     }
 
-    public init(_ value: T, expireAfter: AsyncDelayTime) {
+    public init(_ value: T, _ expireAfter: AsyncDelayTime) {
         weakValue = value
         strongValue = value
         self.expireAfter = expireAfter
         expireAt = Date().timeIntervalSince1970 + expireAfter.seconds
     }
 
-    public func prolong() {
+    public func prolong(_ expireAfter: AsyncDelayTime) {
+        self.expireAfter = expireAfter
         expireAt = Date().timeIntervalSince1970 + expireAfter.seconds
     }
 
     public func expire(prolongUsed: Bool) -> Bool {
-        if expireAt <= Date().timeIntervalSince1970 {
-            strongValue = nil
-        }
+        guard expireAt <= Date().timeIntervalSince1970 else { return false }
+        return drop(prolongUsed: prolongUsed)
+    }
 
+    public func drop(prolongUsed: Bool) -> Bool {
+        strongValue = nil
         if let weakValue {
             strongValue = weakValue
             if prolongUsed {
-                prolong()
+                prolong(expireAfter)
             }
             return false
         }

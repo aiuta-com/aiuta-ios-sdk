@@ -19,24 +19,25 @@ import UIKit
 @_spi(Aiuta) public final class Downsampler: BaseFetcher {
     private let imageCache: ImageCache = KingfisherManager.shared.cache
 
-    public init(_ image: UIImage, quality: ImageQuality) {
+    public init(_ image: UIImage, quality: ImageQuality, breadcrumbs: Breadcrumbs) {
         super.init()
         loadFromCache(image, quality: quality)
     }
 
-    public init(_ data: Data, quality: ImageQuality) {
+    public init(_ data: Data, quality: ImageQuality, breadcrumbs: Breadcrumbs) {
         super.init()
         dispatch(quality == .thumbnails ? .user : .medium) { [self] in
-            let processor = processor(for: quality)
-            let downsample = processor.process(item: .data(data), options: .init(nil))
-            dispatch(.main) { [self] in
-                onImage.fire(downsample)
+            let downsampledImage = downsample(data, quality)
+            dispatch(.mainAsync) { [self] in
+                if let downsampledImage {
+                    onImage.fire(UIImage(cgImage: downsampledImage))
+                } else if let image = UIImage(data: data) {
+                    onImage.fire(image)
+                } else {
+                    onImage.fire(nil)
+                }
             }
         }
-    }
-
-    func processor(for quality: ImageQuality) -> DownsamplingImageProcessor {
-        DownsamplingImageProcessor(size: .init(square: imageTraits.largestSize(for: quality)))
     }
 }
 
@@ -55,13 +56,29 @@ private extension Downsampler {
 
     func downsample(_ image: UIImage, quality: ImageQuality) {
         dispatch(quality == .thumbnails ? .user : .medium) { [self] in
-            let processor = processor(for: quality)
-            let downsample = processor.process(item: .image(image), options: .init(nil))
-            dispatch(.main) { [self] in
-                imageCache.store(downsample ?? image, forKey: image.cacheKey(for: quality), toDisk: false)
-                onImage.fire(downsample ?? image)
+            let downsampledImage = downsample(image.pngData(), quality)
+            dispatch(.mainAsync) { [self] in
+                let result: UIImage
+                if let downsampledImage { result = UIImage(cgImage: downsampledImage) } else { result = image }
+                imageCache.store(result, forKey: image.cacheKey(for: quality), toDisk: false)
+                onImage.fire(result)
             }
         }
+    }
+
+    func downsample(_ data: Data?, _ quality: ImageQuality) -> CGImage? {
+        let imageSourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
+        guard let data, let imageSource = CGImageSourceCreateWithData(data as CFData, imageSourceOptions) else {
+            return nil
+        }
+
+        let size = imageTraits.largestSize(for: quality)
+        let downsampledOptions = [kCGImageSourceCreateThumbnailFromImageAlways: true,
+                                  kCGImageSourceShouldCacheImmediately: true,
+                                  kCGImageSourceCreateThumbnailWithTransform: true,
+                                  kCGImageSourceThumbnailMaxPixelSize: size] as CFDictionary
+
+        return CGImageSourceCreateThumbnailAtIndex(imageSource, 0, downsampledOptions)
     }
 }
 

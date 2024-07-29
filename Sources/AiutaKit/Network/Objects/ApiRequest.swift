@@ -21,14 +21,16 @@ import Foundation
 
 @_spi(Aiuta) public protocol ApiRequest {
     var urlPath: String { get }
+    var method: HTTPMethod { get }
     var type: ApiRequestType { get }
+
+    var query: ApiQuery? { get }
+    var headers: HTTPHeaders { get }
+    var requireAuth: Bool { get }
+    var hasBody: Bool { get }
+
     var title: String { get }
     var subtitle: String? { get }
-    var query: ApiQuery? { get }
-    var method: HTTPMethod { get }
-    var requireAuth: Bool { get }
-    var headers: HTTPHeaders { get }
-    var hasBody: Bool { get }
 
     func multipartFormData(_ data: MultipartFormData)
 }
@@ -36,18 +38,20 @@ import Foundation
 @_spi(Aiuta) public extension ApiRequest {
     var method: HTTPMethod { .get }
     var type: ApiRequestType { .json }
-    var requireAuth: Bool { true }
+
     var query: ApiQuery? { nil }
     var headers: HTTPHeaders { [] }
-    var title: String { "\(method.rawValue.lowercased().firstCapitalized) \(urlPath.replacingOccurrences(of: "_", with: " "))" }
-    var subtitle: String? { nil }
-    var idString: String { "\(urlPath)-\(self)" }
+    var requireAuth: Bool { true }
     var hasBody: Bool {
         switch method {
             case .post, .put: return true
             default: return false
         }
     }
+
+    var idString: String { "\(urlPath)-\(self)" }
+    var title: String { "\(method.rawValue.lowercased().firstCapitalized) \(urlPath.replacingOccurrences(of: "_", with: " "))" }
+    var subtitle: String? { nil }
 
     func multipartFormData(_ data: MultipartFormData) {}
 }

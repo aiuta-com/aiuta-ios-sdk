@@ -40,7 +40,9 @@ final class SdkRegister {
         checkIfUsageDescriptionsProvided()
 
         let config = configuration ?? .default
-        trace(isEnabled: config.behavior.isDebugLogsEnabled)
+        let isDebug = config.behavior.isDebugLogsEnabled
+
+        trace(isEnabled: isDebug)
         setLocalization(language: config.appearance.language)
         setDefaults(apiKey: apiKey)
         scope.reset()
@@ -52,10 +54,10 @@ final class SdkRegister {
         )
 
         resolver.register { config }.scope(scope)
-        resolver.register { RestService(SdkApiProvider(apiKey: apiKey)) }.implements(ApiService.self).scope(scope)
+        resolver.register { RestService(SdkApiProvider(apiKey: apiKey), debugger: ApiDebuggerImpl(isEnabled: isDebug)) }.implements(ApiService.self).scope(scope)
         resolver.register { SdkWatermarker(config.behavior.watermark) }.implements(Watermarker.self).scope(scope)
         resolver.register { SdkAnalyticsEnvImpl() }.implements(SdkAnalyticsEnv.self).scope(scope)
-        resolver.register { AnalyticRouter(.ordinary(SdkAnalyticsTarget(apiKey))) }.implements(AnalyticTracker.self).scope(scope)
+        resolver.register { AnalyticRouter(.ordinary(SdkAnalyticsTarget(apiKey, logging: isDebug))) }.implements(AnalyticTracker.self).scope(scope)
         resolver.register { AiutaSubscriptionImpl() }.implements(AiutaSubscription.self).scope(scope)
         resolver.register { AiutaSdkModelImpl() }.implements(AiutaSdkModel.self).scope(scope)
 
@@ -90,4 +92,13 @@ final class SdkRegister {
 
 @propertyWrapper struct injected<Service> {
     var wrappedValue: Service = SdkRegister.instance.resolver.resolve(Service.self)
+}
+
+@available(iOS 13.0.0, *)
+private struct ApiDebuggerImpl: ApiDebugger {
+    var isEnabled: Bool
+
+    func startOperation(id: String?, title: String, subtitle: String?) async -> ApiDebuggerOperation? {
+        nil
+    }
 }

@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import UIKit
 import Resolver
+import UIKit
 
 @_spi(Aiuta) open class Content<ViewType>: ContentBase where ViewType: UIView {
     public let view: ViewType
@@ -49,6 +49,7 @@ import Resolver
     public private(set) weak var parent: ContentBase?
     public internal(set) var isRoot: Bool = false
     private var isSetUpAndChildrenAdded = false
+    internal var willIgnoreNextLayout = false
 
     /// Public
 
@@ -70,6 +71,10 @@ import Resolver
     open func detached() {}
     open func updateLayout() {}
 
+    public func skipNextLayout() {
+        willIgnoreNextLayout = true
+    }
+
     open func invalidateLayout() {
         if let parent { parent.invalidateLayout() }
         else { updateLayoutRecursive() }
@@ -81,6 +86,7 @@ import Resolver
             container.cornerCurve = .continuous
         }
     }
+
     func updateLayoutInternal() {}
     func inspectChild(_ child: Any) -> Bool { false }
 }

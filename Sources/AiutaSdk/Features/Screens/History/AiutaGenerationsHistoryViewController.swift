@@ -20,6 +20,7 @@ final class AiutaGenerationsHistoryViewController: ViewController<AiutaGeneratio
     @injected private var model: AiutaSdkModel
     @injected private var watermarker: Watermarker
     @injected private var tracker: AnalyticTracker
+    private let breadcrumbs = Breadcrumbs()
 
     override func prepare() {
         hero.isEnabled = true
@@ -145,8 +146,8 @@ final class AiutaGenerationsHistoryViewController: ViewController<AiutaGeneratio
 
     func shareSelection() async {
         tracker.track(.share(.start(origin: .history, count: selection.count, text: nil)))
-        let imagesToShare: [UIImage] = await selection.concurrentCompactMap { [watermarker] in
-            guard let image = try? await $0.fetch() else { return nil }
+        let imagesToShare: [UIImage] = await selection.concurrentCompactMap { [watermarker, breadcrumbs] in
+            guard let image = try? await $0.fetch(breadcrumbs: breadcrumbs.fork()) else { return nil }
             return watermarker.watermark(image)
         }
         guard !imagesToShare.isEmpty else {
@@ -172,7 +173,7 @@ final class AiutaGenerationsHistoryViewController: ViewController<AiutaGeneratio
         let gallery = AiutaGeneratedGalleryViewController(ui.history.data, start: cell.index.item)
         gallery.willShare.subscribe(with: self) { [unowned self] generatedImage, gallery in
             Task {
-                guard let image = try? await generatedImage.fetch() else { return }
+                guard let image = try? await generatedImage.fetch(breadcrumbs: breadcrumbs.fork()) else { return }
                 tracker.track(.share(.start(origin: .history, count: 1, text: nil)))
                 model.delegate?.aiuta(eventOccurred: .shareGeneratedImages(photosCount: 1))
                 let result = await gallery.share(image: watermarker.watermark(image))

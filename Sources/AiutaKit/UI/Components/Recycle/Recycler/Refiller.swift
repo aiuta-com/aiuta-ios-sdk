@@ -81,7 +81,7 @@ import UIKit
 
     private func checkForUpdate() {
         guard isPaginationEnabled, let dataProvider, dataProvider.canUpdate else { return }
-        let visibleRect = layout.visible
+        let visibleRect = layout.visibleBounds
         guard visibleRect.height > 0 else { return }
         let willRequestForUpdate = visibleRect.maxY >= layout.bounds.maxY - layout.screen.height
         if willRequestForUpdate { dataProvider.requestUpdate() }
@@ -109,7 +109,7 @@ import UIKit
         let itemHeigh = itemWidth * contentFraction.height / contentFraction.width
         var topInColumn = [CGFloat](repeating: contentInsets.top, count: countOfItemsInRow)
         var contentHeight: CGFloat = 0
-        let visibleRect = layout.visible
+        let visibleRect = layout.visibleBounds
 
         let limit: Int = fillLimit ?? .max
         while items.count < min(dataProvider.items.count, limit) {
