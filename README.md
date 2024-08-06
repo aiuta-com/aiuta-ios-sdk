@@ -10,7 +10,7 @@ Add AiutaSdk as a `dependencies` value of your `Package.swift`.
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/aiuta-com/aiuta-ios-sdk.git", from: "1.1.6")
+    .package(url: "https://github.com/aiuta-com/aiuta-ios-sdk.git", from: "1.1.7")
 ]
 ```
 

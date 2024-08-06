@@ -15,8 +15,16 @@
 import Foundation
 
 @_spi(Aiuta) public final class Breadcrumbs {
-    public static let onBreadcrumbsFired = Signal<Breadcrumbs>()
-    public static let onBreadcrumbsLeave = Signal<Breadcrumb>(retainLastData: true)
+    public static func enable(with observer: AnyObject, onFire: @escaping (Breadcrumbs) -> Void, onLeft: @escaping (Breadcrumb) -> Void) {
+        guard !isEnabled else { fatalError("Breadcrumbs can be enabled only once") }
+        onBreadcrumbsFired.subscribe(with: observer, callback: onFire)
+        onBreadcrumbsLeave.subscribe(with: observer, callback: onLeft)
+        isEnabled = true
+    }
+
+    private static let onBreadcrumbsFired = Signal<Breadcrumbs>()
+    private static let onBreadcrumbsLeave = Signal<Breadcrumb>(retainLastData: true)
+    private static var isEnabled = false
 
     public struct Breadcrumb {
         public let signal: String?
@@ -31,12 +39,16 @@ import Foundation
         case address(UInt)
     }
 
-    @atomic public private(set) var stackTrace = [StackFrame]()
-    @atomic public private(set) var name: String!
-    @atomic public private(set) var error: String!
+    public private(set) var stackTrace = [StackFrame]()
+    public private(set) var name: String!
+    public private(set) var error: String!
+
+    private let lock = UnfairLock()
 
     public init(on signal: String? = nil, of sender: String? = nil,
                 in function: String = #function, file: String = #file, line: Int = #line) {
+        guard Breadcrumbs.isEnabled else { return }
+
         let callstack = Thread.callStackSymbols.compactMap { getCallStackAddress($0) }
         stackTrace = callstack.map { StackFrame.address($0) }
     }
@@ -44,6 +56,8 @@ import Foundation
     @discardableResult
     public func add(on signal: String? = nil, of sender: String? = nil,
                     in function: String = #function, file: String = #file, line: Int = #line) -> Breadcrumbs {
+        guard Breadcrumbs.isEnabled else { return self }
+
         let file = (file as NSString).lastPathComponent
         let object = (file as NSString).deletingPathExtension
         var symbol = ""
@@ -53,8 +67,16 @@ import Foundation
         symbol += function
         if symbol == object { symbol = "Breadcrumbs()" }
         let frame = StackFrame.symbolic(name: symbol, file: file, line: line)
-        guard stackTrace.first != frame else { return self }
-        stackTrace.insert(frame, at: 0)
+
+        var didUpdate = false
+        lock.synchronize {
+            if stackTrace.first != frame {
+                stackTrace.insert(frame, at: 0)
+                didUpdate = true
+            }
+        }
+        guard didUpdate else { return self }
+
         dispatch(.main) {
             let breadcrumb = Breadcrumb(signal: signal, sender: sender,
                                         function: function, file: file, line: line)
@@ -67,6 +89,8 @@ import Foundation
 
     public func fork(on signal: String? = nil, of sender: String? = nil,
                      in function: String = #function, file: String = #file, line: Int = #line) -> Breadcrumbs {
+        guard Breadcrumbs.isEnabled else { return self }
+
         let breadcrumbsCopy = Breadcrumbs(stackTrace)
         breadcrumbsCopy.add(on: signal, of: sender, in: function, file: file, line: line)
         return breadcrumbsCopy
@@ -80,11 +104,16 @@ import Foundation
 
     public func fire(_ error: String, label name: String, on signal: String? = nil, of sender: String? = nil,
                      in function: String = #function, file: String = #file, line: Int = #line) {
+        guard Breadcrumbs.isEnabled else { return }
+
         add(on: signal, of: sender, in: function, file: file, line: line)
-        self.name = name
-        self.error = error
         trace(i: "x", name, signal, sender, "\n\n\(error)\n")
-        Breadcrumbs.onBreadcrumbsFired.fire(self)
+
+        lock.synchronize {
+            self.name = name
+            self.error = error
+            Breadcrumbs.onBreadcrumbsFired.fire(self)
+        }
     }
 
     private init(_ stackTrace: [StackFrame]) {

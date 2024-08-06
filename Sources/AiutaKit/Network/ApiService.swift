@@ -35,7 +35,7 @@ import Foundation
     }
 }
 
-@available(*, deprecated, message: "Leave breadcrumbs")
+//@available(*, deprecated, message: "Leave breadcrumbs")
 @available(iOS 13.0.0, *)
 @_spi(Aiuta) public extension ApiService {
     func request<Request: ApiRequest & Encodable, Response: Decodable>(_ request: Request, debugger: ApiDebuggerOperation?) async throws -> Response {

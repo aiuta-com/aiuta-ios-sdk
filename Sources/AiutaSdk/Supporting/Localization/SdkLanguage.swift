@@ -29,6 +29,8 @@ protocol SdkLanguage {
     var aiuta: String { get }
     var settings: String { get }
     var cancel: String { get }
+    var send: String { get }
+    var skip: String { get }
 
     // App bar
     var history: String { get }
@@ -70,6 +72,10 @@ protocol SdkLanguage {
     // Upload history sheet
     var uploadHistorySheetPreviously: String { get }
     var uploadHistorySheetUploadNewButton: String { get }
+
+    // Feedback
+    var feedbackSend: String { get }
+    var feedbackCancel: String { get }
 }
 
 typealias Pluralize = (_ count: Int) -> String

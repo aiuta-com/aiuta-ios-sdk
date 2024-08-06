@@ -29,6 +29,8 @@ struct SdkTurkishLanguage: SdkLanguage {
     let aiuta = "Aiuta"
     let settings = "Ayarlar" // Settings
     let cancel = "İptal" // Cancel
+    let send = "Göndermek" // Send
+    let skip = "Atla" // Skip
 
     // App bar
     let history = "Geçmiş" // History
@@ -72,4 +74,8 @@ struct SdkTurkishLanguage: SdkLanguage {
     // Upload history sheet
     let uploadHistorySheetPreviously = "Önceden yüklenen fotoğraflar" // Previously used photos
     let uploadHistorySheetUploadNewButton = "+ Yeni fotoğraf yükle" // + Upload new photo
+
+    // Feedback
+    let feedbackSend = "Geri bildirimi gönder" // Send feedback
+    let feedbackCancel = "Vazgeç" // Cancel
 }

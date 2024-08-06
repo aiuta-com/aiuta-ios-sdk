@@ -29,6 +29,8 @@ struct SdkRussianLanguage: SdkLanguage {
     let aiuta = "Aiuta"
     let cancel = "Отмена" // Cancel
     let settings = "Настройки" // Settings
+    let send = "Отправить" // Send
+    let skip = "Пропустить" // Skip
 
     // App bar
     let history = "История" // History
@@ -72,4 +74,8 @@ struct SdkRussianLanguage: SdkLanguage {
     // Upload history sheet
     let uploadHistorySheetPreviously = "Ранее использованные фото" // Previously used photos
     let uploadHistorySheetUploadNewButton = "+ Загрузить новое фото" // + Upload new photo
+
+    // Feedback
+    let feedbackSend = "Отправить отзыв" // Send feedback
+    let feedbackCancel = "Отменить" // Cancel
 }

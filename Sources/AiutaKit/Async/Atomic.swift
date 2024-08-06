@@ -16,7 +16,7 @@ import Foundation
 
 @propertyWrapper
 @_spi(Aiuta) public struct atomic<Value> {
-    private let lock = NSLock()
+    private let lock = UnfairLock()
     private var value: Value
 
     public init(wrappedValue: Value) {
@@ -34,5 +34,11 @@ import Foundation
             defer { lock.unlock() }
             value = newValue
         }
+    }
+
+    mutating func synchronize(_ mutation: (inout Value) -> Void) {
+        lock.lock()
+        defer { lock.unlock() }
+        mutation(&value)
     }
 }

@@ -75,13 +75,13 @@ final class AiutaFeedbackBulletin: ResultBulletin<String?> {
 
     private let skipButton = LabelButton { it, ds in
         it.font = ds.font.feedbackSkip
-        it.text = L.next
+        it.text = L.skip
     }
 
     private let commitButton = LabelButton { it, ds in
         it.color = ds.color.accent
         it.font = ds.font.buttonBig
-        it.text = L.next
+        it.text = L.send
     }
 
     private var currentOption: String?

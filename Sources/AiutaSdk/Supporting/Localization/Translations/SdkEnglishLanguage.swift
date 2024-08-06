@@ -27,6 +27,8 @@ struct SdkEnglishLanguage: SdkLanguage {
     let tryAgain = "Something went wrong.\nPlease try again later" // Something went wrong. Please try again later
     let cancel = "Cancel" // Cancel
     let settings = "Settings" // Settings
+    let send = "Send" // Send
+    let skip = "Skip" // Skip
 
     // App bar
     let history = "History" // History
@@ -72,4 +74,8 @@ struct SdkEnglishLanguage: SdkLanguage {
     // Upload history sheet
     let uploadHistorySheetPreviously = "Previously used photos" // Previously used photos
     let uploadHistorySheetUploadNewButton = "+ Upload new photo" // + Upload new photo
+    
+    // Feedback
+    let feedbackSend = "Send feedback" // Send feedback
+    let feedbackCancel = "Cancel" // Cancel
 }
