@@ -55,6 +55,13 @@ extension DesignSystemFonts {
 
     var disclaimerTitle: FontRef { SFPro(style: .regular, size: 12, kern: -0.12, color: .black) }
     var disclaimerText: FontRef { SFPro(style: .medium, size: 17, kern: -0.51, lineHeightMultiple: 1.08, color: .black) }
+    
+    var feedbackEmoji: FontRef { SFPro(style: .medium, size: 40, kern: -2.8, color: .black) }
+    var feedbackGratitude: FontRef { SFPro(style: .medium, size: 17, color: .white) }
+    var feedbackTitle: FontRef { SFPro(style: .bold, size: 24, color: .black) }
+    var feedbackButton: FontRef { SFPro(style: .regular, size: 15.2, lineHeightMultiple: 1.1, color: .black) }
+    var feedbackSkip: FontRef { SFPro(style: .regular, size: 15, kern: -0.15, color: 0xB2B2B2FF.uiColor) }
+    var feedbackClose: FontRef { SFPro(style: .regular, size: 17.82, kern: -0.43, color: .black) }
 
     var snackbar: FontRef { SFPro(style: .medium, size: 14, kern: -0.35, lineHeightMultiple: 1.08, color: .white) }
 }

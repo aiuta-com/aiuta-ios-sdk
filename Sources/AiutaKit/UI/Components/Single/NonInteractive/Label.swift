@@ -15,6 +15,10 @@
 import UIKit
 
 @_spi(Aiuta) open class Label: Content<UILabel> {
+    private enum ParseError: Error {
+        case badData
+    }
+
     public var font: FontRef? {
         didSet {
             guard let font else { return }
@@ -29,6 +33,7 @@ import UIKit
         set { view.textColor = newValue }
     }
 
+    public var isHtml: Bool = false
     public var highlights: [String]?
     public var caseHighlights: [String]?
     public var highlightColor: UIColor?
@@ -69,7 +74,9 @@ import UIKit
                 viewAttributes[NSAttributedString.Key.strikethroughStyle] = strikethrough.rawValue
             }
 
-            if let highlights, !highlights.isEmpty {
+            if isHtml {
+                view.attributedText = htmlAtributed(input: newValue, viewAttributes: viewAttributes)
+            } else if let highlights, !highlights.isEmpty {
                 var highlightAttributes = viewAttributes
                 highlightAttributes[NSAttributedString.Key.foregroundColor] = highlightColor ?? ds.color.highlight
                 view.attributedText = colorize(input: newValue, highlights: highlights, viewAttributes: viewAttributes, highlightAttributes: highlightAttributes)
@@ -96,6 +103,34 @@ import UIKit
             }
         } else {
             parent?.updateLayoutRecursive()
+        }
+    }
+
+    private func htmlAtributed(input: String, viewAttributes: [NSAttributedString.Key: Any]) -> NSAttributedString {
+        var html = input
+        if let color = color?.hexString {
+            html = "<font color=#\(color)>\(html)</font>"
+        }
+        do {
+            guard let data = html.data(using: String.Encoding.utf8) else {
+                throw ParseError.badData
+            }
+            let result = try NSMutableAttributedString(
+                data: data,
+                options: [.documentType: NSAttributedString.DocumentType.html,
+                          .characterEncoding: String.Encoding.utf8.rawValue],
+                documentAttributes: nil
+            )
+            let range = NSRange(location: 0, length: result.length)
+            for key in viewAttributes.keys { result.removeAttribute(key, range: range) }
+            result.removeAttribute(NSAttributedString.Key.font, range: range)
+            result.addAttributes(viewAttributes, range: range)
+            return result
+        } catch {
+            return NSMutableAttributedString(
+                string: input,
+                attributes: viewAttributes
+            )
         }
     }
 

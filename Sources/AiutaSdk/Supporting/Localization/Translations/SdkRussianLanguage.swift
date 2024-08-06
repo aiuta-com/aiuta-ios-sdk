@@ -15,10 +15,8 @@
 import Foundation
 
 struct SdkRussianLanguage: SdkLanguage {
-    subscript(_ variants: Aiuta.StringVariants?) -> String? {
-        variants?.ru
-    }
-    
+    subscript(_ variants: Aiuta.StringVariants?) -> String? { variants?.ru }
+
     // General
     let tryOn = "Примерить" // Try on
     let share = "Поделиться" // Share
@@ -45,6 +43,7 @@ struct SdkRussianLanguage: SdkLanguage {
 
     let onboardingBestResultsTitle = "Для лучшего качества примерки" // For best results
     let onboardingBestResultsDescription = "Используйте фото с хорошим освещением и прямой позой" // Use a photo with good lighting, stand straight a plain background
+    let onboardingLegalDisclaimer = "Загружая фото, вы соглашаетесь с <u>условиями</u>" // Your photo is processed as per the Clarification Text
 
     // Image selector
     let imageSelectorUploadButton = "Загрузить своё фото" // Upload a photo of you

@@ -41,6 +41,7 @@ protocol SdkLanguage {
     var onboardingTryonDescription: String { get }
     var onboardingBestResultsTitle: String { get }
     var onboardingBestResultsDescription: String { get }
+    var onboardingLegalDisclaimer: String { get }
 
     // Image selector
     var imageSelectorUploadButton: String { get }

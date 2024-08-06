@@ -17,6 +17,7 @@ import Hero
 import UIKit
 
 final class AiutaOnboardingViewController: ViewController<AiutaOnboardingView> {
+    @injected private var configuration: Aiuta.Configuration
     @injected private var tracker: AnalyticTracker
     @injected private var model: AiutaSdkModel
     private var forwardVc: UIViewController?
@@ -54,6 +55,13 @@ final class AiutaOnboardingViewController: ViewController<AiutaOnboardingView> {
         }
 
         enableInteractiveDismiss(withTarget: ui.swipeEdge)
+
+        if let disclaimerUrl = configuration.appearance.legalDisclaimerUrl {
+            ui.disclaimerLabel.view.isVisible = true
+            ui.disclaimerButton.onTouchUpInside.subscribe(with: self) { [unowned self] in
+                openUrl(disclaimerUrl.absoluteString, anchor: ui.disclaimerLabel)
+            }
+        }
 
         tracker.track(.onBoarding(.start))
     }

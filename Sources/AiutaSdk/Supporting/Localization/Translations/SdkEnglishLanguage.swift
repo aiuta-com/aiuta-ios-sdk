@@ -15,9 +15,7 @@
 import Foundation
 
 struct SdkEnglishLanguage: SdkLanguage {
-    subscript(_ variants: Aiuta.StringVariants?) -> String? {
-        variants?.en
-    }
+    subscript(_ variants: Aiuta.StringVariants?) -> String? { variants?.en }
 
     // General
     let tryOn = "Try on" // Try on
@@ -43,6 +41,7 @@ struct SdkEnglishLanguage: SdkLanguage {
 
     let onboardingBestResultsTitle = "For best results" // For best results
     let onboardingBestResultsDescription = "Use a photo with good lighting,\nstand straight a plain background" // Use a photo with good lighting, stand straight a plain background
+    let onboardingLegalDisclaimer = "Your photo is processed as per the&nbsp;<u>Clarification Text</u>" // Your photo is processed as per the Clarification Text
 
     // Image selector
     let imageSelectorUploadButton = "Upload a photo of you" // Upload a photo of you

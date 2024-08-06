@@ -23,6 +23,9 @@ protocol AiutaSubscription {
     
     var shouldDisplayFitDisclaimer: Bool { get }
     var fitDisclaimer: Aiuta.SubscriptionDetails.Disclaimer? { get }
+    
+    var shouldDisplayFeedback: Bool { get }
+    var feedback: Aiuta.SubscriptionDetails.Feedback? { get }
 
     func load()
 }

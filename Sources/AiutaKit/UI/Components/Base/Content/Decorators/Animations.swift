@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import UIKit
 import Resolver
+import UIKit
 
 @_spi(Aiuta) public final class Animations {
     @Injected private var heroic: Heroic
@@ -43,7 +43,7 @@ import Resolver
     }
 
     public func animate(time duration: AsyncDelayTime = .quarterOfSecond, curve: UIView.AnimationOptions = .curveEaseInOut, changes: @escaping AsyncCallback, complete completion: AsyncCallback? = nil) {
-        if duration == .instant || heroic.isTransitioning {
+        guard !heroic.isTransitioning, view.window.isSome, duration != .instant else {
             changes()
             completion?()
             return
@@ -52,6 +52,11 @@ import Resolver
     }
 
     public func animate(dampingRatio ratio: CGFloat, time duration: TimeInterval? = nil, delay: AsyncDelayTime? = nil, changes: @escaping AsyncCallback, complete completion: AsyncCallback? = nil) {
+        guard !heroic.isTransitioning, view.window.isSome else {
+            changes()
+            completion?()
+            return
+        }
         let animator = UIViewPropertyAnimator(duration: duration ?? 1.3 - TimeInterval(ratio), dampingRatio: ratio, animations: changes)
         animator.addCompletion { _ in completion?() }
         if let delay {
@@ -62,7 +67,7 @@ import Resolver
     }
 
     public func transition(_ options: UIView.AnimationOptions, duration: AsyncDelayTime = .oneSecond, complete completion: AsyncCallback? = nil) {
-        guard !heroic.isTransitioning else {
+        guard !heroic.isTransitioning, view.window.isSome else {
             completion?()
             return
         }
@@ -106,10 +111,16 @@ import Resolver
     }
 
     public func shake() {
+        guard !heroic.isTransitioning, view.window.isSome else {
+            return
+        }
         view.shake()
     }
 
     public func rotate(duration: Double) {
+        guard !heroic.isTransitioning, view.window.isSome else {
+            return
+        }
         view.rotate(duration: duration)
     }
 

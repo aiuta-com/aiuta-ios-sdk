@@ -45,13 +45,30 @@ final class AiutaTryOnResultCell: Recycle<Aiuta.SessionResult> {
         shareView.shareButton
     }
 
+    var feedback = AiutaFeedbackView { it, _ in
+        it.transitions.whenAppear { make in
+            make.delay = 0.3
+            make.scale(0)
+            make.global()
+        }
+        it.transitions.isActive = false
+    }
+
     let skuGallery = AiutaGalleryView<String, AiutaTryOnResultSkuCell>()
+
+    var hasFeedback = false {
+        didSet {
+            feedback.view.isVisible = hasFeedback
+            feedback.transitions.isActive = hasFeedback
+        }
+    }
 
     override func update(_ data: Aiuta.SessionResult?, at index: ItemIndex) {
         generatedImage.view.isVisible = false
         skuGallery.view.isVisible = false
         shareView.view.isVisible = false
-        shareView.transitions.isActive = false
+        feedback.view.isVisible = false
+        hasFeedback = false
 
         guard let data else {
             generatedImage.transitions.reference = nil
@@ -94,6 +111,11 @@ final class AiutaTryOnResultCell: Recycle<Aiuta.SessionResult> {
             make.top = 0
             make.bottom = 0
             make.radius = 24
+        }
+
+        feedback.layout.make { make in
+            make.right = generatedImage.layout.right + 12
+            make.bottom = 12
         }
 
         shareView.layout.make { make in
