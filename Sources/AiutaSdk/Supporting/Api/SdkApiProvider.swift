@@ -24,7 +24,7 @@ import Alamofire
         headers.add(.authorization(xApiKey: apiKey))
     }
 
-    public init(apiKey: String, baseUrl: String = "https://api.aiuta.com") {
+    public init(apiKey: String, baseUrl: String = "https://api.aiuta.com/digital-try-on/v1") {
         self.baseUrl = baseUrl
         self.apiKey = apiKey
     }
