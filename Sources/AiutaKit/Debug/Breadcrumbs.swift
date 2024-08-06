@@ -16,6 +16,15 @@ import Foundation
 
 @_spi(Aiuta) public final class Breadcrumbs {
     public static let onBreadcrumbsFired = Signal<Breadcrumbs>()
+    public static let onBreadcrumbsLeave = Signal<Breadcrumb>(retainLastData: true)
+
+    public struct Breadcrumb {
+        public let signal: String?
+        public let sender: String?
+        public let function: String
+        public let file: String
+        public let line: Int
+    }
 
     public enum StackFrame: Equatable {
         case symbolic(name: String, file: String, line: Int)
@@ -32,8 +41,9 @@ import Foundation
         stackTrace = callstack.map { StackFrame.address($0) }
     }
 
+    @discardableResult
     public func add(on signal: String? = nil, of sender: String? = nil,
-                    in function: String = #function, file: String = #file, line: Int = #line) {
+                    in function: String = #function, file: String = #file, line: Int = #line) -> Breadcrumbs {
         let file = (file as NSString).lastPathComponent
         let object = (file as NSString).deletingPathExtension
         var symbol = ""
@@ -43,8 +53,16 @@ import Foundation
         symbol += function
         if symbol == object { symbol = "Breadcrumbs()" }
         let frame = StackFrame.symbolic(name: symbol, file: file, line: line)
-        guard stackTrace.first != frame else { return }
+        guard stackTrace.first != frame else { return self }
         stackTrace.insert(frame, at: 0)
+        dispatch(.main) {
+            let breadcrumb = Breadcrumb(signal: signal, sender: sender,
+                                        function: function, file: file, line: line)
+            if Breadcrumbs.onBreadcrumbsLeave.lastDataFired != breadcrumb {
+                Breadcrumbs.onBreadcrumbsLeave.fire(breadcrumb)
+            }
+        }
+        return self
     }
 
     public func fork(on signal: String? = nil, of sender: String? = nil,
@@ -81,5 +99,24 @@ import Foundation
             }
         }
         return nil
+    }
+}
+
+@_spi(Aiuta) extension Breadcrumbs.Breadcrumb: Equatable {
+    public static func == (lhs: Breadcrumbs.Breadcrumb, rhs: Breadcrumbs.Breadcrumb) -> Bool {
+        lhs.file == rhs.file && lhs.function == rhs.function && lhs.signal == rhs.signal && lhs.sender == rhs.sender
+    }
+}
+
+@_spi(Aiuta) public extension Breadcrumbs.Breadcrumb {
+    var asDictionary: [String: Any] {
+        var result: [String: Any] = [
+            "function": function,
+            "file": file,
+            "line": line,
+        ]
+        if let signal { result["signal"] = signal }
+        if let sender { result["sender"] = sender }
+        return result
     }
 }

@@ -45,6 +45,7 @@ import UIKit
     private struct Property {
         static var source: Void?
         static var loader: Void?
+        static var breadcrumbs: Void?
         static var desiredQuality: ImageQuality = .hiResImage
         static var retrievedQuality: Void?
         static var keepCurrentImage: Bool = false
@@ -82,12 +83,20 @@ import UIKit
                 animations.transition(.transitionCrossDissolve, duration: .thirdOfSecond)
             }
 
-            newValue?.load(desiredQuality, breadcrumbs: Breadcrumbs())
+            newValue?.load(desiredQuality, breadcrumbs: breadcrumbs.fork())
         }
     }
 
     var retrievedQuality: ImageQuality? {
         get { getAssociatedProperty(&Property.retrievedQuality, ofType: ImageQuality.self) }
         set { setAssociatedProperty(&Property.retrievedQuality, newValue: newValue) }
+    }
+
+    public var breadcrumbs: Breadcrumbs {
+        get {
+            getAssociatedProperty(&Property.breadcrumbs, ofType: Breadcrumbs.self) ??
+                setAssociatedProperty(&Property.breadcrumbs, newValue: Breadcrumbs())
+        }
+        set { setAssociatedProperty(&Property.breadcrumbs, newValue: newValue) }
     }
 }

@@ -46,4 +46,6 @@ enum AiutaSdkDesignSystemImages: String {
     case aiutaClose
     case aiutaCross
     case aiutaError
+    case aiutaLike
+    case aiutaDislike
 }

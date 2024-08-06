@@ -31,6 +31,18 @@ final class AiutaOnboardingView: Plane {
 
     let indicator = PageIndicator()
 
+    let disclaimerLabel = Label { it, ds in
+        it.font = ds.font.disclaimerTitle
+        it.color = ds.color.secondaryText
+        it.alignment = .center
+        it.isMultiline = true
+        it.isHtml = true
+        it.text = L.onboardingLegalDisclaimer
+        it.view.isVisible = false
+    }
+
+    let disclaimerButton = PlainButton()
+
     let startButton = LabelButton { it, ds in
         it.font = ds.font.buttonBig
         it.color = ds.color.accent
@@ -51,7 +63,7 @@ final class AiutaOnboardingView: Plane {
             if isOverScrolled { onOverScroll.fire() }
         }
     }
-    
+
     private var pageIndex: Int = -1 {
         didSet {
             guard oldValue != pageIndex else { return }
@@ -79,11 +91,26 @@ final class AiutaOnboardingView: Plane {
             make.bottom = 0
         }
 
+        disclaimerLabel.layout.make { make in
+            make.width = min(240, layout.width)
+            make.bottom = layout.safe.insets.bottom + 8
+            make.centerX = 0
+        }
+
+        disclaimerButton.view.isVisible = disclaimerLabel.view.isVisible
+        disclaimerButton.layout.make { make in
+            make.frame = disclaimerLabel.layout.frame
+        }
+
         startButton.layout.make { make in
             make.leftRight = 16
             make.height = 50
             make.radius = 8
-            make.bottom = layout.safe.insets.bottom + 12
+            if disclaimerLabel.view.isVisible {
+                make.bottom = disclaimerButton.layout.topPin + 16
+            } else {
+                make.bottom = layout.safe.insets.bottom + 12
+            }
         }
 
         indicator.layout.make { make in
@@ -193,7 +220,7 @@ extension AiutaOnboardingView {
                     make.left = 0
                     make.centerY = 0
                 }
-                
+
                 image.layout.make { make in
                     make.inset = 0
                     make.fit(.init(width: 284, height: 434))

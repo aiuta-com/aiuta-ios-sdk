@@ -23,6 +23,7 @@ extension AnalyticEvent {
     static func results(_ event: AnalyticEvent.ResultsScreen) -> AnalyticEvent { event.event }
     static func history(_ event: AnalyticEvent.History) -> AnalyticEvent { event.event }
     static func share(_ event: AnalyticEvent.Share) -> AnalyticEvent { event.event }
+    static func feedback(_ event: AnalyticEvent.Feedback) -> AnalyticEvent { event.event }
 }
 
 extension AnalyticEvent {
@@ -160,7 +161,7 @@ extension AnalyticEvent {
                     return AnalyticEvent("FinishTryOn", [
                         "sku_id": sku.skuId,
                         "sku_catalog_name": sku.skuCatalog ?? "",
-                        "generation_time": Int(time.seconds),
+                        "generation_time": time.seconds,
                     ])
 
                 case let .error(sku, type):
@@ -191,7 +192,7 @@ extension AnalyticEvent {
                     return AnalyticEvent("OpenResultsScreen", [
                         "sku_id": sku.skuId,
                         "sku_catalog_name": sku.skuCatalog ?? "",
-                        "elapsed_time": Int(time.seconds),
+                        "elapsed_time": time.seconds,
                         "generated_photos": generatedCount,
                         "photos_in_progress": processingCount,
                         "more_to_try_on": relatedCount,
@@ -280,6 +281,36 @@ extension AnalyticEvent {
                         "count": count,
                         "target": activity ?? "",
                         "error": error?.localizedDescription ?? "",
+                    ])
+            }
+        }
+    }
+
+    enum Feedback {
+        case like(sku: Aiuta.SkuInfo)
+        case dislike(sku: Aiuta.SkuInfo)
+        case comment(sku: Aiuta.SkuInfo, text: String?)
+
+        var event: AnalyticEvent {
+            switch self {
+                case let .like(sku):
+                    return AnalyticEvent("LikeGenerationFeedback", [
+                        "sku_id": sku.skuId,
+                        "sku_catalog_name": sku.skuCatalog ?? "",
+                        "generated_photo_position": 0,
+                    ])
+                case let .dislike(sku):
+                    return AnalyticEvent("DislikeGenerationFeedback", [
+                        "sku_id": sku.skuId,
+                        "sku_catalog_name": sku.skuCatalog ?? "",
+                        "generated_photo_position": 0,
+                    ])
+                case let .comment(sku, text):
+                    return AnalyticEvent("GenerationFeedback", [
+                        "sku_id": sku.skuId,
+                        "sku_catalog_name": sku.skuCatalog ?? "",
+                        "generated_photo_position": 0,
+                        "feedback": text as Any,
                     ])
             }
         }

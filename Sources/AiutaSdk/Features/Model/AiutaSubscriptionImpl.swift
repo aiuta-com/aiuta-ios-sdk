@@ -36,6 +36,14 @@ final class AiutaSubscriptionImpl: AiutaSubscription {
         details?.sizeAndFitDisclaimer
     }
 
+    var shouldDisplayFeedback: Bool {
+        L[feedback?.gratitudeMessage].isSomeAndNotEmpty
+    }
+
+    var feedback: Aiuta.SubscriptionDetails.Feedback? {
+        details?.feedback
+    }
+
     @defaults(key: "subscriptionDetails", defaultValue: nil)
     var details: Aiuta.SubscriptionDetails?
     @injected private var api: ApiService
@@ -56,7 +64,6 @@ final class AiutaSubscriptionImpl: AiutaSubscription {
             $details.etag = headers?.etag
             detailsVersion = targetVersion
             details = config
-            trace(details)
         } catch ApiError.notModified {
             trace(details)
         } catch {

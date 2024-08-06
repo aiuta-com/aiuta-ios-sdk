@@ -126,6 +126,8 @@ final class AiutaTryOnResultViewController: ComponentController<AiutaTryOnView> 
             guard let sku = sku ?? model.tryOnSku, let index = generatedImages.firstIndex(of: image) else { return }
             tracker.track(.results(.view(sku: sku, index: index, navigation: navigation)))
         }
+        
+        addComponent(AiutaFeedbackViewController(ui.resultView.results))
     }
 
     func updateResults() {

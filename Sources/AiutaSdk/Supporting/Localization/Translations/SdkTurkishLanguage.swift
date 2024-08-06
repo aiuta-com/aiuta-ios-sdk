@@ -15,9 +15,7 @@
 import Foundation
 
 struct SdkTurkishLanguage: SdkLanguage {
-    subscript(_ variants: Aiuta.StringVariants?) -> String? {
-        variants?.tr
-    }
+    subscript(_ variants: Aiuta.StringVariants?) -> String? { variants?.tr }
 
     // General
     let tryOn = "Üzerinde Dene" // Try on
@@ -45,6 +43,7 @@ struct SdkTurkishLanguage: SdkLanguage {
 
     let onboardingBestResultsTitle = "En iyi sonuçlar için" // For best results
     let onboardingBestResultsDescription = "İyi ışıklandırılmış, düz bir arka planı olan,\n dik durduğunuz bir fotoğraf kullanın" // Use a photo with good lighting, stand straight a plain background
+    let onboardingLegalDisclaimer = "Fotoğrafınız <u>Aydınlatma Metni'nde</u> belirtilen kapsamda işlenmektedir" // Your photo is processed as per the Clarification Text
 
     // Image selector
     let imageSelectorUploadButton = "Fotoğrafını yükle" // Upload a photo of you

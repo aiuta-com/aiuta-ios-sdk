@@ -103,6 +103,10 @@ extension Aiuta {
             /// If not specified, the first preferred system language will be used
             /// if it is supported, otherwise English will be used.
             public var language: Language?
+            
+            /// If set, will add a legal disclaimer on the onboarding screen,
+            /// opening the specified URL on the user's tap.
+            public var legalDisclaimerUrl: URL?
         }
 
         public struct Behavior {

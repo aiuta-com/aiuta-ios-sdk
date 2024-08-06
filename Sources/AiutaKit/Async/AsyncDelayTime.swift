@@ -24,6 +24,7 @@ import Foundation
     case oneSecond
     case twoSeconds
     case severalSeconds
+    case fiveSeconds
     case halfOfMinute
     case oneMinute
     case twoMinutes
@@ -46,6 +47,7 @@ public extension AsyncDelayTime {
             case .oneSecond: return 1
             case .twoSeconds: return 2
             case .severalSeconds: return 3
+            case .fiveSeconds: return 5
             case .halfOfMinute: return 30
             case .oneMinute: return 1.minutes
             case .twoMinutes: return 2.minutes
@@ -90,7 +92,7 @@ private extension AsyncDelayTime {
     static var allCases: [AsyncDelayTime] = [
         .instant,
         .moment,
-        .sixthOfSecond, .quarterOfSecond, .thirdOfSecond, .halfOfSecond, .oneSecond, .twoSeconds, .severalSeconds,
+        .sixthOfSecond, .quarterOfSecond, .thirdOfSecond, .halfOfSecond, .oneSecond, .twoSeconds, .severalSeconds, .fiveSeconds,
         .halfOfMinute, .oneMinute, .twoMinutes, .severalMinutes,
         .halfOfHour,
         .inoperable,

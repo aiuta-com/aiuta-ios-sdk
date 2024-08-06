@@ -221,13 +221,16 @@ private extension AiutaSdkModelImpl {
         var isGenerating = false
         var checkCount = 0
 
+        var delays: [TimeInterval] = .init(repeating: 0.5, count: 12) + [1, 1, 2]
+
         repeat {
-            if checkCount > 3, !isGenerating {
+            if checkCount > 2, !isGenerating {
                 isGenerating = true
                 changeState(.processing(.generatingOutfit), uuid: uuid)
             }
 
-            await asleep(.twoSeconds)
+            await asleep(.custom(delays.popLast() ?? 3))
+
             guard let operation: Aiuta.TryOnOperation = try? await api.request(Aiuta.TryOnOperation.Get(operationId: start.operationId)) else { continue }
 
             guard operation.status != .failed else {

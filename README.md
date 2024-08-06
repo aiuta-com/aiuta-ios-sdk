@@ -10,7 +10,7 @@ Add AiutaSdk as a `dependencies` value of your `Package.swift`.
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/aiuta-com/aiuta-ios-sdk.git", from: "1.1.5")
+    .package(url: "https://github.com/aiuta-com/aiuta-ios-sdk.git", from: "1.1.6")
 ]
 ```
 
@@ -68,6 +68,7 @@ This structure provides customizable configurations for the Aiuta SDK, allowing 
 - `accentColor: UIColor?`: An extra special attention color for elements like discounted price labels and discount percentage backgrounds.
 - `backgroundTint: UIColor?`: The background tint color for all screens, which will be diluted by an extraLight UIBlurEffect.
 - `language: Language?`: The language in which the SDK interface will be displayed.
+- `legalDisclaimerUrl: URL?`: If set, will add a legal disclaimer on the onboarding screen, opening the specified URL on the user's tap.
 
 ##### `Appearance.NavigationBar` Properties
 
@@ -139,6 +140,7 @@ if #available(iOS 13.0.0, *) {
     configuration.appearance.accentColor = .green
     configuration.appearance.navigationBar.logoImage = UIImage(named: "your_logo")
     configuration.appearance.language = .English
+    configuration.appearance.legalDisclaimerUrl = URL(string: "https://aiuta.com/legal/terms-of-service.html")
     
     configuration.behavior.photoSelectionLimit = 4
     configuration.behavior.watermark.image = UIImage(named: "your_watermark")
