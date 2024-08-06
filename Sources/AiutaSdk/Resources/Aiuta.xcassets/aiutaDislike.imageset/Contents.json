@@ -1,8 +1,18 @@
 {
   "images" : [
     {
-      "filename" : "aiutaFeedback1.pdf",
-      "idiom" : "universal"
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "aiutaFeedbackDislike@2x.png",
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "filename" : "aiutaFeedbackDislike@3x.png",
+      "idiom" : "universal",
+      "scale" : "3x"
     }
   ],
   "info" : {

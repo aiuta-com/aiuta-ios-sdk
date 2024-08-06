@@ -18,54 +18,54 @@ import UIKit
 final class AiutaFeedbackCommentView: Plane {
     let close = LabelButton { it, ds in
         it.font = ds.font.feedbackClose
-        it.text = L.cancel
+        it.text = L.feedbackCancel
     }
-    
+
     let title = Label { it, ds in
         it.font = ds.font.feedbackTitle
         it.isMultiline = true
     }
-    
+
     let stroke = Stroke { it, ds in
         it.color = ds.color.neutral
     }
-    
+
     let input = TextInput { it, ds in
         it.font = ds.font.feedbackButton
         it.view.backgroundColor = .clear
     }
-    
+
     let commitButton = LabelButton { it, ds in
         it.color = ds.color.accent
         it.font = ds.font.buttonBig
-        it.text = L.next
+        it.text = L.feedbackSend
     }
-    
+
     override func updateLayout() {
         close.layout.make { make in
             make.right = 4
             make.top = 7
         }
-        
+
         title.layout.make { make in
             make.left = 17
             make.width = min(layout.width - 34, 336)
             make.top = close.layout.bottomPin + 23
         }
-        
+
         stroke.layout.make { make in
             make.leftRight = 17
             make.height = 159
             make.radius = 16
             make.top = title.layout.bottomPin + 19
         }
-        
+
         input.layout.make { make in
             make.leftRight = 24
             make.top = stroke.layout.top + 3
             make.height = stroke.layout.height - 6
         }
-        
+
         commitButton.layout.make { make in
             make.leftRight = 16
             make.height = 50
