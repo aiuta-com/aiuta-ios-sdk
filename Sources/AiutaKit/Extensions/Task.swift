@@ -14,7 +14,6 @@
 
 import Foundation
 
-@available(iOS 13.0.0, *)
 @_spi(Aiuta) public func asleep(_ delay: AsyncDelayTime) async {
     let duration = UInt64(delay.seconds * 1000000000)
     try? await Task.sleep(nanoseconds: duration)

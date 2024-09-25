@@ -100,6 +100,7 @@ extension PhotoPicker: PHPickerViewControllerDelegate {
     private func downsample(_ image: UIImage?) async -> UIImage? {
         guard let image else { return nil }
         let downsample = try? await Downsampler(image, quality: .hiResImage, breadcrumbs: Breadcrumbs()).fetch()
+        downsample?.createdAt = image.createdAt
         return downsample ?? image
     }
 }

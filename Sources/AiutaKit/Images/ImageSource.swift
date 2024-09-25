@@ -34,7 +34,6 @@ import UIKit
     }
 }
 
-@available(iOS 13.0.0, *)
 @_spi(Aiuta) public extension ImageSource {
     @MainActor func fetch(_ quality: ImageQuality = .hiResImage, breadcrumbs: Breadcrumbs) async throws -> UIImage {
         try await ImageLoader.Cached(self, expireAfter: .severalSeconds).fetch(quality, breadcrumbs: breadcrumbs)

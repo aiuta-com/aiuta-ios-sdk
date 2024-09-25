@@ -29,7 +29,6 @@ import UIKit
     public let didCompleteTransition = Signal<Void>()
     private weak var transitionDelegate: HeroTransitionDelegate?
 
-    @available(iOS 13.0.0, *)
     @MainActor public func completeTransition() async {
         guard isTransitioning else { return }
         await withCheckedContinuation { continuation in

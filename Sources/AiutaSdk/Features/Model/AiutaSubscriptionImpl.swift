@@ -16,7 +16,6 @@
 import Alamofire
 import Foundation
 
-@available(iOS 13.0.0, *)
 final class AiutaSubscriptionImpl: AiutaSubscription {
     let didResolveDetails = Signal<Void>(retainLastData: true)
 

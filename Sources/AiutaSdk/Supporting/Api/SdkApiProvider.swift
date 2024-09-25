@@ -15,7 +15,6 @@
 @_spi(Aiuta) import AiutaKit
 import Alamofire
 
-@available(iOS 13.0.0, *)
 @_spi(Aiuta) public struct SdkApiProvider: ApiProvider {
     public let baseUrl: String
     let apiKey: String

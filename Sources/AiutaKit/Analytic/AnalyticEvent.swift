@@ -26,9 +26,19 @@ import Foundation
 
     let level: Level
 
-    public init(_ name: String, _ parameters: [String: Any]? = nil, level: Level = .ordinary) {
+    public init(_ name: String, _ parameters: [String: Any?]? = nil, level: Level = .ordinary) {
         self.name = name
-        self.parameters = parameters
+        self.parameters = parameters?.compactMap()
         self.level = level
+    }
+}
+
+private extension Dictionary<String, Any?> {
+    func compactMap() -> Dictionary<String, Any> {
+        var result = [String: Any]()
+        forEach { k, v in
+            if let v { result[k] = v }
+        }
+        return result
     }
 }

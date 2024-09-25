@@ -54,20 +54,20 @@ extension AnalyticEvent {
                 case let .start(sku, relatedCount):
                     return AnalyticEvent("StartSession", [
                         "sku_id": sku.skuId,
-                        "sku_catalog_name": sku.skuCatalog ?? "",
+                        "sku_catalog_name": sku.skuCatalog,
                         "related_sku_count": relatedCount,
                         "price": sku.localizedOldPrice.isSome ? sku.localizedOldPrice! : sku.localizedPrice,
-                        "price_discounted": sku.localizedOldPrice.isSome ? sku.localizedPrice : "",
+                        "price_discounted": sku.localizedOldPrice.isSome ? sku.localizedPrice : nil,
                         "store": sku.localizedBrand,
-                        "additional_share_info": sku.additionalShareInfo ?? "",
+                        "additional_share_info": sku.additionalShareInfo,
                     ], level: .significant)
 
                 case let .finish(action, origin, sku):
                     return AnalyticEvent("FinishSession", [
                         "action": action.rawValue.firstCapitalized,
                         "origin": origin.rawValue.firstCapitalized,
-                        "sku_id": sku?.skuId ?? "",
-                        "sku_catalog_name": sku?.skuCatalog ?? "",
+                        "sku_id": sku?.skuId,
+                        "sku_catalog_name": sku?.skuCatalog,
                     ], level: .significant)
             }
         }
@@ -147,27 +147,27 @@ extension AnalyticEvent {
                     return AnalyticEvent("StartUITryOn", [
                         "origin": origin.rawValue.firstCapitalized,
                         "sku_id": sku.skuId,
-                        "sku_catalog_name": sku.skuCatalog ?? "",
+                        "sku_catalog_name": sku.skuCatalog,
                         "photos_count": photosCount,
                     ])
 
                 case let .generate(sku):
                     return AnalyticEvent("StartTryOn", [
                         "sku_id": sku.skuId,
-                        "sku_catalog_name": sku.skuCatalog ?? "",
+                        "sku_catalog_name": sku.skuCatalog,
                     ])
 
                 case let .finish(sku, time):
                     return AnalyticEvent("FinishTryOn", [
                         "sku_id": sku.skuId,
-                        "sku_catalog_name": sku.skuCatalog ?? "",
+                        "sku_catalog_name": sku.skuCatalog,
                         "generation_time": time.seconds,
                     ])
 
                 case let .error(sku, type):
                     return AnalyticEvent("TryOnError", [
                         "sku_id": sku.skuId,
-                        "sku_catalog_name": sku.skuCatalog ?? "",
+                        "sku_catalog_name": sku.skuCatalog,
                         "type": type.rawValue.firstCapitalized,
                     ])
             }
@@ -191,7 +191,7 @@ extension AnalyticEvent {
                 case let .open(sku, time, generatedCount, processingCount, relatedCount):
                     return AnalyticEvent("OpenResultsScreen", [
                         "sku_id": sku.skuId,
-                        "sku_catalog_name": sku.skuCatalog ?? "",
+                        "sku_catalog_name": sku.skuCatalog,
                         "elapsed_time": time.seconds,
                         "generated_photos": generatedCount,
                         "photos_in_progress": processingCount,
@@ -201,7 +201,7 @@ extension AnalyticEvent {
                 case let .view(sku, index, navigation):
                     return AnalyticEvent("ViewGeneratedImage", [
                         "sku_id": sku.skuId,
-                        "sku_catalog_name": sku.skuCatalog ?? "",
+                        "sku_catalog_name": sku.skuCatalog,
                         "image_number": index + 1,
                         "navigation_type": navigation.rawValue.firstCapitalized,
                     ])
@@ -209,7 +209,7 @@ extension AnalyticEvent {
                 case let .update(sku, generatedCount):
                     return AnalyticEvent("UpdateResultsScreen", [
                         "sku_id": sku.skuId,
-                        "sku_catalog_name": sku.skuCatalog ?? "",
+                        "sku_catalog_name": sku.skuCatalog,
                         "generated_photos": generatedCount,
                     ])
 
@@ -219,13 +219,13 @@ extension AnalyticEvent {
                 case let .tapRelated(sku):
                     return AnalyticEvent("TapMoreToTryOn", [
                         "sku_id": sku.skuId,
-                        "sku_catalog_name": sku.skuCatalog ?? "",
+                        "sku_catalog_name": sku.skuCatalog,
                     ])
 
                 case let .selectRelated(sku):
                     return AnalyticEvent("SelectMoreToTryOn", [
                         "sku_id": sku.skuId,
-                        "sku_catalog_name": sku.skuCatalog ?? "",
+                        "sku_catalog_name": sku.skuCatalog,
                     ])
             }
         }
@@ -257,30 +257,30 @@ extension AnalyticEvent {
                     return AnalyticEvent("ShareGeneratedImage", [
                         "origin": origin.rawValue.firstCapitalized,
                         "count": count,
-                        "additional_share_info": text ?? "",
+                        "additional_share_info": text,
                     ])
 
                 case let .success(origin, count, activity, text):
                     return AnalyticEvent("ShareSuccessfully", [
                         "origin": origin.rawValue.firstCapitalized,
                         "count": count,
-                        "target": activity ?? "",
-                        "additional_share_info": text ?? "",
+                        "target": activity,
+                        "additional_share_info": text,
                     ])
 
                 case let .cancelled(origin, count, activity):
                     return AnalyticEvent("ShareCanceled", [
                         "origin": origin.rawValue.firstCapitalized,
                         "count": count,
-                        "target": activity ?? "",
+                        "target": activity,
                     ])
 
                 case let .failed(origin, count, activity, error):
                     return AnalyticEvent("ShareFailed", [
                         "origin": origin.rawValue.firstCapitalized,
                         "count": count,
-                        "target": activity ?? "",
-                        "error": error?.localizedDescription ?? "",
+                        "target": activity,
+                        "error": error?.localizedDescription,
                     ])
             }
         }
@@ -296,19 +296,19 @@ extension AnalyticEvent {
                 case let .like(sku):
                     return AnalyticEvent("LikeGenerationFeedback", [
                         "sku_id": sku.skuId,
-                        "sku_catalog_name": sku.skuCatalog ?? "",
+                        "sku_catalog_name": sku.skuCatalog,
                         "generated_photo_position": 0,
                     ])
                 case let .dislike(sku):
                     return AnalyticEvent("DislikeGenerationFeedback", [
                         "sku_id": sku.skuId,
-                        "sku_catalog_name": sku.skuCatalog ?? "",
+                        "sku_catalog_name": sku.skuCatalog,
                         "generated_photo_position": 0,
                     ])
                 case let .comment(sku, text):
                     return AnalyticEvent("GenerationFeedback", [
                         "sku_id": sku.skuId,
-                        "sku_catalog_name": sku.skuCatalog ?? "",
+                        "sku_catalog_name": sku.skuCatalog,
                         "generated_photo_position": 0,
                         "feedback": text as Any,
                     ])

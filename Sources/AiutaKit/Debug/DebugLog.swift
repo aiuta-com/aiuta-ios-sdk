@@ -247,12 +247,13 @@ import Foundation
 
 @_spi(Aiuta) public func trace(measure work: () -> Void,
                                file: String = #file, line: Int = #line, function: String = #function) {
-    guard isTraceEnabled else { return }
-    if #available(iOS 16.0, *) {
-        let clock = ContinuousClock()
-        let result = clock.measure(work)
-        trace(statusSymbol: " ", anything: [result], file: file, line: line, function: function)
+    guard #available(iOS 16.0, *), isTraceEnabled else {
+        work()
+        return
     }
+    let clock = ContinuousClock()
+    let result = clock.measure(work)
+    trace(statusSymbol: " ", anything: [result], file: file, line: line, function: function)
 }
 
 private func trace(statusSymbol: String, anything: [Any?], file: String, line: Int, function: String) {

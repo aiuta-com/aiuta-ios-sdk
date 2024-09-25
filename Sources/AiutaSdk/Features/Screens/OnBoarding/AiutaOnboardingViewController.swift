@@ -76,7 +76,6 @@ final class AiutaOnboardingViewController: ViewController<AiutaOnboardingView> {
     }
 }
 
-@available(iOS 13.0.0, *)
 extension AiutaOnboardingViewController: UIPopoverPresentationControllerDelegate {
     func presentationControllerShouldDismiss(_ presentationController: UIPresentationController) -> Bool {
         return true

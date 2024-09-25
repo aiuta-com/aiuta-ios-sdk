@@ -16,7 +16,7 @@ import UIKit
 
 public enum Aiuta {
     /// Aiuta SDK Version
-    public static let sdkVersion = "1.1.7"
+    public static let sdkVersion = "2.0.0"
 
     /// This function configures the Aiuta SDK with the necessary API key and sets up the required services.
     /// You can call this method as many times as you like to update the configuration.
@@ -26,7 +26,6 @@ public enum Aiuta {
     ///             See [Getting Started](https://developer.aiuta.com/docs/start) for instructions to obtain your API KEY.
     ///             See [Digital Try On](https://developer.aiuta.com/products/digital-try-on/Documentation) Api Reference.
     ///   - configuration: Aiuta SDK Configuration struct, see Aiuta.Configuration down below.
-    @available(iOS 13.0.0, *)
     public static func setup(apiKey: String, configuration: Aiuta.Configuration?) {
         SdkRegister.setup(apiKey: apiKey, configuration: configuration)
     }
@@ -38,7 +37,6 @@ public enum Aiuta {
     ///   - withMoreToTryOn: Related SKUs that the user can try on, defaulting to an empty array.
     ///   - in: The view controller from which the Aiuta UI will be presented.
     ///   - delegate: The delegate that will receive callbacks from the Aiuta SDK.
-    @available(iOS 13.0.0, *)
     public static func tryOn(sku: SkuInfo,
                              withMoreToTryOn relatedSkus: [SkuInfo] = [],
                              in viewController: UIViewController,
@@ -50,7 +48,6 @@ public enum Aiuta {
     ///
     /// - Parameters:
     ///   - in: The view controller from which the Aiuta UI will be presented.
-    @available(iOS 13.0.0, *)
     @discardableResult
     public static func showHistory(in viewController: UIViewController) -> Bool {
         SdkPresenter.showHistory(in: viewController)
@@ -103,7 +100,7 @@ extension Aiuta {
             /// If not specified, the first preferred system language will be used
             /// if it is supported, otherwise English will be used.
             public var language: Language?
-            
+
             /// If set, will add a legal disclaimer on the onboarding screen,
             /// opening the specified URL on the user's tap.
             public var legalDisclaimerUrl: URL?

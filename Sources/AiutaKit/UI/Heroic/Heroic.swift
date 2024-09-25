@@ -19,7 +19,6 @@ import UIKit
     var willStartTransition: Signal<Void> { get }
     var didCompleteTransition: Signal<Void> { get }
 
-    @available(iOS 13.0.0, *)
     func completeTransition() async
 
     func setEnabled(_ value: Bool, for vc: UIViewController)

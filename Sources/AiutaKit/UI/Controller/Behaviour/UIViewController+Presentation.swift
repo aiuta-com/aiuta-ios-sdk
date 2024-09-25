@@ -124,15 +124,14 @@ import UIKit
         @Injected var heroic: Heroic
         heroic.finish(animate: false)
 
-        if !isDeparting {
-            whenDismiss(interactive: false)
-            delay(.thirdOfSecond) { [weak self] in self?.whenDettached() }
-        }
+        if !isDeparting { whenDismiss(interactive: false) }
 
         heroic.copyAnimation(from: self, to: navigationController)
 
         guard let navigationController else {
-            dismiss(animated: true)
+            dismiss(animated: true) { [weak self] in
+                self?.whenDettached()
+            }
             return
         }
 
@@ -154,19 +153,71 @@ import UIKit
             }
 
             if navigationController.viewControllers.contains(backstackCandidate) {
-                navigationController.popToViewController(backstackCandidate, animated: true)
+                navigationController.popToViewController(backstackCandidate, animated: true) { [weak self] in
+                    self?.checkDismissInNavigationController()
+                }
             } else {
-                navigationController.popToRootViewController(animated: true)
+                navigationController.popToRootViewController(animated: true) { [weak self] in
+                    self?.checkDismissInNavigationController()
+                }
             }
 
             return
         }
 
         if navigationController.viewControllers.last == self {
-            navigationController.popViewController(animated: true)
+            navigationController.popViewController(animated: true) { [weak self] in
+                self?.checkDismissInNavigationController()
+            }
             return
         }
 
-        navigationController.popToRootViewController(animated: true)
+        navigationController.popToRootViewController(animated: true) { [weak self] in
+            self?.checkDismissInNavigationController()
+        }
+    }
+}
+
+private extension UIViewController {
+    func checkDismissInNavigationController() {
+        if navigationController?.viewControllers.last == self {
+            whenCancelDismiss()
+        } else {
+            whenDettached()
+        }
+    }
+}
+
+private extension UINavigationController {
+    func completionHelper(for completion: (() -> Void)?) {
+        if let transitionCoordinator = transitionCoordinator {
+            transitionCoordinator.animate(alongsideTransition: nil) { _ in
+                completion?()
+            }
+        } else {
+            delay(.thirdOfSecond) {
+                completion?()
+            }
+        }
+    }
+
+    func pushViewController(_ viewController: UIViewController, animated: Bool, completion: (() -> Void)?) {
+        pushViewController(viewController, animated: animated)
+        completionHelper(for: completion)
+    }
+
+    func popViewController(animated: Bool, completion: (() -> Void)?) {
+        popViewController(animated: animated)
+        completionHelper(for: completion)
+    }
+
+    func popToRootViewController(animated: Bool, completion: (() -> Void)?) {
+        popToRootViewController(animated: animated)
+        completionHelper(for: completion)
+    }
+
+    func popToViewController(_ viewController: UIViewController, animated: Bool, completion: (() -> Void)?) {
+        popToViewController(viewController, animated: animated)
+        completionHelper(for: completion)
     }
 }

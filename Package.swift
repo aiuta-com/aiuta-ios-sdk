@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "AiutaSdk",
     platforms: [
-        .iOS(.v12),
+        .iOS(.v13),
     ],
     products: [
         .library(
@@ -20,7 +20,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/Alamofire/Alamofire.git", from: "5.0.0"),
-        .package(url: "https://github.com/onevcat/Kingfisher.git", from: "7.6.1"),
+        .package(url: "https://github.com/onevcat/Kingfisher.git", from: "8.0.0"),
         .package(url: "https://github.com/hmlongco/Resolver.git", from: "1.0.0"),
         .package(url: "https://github.com/HeroTransitions/Hero.git", from: "1.6.2")
     ],

@@ -15,7 +15,6 @@
 @_spi(Aiuta) import AiutaKit
 import UIKit
 
-@available(iOS 13.0.0, *)
 final class AiutaGenerationsHistoryViewController: ViewController<AiutaGenerationsHistoryView> {
     @injected private var model: AiutaSdkModel
     @injected private var watermarker: Watermarker

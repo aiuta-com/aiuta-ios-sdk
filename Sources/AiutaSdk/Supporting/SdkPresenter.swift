@@ -15,7 +15,6 @@
 @_spi(Aiuta) import AiutaKit
 import UIKit
 
-@available(iOS 13.0.0, *)
 enum SdkPresenter {
     public static func tryOn(sku: Aiuta.SkuInfo,
                              withMoreToTryOn relatedSkus: [Aiuta.SkuInfo] = [],
