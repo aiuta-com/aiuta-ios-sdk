@@ -5,26 +5,6 @@
 import ObjectiveC
 import UIKit
 
-private func setAssociatedObject<T>(_ object: AnyObject, value: T, associativeKey: UnsafeRawPointer, policy: objc_AssociationPolicy) {
-    objc_setAssociatedObject(object, associativeKey, value, policy)
-}
-
-private func getAssociatedObject<T>(_ object: AnyObject, associativeKey: UnsafeRawPointer) -> T? {
-    if let valueAsType = objc_getAssociatedObject(object, associativeKey) as? T {
-        return valueAsType
-    } else {
-        return nil
-    }
-}
-
-private func getOrCreateAssociatedObject<T>(_ object: AnyObject, associativeKey: UnsafeRawPointer, defaultValue: T, policy: objc_AssociationPolicy) -> T {
-    if let valueAsType: T = getAssociatedObject(object, associativeKey: associativeKey) {
-        return valueAsType
-    }
-    setAssociatedObject(object, value: defaultValue, associativeKey: associativeKey, policy: policy)
-    return defaultValue
-}
-
 /// Extends UIControl with signals for all ui control events.
 @_spi(Aiuta) public extension UIControl {
     /// A signal that fires for each touch down control event.
@@ -96,14 +76,16 @@ private func getOrCreateAssociatedObject<T>(_ object: AnyObject, associativeKey:
     var onEditingDidEndOnExit: Signal<Void> {
         return getOrCreateSignalForUIControlEvent(.editingDidEndOnExit)
     }
+}
 
-    // MARK: - Private interface
+// MARK: - Private interface
 
-    private struct AssociatedKeys {
-        static var SignalDictionaryKey = "signals_signalKey"
+private extension UIControl {
+    struct AssociatedKeys {
+        static var SignalDictionaryKey: Void?
     }
 
-    private static let eventToKey: [UIControl.Event: NSString] = [
+    static let eventToKey: [UIControl.Event: NSString] = [
         .touchDown: "TouchDown",
         .touchDownRepeat: "TouchDownRepeat",
         .touchDragInside: "TouchDragInside",
@@ -117,14 +99,17 @@ private func getOrCreateAssociatedObject<T>(_ object: AnyObject, associativeKey:
         .editingDidBegin: "EditingDidBegin",
         .editingChanged: "EditingChanged",
         .editingDidEnd: "EditingDidEnd",
-        .editingDidEndOnExit: "EditingDidEndOnExit"]
+        .editingDidEndOnExit: "EditingDidEndOnExit",
+    ]
 
-    private func getOrCreateSignalForUIControlEvent(_ event: UIControl.Event) -> Signal<Void> {
+    func getOrCreateSignalForUIControlEvent(_ event: UIControl.Event) -> Signal<Void> {
         guard let key = UIControl.eventToKey[event] else {
             assertionFailure("Event type is not handled")
             return Signal()
         }
-        let dictionary = getOrCreateAssociatedObject(self, associativeKey: &AssociatedKeys.SignalDictionaryKey, defaultValue: NSMutableDictionary(), policy: objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+
+        let dictionary = getAssociatedProperty(&AssociatedKeys.SignalDictionaryKey, ofType: NSMutableDictionary.self)
+            ?? setAssociatedProperty(&AssociatedKeys.SignalDictionaryKey, newValue: NSMutableDictionary(), policy: .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
 
         if let signal = dictionary[key] as? Signal<Void> {
             return signal
@@ -136,7 +121,7 @@ private func getOrCreateAssociatedObject<T>(_ object: AnyObject, associativeKey:
         }
     }
 
-    private func handleUIControlEvent(_ uiControlEvent: UIControl.Event) {
+    func handleUIControlEvent(_ uiControlEvent: UIControl.Event) {
         getOrCreateSignalForUIControlEvent(uiControlEvent).fire()
     }
 

@@ -272,23 +272,15 @@ private extension AiutaSdkModelImpl {
 extension AiutaSdkModelImpl {
     @MainActor func preload(_ urlString: String?) async {
         guard let url = URL(string: urlString) else { return }
-        var isWaitingForKingfisherCallback = true
-        await withCheckedContinuation { continuation in
-            KingfisherManager.shared.retrieveImage(with: url,
-                                                   options: [
-                                                       .downloadPriority(URLSessionTask.highPriority),
-                                                       .retryStrategy(DelayRetryStrategy(maxRetryCount: 3)),
-                                                       .processor(DownsamplingImageProcessor(size: .init(square: 1500))),
-                                                       .memoryCacheExpiration(.seconds(360)),
-                                                       .diskCacheExpiration(.days(7)),
-                                                       .diskCacheAccessExtendingExpiration(.cacheTime),
-                                                       .backgroundDecode,
-                                                   ]
-            ) { _ in
-                guard isWaitingForKingfisherCallback else { return }
-                isWaitingForKingfisherCallback = false
-                continuation.resume()
-            }
-        }
+        let options: KingfisherOptionsInfo = [
+            .downloadPriority(URLSessionTask.highPriority),
+            .retryStrategy(DelayRetryStrategy(maxRetryCount: 3)),
+            .processor(DownsamplingImageProcessor(size: .init(square: 1500))),
+            .memoryCacheExpiration(.seconds(360)),
+            .diskCacheExpiration(.days(7)),
+            .diskCacheAccessExtendingExpiration(.cacheTime),
+            .backgroundDecode,
+        ]
+        _ = try? await KingfisherManager.shared.retrieveImage(with: url, options: options)
     }
 }

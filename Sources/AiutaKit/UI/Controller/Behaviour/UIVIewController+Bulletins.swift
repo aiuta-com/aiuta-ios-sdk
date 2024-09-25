@@ -23,7 +23,6 @@ import UIKit
         bulletinManager.currentBulletin.isSome
     }
 
-    @available(iOS 13.0.0, *)
     @discardableResult
     func showBulletin<T>(_ content: ResultBulletin<T>, untilDismissed: Bool = false, overrideVc: UIViewController? = nil) async -> T {
         if let overrideVc {

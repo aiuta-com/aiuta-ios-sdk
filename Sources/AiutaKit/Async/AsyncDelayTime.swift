@@ -74,7 +74,7 @@ public extension AsyncDelayTime {
     }
 }
 
-extension AsyncDelayTime: Hashable, Comparable {
+extension AsyncDelayTime: Hashable, Comparable, Sendable {
     public func hash(into hasher: inout Hasher) {
         seconds.hash(into: &hasher)
     }

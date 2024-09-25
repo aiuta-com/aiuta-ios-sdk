@@ -75,7 +75,6 @@ private extension AiutaFeedbackViewController {
         }
     }
 
-    @available(iOS 13.0.0, *)
     func dislike(_ sku: Aiuta.SkuInfo, _ cell: AiutaTryOnResultCell?) async {
         var result: String?
 

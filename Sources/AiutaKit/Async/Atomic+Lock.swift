@@ -14,11 +14,11 @@
 
 import Foundation
 
-final class UnfairLock {
+@_spi(Aiuta) public final class UnfairLock {
     private let unfairLock: os_unfair_lock_t
     private let unfairValue: os_unfair_lock_s
 
-    init() {
+    public init() {
         unfairLock = .allocate(capacity: 1)
         unfairValue = .init()
         unfairLock.initialize(to: unfairValue)
@@ -29,23 +29,23 @@ final class UnfairLock {
         unfairLock.deallocate()
     }
 
-    func synchronize(_ work: () -> Void) {
+    public func synchronize<T>(_ work: () -> T) -> T {
         lock()
         defer { unlock() }
-        work()
+        return work()
     }
 }
 
-extension UnfairLock: NSLocking {
-    func lock() {
+@_spi(Aiuta) extension UnfairLock: NSLocking {
+    public func lock() {
         os_unfair_lock_lock(unfairLock)
     }
 
-    func tryLock() -> Bool {
+    public func tryLock() -> Bool {
         os_unfair_lock_trylock(unfairLock)
     }
 
-    func unlock() {
+    public func unlock() {
         os_unfair_lock_unlock(unfairLock)
     }
 }

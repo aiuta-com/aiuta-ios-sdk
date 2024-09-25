@@ -15,8 +15,20 @@
 import Alamofire
 import Foundation
 
-@_spi(Aiuta) public protocol ApiProvider {
-    var baseUrl: String { get async throws }
+extension DataRequest {
+    func rawResponse() async -> AFDataResponse<String> {
+        await withCheckedContinuation { continuation in
+            responseString { result in
+                continuation.resume(returning: result)
+            }
+        }
+    }
 
-    func authorize(headers: inout HTTPHeaders) async throws
+    func decodeResponse<T: Decodable>(of type: T.Type, decoder: DataDecoder) async -> AFDataResponse<T> {
+        await withCheckedContinuation { continuation in
+            responseDecodable(of: type, decoder: decoder) { result in
+                continuation.resume(returning: result)
+            }
+        }
+    }
 }

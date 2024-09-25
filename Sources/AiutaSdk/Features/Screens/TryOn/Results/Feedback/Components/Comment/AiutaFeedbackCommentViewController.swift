@@ -15,7 +15,6 @@
 @_spi(Aiuta) import AiutaKit
 import UIKit
 
-@available(iOS 13.0.0, *)
 final class AiutaFeedbackCommentViewController: ViewController<AiutaFeedbackCommentView> {
     @injected private var subscription: AiutaSubscription
 
@@ -35,7 +34,7 @@ final class AiutaFeedbackCommentViewController: ViewController<AiutaFeedbackComm
             dismiss()
         }
     }
-    
+
     override func whenDidDisappear() {
         didFeedback.fire(nil)
     }
@@ -53,7 +52,6 @@ final class AiutaFeedbackCommentViewController: ViewController<AiutaFeedbackComm
     }
 }
 
-@available(iOS 13.0.0, *)
 extension AiutaFeedbackCommentViewController: UIPopoverPresentationControllerDelegate {
     public func adaptivePresentationStyle(for controller: UIPresentationController, traitCollection: UITraitCollection) -> UIModalPresentationStyle {
         return .popover

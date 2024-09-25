@@ -50,19 +50,16 @@ import UIKit
                     if progress + velocity / view.bounds.width > progressToFinish {
                         if hasTransitionUpdates {
                             delay(.moment) { heroic.finish(animate: true) }
-                            whenDettached()
                         }
                     } else {
                         heroic.cancel(animate: true)
                         isDeparting = false
-                        whenCancelDismiss()
                     }
                 default:
                     guard willTransitInteractive else { return }
                     willTransitInteractive = false
                     heroic.cancel(animate: true)
                     isDeparting = false
-                    whenCancelDismiss()
             }
         }
     }

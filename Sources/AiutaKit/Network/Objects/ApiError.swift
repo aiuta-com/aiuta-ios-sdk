@@ -15,7 +15,6 @@
 import Alamofire
 import Foundation
 
-@available(iOS 13.0.0, *)
 @_spi(Aiuta) public enum ApiError: Error {
     case notModified
 

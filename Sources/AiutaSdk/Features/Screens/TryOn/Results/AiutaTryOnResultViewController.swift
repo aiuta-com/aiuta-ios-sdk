@@ -16,7 +16,6 @@
 import Resolver
 import UIKit
 
-@available(iOS 13.0.0, *)
 final class AiutaTryOnResultViewController: ComponentController<AiutaTryOnView> {
     @injected private var model: AiutaSdkModel
     @injected private var watermarker: Watermarker
@@ -126,7 +125,7 @@ final class AiutaTryOnResultViewController: ComponentController<AiutaTryOnView> 
             guard let sku = sku ?? model.tryOnSku, let index = generatedImages.firstIndex(of: image) else { return }
             tracker.track(.results(.view(sku: sku, index: index, navigation: navigation)))
         }
-        
+
         addComponent(AiutaFeedbackViewController(ui.resultView.results))
     }
 

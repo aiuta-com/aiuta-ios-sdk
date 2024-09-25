@@ -17,11 +17,11 @@ import Foundation
 @_spi(Aiuta) public protocol PropertyStoring {}
 
 @_spi(Aiuta) public extension PropertyStoring {
-    func getAssociatedProperty<Property>(_ key: UnsafeRawPointer!, ofType: Property.Type) -> Property? {
+    func getAssociatedProperty<Property>(_ key: UnsafeRawPointer, ofType: Property.Type) -> Property? {
         objc_getAssociatedObject(self, key) as? Property
     }
 
-    func getAssociatedProperty<Property>(_ key: UnsafeRawPointer!, defaultValue: Property) -> Property {
+    func getAssociatedProperty<Property>(_ key: UnsafeRawPointer, defaultValue: Property) -> Property {
         if let value = objc_getAssociatedObject(self, key) as? Property {
             return value
         }
@@ -29,13 +29,13 @@ import Foundation
     }
 
     @discardableResult
-    func setAssociatedProperty<Property>(_ key: UnsafeRawPointer!, newValue: Property) -> Property {
+    func setAssociatedProperty<Property>(_ key: UnsafeRawPointer, newValue: Property) -> Property {
         setAssociatedProperty(key, newValue: newValue, policy: .OBJC_ASSOCIATION_RETAIN)
         return newValue
     }
 
     @discardableResult
-    func setAssociatedProperty<Property>(_ key: UnsafeRawPointer!, newValue: Property, policy: objc_AssociationPolicy) -> Property {
+    func setAssociatedProperty<Property>(_ key: UnsafeRawPointer, newValue: Property, policy: objc_AssociationPolicy) -> Property {
         objc_setAssociatedObject(self, key, newValue, policy)
         return newValue
     }

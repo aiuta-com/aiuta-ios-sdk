@@ -18,7 +18,6 @@ import Resolver
 import UIKit
 
 final class SdkRegister {
-    @available(iOS 13.0.0, *)
     static func setup(apiKey: String, configuration: Aiuta.Configuration?) {
         instance.setup(apiKey: apiKey, configuration: configuration)
     }
@@ -35,7 +34,6 @@ final class SdkRegister {
     private let scope = ResolverScopeCache()
     fileprivate let resolver = Resolver()
 
-    @available(iOS 13.0.0, *)
     private func setup(apiKey: String, configuration: Aiuta.Configuration?) {
         checkIfUsageDescriptionsProvided()
 
@@ -94,7 +92,6 @@ final class SdkRegister {
     var wrappedValue: Service = SdkRegister.instance.resolver.resolve(Service.self)
 }
 
-@available(iOS 13.0.0, *)
 private struct ApiDebuggerImpl: ApiDebugger {
     var isEnabled: Bool
 

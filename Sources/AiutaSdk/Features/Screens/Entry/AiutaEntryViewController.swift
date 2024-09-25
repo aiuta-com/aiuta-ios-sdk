@@ -14,7 +14,6 @@
 
 @_spi(Aiuta) import AiutaKit
 
-@available(iOS 13.0.0, *)
 final class AiutaEntryViewController: ViewController<AiutaEntryView> {
     private var session: Aiuta.TryOnSession?
 

@@ -15,14 +15,16 @@
 import Alamofire
 import Foundation
 
-@available(iOS 13.0.0, *)
 @_spi(Aiuta) public actor RestService {
     private let provider: ApiProvider
     private let debugger: ApiDebugger?
-    private let session = Session.default
+
     private let responseDecoder = JSONDecoder()
     private let parameterEncoder = JSONParameterEncoder()
     private let requestModifier: Session.RequestModifier
+
+    private let codeOk = 200
+    private let codeNotModified = 304
 
     public init(_ provider: ApiProvider, debugger: ApiDebugger? = nil) {
         self.provider = provider
@@ -64,132 +66,110 @@ import Foundation
     }
 }
 
-@available(iOS 13.0.0, *)
-@_spi(Aiuta) extension RestService: ApiService {
-    @MainActor public func request<Request: ApiRequest & Encodable, Response: Decodable>(_ request: Request,
-                                                                                         debugger debugOperation: ApiDebuggerOperation?,
-                                                                                         breadcrumbs: Breadcrumbs?) async throws -> ApiResponse<Response> {
-        do {
-            let url = try await buildUrl(request)
-            let headers = try await buildHeaders(request)
+private extension RestService {
+    @MainActor func sendRequest<Request: ApiRequest & Encodable, Response: Decodable>(_ request: Request,
+                                                                                      debugger debugOperation: ApiDebuggerOperation?) async throws -> ApiResponse<Response> {
+        /// request
 
-            var shortUrl: String?
-            var requestBody: String?
-            var requestDebugger: ApiDebuggerRequest?
-            let isDebug = debugger?.isEnabled == true
+        let url = try await buildUrl(request)
+        let headers = try await buildHeaders(request)
+        let parameters = request.hasBody ? request : nil
 
-            if isDebug {
-                shortUrl = try await shortenUrl(url)
-                if request.hasBody { requestBody = String(decoding: try parameterEncoder.encoder.encode(request), as: UTF8.self) }
-                requestDebugger = await buildDebugger(request, body: requestBody, shortUrl: shortUrl, debugger: debugOperation)
-            }
+        var shortUrl: String?
+        var requestBody: String?
+        var requestDebugger: ApiDebuggerRequest?
+        let isDebug = debugger?.isEnabled == true
 
-            return try await withCheckedThrowingContinuation { [self] continuation in
-                let dataRequest: DataRequest
-
-                switch request.type {
-                    case .plain:
-                        if isDebug { trace(i: "▸", request.method.rawValue, shortUrl) }
-                        dataRequest = session.request(url, method: request.method, headers: headers, requestModifier: requestModifier)
-                    case .json:
-                        if isDebug { trace(i: "▷", request.method.rawValue, shortUrl, requestBody) }
-                        dataRequest = session.request(url, method: request.method,
-                                                      parameters: request.hasBody ? request : nil,
-                                                      encoder: parameterEncoder, headers: headers, requestModifier: requestModifier)
-                    case .upload:
-                        if isDebug { trace(i: "▸", request.method.rawValue, shortUrl) }
-                        dataRequest = session.upload(multipartFormData: { request.multipartFormData($0) },
-                                                     to: url, method: request.method, headers: headers, requestModifier: requestModifier)
-                }
-
-                dataRequest.responseString { [self] response in
-                    let statusCode = response.response?.statusCode
-                    let plainResponse = response.value
-                    var plainError: String?
-                    if isDebug, let error = response.error {
-                        plainError = String(describing: error)
-                    }
-
-                    requestDebugger?.responseCode = statusCode
-
-                    if statusCode == 304 {
-                        if isDebug { trace(i: "◁", "Response",
-                                           "\n\n ▷", request.method.rawValue, shortUrl, requestBody,
-                                           "\n ◁", statusCode,
-                                           "\n") }
-
-                        requestDebugger?.responseBody = "<not modified>"
-                        continuation.resume(throwing: ApiError.notModified)
-                        return
-                    }
-
-                    requestDebugger?.responseBody = plainResponse
-                    requestDebugger?.responseError = plainError
-
-                    if isDebug {
-                        switch request.type {
-                            case .plain:
-                                trace(i: "◂", "PLAIN Response",
-                                      "\n\n ▸", request.method.rawValue, shortUrl,
-                                      "\n ◂", statusCode, shortenString(response.value) ?? response.error,
-                                      "\n")
-
-                            case .json:
-                                trace(i: "◁", "JSON Response",
-                                      "\n\n ▷", request.method.rawValue, shortUrl, requestBody,
-                                      "\n\n ◁", statusCode, shortenString(response.value) ?? response.error,
-                                      "\n")
-
-                            case .upload:
-                                trace(i: "◂", "UPLOAD Response",
-                                      "\n\n ▸", request.method.rawValue, shortUrl,
-                                      "\n ◂", statusCode, shortenString(response.value) ?? response.error,
-                                      "\n")
-                        }
-                    }
-
-                    guard let statusCode else {
-                        requestDebugger?.responseError = "<no response>"
-                        continuation.resume(throwing: ApiError(response.error))
-                        return
-                    }
-
-                    guard statusCode == 200 else {
-                        dataRequest.responseDecodable(of: ApiError.Info.self, decoder: responseDecoder) { [self] response in
-                            requestDebugger?.responseError = response.value?.error ?? plainError
-
-                            continuation.resume(throwing: ApiError(
-                                statusCode, with: response.value?.error ?? shortenString(plainResponse, maxLength: 200))
-                            )
-                        }
-
-                        return
-                    }
-
-                    dataRequest.responseDecodable(of: Response.self, decoder: responseDecoder) { response in
-                        if isDebug, let error = response.error {
-                            requestDebugger?.responseError = plainError ?? String(describing: error)
-                        }
-
-                        if let result = response.value {
-                            continuation.resume(returning: (response: result, headers: response.response?.headers))
-                        } else {
-                            continuation.resume(throwing: ApiError(response.error))
-                        }
-                    }
-                }
-            }
-        } catch ApiError.notModified {
-            throw ApiError.notModified
-        } catch {
-            let source = String(reflecting: type(of: request))
-            (breadcrumbs ?? Breadcrumbs(on: source)).fire(error, label: error.localizedDescription, on: source)
-            throw error
+        if isDebug {
+            shortUrl = try await shortenUrl(url)
+            if request.hasBody { requestBody = String(decoding: try parameterEncoder.encoder.encode(request), as: UTF8.self) }
+            requestDebugger = await buildDebugger(request, body: requestBody, shortUrl: shortUrl, debugger: debugOperation)
         }
+
+        let session = Session.default
+        let dataRequest: DataRequest
+
+        switch request.type {
+            case .plain:
+                if isDebug { trace(i: "▸", request.method.rawValue, shortUrl) }
+                dataRequest = session.request(url, method: request.method,
+                                              headers: headers, requestModifier: requestModifier)
+            case .json:
+                if isDebug { trace(i: "▷", request.method.rawValue, shortUrl, requestBody) }
+                dataRequest = session.request(url, method: request.method,
+                                              parameters: parameters, encoder: parameterEncoder,
+                                              headers: headers, requestModifier: requestModifier)
+            case .upload:
+                if isDebug { trace(i: "▸", request.method.rawValue, shortUrl) }
+                dataRequest = session.upload(multipartFormData: { request.multipartFormData($0) },
+                                             to: url, method: request.method,
+                                             headers: headers, requestModifier: requestModifier)
+        }
+
+        /// response
+
+        let rawResponse = await dataRequest.rawResponse()
+        let statusCode = rawResponse.response?.statusCode
+
+        if statusCode == codeNotModified {
+            if isDebug { trace(i: "◁", "Response",
+                               "\n\n ▷", request.method.rawValue, shortUrl, requestBody,
+                               "\n ◁", statusCode,
+                               "\n") }
+
+            requestDebugger?.responseBody = "<not modified>"
+            throw ApiError.notModified
+        }
+
+        if isDebug {
+            switch request.type {
+                case .plain:
+                    trace(i: "◂", "PLAIN Response",
+                          "\n\n ▸", request.method.rawValue, shortUrl,
+                          "\n ◂", statusCode, shortenString(rawResponse.value) ?? rawResponse.error,
+                          "\n")
+
+                case .json:
+                    trace(i: "◁", "JSON Response",
+                          "\n\n ▷", request.method.rawValue, shortUrl, requestBody,
+                          "\n\n ◁", statusCode, shortenString(rawResponse.value) ?? rawResponse.error,
+                          "\n")
+
+                case .upload:
+                    trace(i: "◂", "UPLOAD Response",
+                          "\n\n ▸", request.method.rawValue, shortUrl,
+                          "\n ◂", statusCode, shortenString(rawResponse.value) ?? rawResponse.error,
+                          "\n")
+            }
+        }
+
+        var rawErrorString: String?
+        if isDebug, let error = rawResponse.error {
+            rawErrorString = String(describing: error)
+        }
+
+        requestDebugger?.responseCode = statusCode
+        requestDebugger?.responseError = rawErrorString
+        requestDebugger?.responseBody = rawResponse.value
+
+        guard let statusCode else {
+            requestDebugger?.responseError = "<no response>"
+            throw ApiError(rawResponse.error)
+        }
+
+        guard statusCode == codeOk else {
+            let errorInfo = await dataRequest.decodeResponse(of: ApiError.Info.self, decoder: responseDecoder)
+            requestDebugger?.responseError = errorInfo.value?.error ?? rawErrorString
+            throw ApiError(statusCode, with: errorInfo.value?.error ?? shortenString(rawResponse.value, maxLength: 300))
+        }
+
+        let response = await dataRequest.decodeResponse(of: Response.self, decoder: responseDecoder)
+        if isDebug, let error = response.error { requestDebugger?.responseError = rawErrorString ?? String(describing: error) }
+        guard let result = response.value else { throw ApiError(response.error) }
+        return (response: result, headers: response.response?.headers)
     }
 }
 
-@available(iOS 13.0.0, *)
 @MainActor private extension RestService {
     func buildUrl(_ request: ApiRequest) async throws -> String {
         let urlString = "\(try await provider.baseUrl)/\(request.urlPath)"
@@ -232,5 +212,23 @@ import Foundation
         guard let string else { return nil }
         guard string.count > maxLength else { return string }
         return string.prefix(maxLength) + "..."
+    }
+}
+
+@_spi(Aiuta) extension RestService: ApiService {
+    @MainActor public func request<Request: ApiRequest & Encodable, Response: Decodable>(_ request: Request,
+                                                                                         debugger debugOperation: ApiDebuggerOperation?,
+                                                                                         breadcrumbs: Breadcrumbs?) async throws -> ApiResponse<Response> {
+        let source = String(reflecting: type(of: request))
+        breadcrumbs?.add(on: source)
+        do {
+            return try await sendRequest(request, debugger: debugOperation)
+        } catch ApiError.notModified {
+            throw ApiError.notModified
+        } catch {
+            let breadcrumbs = breadcrumbs ?? Breadcrumbs(on: source)
+            breadcrumbs.fire(error, label: error.localizedDescription, on: source)
+            throw error
+        }
     }
 }

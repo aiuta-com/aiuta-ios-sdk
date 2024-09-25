@@ -18,7 +18,6 @@ import Resolver
 import StoreKit
 import UIKit
 
-@available(iOS 13.0.0, *)
 final class AiutaTryOnViewController: ViewController<AiutaTryOnView> {
     @injected private var model: AiutaSdkModel
     @injected private var configuration: Aiuta.Configuration
@@ -129,7 +128,6 @@ final class AiutaTryOnViewController: ViewController<AiutaTryOnView> {
     }
 }
 
-@available(iOS 13.0.0, *)
 private extension AiutaTryOnViewController {
     func addToCart(_ origin: AnalyticEvent.Session.Origin) {
         guard let sku = model.tryOnSku, let delegate = model.delegate else { return }
@@ -178,14 +176,12 @@ private extension AiutaTryOnViewController {
     }
 }
 
-@available(iOS 13.0.0, *)
 extension AiutaTryOnViewController: UIPopoverPresentationControllerDelegate {
     func presentationControllerShouldDismiss(_ presentationController: UIPresentationController) -> Bool {
         return false
     }
 }
 
-@available(iOS 13.0.0, *)
 extension AiutaTryOnViewController: SKStoreProductViewControllerDelegate {
     func productViewControllerDidFinish(_ viewController: SKStoreProductViewController) {
         viewController.dismiss(animated: true)

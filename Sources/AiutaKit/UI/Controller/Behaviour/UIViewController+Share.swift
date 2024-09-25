@@ -17,13 +17,11 @@ import UIKit
 import UniformTypeIdentifiers
 
 @_spi(Aiuta) public extension UIViewController {
-    @available(iOS 13.0.0, *)
     @discardableResult
     func share(image: UIImage, title: String? = nil, additions: [Any] = []) async -> ShareResult {
         await share(images: [image], title: title, additions: additions)
     }
 
-    @available(iOS 13.0.0, *)
     @discardableResult
     func share(images: [UIImage], title: String? = nil, additions: [Any] = []) async -> ShareResult {
         var isWaitingForResult = true
