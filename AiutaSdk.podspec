@@ -1,14 +1,14 @@
 Pod::Spec.new do |s|
   s.name         = 'AiutaSdk'
-  s.version      = '3.0.0'
+  s.version      = '3.0.1'
   s.summary      = 'Aiuta Virtual Try-On SDK.'
   s.description  = 'Virtual Try-On Solution for Apparel and Fashion Businesses.'
   s.homepage     = 'https://github.com/aiuta-com/aiuta-ios-sdk'
   s.license      = { type: 'Apache 2.0', file: 'LICENSE' }
   s.author       = { 'Aiuta' => 'Partnership@aiuta.com' }
-  s.source       = { :git => 'https://github.com/aiuta-com/aiuta-ios-sdk.git', :tag => '3.0.0' }
+  s.source       = { :git => 'https://github.com/aiuta-com/aiuta-ios-sdk.git', :tag => '3.0.1' }
   s.source_files  = 'Sources/AiutaSdk/**/*.swift'
-  s.resource_bundles = { 'AiutaSdk' => ['Sources/AiutaSdk/Resources/*.{xcassets}'] }
+  s.resource_bundles = { 'AiutaSdk_AiutaSdk' => ['Sources/AiutaSdk/Resources/*.{xcassets}'] }
   s.module_name   = 'AiutaSdk'
   
   s.dependency    'AiutaKit', '3.0.0'
