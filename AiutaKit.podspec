@@ -6,7 +6,7 @@ Pod::Spec.new do |s|
   s.homepage     = 'https://github.com/aiuta-com/aiuta-ios-sdk'
   s.license      = { type: 'Apache 2.0', file: 'LICENSE' }
   s.author       = { 'Aiuta' => 'Partnership@aiuta.com' }
-  s.source       = { :git => 'https://github.com/aiuta-com/aiuta-ios-sdk.git', :tag => '#{s.version}' }
+  s.source       = { :git => 'https://github.com/aiuta-com/aiuta-ios-sdk.git', :tag => '3.0.0' }
   s.source_files  = 'Sources/AiutaKit/**/*.swift'
   s.module_name   = 'AiutaKit'
   
