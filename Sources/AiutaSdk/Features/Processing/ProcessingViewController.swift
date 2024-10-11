@@ -52,9 +52,8 @@ final class ProcessingViewController: ViewController<ProcessingView> {
             Task { await start() }
         }
 
-        if #available(iOS 15.0.0, *) {
-            ui.imageWithLoader.imageView.gotImage.subscribePast(with: self) { [unowned self] in
-                guard config.behavior.tryGeneratePersonSegmentation else { return }
+        if #available(iOS 15.0.0, *), config.behavior.tryGeneratePersonSegmentation {
+            ui.imageWithLoader.imageView.gotImage.subscribe(with: self) { [unowned self] in
                 generatePersonSegmentation()
             }
         }
