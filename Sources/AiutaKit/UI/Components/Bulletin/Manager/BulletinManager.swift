@@ -17,9 +17,8 @@ import UIKit
 final class BulletinManager: PlainButton {
     weak var vc: UIViewController?
 
-    let blur = Blur { it, _ in
-        it.style = .dark
-        it.intensity = 0.75
+    let blur = Stroke { it, _ in
+        it.color = .black.withAlphaComponent(0.5)
     }
 
     private(set) var currentBulletin: BulletinWrapper? {
@@ -35,6 +34,7 @@ final class BulletinManager: PlainButton {
         }
     }
 
+    private var originalPresenterAlpha: CGFloat = 1
     private let cooldDownToken = AutoCancellationToken()
     private var canDismissByMisspan = false
     private var canDismissByMisstap = true {
@@ -58,7 +58,7 @@ final class BulletinManager: PlainButton {
 
     override func setup() {
         view.pressedOpacity = nil
-        
+
         onTouchDown.subscribe(with: self) { [unowned self] in
             guard canDismissByMisstap,
                   let current = currentBulletin, current.canDismissByMisstap
@@ -68,7 +68,7 @@ final class BulletinManager: PlainButton {
             canDismissByMisspan = false
             current.contentView.dismiss()
         }
-        
+
         onTouchUpInside.subscribe(with: self) { [unowned self] in
             canDismissByMisspan = true
         }
@@ -90,6 +90,8 @@ final class BulletinManager: PlainButton {
             canDismissByMisspan = false
             current.contentView.dismiss()
         }
+
+        originalPresenterAlpha = vc?.navigationController?.presentingViewController?.view.alpha ?? 1
     }
 
     override func updateLayoutInternal() {
@@ -114,6 +116,12 @@ final class BulletinManager: PlainButton {
     required init(view: TouchView) {
         fatalError("init(view:) has not been implemented")
     }
+
+    deinit {
+        UIView.animate(withDuration: 0.25) { [vc, originalPresenterAlpha] in
+            vc?.navigationController?.presentingViewController?.view.alpha = originalPresenterAlpha
+        }
+    }
 }
 
 private extension BulletinManager {
@@ -125,9 +133,15 @@ private extension BulletinManager {
         ui.addContent(self)
         updateLayoutInternal()
         blur.animations.opacityTo(1)
+        blur.animations.animate { [vc, self] in
+            vc.navigationController?.presentingViewController?.view.alpha = originalPresenterAlpha / 2
+        }
     }
 
     func hideSelf() {
+        blur.animations.animate { [vc, self] in
+            vc?.navigationController?.presentingViewController?.view.alpha = originalPresenterAlpha
+        }
         blur.animations.opacityTo(0) { [self] in
             guard currentBulletin.isNil else {
                 blur.animations.opacityTo(1)

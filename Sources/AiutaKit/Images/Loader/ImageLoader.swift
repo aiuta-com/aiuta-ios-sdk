@@ -36,10 +36,12 @@ import UIKit
         }
     }
 
+    @available(iOS 13.0.0, *)
     @MainActor func prefetch(_ quality: ImageQuality = .thumbnails, breadcrumbs: Breadcrumbs) async throws {
         _ = try await fetch(quality, breadcrumbs: breadcrumbs)
     }
 
+    @available(iOS 13.0.0, *)
     @MainActor func fetch(_ quality: ImageQuality = .hiResImage, breadcrumbs: Breadcrumbs) async throws -> UIImage {
         let fetcher: ImageFetcher = fetchers[quality] ?? source.fetcher(for: quality, breadcrumbs: breadcrumbs)
         fetchers[quality] = fetcher

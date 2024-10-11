@@ -37,8 +37,8 @@ extension AnalyticEvent {
         }
 
         case configure(hasCustomConfiguration: Bool, configuration: Aiuta.Configuration)
-        case start(sku: Aiuta.SkuInfo, relatedCount: Int)
-        case finish(action: Action, origin: Origin, sku: Aiuta.SkuInfo?)
+        case start(sku: Aiuta.Product, relatedCount: Int)
+        case finish(action: Action, origin: Origin, sku: Aiuta.Product?)
 
         var event: AnalyticEvent {
             switch self {
@@ -136,10 +136,10 @@ extension AnalyticEvent {
             case skuUnknown, skuNotReady, uploadFailed, tryOnStartFailed, tryOnOperationFailed
         }
 
-        case start(origin: Origin, sku: Aiuta.SkuInfo, photosCount: Int)
-        case generate(sku: Aiuta.SkuInfo)
-        case finish(sku: Aiuta.SkuInfo, time: TimeInterval)
-        case error(sku: Aiuta.SkuInfo, type: Error)
+        case start(origin: Origin, sku: Aiuta.Product, photosCount: Int)
+        case generate(sku: Aiuta.Product)
+        case finish(sku: Aiuta.Product, time: TimeInterval)
+        case error(sku: Aiuta.Product, type: Error)
 
         var event: AnalyticEvent {
             switch self {
@@ -179,12 +179,12 @@ extension AnalyticEvent {
             case thumbnail, swipe
         }
 
-        case open(sku: Aiuta.SkuInfo, time: TimeInterval, generatedCount: Int, processingCount: Int, relatedCount: Int)
-        case view(sku: Aiuta.SkuInfo, index: Int, navigation: NavigationType)
-        case update(sku: Aiuta.SkuInfo, generatedCount: Int)
+        case open(sku: Aiuta.Product, time: TimeInterval, generatedCount: Int, processingCount: Int, relatedCount: Int)
+        case view(sku: Aiuta.Product, index: Int, navigation: NavigationType)
+        case update(sku: Aiuta.Product, generatedCount: Int)
         case showRelated
-        case tapRelated(sku: Aiuta.SkuInfo)
-        case selectRelated(sku: Aiuta.SkuInfo)
+        case tapRelated(sku: Aiuta.Product)
+        case selectRelated(sku: Aiuta.Product)
 
         var event: AnalyticEvent {
             switch self {
@@ -287,9 +287,9 @@ extension AnalyticEvent {
     }
 
     enum Feedback {
-        case like(sku: Aiuta.SkuInfo)
-        case dislike(sku: Aiuta.SkuInfo)
-        case comment(sku: Aiuta.SkuInfo, text: String?)
+        case like(sku: Aiuta.Product)
+        case dislike(sku: Aiuta.Product)
+        case comment(sku: Aiuta.Product, text: String?)
 
         var event: AnalyticEvent {
             switch self {

@@ -17,6 +17,8 @@ import Resolver
 import UIKit
 
 @_spi(Aiuta) public extension UIViewController {
+    static var isStackingAllowed: Bool = true
+
     func replace(with viewController: UIViewController, backstack: UIViewController? = nil) {
         if let bctrl = viewController as? BulletinController {
             bctrl.presenter = self
@@ -51,21 +53,12 @@ import UIKit
         }
     }
 
-    func popover(_ viewController: UIViewController & UIPopoverPresentationControllerDelegate, attachedTo sender: ContentBase? = nil) {
-        viewController.modalPresentationStyle = .popover
-        viewController.modalTransitionStyle = .coverVertical
-        if let pres = viewController.presentationController {
-            pres.delegate = viewController
-        }
+    func popover(_ viewController: UIViewController, withMediumDetent: Bool = false) {
+        viewController.applyPrefferedSheetPresentationStyle(withMediumDetent)
         present(viewController, animated: true)
-        if let pop = viewController.popoverPresentationController {
-            pop.delegate = viewController
-            pop.sourceView = sender?.container
-            pop.sourceRect = sender?.container.bounds ?? .init(square: 100)
-        }
     }
 
-    func present(_ viewController: UIViewController, attachedTo sender: ContentBase? = nil) {
+    func present(_ viewController: UIViewController) { // , attachedTo sender: ContentBase? = nil) {
         if let bctrl = viewController as? BulletinController {
             bctrl.presenter = self
             if let bulletin = bctrl.bulletin {
@@ -81,15 +74,15 @@ import UIKit
 
         heroic.copyAnimation(from: viewController, to: navigationController)
 
-        if viewController is UIImagePickerController {
-            viewController.modalPresentationStyle = .popover
-        }
-
-        if let popover = viewController.popoverPresentationController {
-            popover.sourceView = sender?.container ?? view
-            popover.canOverlapSourceViewRect = true
-            popover.permittedArrowDirections = .any
-        }
+//        if viewController is UIImagePickerController {
+//            viewController.modalPresentationStyle = .popover
+//        }
+//
+//        if let popover = viewController.popoverPresentationController {
+//            popover.sourceView = sender?.container ?? view
+//            popover.canOverlapSourceViewRect = true
+//            popover.permittedArrowDirections = .any
+//        }
 
         view.layer.pauseAnimations()
         let child = childViewController
@@ -184,6 +177,21 @@ private extension UIViewController {
             whenCancelDismiss()
         } else {
             whenDettached()
+        }
+    }
+
+    func applyPrefferedSheetPresentationStyle(_ withMediumDetent: Bool = false) {
+        if #available(iOS 16.0, *), !UIViewController.isStackingAllowed {
+            modalTransitionStyle = .coverVertical
+            modalPresentationStyle = .pageSheet
+            let nonStack = UISheetPresentationController.Detent.Identifier("nonStackDetent")
+            let nonStackDetent = UISheetPresentationController.Detent.custom(identifier: nonStack) { context in
+                context.maximumDetentValue - 1 // this will make the view controllers not stack up
+            }
+            sheetPresentationController?.detents = withMediumDetent ? [.medium(), nonStackDetent] : [nonStackDetent]
+        } else {
+            modalPresentationStyle = .pageSheet
+            modalTransitionStyle = .coverVertical
         }
     }
 }

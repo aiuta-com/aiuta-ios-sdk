@@ -15,11 +15,13 @@
 import Alamofire
 import Foundation
 
+@available(iOS 13.0.0, *)
 @_spi(Aiuta) public protocol ApiDebugger {
     var isEnabled: Bool { get }
     func startOperation(id: String?, title: String, subtitle: String?) async -> ApiDebuggerOperation?
 }
 
+@available(iOS 13.0.0, *)
 @_spi(Aiuta) public extension ApiDebugger {
     func startOperation(id: String?, title: String) async -> ApiDebuggerOperation? {
         await startOperation(id: id, title: title, subtitle: nil)
@@ -34,10 +36,12 @@ import Foundation
     }
 }
 
+@available(iOS 13.0.0, *)
 @_spi(Aiuta) public protocol ApiDebuggerOperation {
     func addRequest(method: String?, url: String?, body: String?) async -> ApiDebuggerRequest
 }
 
+@available(iOS 13.0.0, *)
 @_spi(Aiuta) public protocol ApiDebuggerRequest {
     var responseCode: Int? { get set }
     var responseBody: String? { get set }

@@ -23,6 +23,7 @@ import UIKit
         bulletinManager.currentBulletin.isSome
     }
 
+    @available(iOS 13.0.0, *)
     @discardableResult
     func showBulletin<T>(_ content: ResultBulletin<T>, untilDismissed: Bool = false, overrideVc: UIViewController? = nil) async -> T {
         if let overrideVc {
@@ -54,29 +55,21 @@ import UIKit
         bulletinManager.showBulletin(content)
     }
 
-    func openUrl(_ str: String, anchor: ContentBase?, inApp: Bool = true) {
+    func openUrl(_ str: String, anchor: ContentBase? = nil, inApp: Bool = true) {
         guard let url = URL(string: str) else { return }
 
-        guard inApp, let anchor else {
+        guard inApp else {
             let app = UIApplication.shared
             if app.canOpenURL(url) { app.open(url) }
             return
         }
 
         let config = SFSafariViewController.Configuration()
-        let safari = SFSafariViewController(url: url, configuration: config)
-        safari.modalPresentationStyle = .popover
-        if let popover = safari.popoverPresentationController {
-            popover.sourceView = anchor.container
-            popover.canOverlapSourceViewRect = true
-            popover.permittedArrowDirections = .any
-        }
-
-        present(safari, animated: true)
+        popover(SFSafariViewController(url: url, configuration: config))
     }
 
-    func composeEmail(_ mailto: String, subject: String? = nil, body: String? = nil, anchor: ContentBase?) {
-        guard let anchor, MFMailComposeViewController.canSendMail() else {
+    func composeEmail(_ mailto: String, subject: String? = nil, body: String? = nil, anchor: ContentBase? = nil) {
+        guard MFMailComposeViewController.canSendMail() else {
             openUrl("mailto:\(mailto)", anchor: nil, inApp: false)
             return
         }
@@ -86,14 +79,8 @@ import UIKit
         mail.setToRecipients([mailto])
         if let subject { mail.setSubject(subject) }
         if let body { mail.setMessageBody("\n\n---\n\(body)", isHTML: false) }
-        mail.modalPresentationStyle = .popover
-        if let popover = mail.popoverPresentationController {
-            popover.sourceView = anchor.container
-            popover.canOverlapSourceViewRect = true
-            popover.permittedArrowDirections = .any
-        }
 
-        present(mail, animated: true)
+        popover(mail)
     }
 }
 

@@ -15,10 +15,26 @@
 import UIKit
 
 @_spi(Aiuta) public final class GradientView: UIView {
+    public struct ColorStop {
+        public let color: UIColor
+        public let stop: CGFloat
+
+        public init(_ color: UIColor, _ stop: CGFloat) {
+            self.color = color
+            self.stop = stop
+        }
+        
+        public init(_ color: Int, _ stop: CGFloat) {
+            self.color = color.uiColor
+            self.stop = stop
+        }
+    }
+
     public var startColor: UIColor = .red
     public var endColor: UIColor = .blue
 
     public var colors: [CGColor]?
+    public var colorStops: [ColorStop]?
 
     public var startPoint: CGPoint = .init(x: 0.5, y: 0)
     public var endPoint: CGPoint = .init(x: 0.5, y: 1)
@@ -32,7 +48,12 @@ import UIKit
     }
 
     override public func layoutSubviews() {
-        gradientLayer.colors = colors ?? [startColor.cgColor, endColor.cgColor]
+        if let colorStops {
+            gradientLayer.colors = colorStops.map { $0.color.cgColor }
+            gradientLayer.locations = colorStops.map { NSNumber(floatLiteral: $0.stop) }
+        } else {
+            gradientLayer.colors = colors ?? [startColor.cgColor, endColor.cgColor]
+        }
         gradientLayer.startPoint = startPoint
         gradientLayer.endPoint = endPoint
         updateShapeWithRoundedCorners()

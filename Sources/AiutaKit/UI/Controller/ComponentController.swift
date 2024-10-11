@@ -29,7 +29,8 @@ import UIKit
     public fileprivate(set) weak var vc: UIViewController?
 
     open func setup() {}
-        open func start() async {}
+    @available(iOS 13.0.0, *)
+    open func start() async {}
 }
 
 @_spi(Aiuta) public extension ComponentControllerBase {
@@ -41,7 +42,8 @@ import UIKit
         vc?.present(viewController)
     }
 
-        @discardableResult
+    @available(iOS 13.0.0, *)
+    @discardableResult
     func showBulletin<T>(_ content: ResultBulletin<T>, untilDismissed: Bool = false, overrideVc: UIViewController? = nil) async -> T {
         guard let presenter = overrideVc ?? vc else { return content.defaultResult }
         return await presenter.showBulletin(content, untilDismissed: untilDismissed)
@@ -62,13 +64,15 @@ import UIKit
         return componentController
     }
 
-        @discardableResult
+    @available(iOS 13.0.0, *)
+    @discardableResult
     func share(image: UIImage, title: String? = nil, additions: [Any] = []) async -> ShareResult {
         if let vc { return await vc.share(image: image, title: title, additions: additions) }
         else { return .failed(activity: nil, error: ShareError("No view controller to share")) }
     }
 
-        @discardableResult
+    @available(iOS 13.0.0, *)
+    @discardableResult
     func share(images: [UIImage], title: String? = nil, additions: [Any] = []) async -> ShareResult {
         if let vc { return await vc.share(images: images, title: title, additions: additions) }
         else { return .failed(activity: nil, error: ShareError("No view controller to share")) }

@@ -15,6 +15,7 @@
 import Alamofire
 import Foundation
 
+@available(iOS 13.0.0, *)
 @_spi(Aiuta) public actor RestService {
     private let provider: ApiProvider
     private let debugger: ApiDebugger?
@@ -22,6 +23,7 @@ import Foundation
     private let responseDecoder = JSONDecoder()
     private let parameterEncoder = JSONParameterEncoder()
     private let requestModifier: Session.RequestModifier
+    private let uploadsModifier: Session.RequestModifier
 
     private let codeOk = 200
     private let codeNotModified = 304
@@ -63,9 +65,15 @@ import Foundation
             urlRequest.cachePolicy = .reloadIgnoringLocalCacheData
             urlRequest.timeoutInterval = 10
         }
+
+        uploadsModifier = { urlRequest in
+            urlRequest.cachePolicy = .reloadIgnoringLocalCacheData
+            urlRequest.timeoutInterval = 60
+        }
     }
 }
 
+@available(iOS 13.0.0, *)
 private extension RestService {
     @MainActor func sendRequest<Request: ApiRequest & Encodable, Response: Decodable>(_ request: Request,
                                                                                       debugger debugOperation: ApiDebuggerOperation?) async throws -> ApiResponse<Response> {
@@ -103,7 +111,7 @@ private extension RestService {
                 if isDebug { trace(i: "▸", request.method.rawValue, shortUrl) }
                 dataRequest = session.upload(multipartFormData: { request.multipartFormData($0) },
                                              to: url, method: request.method,
-                                             headers: headers, requestModifier: requestModifier)
+                                             headers: headers, requestModifier: uploadsModifier)
         }
 
         /// response
@@ -170,6 +178,7 @@ private extension RestService {
     }
 }
 
+@available(iOS 13.0.0, *)
 @MainActor private extension RestService {
     func buildUrl(_ request: ApiRequest) async throws -> String {
         let urlString = "\(try await provider.baseUrl)/\(request.urlPath)"
@@ -215,6 +224,7 @@ private extension RestService {
     }
 }
 
+@available(iOS 13.0.0, *)
 @_spi(Aiuta) extension RestService: ApiService {
     @MainActor public func request<Request: ApiRequest & Encodable, Response: Decodable>(_ request: Request,
                                                                                          debugger debugOperation: ApiDebuggerOperation?,

@@ -20,9 +20,10 @@ import UIKit
     case light
     case bold
     case semibold
+    case heavy
     case blackOblique
 
-    fileprivate var descriptor: String {
+    public var descriptor: String {
         rawValue.firstCapitalized
     }
 }

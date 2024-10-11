@@ -41,7 +41,7 @@ struct SdkRussianLanguage: SdkLanguage {
     let start = "Начать" // Start
 
     let onboardingTryonTitle = "Примерьте перед покупкой" // Try on before buying
-    let onboardingTryonDescription = "Загрузите своё фото и\nпорадуйтесь новому образу" // Just upload your photo and see how it looks
+    let onboardingTryonDescription = "Загрузите своё фото и порадуйтесь новому образу" // Just upload your photo and see how it looks
 
     let onboardingBestResultsTitle = "Для лучшего качества примерки" // For best results
     let onboardingBestResultsDescription = "Используйте фото с хорошим освещением и прямой позой" // Use a photo with good lighting, stand straight a plain background

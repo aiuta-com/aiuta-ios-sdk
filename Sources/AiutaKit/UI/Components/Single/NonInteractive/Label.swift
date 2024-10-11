@@ -61,7 +61,7 @@ import UIKit
 
             let paragraphStyle = NSMutableParagraphStyle()
             paragraphStyle.alignment = view.textAlignment
-            if isLineHeightMultipleEnabled {
+            if isLineHeightMultipleEnabled, isMultiline {
                 paragraphStyle.lineHeightMultiple = font.lineHeightMultiple
             }
             paragraphStyle.lineBreakMode = view.lineBreakMode
@@ -74,25 +74,49 @@ import UIKit
                 viewAttributes[NSAttributedString.Key.strikethroughStyle] = strikethrough.rawValue
             }
 
+            let attributedText: NSAttributedString
             if isHtml {
-                view.attributedText = htmlAtributed(input: newValue, viewAttributes: viewAttributes)
+                attributedText = htmlAttributed(input: newValue, viewAttributes: viewAttributes)
             } else if let highlights, !highlights.isEmpty {
                 var highlightAttributes = viewAttributes
                 highlightAttributes[NSAttributedString.Key.foregroundColor] = highlightColor ?? ds.color.highlight
-                view.attributedText = colorize(input: newValue, highlights: highlights, viewAttributes: viewAttributes, highlightAttributes: highlightAttributes)
+                attributedText = colorize(input: newValue, highlights: highlights, viewAttributes: viewAttributes, highlightAttributes: highlightAttributes)
             } else if let caseHighlights, !caseHighlights.isEmpty {
                 var highlightAttributes = viewAttributes
                 highlightAttributes[NSAttributedString.Key.foregroundColor] = highlightColor ?? ds.color.highlight
-                view.attributedText = caseColorize(input: newValue, highlights: caseHighlights, viewAttributes: viewAttributes, highlightAttributes: highlightAttributes)
+                attributedText = caseColorize(input: newValue, highlights: caseHighlights, viewAttributes: viewAttributes, highlightAttributes: highlightAttributes)
             } else {
-                view.attributedText = NSMutableAttributedString(
+                attributedText = NSMutableAttributedString(
                     string: newValue,
                     attributes: viewAttributes
                 )
             }
 
+            if let leadingAttachment {
+                let attachmentString = NSAttributedString(attachment: leadingAttachment)
+                let completeText = NSMutableAttributedString(string: "")
+                completeText.append(attachmentString)
+                completeText.append(NSAttributedString(string: " "))
+                completeText.append(attributedText)
+                view.attributedText = completeText
+            } else {
+                view.attributedText = attributedText
+            }
+
             if needLayout { updateParentLayout() }
         }
+    }
+
+    var leadingAttachment: NSTextAttachment? {
+        didSet { text = view.text }
+    }
+
+    public func attach(_ image: UIImage?, bounds: CGRect) {
+        guard let image else { return }
+        let attachment = NSTextAttachment()
+        attachment.image = image
+        attachment.bounds = bounds
+        leadingAttachment = attachment
     }
 
     private func updateParentLayout() {
@@ -106,11 +130,14 @@ import UIKit
         }
     }
 
-    private func htmlAtributed(input: String, viewAttributes: [NSAttributedString.Key: Any]) -> NSAttributedString {
+    private func htmlAttributed(input: String, viewAttributes: [NSAttributedString.Key: Any]) -> NSAttributedString {
         var html = input
-        if let color = color?.hexString {
-            html = "<font color=#\(color)>\(html)</font>"
+
+        if let font {
+            let color = (color ?? font.color).hexString ?? "black"
+            html = "<span style=\"font-family: '\(font.family)-\(font.style.descriptor)', '-apple-system', 'HelveticaNeue'; font-weight: \(font.style.weight); font-size: \(font.size); color: \(color)\">\(html)</span>"
         }
+
         do {
             guard let data = html.data(using: String.Encoding.utf8) else {
                 throw ParseError.badData
@@ -123,7 +150,6 @@ import UIKit
             )
             let range = NSRange(location: 0, length: result.length)
             for key in viewAttributes.keys { result.removeAttribute(key, range: range) }
-            result.removeAttribute(NSAttributedString.Key.font, range: range)
             result.addAttributes(viewAttributes, range: range)
             return result
         } catch {
@@ -229,6 +255,14 @@ import UIKit
         set { view.textAlignment = newValue }
     }
 
+    public var minScale: CGFloat {
+        get { view.adjustsFontSizeToFitWidth ? view.minimumScaleFactor : 1 }
+        set {
+            view.minimumScaleFactor = clamp(newValue, min: 0, max: 1)
+            view.adjustsFontSizeToFitWidth = view.minimumScaleFactor < 1
+        }
+    }
+
     public convenience init(_ builder: (_ it: Label, _ ds: DesignSystem) -> Void) {
         self.init()
         view.isUserInteractionEnabled = false
@@ -275,5 +309,19 @@ private extension String {
         }
         if matches.isEmpty { return [self] }
         return ranges.map { String(self[Range($0, in: self)!]) }
+    }
+}
+
+extension FontStyle {
+    var weight: Int {
+        switch self {
+            case .light: return 300
+            case .regular: return 400
+            case .medium: return 500
+            case .semibold: return 600
+            case .bold: return 700
+            case .heavy: return 900
+            case .blackOblique: return 950
+        }
     }
 }

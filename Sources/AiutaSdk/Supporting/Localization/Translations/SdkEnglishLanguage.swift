@@ -21,7 +21,7 @@ struct SdkEnglishLanguage: SdkLanguage {
     let tryOn = "Try on" // Try on
     let share = "Share" // Share
     let addToCart = "Add to cart" // Add to cart
-    let addToWishlist = "Add to wishlist" // Add to wishlist
+    let addToWishlist = "Wishlist" // Add to wishlist
     let moreDetails = "More details" // More details
     let somethingWrong = "Something went wrong" // Something went wrong
     let tryAgain = "Something went wrong.\nPlease try again later" // Something went wrong. Please try again later
@@ -39,16 +39,16 @@ struct SdkEnglishLanguage: SdkLanguage {
     let start = "Start" // Start
 
     let onboardingTryonTitle = "Try on before buying" // Try on before buying
-    let onboardingTryonDescription = "Just upload your photo\nand see how it looks" // Just upload your photo and see how it looks
+    let onboardingTryonDescription = "Upload a photo and see how items<br/>look&nbsp;on&nbsp;you" // Just upload your photo and see how it looks
 
     let onboardingBestResultsTitle = "For best results" // For best results
-    let onboardingBestResultsDescription = "Use a photo with good lighting,\nstand straight a plain background" // Use a photo with good lighting, stand straight a plain background
+    let onboardingBestResultsDescription = "Use a photo with good lighting,<br/>stand straight a plain background" // Use a photo with good lighting, stand straight a plain background
     let onboardingLegalDisclaimer = "Your photo is processed as per the&nbsp;<u>Clarification Text</u>" // Your photo is processed as per the Clarification Text
 
     // Image selector
     let imageSelectorUploadButton = "Upload a photo of you" // Upload a photo of you
     let imageSelectorChangeButton = "Change photo" // Change photo
-    let poweredBy = "Powered by " // Powered by
+    let poweredBy = "Powered by" // Powered by
     let aiuta = "Aiuta"
     let imageSelectorPhotos: Pluralize = { "\($0) photos" } // N photos
     let imageSelectorCameraPermission = "Please allow access to the camera in the application settings." // Please allow access to the camera in the application settings.

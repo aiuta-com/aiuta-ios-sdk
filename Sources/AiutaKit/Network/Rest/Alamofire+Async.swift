@@ -15,6 +15,7 @@
 import Alamofire
 import Foundation
 
+@available(iOS 13.0.0, *)
 extension DataRequest {
     func rawResponse() async -> AFDataResponse<String> {
         await withCheckedContinuation { continuation in

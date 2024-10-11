@@ -14,7 +14,7 @@
 
 import UIKit
 
-@_spi(Aiuta) open class Page<DataType: Equatable>: Plane {
+@_spi(Aiuta) open class Page<DataType>: Plane {
     public let onUpdate = Signal<Void>()
 
     public enum Position {
@@ -31,6 +31,10 @@ import UIKit
         public var isSide: Bool {
             self != .current
         }
+        
+        public var isFocus: Bool {
+            self == .current
+        }
     }
 
     public private(set) var index: Int = 0
@@ -44,7 +48,7 @@ import UIKit
     public internal(set) var data: DataType? {
         didSet {
             view.isVisible = data.isSome
-            guard data != oldValue else { return }
+            //guard data != oldValue else { return }
             update(data)
             onUpdate.fire()
         }

@@ -18,12 +18,12 @@ import Resolver
 import UIKit
 
 final class SdkRegister {
+    @available(iOS 13.0.0, *)
     static func setup(apiKey: String, configuration: Aiuta.Configuration?) {
         instance.setup(apiKey: apiKey, configuration: configuration)
     }
 
-    static func insureConfigured() -> Bool {
-        VanilaHero.capture()
+    static func ensureConfigured() -> Bool {
         return instance.isConfigured
     }
 
@@ -34,6 +34,7 @@ final class SdkRegister {
     private let scope = ResolverScopeCache()
     fileprivate let resolver = Resolver()
 
+    @available(iOS 13.0.0, *)
     private func setup(apiKey: String, configuration: Aiuta.Configuration?) {
         checkIfUsageDescriptionsProvided()
 
@@ -41,13 +42,13 @@ final class SdkRegister {
         let isDebug = config.behavior.isDebugLogsEnabled
 
         trace(isEnabled: isDebug)
-        setLocalization(language: config.appearance.language)
+        //setLocalization(language: config.appearance.language)
+        setLocalization(language: .English)
         setDefaults(apiKey: apiKey)
         scope.reset()
 
         AiutaKit.register(
-            ds: { AiutaSdkDesignSystem(config) },
-            heroic: { VanilaHero.capture() },
+            ds: { SdkTheme(config) },
             imageTraits: { SdkImageTraits() }
         )
 
@@ -56,8 +57,12 @@ final class SdkRegister {
         resolver.register { SdkWatermarker(config.behavior.watermark) }.implements(Watermarker.self).scope(scope)
         resolver.register { SdkAnalyticsEnvImpl() }.implements(SdkAnalyticsEnv.self).scope(scope)
         resolver.register { AnalyticRouter(.ordinary(SdkAnalyticsTarget(apiKey, logging: isDebug))) }.implements(AnalyticTracker.self).scope(scope)
+
+        resolver.register { ConsentModelImpl() }.implements(ConsentModel.self).scope(scope)
+        resolver.register { SessionModelImpl() }.implements(SessionModel.self).scope(scope)
+        resolver.register { HistoryModelImpl() }.implements(HistoryModel.self).scope(scope)
+        resolver.register { TryOnModelImpl() }.implements(TryOnModel.self).scope(scope)
         resolver.register { AiutaSubscriptionImpl() }.implements(AiutaSubscription.self).scope(scope)
-        resolver.register { AiutaSdkModelImpl() }.implements(AiutaSdkModel.self).scope(scope)
 
         @injected var tracker: AnalyticTracker
         tracker.track(.session(.configure(hasCustomConfiguration: configuration.isSome, configuration: config)))
@@ -65,8 +70,8 @@ final class SdkRegister {
         @injected var subscription: AiutaSubscription
         subscription.load()
 
-        @injected var model: AiutaSdkModel
-        model.eraseHistoryIfNeeded()
+//        @injected var model: AiutaSdkModel
+//        model.eraseHistoryIfNeeded()
 
         isConfigured = true
     }
@@ -92,6 +97,7 @@ final class SdkRegister {
     var wrappedValue: Service = SdkRegister.instance.resolver.resolve(Service.self)
 }
 
+@available(iOS 13.0.0, *)
 private struct ApiDebuggerImpl: ApiDebugger {
     var isEnabled: Bool
 

@@ -48,7 +48,7 @@ import UIKit
     }
 
     public let stroke = Stroke { it, _ in
-        it.color = 0xD9D9D9FF.uiColor
+        it.color = 0xCCCCCCFF.uiColor
     }
 
     public func dismiss() {
@@ -72,6 +72,9 @@ import UIKit
     }
 
     public var blurHeight: CGFloat = 24
+    public var cornerRadius: CGFloat = 24
+    public var strokeWidth: CGFloat = 36
+    public var strokeOffset: CGFloat = 6
 
     override func updateLayoutInternal() {
         if behaviour == .floating {
@@ -92,10 +95,10 @@ import UIKit
         }
 
         stroke.layout.make { make in
-            make.size = .init(width: 30, height: 3)
+            make.size = .init(width: strokeWidth, height: 3)
             make.radius = 1.5
             make.centerX = 0
-            make.top = 8
+            make.top = strokeOffset
         }
 
         scrollView.layout.make { make in

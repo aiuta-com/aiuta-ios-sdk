@@ -16,7 +16,7 @@ import UIKit
 
 public enum Aiuta {
     /// Aiuta SDK Version
-    public static let sdkVersion = "2.0.0"
+    public static let sdkVersion = "3.0.0"
 
     /// This function configures the Aiuta SDK with the necessary API key and sets up the required services.
     /// You can call this method as many times as you like to update the configuration.
@@ -26,6 +26,7 @@ public enum Aiuta {
     ///             See [Getting Started](https://developer.aiuta.com/docs/start) for instructions to obtain your API KEY.
     ///             See [Digital Try On](https://developer.aiuta.com/products/digital-try-on/Documentation) Api Reference.
     ///   - configuration: Aiuta SDK Configuration struct, see Aiuta.Configuration down below.
+    @available(iOS 13.0.0, *)
     public static func setup(apiKey: String, configuration: Aiuta.Configuration?) {
         SdkRegister.setup(apiKey: apiKey, configuration: configuration)
     }
@@ -37,8 +38,9 @@ public enum Aiuta {
     ///   - withMoreToTryOn: Related SKUs that the user can try on, defaulting to an empty array.
     ///   - in: The view controller from which the Aiuta UI will be presented.
     ///   - delegate: The delegate that will receive callbacks from the Aiuta SDK.
-    public static func tryOn(sku: SkuInfo,
-                             withMoreToTryOn relatedSkus: [SkuInfo] = [],
+    @available(iOS 13.0.0, *)
+    public static func tryOn(sku: Product,
+                             withMoreToTryOn relatedSkus: [Product] = [],
                              in viewController: UIViewController,
                              delegate: AiutaSdkDelegate) {
         SdkPresenter.tryOn(sku: sku, withMoreToTryOn: relatedSkus, in: viewController, delegate: delegate)
@@ -48,6 +50,7 @@ public enum Aiuta {
     ///
     /// - Parameters:
     ///   - in: The view controller from which the Aiuta UI will be presented.
+    @available(iOS 13.0.0, *)
     @discardableResult
     public static func showHistory(in viewController: UIViewController) -> Bool {
         SdkPresenter.showHistory(in: viewController)
@@ -62,11 +65,115 @@ extension Aiuta {
     public struct Configuration {
         public static let `default` = Configuration()
 
-        public enum Language {
+        public enum Language: Equatable {
             case English, Turkish, Russian
         }
 
+        public enum PresentationStyle: Equatable, Codable {
+            case pageSheet, bottomSheet, fullScreen
+        }
+
         public struct Appearance {
+            public var presentationStyle: PresentationStyle = .pageSheet
+            public var extendedOnbordingNavBar: Bool = false
+            public var preferRightClose: Bool = false
+            public var reduceShadows: Bool = false
+
+            public struct Colors {
+                public var brand: UIColor?
+                public var accent: UIColor?
+                public var aiuta: UIColor?
+
+                public var primary: UIColor?
+                public var secondary: UIColor?
+                public var tertiary: UIColor?
+                public var onDark: UIColor?
+
+                public var error: UIColor?
+                public var onError: UIColor?
+
+                public var background: UIColor?
+                public var neutral: UIColor?
+                public var neutral2: UIColor?
+                public var neutral3: UIColor?
+
+                public var green: UIColor?
+                public var red: UIColor?
+                public var gray: UIColor?
+                public var lightGray: UIColor?
+                public var darkGray: UIColor?
+                
+                public var loadingAnimation: [UIColor]?
+
+                public init() {}
+            }
+
+            public var colors = Colors()
+
+            public struct Dimensions {
+                public var imageMainRadius: CGFloat?
+                public var imageBoardingRadius: CGFloat?
+                public var imagePreviewRadius: CGFloat?
+
+                public var bottomSheetRadius: CGFloat?
+
+                public var buttonLargeRadius: CGFloat?
+                public var buttonSmallRadius: CGFloat?
+
+                public var grabberWidth: CGFloat?
+                public var grabberOffset: CGFloat?
+
+                public var continuingSeparators: Bool?
+
+                public init() {}
+            }
+
+            public var dimensions = Dimensions()
+
+            public struct CustomFont {
+                public let font: UIFont
+                public let family: String
+                public let size: CGFloat
+                public let weight: UIFont.Weight
+                public var kern: CGFloat?
+                public var lineHeightMultiple: CGFloat?
+
+                public init(font: UIFont, family: String, size: CGFloat, weight: UIFont.Weight, kern: CGFloat? = nil, lineHeightMultiple: CGFloat? = nil) {
+                    self.font = font
+                    self.family = family
+                    self.size = size
+                    self.weight = weight
+                    self.kern = kern
+                    self.lineHeightMultiple = lineHeightMultiple
+                }
+            }
+
+            public struct Fonts {
+                public var titleXL: CustomFont?
+                public var titleL: CustomFont?
+                public var titleM: CustomFont?
+
+                public var navBar: CustomFont?
+                public var regular: CustomFont?
+                public var button: CustomFont?
+                public var buttonS: CustomFont?
+
+                public var cells: CustomFont?
+                public var chips: CustomFont?
+
+                public var product: CustomFont?
+                public var price: CustomFont?
+                public var brand: CustomFont?
+
+                public var description: CustomFont?
+
+                public init() {}
+            }
+
+            public var fonts = Fonts()
+
+            // MARK: -
+
             /// Your brand's primary color.
             /// This color will be used for all significant interface elements,
             /// such as the main action button on the screen, progress bars, etc.
@@ -107,6 +214,8 @@ extension Aiuta {
         }
 
         public struct Behavior {
+            public var tryGeneratePersonSegmentation: Bool = false
+
             /// The maximum number of photos that a user can select
             /// in the system piker for virtual try on.
             public var photoSelectionLimit: Int = 10
@@ -149,13 +258,13 @@ extension Aiuta {
 
 extension Aiuta {
     /// This structure represents the information about a SKU in the Aiuta platform.
-    public struct SkuInfo {
+    public struct Product {
         public let skuId: String
         public let skuCatalog: String?
         public let imageUrls: [String]
         public let localizedTitle: String
         public let localizedBrand: String
-        public let localizedPrice: String
+        public let localizedPrice: String?
         public let localizedOldPrice: String?
         public let localizedDiscount: String?
         public let additionalShareInfo: String?
@@ -185,7 +294,7 @@ extension Aiuta {
                     imageUrls: [String],
                     localizedTitle: String,
                     localizedBrand: String,
-                    localizedPrice: String,
+                    localizedPrice: String? = nil,
                     localizedOldPrice: String? = nil,
                     localizedDiscount: String? = nil,
                     additionalShareInfo: String? = nil) {
@@ -200,6 +309,8 @@ extension Aiuta {
             self.additionalShareInfo = additionalShareInfo
         }
     }
+
+    public typealias SkuInfo = Product
 }
 
 // MARK: - Events

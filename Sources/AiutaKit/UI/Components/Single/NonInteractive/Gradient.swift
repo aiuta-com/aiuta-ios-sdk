@@ -35,6 +35,16 @@ import UIKit
         set { view.endColor = newValue }
     }
 
+    public var colorStops: [GradientView.ColorStop]? {
+        get { view.colorStops }
+        set { view.colorStops = newValue }
+    }
+
+    public var colors: [UIColor]? {
+        get { view.colors?.map { UIColor(cgColor: $0) } }
+        set { view.colors = newValue?.map { $0.cgColor } }
+    }
+
     public var direction: Direction = .vertical {
         didSet {
             switch direction {

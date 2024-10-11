@@ -16,6 +16,7 @@
 import Alamofire
 import Foundation
 
+@available(iOS 13.0.0, *)
 final class SdkAnalyticsTarget: AnalyticTarget {
     private let api: ApiService
     private let logsEnabled: Bool
