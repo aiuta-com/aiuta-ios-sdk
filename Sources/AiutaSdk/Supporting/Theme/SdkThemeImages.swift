@@ -15,7 +15,28 @@
 @_spi(Aiuta) import AiutaKit
 import UIKit
 
-struct SdkThemeImages: DesignSystemImages {}
+struct SdkThemeImages: DesignSystemImages {
+    static let resourceBundle: Bundle? = {
+        let candidates = [
+            // Bundle should be present here when the package is linked into an App.
+            Bundle.main.resourceURL,
+            // Bundle should be present here when the package is linked into a framework.
+            Bundle(for: SdkRegister.self).resourceURL,
+        ]
+
+        let bundleName = "AiutaSdk_AiutaSdk"
+
+        for candidate in candidates {
+            let bundlePath = candidate?.appendingPathComponent(bundleName + ".bundle")
+            if let bundle = bundlePath.flatMap(Bundle.init(url:)) {
+                return bundle
+            }
+        }
+
+        // Return whatever bundle this code is in as a last resort.
+        return Bundle(for: SdkRegister.self)
+    }()
+}
 
 extension DesignSystemImages {
     func navigation(_ ref: SdkTheme.Navigation24) -> UIImage? { getImage(ref.group, ref.rawValue) }
@@ -24,15 +45,11 @@ extension DesignSystemImages {
     func icon36(_ ref: SdkTheme.Icon36) -> UIImage? { getImage(ref.group, ref.rawValue) }
     func onboarding(_ ref: SdkTheme.OnBoarding) -> UIImage? { getImage(ref.group, ref.rawValue) }
     func tryOn(_ ref: SdkTheme.TryOn) -> UIImage? { getImage("", ref.rawValue) }
-
-    func sdk(_ ref: AiutaSdkDesignSystemImages) -> UIImage? {
-        UIImage(named: ref.rawValue, in: .module, compatibleWith: nil)
-    }
 }
 
 private extension DesignSystemImages {
     func getImage(_ group: String, _ name: String) -> UIImage? {
-        UIImage(named: "aiuta\(group)\(name.firstCapitalized)", in: .module, compatibleWith: nil)
+        UIImage(named: "aiuta\(group)\(name.firstCapitalized)", in: SdkThemeImages.resourceBundle, compatibleWith: nil)
     }
 }
 
