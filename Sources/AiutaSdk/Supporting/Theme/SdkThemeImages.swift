@@ -17,38 +17,32 @@ import UIKit
 
 struct SdkThemeImages: DesignSystemImages {
     static let resourceBundle: Bundle? = {
+        let bundleName = "AiutaSdk_AiutaSdk"
         let candidates = [
-            // Bundle should be present here when the package is linked into an App.
             Bundle.main.resourceURL,
-            // Bundle should be present here when the package is linked into a framework.
             Bundle(for: SdkRegister.self).resourceURL,
         ]
 
-        let bundleName = "AiutaSdk_AiutaSdk"
-
         for candidate in candidates {
-            let bundlePath = candidate?.appendingPathComponent(bundleName + ".bundle")
-            if let bundle = bundlePath.flatMap(Bundle.init(url:)) {
-                return bundle
-            }
+            let bundlePath = candidate?.appendingPathComponent("\(bundleName).bundle")
+            if let bundle = bundlePath.flatMap(Bundle.init(url:)) { return bundle }
         }
 
-        // Return whatever bundle this code is in as a last resort.
         return Bundle(for: SdkRegister.self)
     }()
 }
 
 extension DesignSystemImages {
-    func navigation(_ ref: SdkTheme.Navigation24) -> UIImage? { getImage(ref.group, ref.rawValue) }
-    func icon16(_ ref: SdkTheme.Icon16) -> UIImage? { getImage(ref.group, ref.rawValue) }
-    func icon24(_ ref: SdkTheme.Icon24) -> UIImage? { getImage(ref.group, ref.rawValue) }
-    func icon36(_ ref: SdkTheme.Icon36) -> UIImage? { getImage(ref.group, ref.rawValue) }
-    func onboarding(_ ref: SdkTheme.OnBoarding) -> UIImage? { getImage(ref.group, ref.rawValue) }
-    func tryOn(_ ref: SdkTheme.TryOn) -> UIImage? { getImage("", ref.rawValue) }
+    func navigation(_ ref: SdkTheme.Navigation24) -> UIImage? { ref.custom(config) ?? bundleImage(ref.group, ref.rawValue) }
+    func icon16(_ ref: SdkTheme.Icon16) -> UIImage? { ref.custom(config) ?? bundleImage(ref.group, ref.rawValue) }
+    func icon24(_ ref: SdkTheme.Icon24) -> UIImage? { ref.custom(config) ?? bundleImage(ref.group, ref.rawValue) }
+    func icon36(_ ref: SdkTheme.Icon36) -> UIImage? { ref.custom(config) ?? bundleImage(ref.group, ref.rawValue) }
+    func onboarding(_ ref: SdkTheme.OnBoarding) -> UIImage? { bundleImage(ref.group, ref.rawValue) }
+    func tryOn(_ ref: SdkTheme.TryOn) -> UIImage? { bundleImage("", ref.rawValue) }
 }
 
 private extension DesignSystemImages {
-    func getImage(_ group: String, _ name: String) -> UIImage? {
+    func bundleImage(_ group: String, _ name: String) -> UIImage? {
         UIImage(named: "aiuta\(group)\(name.firstCapitalized)", in: SdkThemeImages.resourceBundle, compatibleWith: nil)
     }
 }
@@ -57,10 +51,21 @@ extension SdkTheme {
     enum Icon16: String {
         var group: String { "Icon16" }
 
-        case arrowSmall
+        case arrow
         case lock
         case magic
         case spin
+        case info
+
+        func custom(_ config: Aiuta.Configuration.Appearance.Images) -> UIImage? {
+            switch self {
+                case .arrow: return config.icons16.arrow
+                case .lock: return config.icons16.lock
+                case .magic: return config.icons16.magic
+                case .spin: return config.icons16.spin
+                case .info: return config.icons20.info
+            }
+        }
     }
 
     enum Icon24: String {
@@ -77,6 +82,21 @@ extension SdkTheme {
         case checkRounded
         case checkSmall
         case cross
+
+        func custom(_ config: Aiuta.Configuration.Appearance.Images) -> UIImage? {
+            switch self {
+                case .camera: return config.icons24.camera
+                case .cameraSwap: return config.icons24.takePhoto
+                case .photoLibrary: return config.icons24.photoLibrary
+                case .share: return config.icons24.share
+                case .trash: return config.icons24.trash
+                case .wishlist: return config.icons24.wishlist
+                case .wishlistFill: return config.icons24.wishlistFill
+                case .checkRounded: return config.icons24.checkCorrect
+                case .checkSmall: return config.icons24.checkCorrect
+                case .cross: return config.icons24.checkNotCorrect
+            }
+        }
     }
 
     enum Icon36: String {
@@ -85,6 +105,14 @@ extension SdkTheme {
         case error
         case like
         case dislike
+
+        func custom(_ config: Aiuta.Configuration.Appearance.Images) -> UIImage? {
+            switch self {
+                case .error: return config.icons36.error
+                case .like: return config.icons36.like
+                case .dislike: return config.icons36.dislike
+            }
+        }
     }
 
     enum Navigation24: String {
@@ -93,6 +121,14 @@ extension SdkTheme {
         case back
         case close
         case history
+
+        func custom(_ config: Aiuta.Configuration.Appearance.Images) -> UIImage? {
+            switch self {
+                case .back: return config.icons24.back
+                case .close: return config.icons24.close
+                case .history: return config.icons24.history
+            }
+        }
     }
 
     enum OnBoarding: String {
@@ -114,27 +150,4 @@ extension SdkTheme {
     enum TryOn: String {
         case photoPlaceholder
     }
-}
-
-enum AiutaSdkDesignSystemImages: String {
-    case aiutaBack
-    case aiutaNext
-    case aiutaEmptyHistory
-    case aiutaPlaceholder
-    case aiutaIconCamera
-    case aiutaIconGallery
-    case aiutaLoader
-    case aiutaMagic
-    case aiutaDown
-    case aiutaUp
-    case aiutaOnBoard2
-    case aiutaSelection
-    case aiutaSelected
-    case aiutaShare
-    case aiutaTrash
-    case aiutaClose
-    case aiutaCross
-    case aiutaError
-    case aiutaLike
-    case aiutaDislike
 }

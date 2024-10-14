@@ -34,8 +34,8 @@ extension ProcessingView {
             }
         }
 
-        private let blur = Blur { it, _ in
-            it.style = .extraLight
+        private let blur = Blur { it, ds in
+            it.style = ds.color.blur
             it.intensity = 0.4
         }
 

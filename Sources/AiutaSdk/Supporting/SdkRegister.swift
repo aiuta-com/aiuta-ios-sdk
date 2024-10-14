@@ -19,8 +19,8 @@ import UIKit
 
 final class SdkRegister {
     @available(iOS 13.0.0, *)
-    static func setup(apiKey: String, configuration: Aiuta.Configuration?) {
-        instance.setup(apiKey: apiKey, configuration: configuration)
+    static func setup(auth: AiutaAuthType, configuration: Aiuta.Configuration?) {
+        instance.setup(auth: auth, configuration: configuration)
     }
 
     static func ensureConfigured() -> Bool {
@@ -35,16 +35,16 @@ final class SdkRegister {
     fileprivate let resolver = Resolver()
 
     @available(iOS 13.0.0, *)
-    private func setup(apiKey: String, configuration: Aiuta.Configuration?) {
+    private func setup(auth: AiutaAuthType, configuration: Aiuta.Configuration?) {
         checkIfUsageDescriptionsProvided()
 
         let config = configuration ?? .default
         let isDebug = config.behavior.isDebugLogsEnabled
 
         trace(isEnabled: isDebug)
-        //setLocalization(language: config.appearance.language)
+        // setLocalization(language: config.appearance.language)
         setLocalization(language: .English)
-        setDefaults(apiKey: apiKey)
+        setDefaults(apiKey: auth.keyToDefaults)
         scope.reset()
 
         AiutaKit.register(
@@ -53,10 +53,10 @@ final class SdkRegister {
         )
 
         resolver.register { config }.scope(scope)
-        resolver.register { RestService(SdkApiProvider(apiKey: apiKey), debugger: ApiDebuggerImpl(isEnabled: isDebug)) }.implements(ApiService.self).scope(scope)
+        resolver.register { RestService(SdkApiProvider(auth: auth), debugger: ApiDebuggerImpl(isEnabled: isDebug)) }.implements(ApiService.self).scope(scope)
         resolver.register { SdkWatermarker(config.behavior.watermark) }.implements(Watermarker.self).scope(scope)
         resolver.register { SdkAnalyticsEnvImpl() }.implements(SdkAnalyticsEnv.self).scope(scope)
-        resolver.register { AnalyticRouter(.ordinary(SdkAnalyticsTarget(apiKey, logging: isDebug))) }.implements(AnalyticTracker.self).scope(scope)
+        resolver.register { AnalyticRouter(.ordinary(SdkAnalyticsTarget(auth, logging: isDebug))) }.implements(AnalyticTracker.self).scope(scope)
 
         resolver.register { ConsentModelImpl() }.implements(ConsentModel.self).scope(scope)
         resolver.register { SessionModelImpl() }.implements(SessionModel.self).scope(scope)
@@ -103,5 +103,15 @@ private struct ApiDebuggerImpl: ApiDebugger {
 
     func startOperation(id: String?, title: String, subtitle: String?) async -> ApiDebuggerOperation? {
         nil
+    }
+}
+
+@available(iOS 13.0.0, *)
+private extension AiutaAuthType {
+    var keyToDefaults: String {
+        switch self {
+            case let .apiKey(apiKey): return apiKey
+            case let .jwt(subscriptionId, _): return subscriptionId
+        }
     }
 }

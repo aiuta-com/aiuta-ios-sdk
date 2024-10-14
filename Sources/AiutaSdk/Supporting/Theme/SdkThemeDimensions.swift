@@ -18,21 +18,21 @@ import UIKit
 struct SdkThemeDimensions: DesignSystemDimensions {}
 
 extension DesignSystemDimensions {
-    var imageMainRadius: CGFloat { appearance.imageMainRadius ?? 24 }
-    var imageBoardingRadius: CGFloat { appearance.imageBoardingRadius ?? 16 }
-    var imagePreviewRadius: CGFloat { appearance.imagePreviewRadius ?? 16 }
+    var imageMainRadius: CGFloat { config.imageMainRadius ?? 24 }
+    var imageBoardingRadius: CGFloat { config.imageBoardingRadius ?? 16 }
+    var imagePreviewRadius: CGFloat { config.imagePreviewRadius ?? 16 }
 
-    var bottomSheetRadius: CGFloat { appearance.bottomSheetRadius ?? 16 }
+    var bottomSheetRadius: CGFloat { config.bottomSheetRadius ?? 16 }
 
-    var buttonLargeRadius: CGFloat { appearance.buttonLargeRadius ?? 8 }
-    var buttonSmallRadius: CGFloat { appearance.buttonSmallRadius ?? 8 }
+    var buttonLargeRadius: CGFloat { config.buttonLargeRadius ?? 8 }
+    var buttonSmallRadius: CGFloat { config.buttonSmallRadius ?? 8 }
 }
 
 extension DesignSystemDimensions {
-    var grabberWidth: CGFloat { appearance.grabberWidth ?? 36 }
-    var grabberOffset: CGFloat { appearance.grabberOffset ?? 6 }
+    var grabberWidth: CGFloat { config.grabberWidth ?? 36 }
+    var grabberOffset: CGFloat { config.grabberOffset ?? 6 }
 }
 
 extension DesignSystemDimensions {
-    var continuingSeparators: Bool { appearance.continuingSeparators ?? false }
+    var continuingSeparators: Bool { config.continuingSeparators ?? false }
 }

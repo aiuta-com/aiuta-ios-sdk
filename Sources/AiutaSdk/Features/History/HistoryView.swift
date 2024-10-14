@@ -16,8 +16,8 @@
 import UIKit
 
 final class HistoryView: Scroll {
-    let blur = Blur { it, _ in
-        it.style = .extraLight
+    let blur = Blur { it, ds in
+        it.style = ds.color.blur
     }
 
     let stroke = Stroke { it, ds in

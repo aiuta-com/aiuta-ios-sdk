@@ -194,7 +194,7 @@ private extension RestService {
     func buildHeaders(_ request: ApiRequest) async throws -> HTTPHeaders {
         guard request.requireAuth else { return request.headers }
         var headers = request.headers
-        try await provider.authorize(headers: &headers)
+        try await provider.authorize(headers: &headers, for: request)
         return headers
     }
 

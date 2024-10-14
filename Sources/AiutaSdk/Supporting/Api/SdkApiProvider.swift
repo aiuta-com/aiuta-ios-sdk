@@ -18,14 +18,24 @@ import Alamofire
 @available(iOS 13.0.0, *)
 @_spi(Aiuta) public struct SdkApiProvider: ApiProvider {
     public let baseUrl: String
-    let apiKey: String
+    private let auth: AiutaAuthType
 
-    public func authorize(headers: inout HTTPHeaders) async throws {
-        headers.add(.authorization(xApiKey: apiKey))
+    public func authorize(headers: inout HTTPHeaders, for request: ApiRequest) async throws {
+        switch auth {
+            case let .apiKey(apiKey):
+                headers.add(.authorization(xApiKey: apiKey))
+            case let .jwt(subscriptionId, jwtProvider):
+                if request.isSecure {
+                    let requestParams: [String: String] = request.secureAuthFields ?? [:]
+                    headers.add(.authorization(bearerToken: try await jwtProvider.getJwt(requestParams: requestParams)))
+                } else {
+                    headers.add(.authorization(xApiKey: subscriptionId))
+                }
+        }
     }
 
-    public init(apiKey: String, baseUrl: String = "https://api.aiuta.com/digital-try-on/v1") {
+    public init(auth: AiutaAuthType, baseUrl: String = "https://api.aiuta.com/digital-try-on/v1") {
         self.baseUrl = baseUrl
-        self.apiKey = apiKey
+        self.auth = auth
     }
 }

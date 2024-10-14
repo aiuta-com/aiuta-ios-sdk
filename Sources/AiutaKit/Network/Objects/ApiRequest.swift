@@ -32,6 +32,8 @@ import Foundation
     var title: String { get }
     var subtitle: String? { get }
 
+    var isSecure: Bool { get }
+    var secureAuthFields: [String: String]? { get }
     func multipartFormData(_ data: MultipartFormData)
 }
 
@@ -53,5 +55,7 @@ import Foundation
     var title: String { "\(method.rawValue.lowercased().firstCapitalized) \(urlPath.replacingOccurrences(of: "_", with: " "))" }
     var subtitle: String? { nil }
 
+    var isSecure: Bool { secureAuthFields.isSome }
+    var secureAuthFields: [String: String]? { nil }
     func multipartFormData(_ data: MultipartFormData) {}
 }

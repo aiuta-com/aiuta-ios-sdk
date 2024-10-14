@@ -83,12 +83,12 @@ final class PlainBulletinWrapper: Bulletin {
 
     override func setup() {
         view.backgroundColor = scrollContent.view.backgroundColor ?? scrollContent.memColor
+        blurStroke.color = view.backgroundColor ?? .clear
         scrollContent.memColor = view.backgroundColor
         scrollContent.view.backgroundColor = nil
         if !scrollContent.hasStroke {
             stroke.view.isHidden = true
             blurStroke.view.isHidden = true
-            blurBody.view.isHidden = true
         }
         maxWidth = scrollContent.maxWidth
         cornerRadius = scrollContent.cornerRadius

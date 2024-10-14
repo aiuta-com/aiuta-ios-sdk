@@ -18,11 +18,11 @@ import UIKit
 extension ResultsView {
     final class FitDisclaimer: Stroke {
         let button = FitButton()
-        
+
         override func setup() {
             color = ds.color.neutral
         }
-        
+
         override func updateLayout() {
             layout.make { make in
                 make.height = 80
@@ -31,22 +31,34 @@ extension ResultsView {
             }
         }
     }
-    
+
     final class FitButton: PlainButton {
         let label = Label { it, ds in
             it.font = ds.font.description
             it.color = ds.color.primary
             it.text = "Results may vary from real-life fit"
         }
-        
+
+        let icon = Image { it, ds in
+            it.isAutoSize = false
+            it.tint = ds.color.primary
+            it.image = ds.image.icon16(.info)
+        }
+
         override func updateLayout() {
             layout.make { make in
                 make.leftRight = 0
                 make.height = 27
             }
-            
+
             label.layout.make { make in
-                make.centerX = 0
+                make.centerX = icon.hasImage ? -12 : 0
+                make.centerY = -1
+            }
+
+            icon.layout.make { make in
+                make.square = 20
+                make.left = label.layout.rightPin + 4
                 make.centerY = -1
             }
         }

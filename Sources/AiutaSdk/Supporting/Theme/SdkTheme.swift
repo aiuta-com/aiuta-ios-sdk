@@ -42,19 +42,25 @@ extension DesignSystem {
 }
 
 extension DesignSystemColors {
-    var appearance: Aiuta.Configuration.Appearance {
-        SdkTheme.config.appearance
+    var config: Aiuta.Configuration.Appearance.Colors {
+        SdkTheme.config.appearance.colors
     }
 }
 
 extension DesignSystemDimensions {
-    var appearance: Aiuta.Configuration.Appearance.Dimensions {
+    var config: Aiuta.Configuration.Appearance.Dimensions {
         SdkTheme.config.appearance.dimensions
     }
 }
 
 extension DesignSystemFonts {
-    var appearance: Aiuta.Configuration.Appearance.Fonts {
+    var config: Aiuta.Configuration.Appearance.Fonts {
         SdkTheme.config.appearance.fonts
+    }
+}
+
+extension DesignSystemImages {
+    var config: Aiuta.Configuration.Appearance.Images {
+        SdkTheme.config.appearance.images
     }
 }

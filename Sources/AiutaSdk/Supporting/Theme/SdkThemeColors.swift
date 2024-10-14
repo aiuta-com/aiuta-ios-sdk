@@ -16,39 +16,39 @@
 import UIKit
 
 struct SdkThemeColors: DesignSystemColors {
-    var ground: UIColor { appearance.colors.background ?? appearance.backgroundTint ?? .white }
+    var ground: UIColor { config.background ?? .white }
     var popup: UIColor { ground }
     var item: UIColor { ground }
-    var accent: UIColor { appearance.colors.accent ?? appearance.accentColor ?? 0xFB1010FF.uiColor }
+    var accent: UIColor { config.accent ?? 0xFB1010FF.uiColor }
     var tint: UIColor { primary }
     var highlight: UIColor { accent }
-    var error: UIColor { appearance.colors.error ?? 0xEF5754FF.uiColor }
+    var error: UIColor { config.error ?? 0xEF5754FF.uiColor }
 }
 
 extension DesignSystemColors {
-    var primary: UIColor { appearance.colors.primary ?? 0x000000FF.uiColor }
-    var secondary: UIColor { appearance.colors.secondary ?? 0x9F9F9FFF.uiColor }
-    var tertiary: UIColor { appearance.colors.tertiary ?? 0xEEEEEEFF.uiColor }
-    var onDark: UIColor { appearance.colors.onDark ?? 0xFFFFFFFF.uiColor }
-    var onError: UIColor { appearance.colors.onError ?? 0xFFFFFFFF.uiColor }
+    var primary: UIColor { config.primary ?? 0x000000FF.uiColor }
+    var secondary: UIColor { config.secondary ?? 0x9F9F9FFF.uiColor }
+    var tertiary: UIColor { config.tertiary ?? 0xEEEEEEFF.uiColor }
+    var onDark: UIColor { config.onDark ?? 0xFFFFFFFF.uiColor }
+    var onError: UIColor { config.onError ?? 0xFFFFFFFF.uiColor }
 }
 
 extension DesignSystemColors {
-    var brand: UIColor { appearance.colors.brand ?? appearance.brandColor ?? 0x4000FFFF.uiColor }
-    var neutral: UIColor { appearance.colors.neutral ?? 0xF2F2F7FF.uiColor }
-    var neutral2: UIColor { appearance.colors.neutral2 ?? 0xE5E5EAFF.uiColor }
-    var neutral3: UIColor { appearance.colors.neutral3 ?? 0xC7C7CCFF.uiColor }
+    var brand: UIColor { config.brand ?? 0x4000FFFF.uiColor }
+    var neutral: UIColor { config.neutral ?? 0xF2F2F7FF.uiColor }
+    var neutral2: UIColor { config.neutral2 ?? 0xE5E5EAFF.uiColor }
+    var neutral3: UIColor { config.neutral3 ?? 0xC7C7CCFF.uiColor }
 }
 
 extension DesignSystemColors {
-    var green: UIColor { appearance.colors.green ?? 0x00C35AFF.uiColor }
-    var red: UIColor { appearance.colors.red ?? 0xEF5754FF.uiColor }
+    var green: UIColor { config.green ?? 0x00C35AFF.uiColor }
+    var red: UIColor { config.red ?? 0xEF5754FF.uiColor }
 }
 
 extension DesignSystemColors {
-    var gray: UIColor { appearance.colors.gray ?? 0xB2B2B2FF.uiColor }
-    var lightGray: UIColor { appearance.colors.lightGray ?? 0xEEEEEEFF.uiColor }
-    var darkGray: UIColor { appearance.colors.darkGray ?? 0xCCCCCCFF.uiColor }
+    var gray: UIColor { config.gray ?? 0xB2B2B2FF.uiColor }
+    var lightGray: UIColor { config.lightGray ?? 0xEEEEEEFF.uiColor }
+    var darkGray: UIColor { config.darkGray ?? 0xCCCCCCFF.uiColor }
 }
 
 extension DesignSystemColors {
@@ -57,10 +57,19 @@ extension DesignSystemColors {
     }
 
     var loadingAnimation: [UIColor] {
-        if appearance.colors.loadingAnimation.isSomeAndNotEmpty {
-            return appearance.colors.loadingAnimation ?? loadingAnimationDefaults
+        if config.loadingAnimation.isSomeAndNotEmpty {
+            return config.loadingAnimation ?? loadingAnimationDefaults
         } else {
             return loadingAnimationDefaults
+        }
+    }
+}
+
+extension DesignSystemColors {
+    var blur: UIBlurEffect.Style {
+        switch config.style {
+            case .light: return .extraLight
+            case .dark: return .dark
         }
     }
 }

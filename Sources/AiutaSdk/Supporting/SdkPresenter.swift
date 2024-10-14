@@ -41,6 +41,8 @@ enum SdkPresenter {
 // MARK: - Navigator
 
 private final class SdkNavigator: UINavigationController {
+    private var originalPresenterWindow: UIWindow?
+    private var originalInterfaceStyle: UIUserInterfaceStyle?
     private var presentingOriginalAlpha: CGFloat = 1
     private let presentingTargetAlpha: CGFloat = 0.6
     private var presentingDimmedAlpha: CGFloat = 0.6
@@ -50,17 +52,30 @@ private final class SdkNavigator: UINavigationController {
     override init(rootViewController: UIViewController) {
         super.init(rootViewController: rootViewController)
         setNavigationBarHidden(true, animated: false)
-        applyPrefferedPresentationStyle()
+        applyPreferedAppearancePresentationStyle()
         presentationController?.delegate = self
     }
 
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    func applyPreferedAppearancePresentationStyle() {
+        modalTransitionStyle = .coverVertical
+        modalPresentationStyle = config.appearance.presentationStyle.modalPresentationStyle
+        UIViewController.isStackingAllowed = config.appearance.presentationStyle.allowViewControllersStackUp
+        if #available(iOS 16.0, *), config.appearance.presentationStyle == .bottomSheet {
+            let nonStack = UISheetPresentationController.Detent.Identifier("nonStackDetent")
+            sheetPresentationController?.detents = [.custom(identifier: nonStack) { context in
+                context.maximumDetentValue - 1 // this will make the view controllers not stack up
+            }]
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         sdkWillReappear()
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        sdkDidAppear()
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -71,13 +86,27 @@ private final class SdkNavigator: UINavigationController {
     func sdkWillAppear() {
         trace("---------------")
         trace("SDK WILL APPEAR")
+        originalPresenterWindow = presentingViewController?.view.window
         presentingOriginalAlpha = presentingViewController?.view.alpha ?? presentingOriginalAlpha
+        if #available(iOS 13.0, *) {
+            originalInterfaceStyle = presentingViewController?.view.window?.overrideUserInterfaceStyle
+        }
     }
 
     func sdkWillReappear() {
         guard config.appearance.presentationStyle == .bottomSheet else { return }
         UIView.animate(withDuration: presentingAlphaChangeDuration) { [self] in
             presentingViewController?.view.alpha = presentingDimmedAlpha
+        }
+    }
+
+    func sdkDidAppear() {
+        if #available(iOS 13.0, *), let window = presentingViewController?.view.window {
+            delay(.moment) { [self] in
+                UIView.transition(with: window, duration: presentingAlphaChangeDuration / 2, options: [.transitionCrossDissolve, .allowUserInteraction]) { [self] in
+                    presentingViewController?.view.window?.overrideUserInterfaceStyle = config.appearance.colors.style.userInterface
+                }
+            }
         }
     }
 
@@ -95,6 +124,15 @@ private final class SdkNavigator: UINavigationController {
     func sdkDidDismiss() {
         trace("SDK DID DISMISS")
         trace("===============")
+        if #available(iOS 13.0, *), let originalInterfaceStyle, let originalPresenterWindow {
+            UIView.transition(with: originalPresenterWindow, duration: presentingAlphaChangeDuration / 2, options: [.transitionCrossDissolve, .allowUserInteraction]) {
+                originalPresenterWindow.overrideUserInterfaceStyle = originalInterfaceStyle
+            }
+        }
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
 
@@ -120,19 +158,6 @@ extension SdkNavigator: UIAdaptivePresentationControllerDelegate {
 // MARK: - Presentation extension
 
 extension UIViewController {
-    func applyPrefferedPresentationStyle() {
-        @injected var config: Aiuta.Configuration
-        modalTransitionStyle = .coverVertical
-        modalPresentationStyle = config.appearance.presentationStyle.modalPresentationStyle
-        UIViewController.isStackingAllowed = config.appearance.presentationStyle.allowViewControllersStackUp
-        if #available(iOS 16.0, *), config.appearance.presentationStyle == .bottomSheet {
-            let nonStack = UISheetPresentationController.Detent.Identifier("nonStackDetent")
-            sheetPresentationController?.detents = [.custom(identifier: nonStack) { context in
-                context.maximumDetentValue - 1 // this will make the view controllers not stack up
-            }]
-        }
-    }
-
     func popoverOrCover(_ vc: UIViewController) {
         @injected var config: Aiuta.Configuration
         if config.appearance.presentationStyle.isFullScreen {
@@ -163,7 +188,7 @@ extension UIViewController {
 
 // MARK: - Presentation style
 
-extension Aiuta.Configuration.PresentationStyle {
+extension Aiuta.Configuration.Appearance.PresentationStyle {
     var modalPresentationStyle: UIModalPresentationStyle {
         switch self {
             case .pageSheet, .bottomSheet: return .pageSheet
@@ -186,6 +211,15 @@ extension Aiuta.Configuration.PresentationStyle {
         switch self {
             case .pageSheet, .bottomSheet: return false
             case .fullScreen: return true
+        }
+    }
+}
+
+extension Aiuta.Configuration.Appearance.Style {
+    var userInterface: UIUserInterfaceStyle {
+        switch self {
+            case .light: return .light
+            case .dark: return .dark
         }
     }
 }

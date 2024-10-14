@@ -45,9 +45,7 @@ extension AnalyticEvent {
                 case let .configure(hasCustomConfiguration, configuration):
                     return AnalyticEvent("Configure", [
                         "has_custom_configuration": hasCustomConfiguration,
-                        "photo_selection_limit": configuration.behavior.photoSelectionLimit,
                         "is_watermark_provided": configuration.behavior.watermark.image.isSome,
-                        "is_logo_provided": configuration.appearance.navigationBar.logoImage.isSome,
                         "is_history_enable": configuration.behavior.isHistoryAvailable,
                     ], level: .significant)
 

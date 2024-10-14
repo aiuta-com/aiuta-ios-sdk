@@ -18,27 +18,27 @@ import UIKit
 extension TryOnView {
     final class ChangePhotoButton: PlainButton {
         let blur = Blur { it, ds in
-            it.style = .extraLight
+            it.style = ds.color.blur
             it.intensity = 0.4
         }
-        
+
         let label = Label { it, ds in
             it.isLineHeightMultipleEnabled = false
             it.font = ds.font.buttonS
             it.color = ds.color.primary
             it.text = L.imageSelectorChangeButton
         }
-        
+
         override func updateLayout() {
             layout.make { make in
                 make.width = label.layout.width + 48
                 make.height = label.layout.height + 24
             }
-            
+
             label.layout.make { make in
                 make.center = .zero
             }
-            
+
             blur.layout.make { make in
                 make.inset = 0
                 make.radius = ds.dimensions.buttonSmallRadius

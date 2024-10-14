@@ -22,8 +22,8 @@ final class SdkAnalyticsTarget: AnalyticTarget {
     private let logsEnabled: Bool
     private let maxRetryCount: Int
 
-    init(_ apiKey: String, retryCount: Int = 5, logging: Bool = false) {
-        api = RestService(SdkApiProvider(apiKey: apiKey, baseUrl: "https://api.aiuta.com/analytics/v1"))
+    init(_ auth: AiutaAuthType, retryCount: Int = 5, logging: Bool = false) {
+        api = RestService(SdkApiProvider(auth: auth, baseUrl: "https://api.aiuta.com/analytics/v1"))
         maxRetryCount = retryCount
         logsEnabled = logging
     }

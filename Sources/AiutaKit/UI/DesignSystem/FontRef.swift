@@ -39,10 +39,6 @@ import UIKit
     var underline: NSUnderlineStyle? { get }
     var strikethrough: NSUnderlineStyle? { get }
 
-    func changing(size: CGFloat) -> Self
-    func changing(color: UIColor) -> Self
-    func changing(color: Int64) -> Self
-    
     func uiFont() -> UIFont?
 }
 

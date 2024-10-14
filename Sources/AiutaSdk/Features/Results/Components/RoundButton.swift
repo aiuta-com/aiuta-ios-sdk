@@ -21,22 +21,22 @@ extension ResultPage {
             didSet {
                 blur.view.isVisible = hasBlur
                 stroke.view.isVisible = !hasBlur
-                icon.tint = hasBlur ? ds.color.onDark : ds.color.primary
+                icon.tint = (hasBlur && ds.color.blur == .light) ? ds.color.onDark : ds.color.primary
             }
         }
 
-        let blur = Blur { it, _ in
-            it.style = .light
+        let blur = Blur { it, ds in
+            it.style = ds.color.blur
         }
 
         let stroke = Stroke { it, ds in
-            it.color = ds.color.onDark
+            it.color = ds.color.ground
             it.view.isVisible = false
         }
 
         let icon = Image { it, ds in
             it.isAutoSize = false
-            it.tint = ds.color.onDark
+            it.tint = ds.color.blur == .light ? ds.color.onDark : ds.color.primary
         }
 
         override func updateLayout() {

@@ -16,7 +16,7 @@ import Foundation
 
 fileprivate(set) var L: SdkLanguage = SdkEnglishLanguage()
 
-func setLocalization(language: Aiuta.Configuration.Language?) {
+func setLocalization(language: Aiuta.Configuration.Appearance.Language?) {
     guard let language else {
         setSystemLanguage()
         return

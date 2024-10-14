@@ -132,7 +132,6 @@ final class BulletinWrapper: Plane {
         }
 
         floatingContainer.addContent(contentView)
-        contentView.blurBody.sendBelow(contentView.scrollView)
     }
 
     override func invalidateLayout() {

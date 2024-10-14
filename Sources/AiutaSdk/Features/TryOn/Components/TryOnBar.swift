@@ -29,7 +29,7 @@ extension TryOnView {
         let tryOnButton = TryOnButton()
 
         override func setup() {
-            shadowColor = .black.withAlphaComponent(0.04)
+            shadowColor = ds.color.primary.withAlphaComponent(0.04)
             shadowOffset = .init(width: 0, height: -10)
             shadowRadius = 15
             shadowOpacity = 1
@@ -84,7 +84,7 @@ extension TryOnView {
         }
 
         let arrow = Image { it, ds in
-            it.image = ds.image.icon16(.arrowSmall)
+            it.image = ds.image.icon16(.arrow)
             it.tint = ds.color.primary
         }
 

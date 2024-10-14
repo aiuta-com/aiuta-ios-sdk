@@ -20,24 +20,26 @@ struct SdkThemeFonts: DesignSystemFonts {
 }
 
 extension DesignSystemFonts {
-    var titleXL: FontRef { appearance.titleXL?.ref ?? SdkFont(style: .heavy, size: 40, lineHeightMultiple: 0.92) }
-    var titleL: FontRef { appearance.titleL?.ref ?? SdkFont(style: .bold, size: 24) }
-    var titleM: FontRef { appearance.titleM?.ref ?? SdkFont(style: .bold, size: 20, kern: -0.4) }
+    var titleXL: FontRef { config.titleXL?.ref ?? SdkFont(style: .heavy, size: 40, lineHeightMultiple: 0.92) }
+    var titleL: FontRef { config.titleL?.ref ?? SdkFont(style: .bold, size: 24) }
+    var titleM: FontRef { config.titleM?.ref ?? SdkFont(style: .bold, size: 20, kern: -0.4) }
 
-    var navBar: FontRef { appearance.navBar?.ref ?? SdkFont(style: .medium, size: 17, kern: -0.51, lineHeightMultiple: 1.08) }
-    var regular: FontRef { appearance.regular?.ref ?? SdkFont(style: .medium, size: 17, kern: -0.51, lineHeightMultiple: 1.08) }
-    var button: FontRef { appearance.button?.ref ?? SdkFont(style: .semibold, size: 17, kern: -0.17, lineHeightMultiple: 0.89) }
-    var buttonS: FontRef { appearance.buttonS?.ref ?? SdkFont(style: .semibold, size: 13, kern: -0.13, lineHeightMultiple: 1.16) }
+    var navBar: FontRef { config.navBar?.ref ?? SdkFont(style: .medium, size: 17, kern: -0.51, lineHeightMultiple: 1.08) }
+    var regular: FontRef { config.regular?.ref ?? SdkFont(style: .medium, size: 17, kern: -0.51, lineHeightMultiple: 1.08) }
+    var button: FontRef { config.button?.ref ?? SdkFont(style: .semibold, size: 17, kern: -0.17, lineHeightMultiple: 0.89) }
+    var buttonS: FontRef { config.buttonS?.ref ?? SdkFont(style: .semibold, size: 13, kern: -0.13, lineHeightMultiple: 1.16) }
 
-    var cells: FontRef { appearance.cells?.ref ?? SdkFont(style: .medium, size: 17, kern: -0.17) }
-    var chips: FontRef { appearance.chips?.ref ?? SdkFont(style: .regular, size: 15, kern: -0.15, lineHeightMultiple: 1.01) }
+    var cells: FontRef { config.cells?.ref ?? SdkFont(style: .medium, size: 17, kern: -0.17) }
+    var chips: FontRef { config.chips?.ref ?? SdkFont(style: .regular, size: 15, kern: -0.15, lineHeightMultiple: 1.01) }
 
-    var product: FontRef { appearance.product?.ref ?? SdkFont(style: .regular, size: 13) }
-    var price: FontRef { appearance.price?.ref ?? SdkFont(style: .bold, size: 14, kern: -0.14) }
-    var brand: FontRef { appearance.brand?.ref ?? SdkFont(style: .medium, size: 12, kern: -0.12) }
+    var product: FontRef { config.product?.ref ?? SdkFont(style: .regular, size: 13) }
+    var price: FontRef { config.price?.ref ?? SdkFont(style: .bold, size: 14, kern: -0.14) }
+    var brand: FontRef { config.brand?.ref ?? SdkFont(style: .medium, size: 12, kern: -0.12) }
 
-    var description: FontRef { appearance.description?.ref ?? SdkFont(style: .regular, size: 12, kern: -0.12) }
+    var description: FontRef { config.description?.ref ?? SdkFont(style: .regular, size: 12, kern: -0.12) }
 }
+
+// MARK: - Default
 
 struct SdkFont: FontRef {
     var family: String { "-apple-system" }
@@ -49,18 +51,6 @@ struct SdkFont: FontRef {
     var color: UIColor = .black
     var underline: NSUnderlineStyle? = nil
     var strikethrough: NSUnderlineStyle? = nil
-
-    func changing(size newSize: CGFloat) -> SdkFont {
-        SdkFont(style: style, size: newSize, kern: kern, baselineOffset: baselineOffset, lineHeightMultiple: lineHeightMultiple, color: color)
-    }
-
-    func changing(color newColor: UIColor) -> SdkFont {
-        SdkFont(style: style, size: size, kern: kern, baselineOffset: baselineOffset, lineHeightMultiple: lineHeightMultiple, color: newColor)
-    }
-
-    func changing(color hexColor: Int64) -> SdkFont {
-        changing(color: UIColor(hex: hexColor))
-    }
 
     func uiFont() -> UIFont? {
         UIFont.systemFont(ofSize: size, weight: style.weight)
@@ -96,6 +86,8 @@ extension UIFont.Weight {
     }
 }
 
+// MARK: - Custom
+
 struct CustomFontWrapper: FontRef {
     var family: String { font.family }
     var style: FontStyle { font.weight.style }
@@ -112,10 +104,6 @@ struct CustomFontWrapper: FontRef {
     init(font: Aiuta.Configuration.Appearance.CustomFont) {
         self.font = font
     }
-
-    func changing(size: CGFloat) -> CustomFontWrapper { self }
-    func changing(color: UIColor) -> CustomFontWrapper { self }
-    func changing(color: Int64) -> CustomFontWrapper { self }
 
     func uiFont() -> UIFont? { font.font.withSize(size) }
 }

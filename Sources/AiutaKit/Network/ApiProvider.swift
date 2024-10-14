@@ -19,5 +19,5 @@ import Foundation
 @_spi(Aiuta) public protocol ApiProvider {
     var baseUrl: String { get async throws }
 
-    func authorize(headers: inout HTTPHeaders) async throws
+    func authorize(headers: inout HTTPHeaders, for request: ApiRequest) async throws
 }

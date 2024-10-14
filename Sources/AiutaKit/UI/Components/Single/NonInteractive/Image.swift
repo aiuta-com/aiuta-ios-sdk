@@ -40,6 +40,10 @@ import UIKit
         set { view.contentMode = newValue }
     }
 
+    public var hasImage: Bool {
+        image.isSome
+    }
+
     public var isAutoSize = true
 
     public convenience init(_ builder: (_ it: Image, _ ds: DesignSystem) -> Void) {

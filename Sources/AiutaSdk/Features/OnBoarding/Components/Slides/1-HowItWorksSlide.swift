@@ -183,7 +183,7 @@ extension OnBoardingView.StickyScroll {
         var forcedZoom: Int?
 
         override func setup() {
-            shadowColor = .black.withAlphaComponent(0.12)
+            shadowColor = ds.color.primary.withAlphaComponent(0.12)
             shadowOffset = .init(width: 0, height: 2.55)
             shadowRadius = 13.2
             shadowOpacity = 1
