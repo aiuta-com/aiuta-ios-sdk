@@ -36,11 +36,11 @@ public protocol AiutaDataProvider: AnyObject {
 
 extension Aiuta {
     public struct UploadedImage {
-        let id: String
-        let url: String
+        public let id: String
+        public let url: String
     }
 
     public struct GeneratedImage {
-        let url: String
+        public let url: String
     }
 }
