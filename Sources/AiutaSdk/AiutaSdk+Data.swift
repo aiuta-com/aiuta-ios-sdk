@@ -38,9 +38,18 @@ extension Aiuta {
     public struct UploadedImage {
         public let id: String
         public let url: String
+
+        public init(id: String, url: String) {
+            self.id = id
+            self.url = url
+        }
     }
 
     public struct GeneratedImage {
         public let url: String
+
+        public init(url: String) {
+            self.url = url
+        }
     }
 }
