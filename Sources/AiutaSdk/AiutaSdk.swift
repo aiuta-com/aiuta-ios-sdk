@@ -16,7 +16,7 @@ import UIKit
 
 public enum Aiuta {
     /// Aiuta SDK Version
-    public static let sdkVersion = "3.1.0"
+    public static let sdkVersion = "3.1.1"
 
     /// This function configures the Aiuta SDK with the necessary auth type and sets up the required services.
     /// You can call this method as many times as you like to update the configuration.
