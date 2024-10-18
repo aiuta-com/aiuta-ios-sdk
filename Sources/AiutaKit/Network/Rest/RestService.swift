@@ -99,16 +99,16 @@ private extension RestService {
 
         switch request.type {
             case .plain:
-                if isDebug { trace(i: "▸", request.method.rawValue, shortUrl) }
+                if isDebug { trace(i: "▸", request.method.rawValue, shortUrl, headers.keys) }
                 dataRequest = session.request(url, method: request.method,
                                               headers: headers, requestModifier: requestModifier)
             case .json:
-                if isDebug { trace(i: "▷", request.method.rawValue, shortUrl, requestBody) }
+                if isDebug { trace(i: "▷", request.method.rawValue, shortUrl, headers.keys, requestBody ?? "") }
                 dataRequest = session.request(url, method: request.method,
                                               parameters: parameters, encoder: parameterEncoder,
                                               headers: headers, requestModifier: requestModifier)
             case .upload:
-                if isDebug { trace(i: "▸", request.method.rawValue, shortUrl) }
+                if isDebug { trace(i: "▸", request.method.rawValue, shortUrl, headers.keys) }
                 dataRequest = session.upload(multipartFormData: { request.multipartFormData($0) },
                                              to: url, method: request.method,
                                              headers: headers, requestModifier: uploadsModifier)
@@ -121,7 +121,7 @@ private extension RestService {
 
         if statusCode == codeNotModified {
             if isDebug { trace(i: "◁", "Response",
-                               "\n\n ▷", request.method.rawValue, shortUrl, requestBody,
+                               "\n\n ▷", request.method.rawValue, shortUrl, headers.keys, requestBody ?? "",
                                "\n ◁", statusCode,
                                "\n") }
 
@@ -133,19 +133,19 @@ private extension RestService {
             switch request.type {
                 case .plain:
                     trace(i: "◂", "PLAIN Response",
-                          "\n\n ▸", request.method.rawValue, shortUrl,
+                          "\n\n ▸", request.method.rawValue, shortUrl, headers.keys,
                           "\n ◂", statusCode, shortenString(rawResponse.value) ?? rawResponse.error,
                           "\n")
 
                 case .json:
                     trace(i: "◁", "JSON Response",
-                          "\n\n ▷", request.method.rawValue, shortUrl, requestBody,
-                          "\n\n ◁", statusCode, shortenString(rawResponse.value) ?? rawResponse.error,
+                          "\n\n ▷", request.method.rawValue, shortUrl, headers.keys, requestBody ?? "",
+                          "\n ◁", statusCode, shortenString(rawResponse.value) ?? rawResponse.error,
                           "\n")
 
                 case .upload:
                     trace(i: "◂", "UPLOAD Response",
-                          "\n\n ▸", request.method.rawValue, shortUrl,
+                          "\n\n ▸", request.method.rawValue, shortUrl, headers.keys,
                           "\n ◂", statusCode, shortenString(rawResponse.value) ?? rawResponse.error,
                           "\n")
             }

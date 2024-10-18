@@ -35,10 +35,8 @@ import UIKit
     public func replace(_ viewController: UIViewController, with next: UIViewController) {
         if let navigationController = viewController.navigationController {
             var vcs = navigationController.children
-            if !vcs.isEmpty {
-                vcs.removeLast()
-                vcs.append(next)
-            }
+            if !vcs.isEmpty { vcs.removeLast() }
+            vcs.append(next)
             navigationController.setViewControllers(vcs, animated: true)
         }
     }

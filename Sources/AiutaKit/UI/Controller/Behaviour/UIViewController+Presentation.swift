@@ -53,6 +53,21 @@ import UIKit
         }
     }
 
+    func replace(with viewController: UIViewController, crossFadeDuration: AsyncDelayTime?) {
+        if let crossFadeDuration, let navigationController {
+            var vcs = navigationController.children
+            if !vcs.isEmpty { vcs.removeLast() }
+            vcs.append(viewController)
+            let transition: CATransition = CATransition()
+            transition.duration = crossFadeDuration.seconds
+            transition.type = CATransitionType.fade
+            navigationController.view.layer.add(transition, forKey: nil)
+            navigationController.setViewControllers(vcs, animated: false)
+        } else {
+            replace(with: viewController, backstack: nil)
+        }
+    }
+
     func popover(_ viewController: UIViewController, withMediumDetent: Bool = false) {
         viewController.applyPrefferedSheetPresentationStyle(withMediumDetent)
         present(viewController, animated: true)

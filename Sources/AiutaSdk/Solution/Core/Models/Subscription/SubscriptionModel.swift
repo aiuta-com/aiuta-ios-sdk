@@ -12,27 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import Alamofire
+@_spi(Aiuta) import AiutaKit
 import Foundation
 
-@_spi(Aiuta) public extension HTTPHeader {
-    static func ifNoneMatch(_ value: String) -> HTTPHeader {
-        HTTPHeader(name: "if-none-match", value: value)
-    }
+protocol SubscriptionModel {
+    var didResolveDetails: Signal<Void> { get }
 
-    static func authorization(xApiKey value: String) -> HTTPHeader {
-        HTTPHeader(name: "x-api-key", value: value)
-    }
+    var shouldDisplayPoweredBy: Bool { get }
+    var powerdByLink: String? { get }
 
-    static func authorization(xUserId value: String) -> HTTPHeader {
-        HTTPHeader(name: "x-user-id", value: value)
-    }
-}
+    var shouldDisplayFitDisclaimer: Bool { get }
+    var fitDisclaimer: Aiuta.SubscriptionDetails.Disclaimer? { get }
 
-@_spi(Aiuta) public extension HTTPHeaders {
-    var etag: String? { value(for: "Etag") }
+    var shouldDisplayFeedback: Bool { get }
+    var feedback: Aiuta.SubscriptionDetails.Feedback? { get }
 
-    var keys: [String] {
-        Array(dictionary.keys)
-    }
+    func load()
 }
