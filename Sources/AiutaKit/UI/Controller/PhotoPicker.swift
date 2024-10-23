@@ -4,6 +4,7 @@
 
 import Foundation
 import PhotosUI
+import Resolver
 
 @MainActor @_spi(Aiuta) public final class PhotoPicker {
     public enum PickError: Error {
@@ -17,6 +18,7 @@ import PhotosUI
     public var concurrentLoadChunkSize = 4
 
     private weak var vc: UIViewController?
+    @Injected private var ds: DesignSystem
 
     public init(vc: UIViewController?) {
         self.vc = vc
@@ -45,6 +47,8 @@ extension PhotoPicker: PHPickerViewControllerDelegate {
         phPickerConfig.selectionLimit = selectionLimit
         phPickerConfig.filter = PHPickerFilter.images
         let phPickerVC = PHPickerViewController(configuration: phPickerConfig)
+        phPickerVC.overrideUserInterfaceStyle = ds.color.style
+        phPickerVC.view.tintColor = ds.color.accent
         phPickerVC.delegate = self
         vc.popover(phPickerVC)
     }

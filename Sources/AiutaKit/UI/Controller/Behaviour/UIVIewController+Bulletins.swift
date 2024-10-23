@@ -15,6 +15,7 @@
 import MessageUI
 import Photos
 import PhotosUI
+import Resolver
 import SafariServices
 import UIKit
 
@@ -65,7 +66,14 @@ import UIKit
         }
 
         let config = SFSafariViewController.Configuration()
-        popover(SFSafariViewController(url: url, configuration: config))
+        let safari = SFSafariViewController(url: url, configuration: config)
+        if #available(iOS 13.0, *) {
+            @Injected var ds: DesignSystem
+            safari.overrideUserInterfaceStyle = ds.color.style
+            safari.preferredControlTintColor = ds.color.accent
+            safari.preferredBarTintColor = ds.color.ground
+        }
+        popover(safari)
     }
 
     func composeEmail(_ mailto: String, subject: String? = nil, body: String? = nil, anchor: ContentBase? = nil) {
@@ -80,6 +88,10 @@ import UIKit
         if let subject { mail.setSubject(subject) }
         if let body { mail.setMessageBody("\n\n---\n\(body)", isHTML: false) }
 
+        if #available(iOS 13.0, *) {
+            @Injected var ds: DesignSystem
+            mail.overrideUserInterfaceStyle = ds.color.style
+        }
         popover(mail)
     }
 }

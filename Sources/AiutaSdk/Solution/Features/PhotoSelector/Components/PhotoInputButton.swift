@@ -18,6 +18,7 @@ import UIKit
 extension PhotoSelectorBulletin {
     final class PhotoInputButton: PlainButton {
         let icon = Image { it, ds in
+            it.isAutoSize = false
             it.tint = ds.color.brand
         }
 
@@ -38,6 +39,7 @@ extension PhotoSelectorBulletin {
             }
 
             icon.layout.make { make in
+                make.square = 24
                 make.left = 16
                 make.centerY = 0
             }

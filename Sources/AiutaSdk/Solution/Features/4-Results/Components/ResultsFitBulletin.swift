@@ -21,7 +21,7 @@ extension TryOnView {
             it.font = ds.font.regular
             it.color = ds.color.primary
             it.isMultiline = true
-            it.text = "Virtual try-on is a visualization tool that shows how items might look and may not perfectly represent how the item will fit in reality"
+            it.text = L.fitDisclaimerBody
         }
 
         let button = LabelButton { it, ds in
@@ -29,7 +29,7 @@ extension TryOnView {
             it.label.color = ds.color.primary
             it.view.borderColor = ds.color.neutral2
             it.view.borderWidth = 1
-            it.text = "Close"
+            it.text = L.close
         }
 
         override func setup() {

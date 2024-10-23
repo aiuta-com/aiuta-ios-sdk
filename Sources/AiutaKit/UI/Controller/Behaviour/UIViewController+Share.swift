@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import LinkPresentation
+import Resolver
 import UIKit
 import UniformTypeIdentifiers
 
@@ -46,6 +47,11 @@ import UniformTypeIdentifiers
         activityViewController.completionWithItemsHandler = { _, _, _, _ in
             try? FileManager.default.removeItem(at: filePath)
         }
+        if #available(iOS 13.0, *) {
+            @Injected var ds: DesignSystem
+            activityViewController.overrideUserInterfaceStyle = ds.color.style
+            activityViewController.view.tintColor = ds.color.accent
+        }
         popover(activityViewController, withMediumDetent: true)
     }
 
@@ -55,10 +61,20 @@ import UniformTypeIdentifiers
 
     func share(images: [UIImage], title: String? = nil, additions: [Any] = [], completion: ((ShareResult) -> Void)? = nil) {
         trace(i: "<", "Sharing")
+        var window: UIWindow?
+        var interfaceStyle: UIUserInterfaceStyle?
         let activityViewController = UIActivityViewController(
             activityItems: images.compactMap {
                 ShareableImage($0, title: title)
             } + additions.compactMap { ShareableAddition(some: $0) }, applicationActivities: nil)
+        if #available(iOS 13.0, *) {
+            @Injected var ds: DesignSystem
+            activityViewController.overrideUserInterfaceStyle = ds.color.style
+            activityViewController.view.tintColor = ds.color.accent
+            window = UIApplication.shared.windows.first
+            interfaceStyle = window?.overrideUserInterfaceStyle
+            window?.overrideUserInterfaceStyle = ds.color.style
+        }
         var shareWall: ShareWall?
         if UIViewController.isStackingAllowed {
             popover(activityViewController, withMediumDetent: true)
@@ -70,6 +86,7 @@ import UniformTypeIdentifiers
         }
         activityViewController.completionWithItemsHandler = { [weak shareWall] activityType, completed, _, activityError in
             let result = ShareResult(activity: activityType?.rawValue, completed: completed, error: activityError)
+            if #available(iOS 13.0, *), let interfaceStyle { window?.overrideUserInterfaceStyle = interfaceStyle }
             shareWall?.dismiss(animated: false)
             trace(i: "<", result)
             completion?(result)

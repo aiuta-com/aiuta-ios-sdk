@@ -23,6 +23,7 @@ extension PhotoHistoryBulletin {
         }
 
         let deleteView = ImageButton { it, ds in
+            it.imageView.isAutoSize = false
             it.image = ds.image.icon24(.trash)
             it.tint = .white
         }
@@ -38,10 +39,16 @@ extension PhotoHistoryBulletin {
                 make.inset = 0
                 make.radius = ds.dimensions.imagePreviewRadius
             }
-
+            
             deleteView.layout.make { make in
-                make.right = -2
+                make.square = 44
+                make.right = -5
                 make.bottom = -2
+            }
+            
+            deleteView.imageView.layout.make { make in
+                make.square = 24
+                make.center = .zero
             }
         }
     }

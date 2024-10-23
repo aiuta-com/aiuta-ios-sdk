@@ -16,7 +16,7 @@ import UIKit
 
 public enum Aiuta {
     /// Aiuta SDK Version
-    public static let sdkVersion = "3.1.1"
+    public static let sdkVersion = "3.1.6"
 
     /// This function configures the Aiuta SDK with the necessary auth type and sets up the required services.
     /// You can call this method as many times as you like to update the configuration.
@@ -30,7 +30,7 @@ public enum Aiuta {
     ///   - controller: Overrides Aiuta default data provider.
     ///                 See `AiutaSdk+Data.swift`.
     @available(iOS 13.0.0, *)
-    public static func setup(auth: AiutaAuthType,
+    public static func setup(auth: Aiuta.AuthType,
                              configuration: Aiuta.Configuration? = nil,
                              controller: AiutaDataController? = nil) {
         SdkRegister.setup(auth: auth, configuration: configuration, controller: controller)

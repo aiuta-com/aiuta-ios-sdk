@@ -15,15 +15,17 @@
 import Foundation
 
 @available(iOS 13.0.0, *)
-public enum AiutaAuthType {
-    ///   - apiKey: The API key provided by Aiuta for accessing its services.
-    ///             See [Getting Started](https://developer.aiuta.com/docs/start) for instructions to obtain your API KEY.
-    ///             See [Digital Try On](https://developer.aiuta.com/products/digital-try-on/Documentation) Api Reference.
-    case apiKey(apiKey: String)
+extension Aiuta {
+    public enum AuthType {
+        ///   - apiKey: The API key provided by Aiuta for accessing its services.
+        ///             See [Getting Started](https://developer.aiuta.com/docs/start) for instructions to obtain your API KEY.
+        ///             See [Digital Try On](https://developer.aiuta.com/products/digital-try-on/Documentation) Api Reference.
+        case apiKey(apiKey: String)
 
-    ///   - subscriptionId: You can find the subscription ID in the URL of a subscription you have.
-    ///             See [Getting Started](https://developer.aiuta.com/docs/start) how to use JWT auth.
-    case jwt(subscriptionId: String, jwtProvider: AiutaJwtProvider)
+        ///   - subscriptionId: You can find the subscription ID in the URL of a subscription you have.
+        ///             See [Getting Started](https://developer.aiuta.com/docs/start) how to use JWT auth.
+        case jwt(subscriptionId: String, jwtProvider: AiutaJwtProvider)
+    }
 }
 
 @available(iOS 13.0.0, *)

@@ -114,4 +114,5 @@ final class TryOnViewController: ViewController<TryOnView> {
 @available(iOS 13.0.0, *)
 extension TryOnViewController: PageRepresentable {
     var page: Aiuta.Event.Page { .imagePicker }
+    var isSafeToDismiss: Bool { true }
 }

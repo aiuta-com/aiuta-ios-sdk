@@ -23,7 +23,7 @@ final class FeedbackCommentViewController: ViewController<FeedbackCommentView> {
 
     override func setup() {
         ui.input.becomeFirstResponder()
-        ui.title.text = L[subscription.feedback?.plaintextTitle]
+        ui.title.text = L.feedbackSheetExtraOptionTitle
 
         ui.navBar.onClose.subscribe(with: self) { [unowned self] in
             didFeedback.fire(nil)

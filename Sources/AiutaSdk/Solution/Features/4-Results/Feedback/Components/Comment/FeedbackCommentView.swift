@@ -43,7 +43,7 @@ final class FeedbackCommentView: Plane {
         it.color = ds.color.brand
         it.font = ds.font.button
         it.label.color = ds.color.onDark
-        it.text = L.feedbackSend
+        it.text = L.feedbackSheetSendFeedback
     }
 
     override func updateLayout() {

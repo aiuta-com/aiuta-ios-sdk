@@ -16,4 +16,5 @@ import UIKit
 
 protocol PageRepresentable {
     var page: Aiuta.Event.Page { get }
+    var isSafeToDismiss: Bool { get }
 }

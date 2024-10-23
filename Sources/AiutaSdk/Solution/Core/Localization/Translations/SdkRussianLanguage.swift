@@ -14,68 +14,115 @@
 
 import Foundation
 
-struct SdkRussianLanguage: SdkLanguage {
-    subscript(_ variants: Aiuta.StringVariants?) -> String? { variants?.ru }
+struct SdkRussianLanguage: AiutaSdkLanguage {
+    let substitutions: Aiuta.Localization.Builtin.Substitutions
 
-    // General
-    let tryOn = "Примерить" // Try on
-    let share = "Поделиться" // Share
-    let addToCart = "Добавить в корзину" // Add to cart
-    let addToWishlist = "В избранное" // Add to wishlist
-    let moreDetails = "Подробнее" // More details
-    let somethingWrong = "Что-то пошло не так" // Something went wrong
-    let tryAgain = "Что-то пошло не так.\nПожалуйста, повторите попытку позже" // Something went wrong. Please try again later
-    let poweredBy = "Powered by" // Powered by
-    let aiuta = "Aiuta"
-    let cancel = "Отмена" // Cancel
-    let settings = "Настройки" // Settings
-    let send = "Отправить" // Send
-    let skip = "Пропустить" // Skip
+    init(_ substitutions: Aiuta.Localization.Builtin.Substitutions) {
+        self.substitutions = substitutions
+    }
 
-    // App bar
-    let history = "История" // History
-    let select = "Выбрать" // Select
+    let tryOn = "Примерить"
+    let close = "Закрыть"
+    let cancel = "Отмена"
+    let addToWish = "Список желаний"
+    let addToCart = "Добавить в корзину"
+    let share = "Поделиться"
+    let tryAgain = "Попробовать снова"
+    let defaultErrorMessage = "Что-то пошло не так.\nПожалуйста, попробуйте позже"
 
-    // Onboarding
-    let next = "Далее" // Next
-    let start = "Начать" // Start
+    // MARK: - App bar
 
-    let onboardingTryonTitle = "Примерьте перед покупкой" // Try on before buying
-    let onboardingTryonDescription = "Загрузите своё фото и порадуйтесь новому образу" // Just upload your photo and see how it looks
+    let appBarVirtualTryOn = "Виртуальная примерка"
+    let appBarHistory = "История"
+    let appBarSelect = "Выбрать"
 
-    let onboardingBestResultsTitle = "Для лучшего качества примерки" // For best results
-    let onboardingBestResultsDescription = "Используйте фото с хорошим освещением и прямой позой" // Use a photo with good lighting, stand straight a plain background
-    let onboardingLegalDisclaimer = "Загружая фото, вы соглашаетесь с <u>условиями</u>" // Your photo is processed as per the Clarification Text
+    // MARK: - Splash
 
-    // Image selector
-    let imageSelectorUploadButton = "Загрузить своё фото" // Upload a photo of you
-    let imageSelectorChangeButton = "Заменить фото" // Change photo
-    let imageSelectorPhotos: Pluralize = { "\($0) фото" } // N photos
-    let imageSelectorCameraPermission = "Пожалуйста, предоставьте доступ к камере в настройках приложения." // Please allow access to the camera in the application settings.
+    let preOnboardingTitle = "Попробуйте на себе"
+    let preOnboardingSubtitle = "Добро пожаловать в нашу виртуальную примерочную.\nПримерьте товар прямо\nна своей фотографии"
+    let preOnboardingButton = "Начнем"
 
-    // Generation
-    let generatingUpload = "Загружаем фото" // Uploading image
-    let generatingScanBody = "Примеряем" // Scanning your body
-    let generatingOutfit = "Генерируем образ" // Generating outfit
+    // MARK: - Onboarding
 
-    // History
-    let selectAll = "Выбрать все" // Select all
-    let selectNone = "Снять выделение" // Select none
-    let historyEmptyDescription = "История ваших примерок\nбудет сохранена здесь" // Once you try on first item your try-on history would be stored here
+    let onboardingAppbarTryonPage = "<b>Шаг 1/3</b> - Как это работает"
+    let onboardingPageTryonTopic = "Примерьте перед покупкой"
+    let onboardingPageTryonSubtopic = "Загрузите фото и посмотрите, как вещи выглядят на вас"
 
-    // Generation Result
-    let generationResultMoreTitle = "Больше образов для примерки" // More for you to try on
-    let generationResultSwipeUp = "Посмотреть новые образы" // Swipe up for more
+    let onboardingAppbarBestResultPage = "<b>Шаг 2/3</b> - Для лучшего результата"
+    let onboardingPageBestResultTopic = "Для лучшего результата"
+    let onboardingPageBestResultSubtopic = "Используйте фото с хорошим освещением, стойте прямо на однотонном фоне"
 
-    // Picker sheet
-    let pickerSheetTakePhoto = "Сделать фото" // Take a photo
-    let pickerSheetChooseLibrary = "Выбрать из галереи" // Choose from library
+    let onboardingAppbarConsentPage = "<b>Шаг 3/3</b> - Согласие"
+    let onboardingPageConsentTopic = "Согласие"
 
-    // Upload history sheet
-    let uploadHistorySheetPreviously = "Ранее использованные фото" // Previously used photos
-    let uploadHistorySheetUploadNewButton = "+ Загрузить новое фото" // + Upload new photo
+    var onboardingPageConsentBody: String {
+        "Чтобы примерить товары в цифровом виде, вы соглашаетесь разрешить \(substitutions.brandName) обрабатывать вашу фотографию. " +
+        "Ваши данные будут обработаны в соответствии с <b><a href='\(substitutions.privacyPolicyUrl)'>Политикой конфиденциальности</a></b> и <b><a href='\(substitutions.termsOfServiceUrl)'>Условиями использования</a></b> \(substitutions.brandName)."
+    }
 
-    // Feedback
-    let feedbackSend = "Отправить отзыв" // Send feedback
-    let feedbackCancel = "Отменить" // Cancel
+    var onboardingPageConsentAgreePoint: String {
+        "Я даю согласие \(substitutions.brandName) на обработку моей фотографии"
+    }
+
+    let onboardingButtonNext = "Далее"
+    let onboardingButtonStart = "Начать"
+
+    // MARK: - Image selector
+
+    let imageSelectorUploadButton = "Загрузить вашу фотографию"
+    let imageSelectorChangeButton = "Изменить фотографию"
+    let imageSelectorProtectionPoint = "Ваши фотографии защищены и видны только&nbsp;вам"
+    let imageSelectorPoweredByAiuta = "Работает на базе Aiuta"
+
+    // MARK: - Loading
+
+    let loadingUploadingImage = "Загрузка изображения"
+    let loadingScanningBody = "Сканирование вашего тела"
+    let loadingGeneratingOutfit = "Создание образа"
+
+    // MARK: - Generation Result
+
+    let generationResultMoreTitle = "Вам также может понравиться"
+    let generationResultMoreSubtitle = "Еще варианты для примерки"
+
+    // MARK: - History
+
+    let historySelectorDisabledButton = "Выбрать"
+    let historySelectorEnableButtonSelectAll = "Выбрать все"
+    let historySelectorEnableButtonUnselectAll = "Снять выделение"
+    let historySelectorEnableButtonCancel = "Отмена"
+    let historyEmptyDescription = "После того, как вы примерите первый товар, история примерок будет сохранена здесь"
+
+    // MARK: - Photo picker sheet
+
+    let pickerSheetTakePhoto = "Сделать фото"
+    let pickerSheetChooseLibrary = "Выбрать из библиотеки"
+
+    // MARK: - Uploads history sheet
+
+    let uploadsHistorySheetPreviously = "Ранее использованные фотографии"
+    let uploadsHistorySheetUploadNewButton = "+ Загрузить новое фото"
+
+    // MARK: - Feedback sheet
+
+    let feedbackSheetTitle = "Можете рассказать подробнее?"
+    let feedbackSheetOptions = ["Этот стиль не для меня", "Товар выглядит неправильно", "Я выгляжу по-другому"]
+    let feedbackSheetSkip = "Пропустить"
+    let feedbackSheetSend = "Отправить"
+
+    let feedbackSheetExtraOption = "Другое"
+    let feedbackSheetExtraOptionTitle = "Расскажите, что мы можем улучшить?"
+    let feedbackSheetSendFeedback = "Отправить отзыв"
+    let feedbackSheetGratitude = "Спасибо за ваш отзыв"
+
+    // MARK: - Fit disclaimer
+
+    let fitDisclaimerTitle = "Результаты могут отличаться от реальной посадки"
+    let fitDisclaimerBody = "Виртуальная примерка — это инструмент визуализации, который показывает, как вещи могут выглядеть, и может не идеально отображать, как вещь будет сидеть в реальности"
+
+    // MARK: - Camera permission
+
+    let dialogCameraPermissionTitle = "Доступ к камере"
+    let dialogCameraPermissionDescription = "Пожалуйста, разрешите доступ к камере в настройках приложения"
+    let dialogCameraPermissionConfirmButton = "Настройки"
 }

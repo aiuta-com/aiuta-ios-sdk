@@ -47,6 +47,9 @@ extension Aiuta.Configuration {
         /// In case of failure, the normal animation of the loader will not be affected.
         public var tryGeneratePersonSegmentation: Bool = false
 
+        /// Use additional splash screen before onboarding.
+        public var isSplashScreenEnabled: Bool = false
+
         public struct Watermark {
             /// Optional watermark image that will be applied to share generated image.
             /// Watermark will fit within the (x: 0.5, y: 0.82, w: 0.45, h: 0.14) area of the generated image,
@@ -74,21 +77,12 @@ extension Aiuta.Configuration {
         /// The language in which the SDK interface will be displayed.
         /// If not specified, the first preferred system language will be used
         /// if it is supported, otherwise English will be used.
-        public var language: Language?
+        public var localization: Aiuta.Localization?
 
         public var colors = Colors()
         public var dimensions = Dimensions()
         public var fonts = Fonts()
         public var images = Images()
-    }
-}
-
-// MARK: - Appearance.Manguage
-
-extension Aiuta.Configuration.Appearance {
-    /// The language in which the SDK should be displayed.
-    public enum Language: Equatable {
-        case English, Turkish, Russian
     }
 }
 
@@ -180,6 +174,8 @@ extension Aiuta.Configuration.Appearance {
     /// Custom fonts
     public struct Fonts {
         public var titleXL: CustomFont?
+        public var welcome: CustomFont?
+
         public var titleL: CustomFont?
         public var titleM: CustomFont?
 

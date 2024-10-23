@@ -16,10 +16,11 @@
 import UIKit
 
 struct SdkThemeColors: DesignSystemColors {
+    var style: UIUserInterfaceStyle { config.style.userInterface }
     var ground: UIColor { config.background ?? .white }
     var popup: UIColor { ground }
     var item: UIColor { ground }
-    var accent: UIColor { config.accent ?? 0xFB1010FF.uiColor }
+    var accent: UIColor { brand }
     var tint: UIColor { primary }
     var highlight: UIColor { accent }
     var error: UIColor { config.error ?? 0xEF5754FF.uiColor }
@@ -35,6 +36,7 @@ extension DesignSystemColors {
 
 extension DesignSystemColors {
     var brand: UIColor { config.brand ?? 0x4000FFFF.uiColor }
+    var aiuta: UIColor { config.aiuta ?? 0x4000FFFF.uiColor }
     var neutral: UIColor { config.neutral ?? 0xF2F2F7FF.uiColor }
     var neutral2: UIColor { config.neutral2 ?? 0xE5E5EAFF.uiColor }
     var neutral3: UIColor { config.neutral3 ?? 0xC7C7CCFF.uiColor }

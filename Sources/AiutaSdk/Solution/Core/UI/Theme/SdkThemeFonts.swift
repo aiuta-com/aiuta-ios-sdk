@@ -21,6 +21,8 @@ struct SdkThemeFonts: DesignSystemFonts {
 
 extension DesignSystemFonts {
     var titleXL: FontRef { config.titleXL?.ref ?? SdkFont(style: .heavy, size: 40, lineHeightMultiple: 0.92) }
+    var welcome: FontRef { config.welcome?.ref ?? SdkFont(style: .medium, size: 16, lineHeightMultiple: 1.18) }
+
     var titleL: FontRef { config.titleL?.ref ?? SdkFont(style: .bold, size: 24) }
     var titleM: FontRef { config.titleM?.ref ?? SdkFont(style: .bold, size: 20, kern: -0.4) }
 

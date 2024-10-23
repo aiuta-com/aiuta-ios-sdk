@@ -14,26 +14,31 @@
 
 import Foundation
 
-fileprivate(set) var L: SdkLanguage = SdkEnglishLanguage()
+fileprivate(set) var L: AiutaSdkLanguage = SdkEnglishLanguage(.aiuta())
 
-func setLocalization(language: Aiuta.Configuration.Appearance.Language?) {
+func setLocalization(_ language: Aiuta.Localization?) {
     guard let language else {
         setSystemLanguage()
         return
     }
 
     switch language {
-        case .English: L = SdkEnglishLanguage()
-        case .Turkish: L = SdkTurkishLanguage()
-        case .Russian: L = SdkRussianLanguage()
+        case let .builtin(builtin):
+            switch builtin {
+                case let .English(substitutions): L = SdkEnglishLanguage(substitutions)
+                case let .Turkish(substitutions): L = SdkTurkishLanguage(substitutions)
+                case let .Russian(substitutions): L = SdkRussianLanguage(substitutions)
+            }
+        case let .custom(customLanguage):
+            L = customLanguage
     }
 }
 
 private func setSystemLanguage() {
     switch getPrefferedLanguageCode() {
-        case "ru": L = SdkRussianLanguage()
-        case "tr": L = SdkTurkishLanguage()
-        default: L = SdkEnglishLanguage()
+        case "ru": L = SdkRussianLanguage(.aiuta())
+        case "tr": L = SdkTurkishLanguage(.aiuta())
+        default: L = SdkEnglishLanguage(.aiuta())
     }
 }
 
@@ -45,5 +50,13 @@ private func getPrefferedLanguageCode() -> String? {
         return Locale.current.language.languageCode?.identifier
     } else {
         return Locale.current.languageCode
+    }
+}
+
+private extension Aiuta.Localization.Builtin.Substitutions {
+    static func aiuta() -> Aiuta.Localization.Builtin.Substitutions {
+        .init(brandName: "Aiuta",
+              termsOfServiceUrl: "https://aiuta.com/legal/terms-of-service.html",
+              privacyPolicyUrl: "https://aiuta.com/legal/privacy-policy.html")
     }
 }

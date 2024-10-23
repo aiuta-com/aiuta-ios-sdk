@@ -24,6 +24,7 @@ import UIKit
 }
 
 @_spi(Aiuta) public protocol DesignSystemColors {
+    var style: UIUserInterfaceStyle { get }
     var ground: UIColor { get }
     var popup: UIColor { get }
     var item: UIColor { get }

@@ -14,68 +14,114 @@
 
 import Foundation
 
-struct SdkEnglishLanguage: SdkLanguage {
-    subscript(_ variants: Aiuta.StringVariants?) -> String? { variants?.en }
+struct SdkEnglishLanguage: AiutaSdkLanguage {
+    let substitutions: Aiuta.Localization.Builtin.Substitutions
 
-    // General
-    let tryOn = "Try on" // Try on
-    let share = "Share" // Share
-    let addToCart = "Add to cart" // Add to cart
-    let addToWishlist = "Wishlist" // Add to wishlist
-    let moreDetails = "More details" // More details
-    let somethingWrong = "Something went wrong" // Something went wrong
-    let tryAgain = "Something went wrong.\nPlease try again later" // Something went wrong. Please try again later
-    let cancel = "Cancel" // Cancel
-    let settings = "Settings" // Settings
-    let send = "Send" // Send
-    let skip = "Skip" // Skip
+    init(_ substitutions: Aiuta.Localization.Builtin.Substitutions) {
+        self.substitutions = substitutions
+    }
 
-    // App bar
-    let history = "History" // History
-    let select = "Select" // Select
+    let tryOn = "Try on"
+    let close = "Close"
+    let cancel = "Cancel"
+    let addToWish = "Wishlist"
+    let addToCart = "Add to cart"
+    let share = "Share"
+    let tryAgain = "Try again"
+    let defaultErrorMessage = "Something went wrong.\nPlease try again later"
 
-    // Onboarding
-    let next = "Next" // Next
-    let start = "Start" // Start
+    // MARK: - App bar
 
-    let onboardingTryonTitle = "Try on before buying" // Try on before buying
-    let onboardingTryonDescription = "Upload a photo and see how items<br/>look&nbsp;on&nbsp;you" // Just upload your photo and see how it looks
+    let appBarVirtualTryOn = "Virtual Try-on"
+    let appBarHistory = "History"
+    let appBarSelect = "Select"
 
-    let onboardingBestResultsTitle = "For best results" // For best results
-    let onboardingBestResultsDescription = "Use a photo with good lighting,<br/>stand straight a plain background" // Use a photo with good lighting, stand straight a plain background
-    let onboardingLegalDisclaimer = "Your photo is processed as per the&nbsp;<u>Clarification Text</u>" // Your photo is processed as per the Clarification Text
+    // MARK: - Splash
 
-    // Image selector
-    let imageSelectorUploadButton = "Upload a photo of you" // Upload a photo of you
-    let imageSelectorChangeButton = "Change photo" // Change photo
-    let poweredBy = "Powered by" // Powered by
-    let aiuta = "Aiuta"
-    let imageSelectorPhotos: Pluralize = { "\($0) photos" } // N photos
-    let imageSelectorCameraPermission = "Please allow access to the camera in the application settings." // Please allow access to the camera in the application settings.
+    let preOnboardingTitle = "Try on you"
+    let preOnboardingSubtitle = "Welcome to our Virtual try-on.\nTry on the item directly\non your photo"
+    let preOnboardingButton = "Let’s start"
 
-    // Generation
-    let generatingUpload = "Uploading image" // Uploading image
-    let generatingScanBody = "Scanning your body" // Scanning your body
-    let generatingOutfit = "Generating outfit" // Generating outfit
+    // MARK: - Onboarding
 
-    // History
-    let selectAll = "Select all" // Select all
-    let selectNone = "Select none" // Select none
-    let historyEmptyDescription = "Once you try on first item your\ntry-on history would be stored here" // Once you try on first item your try-on history would be stored here
+    let onboardingAppbarTryonPage = "<b>Step 1/3</b> - How it works"
+    let onboardingPageTryonTopic = "Try on before buying"
+    let onboardingPageTryonSubtopic = "Upload a photo and see how items look on you"
 
-    // Generation Result
-    let generationResultMoreTitle = "More for you to try on" // More for you to try on
-    let generationResultSwipeUp = "Swipe up for more" // Swipe up for more
+    let onboardingAppbarBestResultPage = "<b>Step 2/3</b> - For best result"
+    let onboardingPageBestResultTopic = "For best results"
+    let onboardingPageBestResultSubtopic = "Use a photo with good lighting, stand straight a plain background"
 
-    // Picker sheet
-    let pickerSheetTakePhoto = "Take a photo" // Take a photo
-    let pickerSheetChooseLibrary = "Choose from library" // Choose from library
+    let onboardingAppbarConsentPage = "<b>Step 3/3</b> - Consent"
+    let onboardingPageConsentTopic = "Consent"
 
-    // Upload history sheet
-    let uploadHistorySheetPreviously = "Previously used photos" // Previously used photos
-    let uploadHistorySheetUploadNewButton = "+ Upload new photo" // + Upload new photo
-    
-    // Feedback
-    let feedbackSend = "Send feedback" // Send feedback
-    let feedbackCancel = "Cancel" // Cancel
+    var onboardingPageConsentBody: String {
+        "In order to try on items digitally, you agree to allow \(substitutions.brandName) to process your photo. " +
+            "Your data will be processed according to the \(substitutions.brandName) <b><a href='\(substitutions.privacyPolicyUrl)'>Privacy Notice</a></b> " +
+            "and <b><a href='\(substitutions.termsOfServiceUrl)'>Terms of Use.</a></b>"
+    }
+
+    var onboardingPageConsentAgreePoint: String { "I agree to allow \(substitutions.brandName) to process my photo" }
+
+    let onboardingButtonNext = "Next"
+    let onboardingButtonStart = "Start"
+
+    // MARK: - Image selector
+
+    let imageSelectorUploadButton = "Upload a photo of you"
+    let imageSelectorChangeButton = "Change photo"
+    let imageSelectorProtectionPoint = "Your photos are protected and visible only&nbsp;to&nbsp;you"
+    let imageSelectorPoweredByAiuta = "Powered by Aiuta"
+
+    // MARK: - Loading
+
+    let loadingUploadingImage = "Uploading image"
+    let loadingScanningBody = "Scanning your body"
+    let loadingGeneratingOutfit = "Generating outfit"
+
+    // MARK: - Generation Result
+
+    let generationResultMoreTitle = "You might also like"
+    let generationResultMoreSubtitle = "More for you to try on"
+
+    // MARK: - History
+
+    let historySelectorDisabledButton = "Select"
+    let historySelectorEnableButtonSelectAll = "Select all"
+    let historySelectorEnableButtonUnselectAll = "Unselect all"
+    let historySelectorEnableButtonCancel = "Cancel"
+    let historyEmptyDescription = "Once you try on first item your try-on history would be stored here"
+
+    // MARK: - Photo picker sheet
+
+    let pickerSheetTakePhoto = "Take a photo"
+    let pickerSheetChooseLibrary = "Choose from library"
+
+    // MARK: - Uploads history sheet
+
+    let uploadsHistorySheetPreviously = "Previously used photos"
+    let uploadsHistorySheetUploadNewButton = "+ Upload new photo"
+
+    // MARK: - Feedback sheet
+
+    let feedbackSheetTitle = "Can you tell us more?"
+    let feedbackSheetOptions = ["This style isn’t for me", "The item looks off", "I look different"]
+    let feedbackSheetSkip = "Skip"
+    let feedbackSheetSend = "Send"
+
+    let feedbackSheetExtraOption = "Other"
+    let feedbackSheetExtraOptionTitle = "Tell us what we could improve?"
+    let feedbackSheetSendFeedback = "Send feedback"
+    let feedbackSheetGratitude = "Thank you for your feedback"
+
+    // MARK: - Fet disclaimer
+
+    let fitDisclaimerTitle = "Results may vary from real-life fit"
+    let fitDisclaimerBody = "Virtual try-on is a visualization tool that shows how items might look and may not perfectly represent how the item will fit in reality"
+
+    // MARK: - Camera permission
+
+    let dialogCameraPermissionTitle = "Camera permission"
+    let dialogCameraPermissionDescription = "Please allow access to the camera in the application settings"
+    let dialogCameraPermissionConfirmButton = "Settings"
 }

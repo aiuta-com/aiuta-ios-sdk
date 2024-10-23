@@ -170,4 +170,5 @@ final class ResulstsViewController: ViewController<ResultsView> {
 @available(iOS 13.0.0, *)
 extension ResulstsViewController: PageRepresentable {
     var page: Aiuta.Event.Page { .results }
+    var isSafeToDismiss: Bool { false }
 }

@@ -14,68 +14,116 @@
 
 import Foundation
 
-struct SdkTurkishLanguage: SdkLanguage {
-    subscript(_ variants: Aiuta.StringVariants?) -> String? { variants?.tr }
+struct SdkTurkishLanguage: AiutaSdkLanguage {
+    let substitutions: Aiuta.Localization.Builtin.Substitutions
 
-    // General
-    let tryOn = "Üzerinde Dene" // Try on
-    let share = "Paylaş" // Share
-    let addToCart = "Sepete ekle" // Add to cart
-    let addToWishlist = "Listelerime ekle" // Add to wishlist
-    let moreDetails = "Daha fazla detay" // More details
-    let somethingWrong = "Bir şeyler yanlış gitti" // Something went wrong
-    let tryAgain = "Bir şeyler yanlış gitti.\nLütfen daha sonra tekrar deneyin" // Something went wrong. Please try again later
-    let poweredBy = "Tarafından desteklenmektedir" // Powered by
-    let aiuta = "Aiuta"
-    let settings = "Ayarlar" // Settings
-    let cancel = "İptal" // Cancel
-    let send = "Göndermek" // Send
-    let skip = "Atla" // Skip
+    init(_ substitutions: Aiuta.Localization.Builtin.Substitutions) {
+        self.substitutions = substitutions
+    }
 
-    // App bar
-    let history = "Geçmiş" // History
-    let select = "Seç" // Select
+    let tryOn = "Deneyin"
+    let close = "Kapat"
+    let cancel = "İptal"
+    let addToWish = "İstek Listesi"
+    let addToCart = "Sepete Ekle"
+    let share = "Paylaş"
+    let tryAgain = "Tekrar deneyin"
+    let defaultErrorMessage = "Bir şeyler ters gitti.\nLütfen daha sonra tekrar deneyin"
 
-    // Onboarding
-    let next = "Başla" // Next
-    let start = "Devam Et" // Start
+    // MARK: - App bar
 
-    let onboardingTryonTitle = "Satın almadan önce dene" // Try on before buying
-    let onboardingTryonDescription = "Fotoğrafını yükle ve\nüzerinde nasıl göründüğüne bak" // Just upload your photo and see how it looks
+    let appBarVirtualTryOn = "Sanal Deneme"
+    let appBarHistory = "Geçmiş"
+    let appBarSelect = "Seç"
 
-    let onboardingBestResultsTitle = "En iyi sonuçlar için" // For best results
-    let onboardingBestResultsDescription = "İyi ışıklandırılmış, düz bir arka planı olan,\n dik durduğunuz bir fotoğraf kullanın" // Use a photo with good lighting, stand straight a plain background
-    let onboardingLegalDisclaimer = "Fotoğrafınız <u>Aydınlatma Metni'nde</u> belirtilen kapsamda işlenmektedir" // Your photo is processed as per the Clarification Text
+    // MARK: - Splash
 
-    // Image selector
-    let imageSelectorUploadButton = "Fotoğrafını yükle" // Upload a photo of you
-    let imageSelectorChangeButton = "Fotoğrafını değiştir" // Change photo
-    let imageSelectorPhotos: Pluralize = { "\($0) fotoğraflar" } // N photos
-    let imageSelectorCameraPermission = "Lütfen uygulama ayarlarından kameraya erişime izin verin." // Please allow access to the camera in the application settings.
+    let preOnboardingTitle = "Kendinizde deneyin"
+    let preOnboardingSubtitle = "Sanal Denememize hoş geldiniz.\nÜrünü doğrudan\nfotoğrafınızda deneyin"
+    let preOnboardingButton = "Başlayalım"
 
-    // Generation
-    let generatingUpload = "Fotoğraf yükleniyor" // Uploading image
-    let generatingScanBody = "Fotoğrafınız taranıyor" // Scanning your body
-    let generatingOutfit = "Ürün uygulanıyor" // Generating outfit
+    // MARK: - Onboarding
 
-    // History
-    let selectAll = "Tümünü seçin" // Select all
-    let selectNone = "Tümünü Kaldır" // Select none
-    let historyEmptyDescription = "İlk ürün denemenizden sonra deneme\ngeçmişiniz burada saklanacaktır" // Once you try on first item your try-on history would be stored here
+    let onboardingAppbarTryonPage = "<b>Adım 1/3</b> - Nasıl çalışır"
+    let onboardingPageTryonTopic = "Satın almadan önce deneyin"
+    let onboardingPageTryonSubtopic = "Bir fotoğraf yükleyin ve ürünlerin üzerinizde nasıl göründüğünü görün"
 
-    // Generation Result
-    let generationResultMoreTitle = "Denemeniz için daha fazlası" // More for you to try on
-    let generationResultSwipeUp = "Daha fazlası için yukarı kaydır" // Swipe up for more
+    let onboardingAppbarBestResultPage = "<b>Adım 2/3</b> - En iyi sonuç için"
+    let onboardingPageBestResultTopic = "En iyi sonuçlar için"
+    let onboardingPageBestResultSubtopic = "İyi aydınlatmalı, düz bir arka plan önünde düz durduğunuz bir fotoğraf kullanın"
 
-    // Picker sheet
-    let pickerSheetTakePhoto = "Fotoğraf çek" // Take a photo
-    let pickerSheetChooseLibrary = "Galeriden seç" // Choose from library
+    let onboardingAppbarConsentPage = "<b>Adım 3/3</b> - Onay"
+    let onboardingPageConsentTopic = "Onay"
 
-    // Upload history sheet
-    let uploadHistorySheetPreviously = "Önceden yüklenen fotoğraflar" // Previously used photos
-    let uploadHistorySheetUploadNewButton = "+ Yeni fotoğraf yükle" // + Upload new photo
+    var onboardingPageConsentBody: String {
+        "Ürünleri dijital olarak denemek için, \(substitutions.brandName)'ın fotoğrafınızı işlemesine izin vermeyi kabul edersiniz. " +
+        "Verileriniz \(substitutions.brandName) <b><a href='\(substitutions.privacyPolicyUrl)'>Gizlilik Bildirimi</a></b> ve " +
+        "<b><a href='\(substitutions.termsOfServiceUrl)'>Kullanım Şartları</a></b> uyarınca işlenecektir."
+    }
 
-    // Feedback
-    let feedbackSend = "Geri bildirimi gönder" // Send feedback
-    let feedbackCancel = "Vazgeç" // Cancel
+    var onboardingPageConsentAgreePoint: String {
+        "Fotoğrafımın işlenmesine \(substitutions.brandName)'a izin vermeyi kabul ediyorum"
+    }
+
+    let onboardingButtonNext = "İleri"
+    let onboardingButtonStart = "Başla"
+
+    // MARK: - Image selector
+
+    let imageSelectorUploadButton = "Kendi fotoğrafınızı yükleyin"
+    let imageSelectorChangeButton = "Fotoğrafı değiştir"
+    let imageSelectorProtectionPoint = "Fotoğraflarınız korunur ve yalnızca&nbsp;sizin&nbsp;için&nbsp;görünür"
+    let imageSelectorPoweredByAiuta = "Aiuta tarafından desteklenmektedir"
+
+    // MARK: - Loading
+
+    let loadingUploadingImage = "Görüntü yükleniyor"
+    let loadingScanningBody = "Vücudunuz taranıyor"
+    let loadingGeneratingOutfit = "Kıyafet oluşturuluyor"
+
+    // MARK: - Generation Result
+
+    let generationResultMoreTitle = "Bunları da beğenebilirsiniz"
+    let generationResultMoreSubtitle = "Denemeniz için daha fazlası"
+
+    // MARK: - History
+
+    let historySelectorDisabledButton = "Seç"
+    let historySelectorEnableButtonSelectAll = "Hepsini seç"
+    let historySelectorEnableButtonUnselectAll = "Seçimi kaldır"
+    let historySelectorEnableButtonCancel = "İptal"
+    let historyEmptyDescription = "İlk ürünü denedikten sonra deneme geçmişiniz burada saklanacaktır"
+
+    // MARK: - Photo picker sheet
+
+    let pickerSheetTakePhoto = "Fotoğraf çek"
+    let pickerSheetChooseLibrary = "Kütüphaneden seç"
+
+    // MARK: - Uploads history sheet
+
+    let uploadsHistorySheetPreviously = "Daha önce kullanılan fotoğraflar"
+    let uploadsHistorySheetUploadNewButton = "+ Yeni fotoğraf yükle"
+
+    // MARK: - Feedback sheet
+
+    let feedbackSheetTitle = "Bize daha fazla bilgi verebilir misiniz?"
+    let feedbackSheetOptions = ["Bu stil bana göre değil", "Ürün yanlış görünüyor", "Farklı görünüyorum"]
+    let feedbackSheetSkip = "Atla"
+    let feedbackSheetSend = "Gönder"
+
+    let feedbackSheetExtraOption = "Diğer"
+    let feedbackSheetExtraOptionTitle = "Ne geliştirebileceğimizi bize söyleyin?"
+    let feedbackSheetSendFeedback = "Geri bildirim gönder"
+    let feedbackSheetGratitude = "Geri bildiriminiz için teşekkür ederiz"
+
+    // MARK: - Fit disclaimer
+
+    let fitDisclaimerTitle = "Sonuçlar gerçek hayattaki uyumdan farklı olabilir"
+    let fitDisclaimerBody = "Sanal deneme, ürünlerin nasıl görünebileceğini gösteren bir görselleştirme aracıdır ve ürünün gerçekte nasıl uyacağını mükemmel şekilde temsil etmeyebilir"
+
+    // MARK: - Camera permission
+
+    let dialogCameraPermissionTitle = "Kamera izni"
+    let dialogCameraPermissionDescription = "Lütfen uygulama ayarlarından kameraya erişime izin verin"
+    let dialogCameraPermissionConfirmButton = "Ayarlar"
 }

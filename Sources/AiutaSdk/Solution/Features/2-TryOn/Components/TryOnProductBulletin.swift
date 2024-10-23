@@ -159,7 +159,7 @@ extension TryOnView {
         override func setup() {
             labelWithIcon.label.font = ds.font.button
             labelWithIcon.label.color = ds.color.primary
-            labelWithIcon.label.text = L.addToWishlist
+            labelWithIcon.label.text = L.addToWish
             labelWithIcon.icon.image = ds.image.icon24(.wishlist)
             labelWithIcon.icon.tint = ds.color.primary
             view.borderColor = ds.color.neutral2

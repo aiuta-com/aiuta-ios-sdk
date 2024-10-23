@@ -130,8 +130,8 @@ private extension PhotoSelectorController {
     }
 
     func showPermissionAlert() {
-        let alert = UIAlertController(title: nil, message: L.imageSelectorCameraPermission, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: L.settings, style: .default, handler: { _ in
+        let alert = UIAlertController(title: L.dialogCameraPermissionTitle, message: L.dialogCameraPermissionDescription, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: L.dialogCameraPermissionConfirmButton, style: .default, handler: { _ in
             let app = UIApplication.shared
             guard let settingsUrl = URL(string: UIApplication.openSettingsURLString),
                   app.canOpenURL(settingsUrl)
@@ -150,6 +150,7 @@ private extension PhotoSelectorController {
         picker.modalTransitionStyle = .coverVertical
         picker.delegate = imagePickerDelegate
         picker.sourceType = .camera
+        picker.overrideUserInterfaceStyle = config.appearance.colors.style.userInterface
         vc?.present(picker, animated: true)
         session.delegate?.aiuta(eventOccurred: .picker(pageId: page, event: .cameraOpened))
     }
@@ -160,6 +161,7 @@ private extension PhotoSelectorController {
         picker.modalPresentationStyle = .pageSheet
         picker.delegate = imagePickerDelegate
         picker.sourceType = .photoLibrary
+        picker.overrideUserInterfaceStyle = config.appearance.colors.style.userInterface
         vc?.popover(picker)
         session.delegate?.aiuta(eventOccurred: .picker(pageId: page, event: .photoGalleryOpened))
     }

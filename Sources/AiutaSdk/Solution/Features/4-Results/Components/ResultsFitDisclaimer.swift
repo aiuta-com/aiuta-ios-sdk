@@ -36,7 +36,7 @@ extension ResultsView {
         let label = Label { it, ds in
             it.font = ds.font.description
             it.color = ds.color.primary
-            it.text = "Results may vary from real-life fit"
+            it.text = L.fitDisclaimerTitle
         }
 
         let icon = Image { it, ds in

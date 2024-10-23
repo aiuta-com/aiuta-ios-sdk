@@ -32,7 +32,8 @@ final class OnBoardingViewController: ViewController<OnBoardingView> {
 
         ui.navBar.onBack.subscribe(with: self) { [unowned self] in
             if ui.scroll.isAtStart {
-                dismissAll()
+                if backstackController.isSome { dismiss() }
+                else { dismissAll() }
             } else {
                 ui.scroll.scrollToPrev()
             }
@@ -75,15 +76,15 @@ final class OnBoardingViewController: ViewController<OnBoardingView> {
             return
         }
         switch ui.scroll.slideIndex {
-            case 0: ui.navBar.title = "<b>Step 1/3</b> - How it works"
-            case 1: ui.navBar.title = "<b>Step 2/3</b> - For best result"
-            case 2: ui.navBar.title = "<b>Step 3/3</b> - Consent"
+            case 0: ui.navBar.title = L.onboardingAppbarTryonPage
+            case 1: ui.navBar.title = L.onboardingAppbarBestResultPage
+            case 2: ui.navBar.title = L.onboardingAppbarConsentPage
             default: ui.navBar.title = nil
         }
     }
 
     private func updateButton() {
-        ui.button.text = ui.scroll.isAtEnd ? L.start : L.next
+        ui.button.text = ui.scroll.isAtEnd ? L.onboardingButtonStart : L.onboardingButtonNext
         let isEnabled = isConsentGiven || !ui.scroll.isAtEnd
         ui.button.view.isUserInteractionEnabled = isEnabled
         ui.button.view.isMaxOpaque = isEnabled
@@ -107,4 +108,6 @@ extension OnBoardingViewController: PageRepresentable {
             default: return .welcome
         }
     }
+
+    var isSafeToDismiss: Bool { true }
 }

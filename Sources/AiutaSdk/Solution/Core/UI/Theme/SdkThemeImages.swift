@@ -37,6 +37,7 @@ extension DesignSystemImages {
     func icon16(_ ref: SdkTheme.Icon16) -> UIImage? { ref.custom(config) ?? bundleImage(ref.group, ref.rawValue) }
     func icon24(_ ref: SdkTheme.Icon24) -> UIImage? { ref.custom(config) ?? bundleImage(ref.group, ref.rawValue) }
     func icon36(_ ref: SdkTheme.Icon36) -> UIImage? { ref.custom(config) ?? bundleImage(ref.group, ref.rawValue) }
+    func splash(_ ref: SdkTheme.Splash) -> UIImage? { ref.custom(config) ?? bundleImage(ref.group, ref.rawValue) }
     func onboarding(_ ref: SdkTheme.OnBoarding) -> UIImage? { bundleImage(ref.group, ref.rawValue) }
     func tryOn(_ ref: SdkTheme.TryOn) -> UIImage? { bundleImage("", ref.rawValue) }
 }
@@ -127,6 +128,20 @@ extension SdkTheme {
                 case .back: return config.icons24.back
                 case .close: return config.icons24.close
                 case .history: return config.icons24.history
+            }
+        }
+    }
+
+    enum Splash: String {
+        var group: String { "Splash" }
+
+        case icon
+        case background
+
+        func custom(_ config: Aiuta.Configuration.Appearance.Images) -> UIImage? {
+            switch self {
+                case .icon: return config.icons82.splash
+                case .background: return config.screens.splash
             }
         }
     }

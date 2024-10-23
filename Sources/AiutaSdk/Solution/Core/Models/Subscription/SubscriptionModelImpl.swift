@@ -28,22 +28,6 @@ final class SubscriptionModelImpl: SubscriptionModel {
         details?.poweredBySticker?.urlIos
     }
 
-    var shouldDisplayFitDisclaimer: Bool {
-        L[fitDisclaimer?.title].isSomeAndNotEmpty
-    }
-
-    var fitDisclaimer: Aiuta.SubscriptionDetails.Disclaimer? {
-        details?.sizeAndFitDisclaimer
-    }
-
-    var shouldDisplayFeedback: Bool {
-        L[feedback?.gratitudeMessage].isSomeAndNotEmpty
-    }
-
-    var feedback: Aiuta.SubscriptionDetails.Feedback? {
-        details?.feedback
-    }
-
     @defaults(key: "subscriptionDetails", defaultValue: nil)
     var details: Aiuta.SubscriptionDetails?
     @injected private var api: ApiService

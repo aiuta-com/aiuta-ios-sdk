@@ -25,13 +25,13 @@ extension OnBoardingView.StickyScroll {
         let title = Label { it, ds in
             it.font = ds.font.titleL
             it.color = ds.color.primary
-            it.text = "Consent"
+            it.text = L.onboardingPageConsentTopic
         }
 
         let description = TextView { it, ds in
             it.font = ds.font.regular
             it.color = ds.color.primary
-            it.text = "In order to try on items digitally, you agree to allow Aiuta to process your photo. Your data will be processed according to the Aiuta <b><a href=\"https://aiuta.com/legal/privacy-policy.html\">Privacy Notice</a></b> and <b><a href=\"https://aiuta.com/legal/terms-of-service.html\">Terms of Use.</a></b>"
+            it.text = L.onboardingPageConsentBody
         }
 
         let checkBox = CheckBoxArea()
@@ -74,7 +74,7 @@ extension OnBoardingView.StickyScroll {
             it.isMultiline = true
             it.font = ds.font.regular
             it.color = ds.color.primary
-            it.text = "I agree to allow Aiuta to process my photo"
+            it.text = L.onboardingPageConsentAgreePoint
         }
 
         override func updateLayout() {

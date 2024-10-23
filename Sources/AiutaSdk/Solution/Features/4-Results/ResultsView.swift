@@ -25,7 +25,7 @@ final class ResultsView: Plane {
             it.style = .closeTitleAction
         }
         it.actionStyle = .icon(.history)
-        it.title = "Virtual Try-on"
+        it.title = L.appBarVirtualTryOn
     }
 
     let pager = Pager<TryOnResult, ResultPage> { it, _ in

@@ -23,7 +23,7 @@ final class TryOnView: Plane {
             it.style = .closeTitleAction
         }
         it.actionStyle = .icon(.history)
-        it.title = "Virtual Try-on"
+        it.title = L.appBarVirtualTryOn
     }
 
     let area = Stroke { it, ds in
@@ -61,7 +61,7 @@ final class TryOnView: Plane {
         it.font = ds.font.description
         it.color = ds.color.secondary
         it.attach(ds.image.icon16(.lock), bounds: .init(x: 0, y: -3, square: 16))
-        it.text = "Your photos are protected and visible only&nbsp;to&nbsp;you"
+        it.text = L.imageSelectorProtectionPoint
     }
 
     let poweredBy = PoweredBy()

@@ -72,6 +72,7 @@ extension ResultsView {
         let gallery = HScroll { it, _ in
             it.contentInset = .init(horizontal: 16)
             it.itemSpace = 8
+            it.view.opacity = 0.1
         }
 
         override func setup() {

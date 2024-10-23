@@ -20,54 +20,51 @@ typealias FeedbackResult = (text: String, index: Int?)
 final class FeedbackBulletin: ResultBulletin<FeedbackResult?> {
     override var defaultResult: FeedbackResult? { nil }
 
-    var feedback: Aiuta.SubscriptionDetails.Feedback? {
-        didSet {
-            removeAllContents()
-            guard let feedback else { return }
+    private func buildOptions() {
+        removeAllContents()
 
-            mainOptions = []
-            plainOption = nil
+        mainOptions = []
+        plainOption = nil
 
-            title.text = L[feedback.title]
-            addContent(title)
+        title.text = L.feedbackSheetTitle
+        addContent(title)
 
-            feedback.mainOptions?.indexed.forEach { i, option in
-                guard let text = L[option], !text.isEmpty else { return }
+        L.feedbackSheetOptions.indexed.forEach { i, text in
+            guard !text.isEmpty else { return }
 
-                let option = LabelButton { it, ds in
-                    it.font = ds.font.chips
-                    it.label.color = ds.color.secondary
-                    it.color = ds.color.neutral
-                    it.text = text
-                    it.view.borderColor = ds.color.primary
-                    it.onTouchUpInside.subscribe(with: self) { [unowned self] in
-                        setOption(text, index: i)
-                    }
+            let option = LabelButton { it, ds in
+                it.font = ds.font.chips
+                it.label.color = ds.color.secondary
+                it.color = ds.color.neutral
+                it.text = text
+                it.view.borderColor = ds.color.primary
+                it.onTouchUpInside.subscribe(with: self) { [unowned self] in
+                    setOption(text, index: i)
                 }
-
-                mainOptions.append(option)
-                addContent(option)
             }
 
-            if let plain = L[feedback.plaintextOption], !plain.isEmpty {
-                plainOption = LabelButton { it, ds in
-                    it.font = ds.font.chips
-                    it.label.color = ds.color.secondary
-                    it.color = ds.color.neutral
-                    it.text = plain
-                    it.view.borderColor = ds.color.primary
-                    it.onTouchUpInside.subscribe(with: self) { [unowned self] in
-                        setOption("", index: nil)
-                    }
-                }
-
-                addContent(plainOption!)
-            }
-
-            addContent(skipButton)
-            addContent(commitButton)
-            commitButton.view.isVisible = false
+            mainOptions.append(option)
+            addContent(option)
         }
+
+        if !L.feedbackSheetExtraOption.isEmpty {
+            plainOption = LabelButton { it, ds in
+                it.font = ds.font.chips
+                it.label.color = ds.color.secondary
+                it.color = ds.color.neutral
+                it.text = L.feedbackSheetExtraOption
+                it.view.borderColor = ds.color.primary
+                it.onTouchUpInside.subscribe(with: self) { [unowned self] in
+                    setOption("", index: nil)
+                }
+            }
+
+            addContent(plainOption!)
+        }
+
+        addContent(skipButton)
+        addContent(commitButton)
+        commitButton.view.isVisible = false
     }
 
     private var mainOptions = [LabelButton]()
@@ -83,14 +80,14 @@ final class FeedbackBulletin: ResultBulletin<FeedbackResult?> {
     private let skipButton = LabelButton { it, ds in
         it.font = ds.font.chips
         it.label.color = ds.color.secondary
-        it.text = L.skip
+        it.text = L.feedbackSheetSkip
     }
 
     private let commitButton = LabelButton { it, ds in
         it.color = ds.color.brand
         it.font = ds.font.button
         it.label.color = ds.color.onDark
-        it.text = L.send
+        it.text = L.feedbackSheetSend
     }
 
     private var currentOptionText: String?
@@ -124,6 +121,8 @@ final class FeedbackBulletin: ResultBulletin<FeedbackResult?> {
         strokeOffset = ds.dimensions.grabberOffset
         cornerRadius = ds.dimensions.bottomSheetRadius
         view.backgroundColor = ds.color.ground
+
+        buildOptions()
 
         skipButton.onTouchUpInside.subscribe(with: self) { [unowned self] in
             returnResult(nil)

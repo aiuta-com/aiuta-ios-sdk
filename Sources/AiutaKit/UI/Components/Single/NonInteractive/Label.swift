@@ -15,10 +15,6 @@
 import UIKit
 
 @_spi(Aiuta) open class Label: Content<UILabel> {
-    private enum ParseError: Error {
-        case badData
-    }
-
     public var font: FontRef? {
         didSet {
             guard let font else { return }
@@ -32,11 +28,6 @@ import UIKit
         get { view.textColor }
         set { view.textColor = newValue }
     }
-
-    public var isHtml: Bool = false
-    public var highlights: [String]?
-    public var caseHighlights: [String]?
-    public var highlightColor: UIColor?
 
     public var text: String? {
         get { view.text }
@@ -76,20 +67,9 @@ import UIKit
 
             let attributedText: NSAttributedString
             if isHtml {
-                attributedText = htmlAttributed(input: newValue, viewAttributes: viewAttributes)
-            } else if let highlights, !highlights.isEmpty {
-                var highlightAttributes = viewAttributes
-                highlightAttributes[NSAttributedString.Key.foregroundColor] = highlightColor ?? ds.color.highlight
-                attributedText = colorize(input: newValue, highlights: highlights, viewAttributes: viewAttributes, highlightAttributes: highlightAttributes)
-            } else if let caseHighlights, !caseHighlights.isEmpty {
-                var highlightAttributes = viewAttributes
-                highlightAttributes[NSAttributedString.Key.foregroundColor] = highlightColor ?? ds.color.highlight
-                attributedText = caseColorize(input: newValue, highlights: caseHighlights, viewAttributes: viewAttributes, highlightAttributes: highlightAttributes)
+                attributedText = htmlAttributed(string: newValue, attributes: viewAttributes)
             } else {
-                attributedText = NSMutableAttributedString(
-                    string: newValue,
-                    attributes: viewAttributes
-                )
+                attributedText = NSMutableAttributedString(string: newValue, attributes: viewAttributes)
             }
 
             if let leadingAttachment {
@@ -107,6 +87,47 @@ import UIKit
         }
     }
 
+    public var hasText: Bool {
+        guard let text else { return false }
+        return !text.isEmpty
+    }
+
+    public var isLineHeightMultipleEnabled = true {
+        didSet { text = view.text }
+    }
+
+    public var isAnimatedChanges = false
+
+    public var willLayoutParentOnChanges = true
+
+    public var isHtml: Bool = false
+
+    public var isMultiline: Bool {
+        get { view.numberOfLines != 1 }
+        set {
+            view.numberOfLines = newValue ? 0 : 1
+            view.lineBreakMode = newValue ? .byWordWrapping : .byTruncatingTail
+        }
+    }
+
+    public var lineBreak: NSLineBreakMode {
+        get { view.lineBreakMode }
+        set { view.lineBreakMode = newValue }
+    }
+
+    public var alignment: NSTextAlignment {
+        get { view.textAlignment }
+        set { view.textAlignment = newValue }
+    }
+
+    public var minScale: CGFloat {
+        get { view.adjustsFontSizeToFitWidth ? view.minimumScaleFactor : 1 }
+        set {
+            view.minimumScaleFactor = clamp(newValue, min: 0, max: 1)
+            view.adjustsFontSizeToFitWidth = view.minimumScaleFactor < 1
+        }
+    }
+
     var leadingAttachment: NSTextAttachment? {
         didSet { text = view.text }
     }
@@ -119,18 +140,26 @@ import UIKit
         leadingAttachment = attachment
     }
 
-    private func updateParentLayout() {
-        guard willLayoutParentOnChanges else { return }
-        if isAnimatedChanges {
-            animations.animate { [weak self] in
-                self?.parent?.updateLayoutRecursive()
-            }
-        } else {
-            parent?.updateLayoutRecursive()
-        }
+    public convenience init(_ builder: (_ it: Label, _ ds: DesignSystem) -> Void) {
+        self.init()
+        view.isUserInteractionEnabled = false
+        builder(self, ds)
     }
 
-    private func htmlAttributed(input: String, viewAttributes: [NSAttributedString.Key: Any]) -> NSAttributedString {
+    @discardableResult
+    public convenience init(view: UILabel, _ builder: (_ it: Label, _ ds: DesignSystem) -> Void) {
+        self.init(view: view)
+        view.isUserInteractionEnabled = false
+        builder(self, ds)
+    }
+}
+
+private extension Label {
+    enum ParseError: Error {
+        case badData
+    }
+
+    func htmlAttributed(string input: String, attributes viewAttributes: [NSAttributedString.Key: Any]) -> NSAttributedString {
         var html = input
 
         if let font {
@@ -160,155 +189,42 @@ import UIKit
         }
     }
 
-    private func caseColorize(input: String, highlights: [String], viewAttributes: [NSAttributedString.Key: Any], highlightAttributes: [NSAttributedString.Key: Any]) -> NSAttributedString {
-        guard let hl = highlights.first else { return NSMutableAttributedString(string: input, attributes: viewAttributes) }
-        let result = NSMutableAttributedString(string: "", attributes: viewAttributes)
-        let parts = input.components(separatedBy: hl)
-        let nextHighlights = Array(highlights.dropFirst(1))
-        if let left = parts.first, !left.isEmpty {
-            result.append(caseColorize(input: left, highlights: nextHighlights, viewAttributes: viewAttributes, highlightAttributes: highlightAttributes))
-        }
-        if !parts.isEmpty {
-            result.append(NSMutableAttributedString(string: hl, attributes: highlightAttributes))
-        }
-        if let right = parts.second, !right.isEmpty {
-            result.append(caseColorize(input: right, highlights: nextHighlights, viewAttributes: viewAttributes, highlightAttributes: highlightAttributes))
-        }
-        return result
-    }
-
-    private func colorize(input: String, highlights: [String], viewAttributes: [NSAttributedString.Key: Any], highlightAttributes: [NSAttributedString.Key: Any]) -> NSAttributedString {
-        let result = NSMutableAttributedString(string: "", attributes: viewAttributes)
-        let parts = splitInput(input: input, highlights: highlights)
-
-        parts.forEach { sub in
-            if highlights.contains(sub.lowercased()) {
-                result.append(NSMutableAttributedString(string: sub, attributes: highlightAttributes))
-            } else {
-                result.append(NSMutableAttributedString(string: sub, attributes: viewAttributes))
+    func updateParentLayout() {
+        guard willLayoutParentOnChanges else { return }
+        if isAnimatedChanges {
+            animations.animate { [weak self] in
+                self?.parent?.updateLayoutRecursive()
             }
+        } else {
+            parent?.updateLayoutRecursive()
         }
-        return result
-    }
-
-    private func splitInput(input: String, highlights: [String]) -> [String] {
-        if highlights.isEmpty { return [input] }
-
-        var result = [String]()
-
-        for i in 0 ..< highlights.count {
-            let highlight = highlights[i]
-
-            if highlight.count > input.count { continue }
-
-            if input.lowercased() == highlight.lowercased() { return [input] }
-
-            if !input.contains(highlight) { continue }
-
-            let caseInsensitiveSplit = input.caseInsensitiveSplit(separator: highlight)
-            if caseInsensitiveSplit.count <= 1 { continue }
-
-            for j in 0 ..< caseInsensitiveSplit.count {
-                let part = caseInsensitiveSplit[j]
-
-                if part.lowercased() == highlight.lowercased() {
-                    result.append(part)
-                } else {
-                    let subHighlights = Array(highlights.dropFirst(i + 1))
-                    result.append(contentsOf: splitInput(input: part, highlights: subHighlights))
-                }
-            }
-            return result
-        }
-
-        if result.isEmpty { return [input] }
-        return result
-    }
-
-    public var isLineHeightMultipleEnabled = true {
-        didSet { text = view.text }
-    }
-
-    public var isAnimatedChanges = false
-    public var willLayoutParentOnChanges = true
-
-    public var hasText: Bool {
-        guard let text else { return false }
-        return !text.isEmpty
-    }
-
-    public var isMultiline: Bool {
-        get { view.numberOfLines != 0 }
-        set {
-            view.numberOfLines = newValue ? 0 : 1
-            view.lineBreakMode = newValue ? .byWordWrapping : .byTruncatingTail
-        }
-    }
-
-    public var lineBreak: NSLineBreakMode {
-        get { view.lineBreakMode }
-        set { view.lineBreakMode = newValue }
-    }
-
-    public var alignment: NSTextAlignment {
-        get { view.textAlignment }
-        set { view.textAlignment = newValue }
-    }
-
-    public var minScale: CGFloat {
-        get { view.adjustsFontSizeToFitWidth ? view.minimumScaleFactor : 1 }
-        set {
-            view.minimumScaleFactor = clamp(newValue, min: 0, max: 1)
-            view.adjustsFontSizeToFitWidth = view.minimumScaleFactor < 1
-        }
-    }
-
-    public convenience init(_ builder: (_ it: Label, _ ds: DesignSystem) -> Void) {
-        self.init()
-        view.isUserInteractionEnabled = false
-        builder(self, ds)
-    }
-
-    @discardableResult
-    public convenience init(view: UILabel, _ builder: (_ it: Label, _ ds: DesignSystem) -> Void) {
-        self.init(view: view)
-        view.isUserInteractionEnabled = false
-        builder(self, ds)
     }
 }
 
-private extension String {
-    func caseInsensitiveSplit(separator: String) -> [String] {
-        if separator.isEmpty {
-            return [self]
-        }
-        let pattern = NSRegularExpression.escapedPattern(for: separator)
-        let regex = try! NSRegularExpression(pattern: pattern, options: .caseInsensitive)
-        let matches = regex.matches(in: self, options: [], range: NSRange(0 ..< utf16.count))
-        var ranges = [NSRange]()
-        var pointer: Int = 0
+@_spi(Aiuta) public final class Html: CustomStringConvertible {
+    public enum Tags {
+        case color(UIColor)
+        case bold
+        case italic
+    }
 
-        for i in 0 ..< matches.count {
-            let match = matches[i]
-            let start = pointer
-            let end = match.range.location
-            if end > start {
-                ranges.append(NSRange(location: start, length: end - start))
-            }
+    public var description: String { result }
+    private var result: String
 
-            ranges.append(match.range)
-            pointer = end + match.range.length
-
-            if i == matches.count - 1 {
-                let start = pointer
-                let end = utf16.count
-                if end > start {
-                    ranges.append(NSRange(location: pointer, length: utf16.count - pointer))
-                }
+    public init(_ input: String, _ tags: Tags...) {
+        result = input
+        for tag in tags {
+            switch tag {
+                case let .color(color):
+                    if let hexString = color.hexString {
+                        result = "<font color='#\(hexString)'>\(result)</font>"
+                    }
+                case .bold:
+                    result = "<b>\(result)</b>"
+                case .italic:
+                    result = "<i>\(result)</i>"
             }
         }
-        if matches.isEmpty { return [self] }
-        return ranges.map { String(self[Range($0, in: self)!]) }
     }
 }
 

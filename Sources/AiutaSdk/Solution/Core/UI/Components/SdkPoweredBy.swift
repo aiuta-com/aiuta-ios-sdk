@@ -16,17 +16,12 @@
 
 final class PoweredBy: PlainButton {
     let poweredBy = Label { it, ds in
+        let aiuta = "Aiuta"
         it.isLineHeightMultipleEnabled = false
         it.font = ds.font.buttonS
         it.color = ds.color.primary
-        it.text = L.poweredBy.trimmingCharacters(in: .whitespacesAndNewlines) + " "
-    }
-
-    let aiuta = Label { it, ds in
-        it.isLineHeightMultipleEnabled = false
-        it.font = ds.font.buttonS
-        it.color = ds.color.brand
-        it.text = L.aiuta
+        it.isHtml = true
+        it.text = L.imageSelectorPoweredByAiuta.replacingOccurrences(of: aiuta, with: Html(aiuta, .color(ds.color.aiuta)).description)
     }
 
     override func setup() {
@@ -39,13 +34,8 @@ final class PoweredBy: PlainButton {
             make.left = 12
         }
 
-        aiuta.layout.make { make in
-            make.top = poweredBy.layout.top
-            make.left = poweredBy.layout.rightPin
-        }
-
         layout.make { make in
-            make.width = aiuta.layout.rightPin + poweredBy.layout.left
+            make.width = poweredBy.layout.rightPin + poweredBy.layout.left
             make.height = poweredBy.layout.bottomPin + poweredBy.layout.top
             make.radius = make.height / 2
         }

@@ -42,7 +42,7 @@ final class ProcessingViewController: ViewController<ProcessingView> {
         }
 
         ui.navBar.isActionAvailable = history.hasGenerations
-        ui.status.text = (source?.knownRemoteId).isSome ? L.generatingScanBody : L.generatingUpload
+        ui.status.text = (source?.knownRemoteId).isSome ? L.loadingScanningBody : L.loadingUploadingImage
 
         history.generated.onUpdate.subscribe(with: self) { [unowned self] in
             if !history.hasGenerations { ui.navBar.isActionAvailable = false }
@@ -69,10 +69,10 @@ final class ProcessingViewController: ViewController<ProcessingView> {
             ui.animator.isAnimating = true
             try await tryOnModel.tryOn(source, with: session.activeSku) { [weak self] status in
                 switch status {
-                    case .uploadingImage: self?.ui.status.text = L.generatingUpload
-                    case .scanningBody: self?.ui.status.text = L.generatingScanBody
+                    case .uploadingImage: self?.ui.status.text = L.loadingUploadingImage
+                    case .scanningBody: self?.ui.status.text = L.loadingScanningBody
                         self?.session.delegate?.aiuta(eventOccurred: .tryOn(event: .tryOnStarted))
-                    case .generatingOutfit: self?.ui.status.text = L.generatingOutfit
+                    case .generatingOutfit: self?.ui.status.text = L.loadingGeneratingOutfit
                 }
             }
             ui.animator.isAnimating = false
@@ -151,4 +151,5 @@ private extension ProcessingViewController {
 @available(iOS 13.0.0, *)
 extension ProcessingViewController: PageRepresentable {
     var page: Aiuta.Event.Page { .loading }
+    var isSafeToDismiss: Bool { false }
 }

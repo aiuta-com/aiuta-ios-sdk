@@ -32,7 +32,7 @@ extension UIViewController {
     }
 
     func dismissAll(completion: (() -> Void)? = nil) {
-        if let navigator = navigationController as? SdkNavigator {
+        if #available(iOS 13.0, *), let navigator = navigationController as? SdkNavigator {
             navigator.sdkWillDismiss()
             navigator.dismiss(animated: true) {
                 navigator.sdkDidDismiss()

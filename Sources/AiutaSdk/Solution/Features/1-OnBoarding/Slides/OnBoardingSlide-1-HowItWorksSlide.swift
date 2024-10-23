@@ -32,7 +32,7 @@ extension OnBoardingView.StickyScroll {
             it.minScale = 0.75
             it.font = ds.font.titleL
             it.color = ds.color.primary
-            it.text = L.onboardingTryonTitle
+            it.text = L.onboardingPageTryonTopic
         }
 
         let description = Label { it, ds in
@@ -40,7 +40,7 @@ extension OnBoardingView.StickyScroll {
             it.isMultiline = true
             it.font = ds.font.regular
             it.color = ds.color.primary
-            it.text = L.onboardingTryonDescription
+            it.text = L.onboardingPageTryonSubtopic
         }
 
         let interacitveImage = InteractiveImageWithNavigation()

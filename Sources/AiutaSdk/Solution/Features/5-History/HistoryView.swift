@@ -26,8 +26,8 @@ final class HistoryView: Scroll {
 
     let navBar = NavBar { it, _ in
         it.style = .backTitleAction
-        it.actionStyle = .label(L.select)
-        it.title = L.history
+        it.actionStyle = .label(L.appBarSelect)
+        it.title = L.appBarHistory
     }
 
     @scrollable

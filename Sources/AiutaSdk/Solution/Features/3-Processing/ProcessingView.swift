@@ -23,7 +23,7 @@ final class ProcessingView: Plane {
             it.style = .closeTitleAction
         }
         it.actionStyle = .icon(.history)
-        it.title = "Virtual Try-on"
+        it.title = L.appBarVirtualTryOn
     }
 
     let animator = LoadAnimator()

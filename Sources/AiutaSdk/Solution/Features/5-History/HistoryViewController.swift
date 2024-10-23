@@ -83,7 +83,7 @@ final class HistoryViewController: ViewController<HistoryView> {
         didSet {
             guard oldValue != isEditMode else { return }
             ui.selectionSnackbar.isVisible = isEditMode
-            ui.navBar.actionStyle = .label(isEditMode ? L.cancel : L.select)
+            ui.navBar.actionStyle = .label(isEditMode ? L.cancel : L.appBarSelect)
             ui.history.updateItems()
             if !isEditMode { selection.removeAll() }
         }
@@ -114,7 +114,7 @@ final class HistoryViewController: ViewController<HistoryView> {
         ui.selectionSnackbar.bar.deleteButton.isEnabled = !selection.isEmpty
         ui.selectionSnackbar.bar.shareButton.isEnabled = !selection.isEmpty
 
-        ui.selectionSnackbar.bar.toggleSeletionButton.text = isSelectedAll ? L.selectNone : L.selectAll
+        ui.selectionSnackbar.bar.toggleSeletionButton.text = isSelectedAll ? L.historySelectorEnableButtonUnselectAll : L.historySelectorEnableButtonSelectAll
         ui.selectionSnackbar.bar.view.layoutSubviews()
     }
 
@@ -179,4 +179,5 @@ final class HistoryViewController: ViewController<HistoryView> {
 @available(iOS 13.0.0, *)
 extension HistoryViewController: PageRepresentable {
     var page: Aiuta.Event.Page { .history }
+    var isSafeToDismiss: Bool { true }
 }

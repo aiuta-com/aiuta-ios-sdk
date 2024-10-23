@@ -35,7 +35,7 @@ final class PhotoHistoryBulletin: PlainBulletin {
     let title = Label { it, ds in
         it.font = ds.font.titleM
         it.color = ds.color.primary
-        it.text = L.uploadHistorySheetPreviously
+        it.text = L.uploadsHistorySheetPreviously
     }
 
     let gallery = HScroll { it, _ in
@@ -47,7 +47,7 @@ final class PhotoHistoryBulletin: PlainBulletin {
         it.font = ds.font.button
         it.color = ds.color.brand
         it.label.color = ds.color.onDark
-        it.text = L.uploadHistorySheetUploadNewButton
+        it.text = L.uploadsHistorySheetUploadNewButton
     }
 
     private func buildHistory() {

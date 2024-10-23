@@ -19,7 +19,7 @@ import UIKit
 
 final class SdkRegister {
     @available(iOS 13.0.0, *)
-    static func setup(auth: AiutaAuthType, configuration: Aiuta.Configuration?, controller: AiutaDataController?) {
+    static func setup(auth: Aiuta.AuthType, configuration: Aiuta.Configuration?, controller: AiutaDataController?) {
         instance.setup(auth: auth, configuration: configuration, controller: controller)
     }
 
@@ -35,15 +35,14 @@ final class SdkRegister {
     fileprivate let resolver = Resolver()
 
     @available(iOS 13.0.0, *)
-    private func setup(auth: AiutaAuthType, configuration: Aiuta.Configuration?, controller: AiutaDataController?) {
+    private func setup(auth: Aiuta.AuthType, configuration: Aiuta.Configuration?, controller: AiutaDataController?) {
         checkIfUsageDescriptionsProvided()
 
         let config = configuration ?? .default
         let isDebug = config.behavior.isDebugLogsEnabled
 
         trace(isEnabled: isDebug)
-        // setLocalization(language: config.appearance.language)
-        setLocalization(language: .English)
+        setLocalization(config.appearance.localization)
         setDefaults(apiKey: auth.keyToDefaults)
         scope.reset()
 
@@ -106,7 +105,7 @@ private struct ApiDebuggerImpl: ApiDebugger {
 }
 
 @available(iOS 13.0.0, *)
-private extension AiutaAuthType {
+private extension Aiuta.AuthType {
     var keyToDefaults: String {
         switch self {
             case let .apiKey(apiKey): return apiKey

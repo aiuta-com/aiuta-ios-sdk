@@ -30,7 +30,7 @@ final class OnBoardingView: Plane {
         it.font = ds.font.button
         it.color = ds.color.brand
         it.label.color = ds.color.onDark
-        it.text = L.next
+        it.text = L.onboardingButtonNext
         it.view.minOpacity = 0.4
     }
 

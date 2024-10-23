@@ -69,7 +69,7 @@ import UIKit
     }
 
     func popover(_ viewController: UIViewController, withMediumDetent: Bool = false) {
-        viewController.applyPrefferedSheetPresentationStyle(withMediumDetent)
+        viewController.applyPrefferedSheetPresentationStyle(withMediumDetent: withMediumDetent)
         present(viewController, animated: true)
     }
 
@@ -194,19 +194,22 @@ private extension UIViewController {
             whenDettached()
         }
     }
+}
 
-    func applyPrefferedSheetPresentationStyle(_ withMediumDetent: Bool = false) {
+public extension UIViewController {
+    func applyPrefferedSheetPresentationStyle(withMediumDetent: Bool = false) {
+        modalTransitionStyle = .coverVertical
+        modalPresentationStyle = .pageSheet
+        applyNonStackDetendsIfNeeded(withMediumDetent: withMediumDetent)
+    }
+
+    func applyNonStackDetendsIfNeeded(withMediumDetent: Bool = false) {
         if #available(iOS 16.0, *), !UIViewController.isStackingAllowed {
-            modalTransitionStyle = .coverVertical
-            modalPresentationStyle = .pageSheet
             let nonStack = UISheetPresentationController.Detent.Identifier("nonStackDetent")
             let nonStackDetent = UISheetPresentationController.Detent.custom(identifier: nonStack) { context in
                 context.maximumDetentValue - 1 // this will make the view controllers not stack up
             }
             sheetPresentationController?.detents = withMediumDetent ? [.medium(), nonStackDetent] : [nonStackDetent]
-        } else {
-            modalPresentationStyle = .pageSheet
-            modalTransitionStyle = .coverVertical
         }
     }
 }

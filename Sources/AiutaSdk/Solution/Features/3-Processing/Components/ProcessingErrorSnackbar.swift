@@ -22,13 +22,13 @@ extension ProcessingView {
             it.font = ds.font.chips
             it.color = ds.color.onError
             it.isMultiline = true
-            it.text = L.tryAgain
+            it.text = L.defaultErrorMessage
         }
 
         let tryAgain = LabelButton { it, ds in
             it.color = ds.color.onDark
             it.font = ds.font.buttonS
-            it.text = "Try again"
+            it.text = L.tryAgain
         }
 
         override func setup() {

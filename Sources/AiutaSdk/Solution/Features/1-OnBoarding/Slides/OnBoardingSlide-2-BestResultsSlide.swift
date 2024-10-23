@@ -21,7 +21,7 @@ extension OnBoardingView.StickyScroll {
             it.minScale = 0.75
             it.font = ds.font.titleL
             it.color = ds.color.primary
-            it.text = L.onboardingBestResultsTitle
+            it.text = L.onboardingPageBestResultTopic
         }
 
         let description = Label { it, ds in
@@ -29,7 +29,7 @@ extension OnBoardingView.StickyScroll {
             it.isMultiline = true
             it.font = ds.font.regular
             it.color = ds.color.primary
-            it.text = L.onboardingBestResultsDescription
+            it.text = L.onboardingPageBestResultSubtopic
         }
 
         let bestResults = BestResultsView { it, ds in

@@ -27,7 +27,7 @@ extension HistoryView {
         let toggleSeletionButton = LabelButton { it, ds in
             it.font = ds.font.buttonS
             it.label.color = ds.color.ground
-            it.text = L.selectAll
+            it.text = L.historySelectorEnableButtonSelectAll
         }
 
         let cancelButton = LabelButton { it, ds in

@@ -13,16 +13,22 @@
 // limitations under the License.
 
 @_spi(Aiuta) import AiutaKit
+import Resolver
 import UIKit
 
+@available(iOS 13.0, *)
 final class SdkNavigator: UINavigationController {
-    private var originalPresenterWindow: UIWindow?
-    private var originalInterfaceStyle: UIUserInterfaceStyle?
+    @injected private var config: Aiuta.Configuration
+    @Injected private var ds: DesignSystem
+
+    private let presentingAlphaChangeDuration = 0.4
     private var presentingOriginalAlpha: CGFloat = 1
     private let presentingTargetAlpha: CGFloat = 0.6
     private var presentingDimmedAlpha: CGFloat = 0.6
-    private let presentingAlphaChangeDuration = 0.4
-    @injected var config: Aiuta.Configuration
+    private var presentingOriginalTint: UIColor?
+
+    private let touchesDismissAreaHeight: CGFloat = 52
+    private var touchesBeganInsideDismissArea: Bool?
 
     override init(rootViewController: UIViewController) {
         super.init(rootViewController: rootViewController)
@@ -35,74 +41,43 @@ final class SdkNavigator: UINavigationController {
         modalTransitionStyle = .coverVertical
         modalPresentationStyle = config.appearance.presentationStyle.modalPresentationStyle
         UIViewController.isStackingAllowed = config.appearance.presentationStyle.allowViewControllersStackUp
-        if #available(iOS 16.0, *), config.appearance.presentationStyle == .bottomSheet {
-            let nonStack = UISheetPresentationController.Detent.Identifier("nonStackDetent")
-            sheetPresentationController?.detents = [.custom(identifier: nonStack) { context in
-                context.maximumDetentValue - 1 // this will make the view controllers not stack up
-            }]
-        }
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        sdkWillReappear()
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        sdkDidAppear()
-    }
-
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        sdkDidDisappear()
+        if config.appearance.presentationStyle == .bottomSheet { applyNonStackDetendsIfNeeded(withMediumDetent: false) }
     }
 
     func sdkWillAppear() {
         trace("---------------")
         trace("SDK WILL APPEAR")
-        originalPresenterWindow = presentingViewController?.view.window
         presentingOriginalAlpha = presentingViewController?.view.alpha ?? presentingOriginalAlpha
-        if #available(iOS 13.0, *) {
-            originalInterfaceStyle = presentingViewController?.view.window?.overrideUserInterfaceStyle
-        }
+        presentingOriginalTint = presentingViewController?.view.window?.tintColor
+        presentingViewController?.view.window?.tintColor = ds.color.accent
     }
 
-    func sdkWillReappear() {
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         guard config.appearance.presentationStyle == .bottomSheet else { return }
         UIView.animate(withDuration: presentingAlphaChangeDuration) { [self] in
             presentingViewController?.view.alpha = presentingDimmedAlpha
         }
     }
 
-    func sdkDidAppear() {
-        if #available(iOS 13.0, *), let window = presentingViewController?.view.window {
-            delay(.moment) { [self] in
-                UIView.transition(with: window, duration: presentingAlphaChangeDuration / 2, options: [.transitionCrossDissolve, .allowUserInteraction]) { [self] in
-                    presentingViewController?.view.window?.overrideUserInterfaceStyle = config.appearance.colors.style.userInterface
-                }
-            }
-        }
-    }
-
-    func sdkDidDisappear() {
-        presentingDimmedAlpha = presentingViewController?.view.alpha ?? presentingDimmedAlpha
-    }
-
     func sdkWillDismiss() {
         presentingDimmedAlpha = presentingTargetAlpha
+        guard config.appearance.presentationStyle == .bottomSheet else { return }
         UIView.animate(withDuration: presentingAlphaChangeDuration) { [self] in
             presentingViewController?.view.alpha = presentingOriginalAlpha
         }
     }
 
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        presentingDimmedAlpha = presentingViewController?.view.alpha ?? presentingDimmedAlpha
+    }
+
     func sdkDidDismiss() {
         trace("SDK DID DISMISS")
         trace("===============")
-        if #available(iOS 13.0, *), let originalInterfaceStyle, let originalPresenterWindow {
-            UIView.transition(with: originalPresenterWindow, duration: presentingAlphaChangeDuration / 2, options: [.transitionCrossDissolve, .allowUserInteraction]) {
-                originalPresenterWindow.overrideUserInterfaceStyle = originalInterfaceStyle
-            }
+        if let presentingOriginalTint {
+            presentingViewController?.view.window?.tintColor = presentingOriginalTint
         }
         if let page = (visibleViewController as? PageRepresentable)?.page {
             @injected var session: SessionModel
@@ -113,15 +88,34 @@ final class SdkNavigator: UINavigationController {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if let touchY = touches.first?.location(in: view).y {
+            touchesBeganInsideDismissArea = touchY <= touchesDismissAreaHeight
+        } else {
+            touchesBeganInsideDismissArea = nil
+        }
+        super.touchesBegan(touches, with: event)
+    }
+
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        touchesBeganInsideDismissArea = nil
+        super.touchesEnded(touches, with: event)
+    }
 }
 
+@available(iOS 13.0, *)
 extension SdkNavigator: UIAdaptivePresentationControllerDelegate {
     func presentationControllerShouldDismiss(_ presentationController: UIPresentationController) -> Bool {
         if visibleViewController?.hasBulletin == true { return false }
+        if let touchesBeganInsideDismissArea { return touchesBeganInsideDismissArea }
+        if let page = visibleViewController as? PageRepresentable { return page.isSafeToDismiss }
         return true
     }
 
-    func presentationController(_ presentationController: UIPresentationController, willPresentWithAdaptiveStyle style: UIModalPresentationStyle, transitionCoordinator: UIViewControllerTransitionCoordinator?) {
+    func presentationController(_ presentationController: UIPresentationController,
+                                willPresentWithAdaptiveStyle style: UIModalPresentationStyle,
+                                transitionCoordinator: UIViewControllerTransitionCoordinator?) {
         sdkWillAppear()
     }
 

@@ -23,9 +23,7 @@ enum SdkPresenter {
         guard SdkRegister.ensureConfigured() else { return }
         @injected var sessionModel: SessionModel
         sessionModel.start(sku: sku, delegate: delegate)
-        @injected var consentModel: ConsentModel
-        let startVc = consentModel.isConsentGiven ? TryOnViewController() : OnBoardingViewController()
-        viewController.present(SdkNavigator(rootViewController: startVc), animated: true)
+        viewController.present(SdkNavigator(rootViewController: entryViewController()), animated: true)
     }
 
     public static func showHistory(in viewController: UIViewController,
@@ -37,5 +35,22 @@ enum SdkPresenter {
         guard configuration.behavior.isHistoryAvailable else { return false }
         viewController.present(SdkNavigator(rootViewController: HistoryViewController()), animated: true)
         return true
+    }
+}
+
+@available(iOS 13.0.0, *)
+extension SdkPresenter {
+    static func entryViewController() -> UIViewController {
+        @injected var consentModel: ConsentModel
+        if consentModel.isConsentGiven {
+            return TryOnViewController()
+        }
+
+        @injected var configuration: Aiuta.Configuration
+        if configuration.behavior.isSplashScreenEnabled {
+            return SplashViewController()
+        }
+
+        return OnBoardingViewController()
     }
 }

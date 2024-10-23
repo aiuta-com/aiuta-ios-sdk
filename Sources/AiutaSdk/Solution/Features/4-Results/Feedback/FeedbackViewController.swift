@@ -41,7 +41,6 @@ final class FeedbackViewController: ComponentController<ResultPage> {
 
 private extension FeedbackViewController {
     func isFeedbackNeeded(_ sessionResult: TryOnResult) -> Bool {
-        guard subscription.shouldDisplayFeedback else { return false }
         return !FeedbackViewController.feedbackedImages.contains(sessionResult.image.url)
     }
 
@@ -73,9 +72,7 @@ private extension FeedbackViewController {
         var result: FeedbackResult?
 
         if hasDislikeOptions {
-            let feedbackBulletin = FeedbackBulletin()
-            feedbackBulletin.feedback = subscription.feedback
-            result = await showBulletin(feedbackBulletin)
+            result = await showBulletin(FeedbackBulletin())
         }
 
         if result?.text.isEmpty == true || (!hasDislikeOptions && hasPlaintextOption) {
@@ -99,18 +96,18 @@ private extension FeedbackViewController {
     }
 
     var hasDislikeOptions: Bool {
-        subscription.feedback?.mainOptions?.compactMap { L[$0] }.isEmpty == false
+        L.feedbackSheetOptions.first(where: { !$0.isEmpty }).isSome
     }
 
     var hasPlaintextOption: Bool {
-        L[subscription.feedback?.plaintextTitle].isSomeAndNotEmpty
+        !L.feedbackSheetExtraOption.isEmpty
     }
 
     func gratiture(_ cell: ResultPage?) {
         guard let cell else { return }
 
         let gratitudeView = FeedbackGratitudeView { it, _ in
-            it.title.text = L[subscription.feedback?.gratitudeMessage]
+            it.title.text = L.feedbackSheetGratitude
             it.view.isVisible = false
         }
 

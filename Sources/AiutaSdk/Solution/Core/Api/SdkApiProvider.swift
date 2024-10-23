@@ -18,7 +18,7 @@ import Alamofire
 @available(iOS 13.0.0, *)
 @_spi(Aiuta) public struct SdkApiProvider: ApiProvider {
     public let baseUrl: String
-    private let auth: AiutaAuthType
+    private let auth: Aiuta.AuthType
 
     public func authorize(headers: inout HTTPHeaders, for request: ApiRequest) async throws {
         switch auth {
@@ -34,7 +34,7 @@ import Alamofire
         }
     }
 
-    public init(auth: AiutaAuthType, baseUrl: String = "https://api.aiuta.com/digital-try-on/v1") {
+    public init(auth: Aiuta.AuthType, baseUrl: String = "https://api.aiuta.com/digital-try-on/v1") {
         self.baseUrl = baseUrl
         self.auth = auth
     }

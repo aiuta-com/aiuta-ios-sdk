@@ -57,6 +57,7 @@ extension TryOnView {
             }
 
             icon.layout.make { make in
+                make.square = 16
                 make.left = 0
                 make.centerY = 0
             }
