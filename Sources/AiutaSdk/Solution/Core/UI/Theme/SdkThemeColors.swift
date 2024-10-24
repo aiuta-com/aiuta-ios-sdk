@@ -43,17 +43,6 @@ extension DesignSystemColors {
 }
 
 extension DesignSystemColors {
-    var green: UIColor { config.green ?? 0x00C35AFF.uiColor }
-    var red: UIColor { config.red ?? 0xEF5754FF.uiColor }
-}
-
-extension DesignSystemColors {
-    var gray: UIColor { config.gray ?? 0xB2B2B2FF.uiColor }
-    var lightGray: UIColor { config.lightGray ?? 0xEEEEEEFF.uiColor }
-    var darkGray: UIColor { config.darkGray ?? 0xCCCCCCFF.uiColor }
-}
-
-extension DesignSystemColors {
     private var loadingAnimationDefaults: [UIColor] {
         [0x4000FFFF.uiColor, 0x4000FF80.uiColor, 0x4000FF00.uiColor]
     }

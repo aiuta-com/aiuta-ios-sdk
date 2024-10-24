@@ -18,7 +18,7 @@ import UIKit
 final class FeedbackCommentView: Plane {
     let navBar = NavBar { it, ds in
         it.style = .actionTitleClose
-        if !ds.config.appearance.preferRightClose {
+        if !ds.config.appearance.toggles.preferRightClose {
             it.closeStyle = .label(L.cancel)
         }
     }

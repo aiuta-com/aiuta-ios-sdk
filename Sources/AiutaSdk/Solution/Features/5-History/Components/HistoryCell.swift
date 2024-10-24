@@ -80,7 +80,7 @@ extension HistoryView {
 
         let check = Image { it, ds in
             it.tint = .white
-            it.image = ds.image.icon24(.checkRounded)
+            it.image = ds.image.icon20(.check)
             it.view.isVisible = false
         }
 
@@ -96,6 +96,7 @@ extension HistoryView {
             }
 
             check.layout.make { make in
+                make.circle = 20
                 make.center = .zero
             }
         }

@@ -22,7 +22,7 @@ final class SdkNavigator: UINavigationController {
     @Injected private var ds: DesignSystem
 
     private let presentingAlphaChangeDuration = 0.4
-    private var presentingOriginalAlpha: CGFloat = 1
+    private let presentingOriginalAlpha: CGFloat = 1
     private let presentingTargetAlpha: CGFloat = 0.6
     private var presentingDimmedAlpha: CGFloat = 0.6
     private var presentingOriginalTint: UIColor?
@@ -47,7 +47,6 @@ final class SdkNavigator: UINavigationController {
     func sdkWillAppear() {
         trace("---------------")
         trace("SDK WILL APPEAR")
-        presentingOriginalAlpha = presentingViewController?.view.alpha ?? presentingOriginalAlpha
         presentingOriginalTint = presentingViewController?.view.window?.tintColor
         presentingViewController?.view.window?.tintColor = ds.color.accent
     }
@@ -79,6 +78,9 @@ final class SdkNavigator: UINavigationController {
         if let presentingOriginalTint {
             presentingViewController?.view.window?.tintColor = presentingOriginalTint
         }
+        UIView.animate(withDuration: presentingAlphaChangeDuration) { [self] in
+            presentingViewController?.view.alpha = presentingOriginalAlpha
+        }
         if let page = (visibleViewController as? PageRepresentable)?.page {
             @injected var session: SessionModel
             session.delegate?.aiuta(eventOccurred: .exit(pageId: page))
@@ -107,10 +109,11 @@ final class SdkNavigator: UINavigationController {
 @available(iOS 13.0, *)
 extension SdkNavigator: UIAdaptivePresentationControllerDelegate {
     func presentationControllerShouldDismiss(_ presentationController: UIPresentationController) -> Bool {
+        defer { touchesBeganInsideDismissArea = nil }
         if visibleViewController?.hasBulletin == true { return false }
         if let touchesBeganInsideDismissArea { return touchesBeganInsideDismissArea }
-        if let page = visibleViewController as? PageRepresentable { return page.isSafeToDismiss }
-        return true
+//        if let page = visibleViewController as? PageRepresentable { return page.isSafeToDismiss }
+        return false
     }
 
     func presentationController(_ presentationController: UIPresentationController,

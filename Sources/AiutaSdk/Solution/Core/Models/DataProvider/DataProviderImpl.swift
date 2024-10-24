@@ -37,4 +37,10 @@ final class DataProviderImpl: AiutaDataProvider {
         get { historyModel.generated.items }
         set { historyModel.setGenerated(newValue) }
     }
+
+    func setProduct(_ product: Aiuta.Product, isInWishlist: Bool) {
+        if sessionModel.isInWishlist(product) != isInWishlist {
+            sessionModel.toggleWishlist(product)
+        }
+    }
 }

@@ -47,7 +47,7 @@ extension ProcessingView {
         }
 
         private let image = Image { it, ds in
-            it.image = ds.image.icon16(.spin)
+            it.image = ds.image.icon14(.spin)
             it.tint = ds.color.primary
         }
 
@@ -72,7 +72,7 @@ extension ProcessingView {
 
         override func updateLayout() {
             image.layout.make { make in
-                make.square = 14
+                make.circle = 14
                 make.left = 24
             }
 

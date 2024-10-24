@@ -42,7 +42,7 @@ extension ResultsView {
         let icon = Image { it, ds in
             it.isAutoSize = false
             it.tint = ds.color.primary
-            it.image = ds.image.icon16(.info)
+            it.image = ds.image.icon20(.info)
         }
 
         override func updateLayout() {

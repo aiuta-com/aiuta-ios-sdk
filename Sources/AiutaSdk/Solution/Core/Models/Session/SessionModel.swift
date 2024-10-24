@@ -15,6 +15,8 @@
 @_spi(Aiuta) import AiutaKit
 
 protocol SessionModel {
+    var onWishlistChange: Signal<Void> { get }
+
     var activeSku: Aiuta.Product? { get }
     var delegate: AiutaSdkDelegate? { get set }
     var dataDelegate: AiutaDataController? { get set }
@@ -23,5 +25,6 @@ protocol SessionModel {
     func finish(addingToCart: Aiuta.Product?)
 
     func isInWishlist(_ sku: Aiuta.Product?) -> Bool
+    @discardableResult
     func toggleWishlist(_ sku: Aiuta.Product?) -> Bool
 }

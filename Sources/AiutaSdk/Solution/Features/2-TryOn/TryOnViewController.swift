@@ -88,6 +88,10 @@ final class TryOnViewController: ViewController<TryOnView> {
             }
         }
 
+        session.onWishlistChange.subscribe(with: self) { [unowned self] in
+            ui.skuBulletin.wishButton.isSelected = session.isInWishlist(session.activeSku)
+        }
+
         updateUploads()
         ui.tryOnBar.product = session.activeSku
         ui.navBar.isActionAvailable = history.hasGenerations

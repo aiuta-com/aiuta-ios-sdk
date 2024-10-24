@@ -89,7 +89,7 @@ final class ResultPage: Page<TryOnResult> {
         }
 
         override func setup() {
-            shadowOpacity = ds.config.appearance.reduceShadows ? 0 : 1
+            shadowOpacity = ds.config.appearance.toggles.reduceShadows ? 0 : 1
             shadowColor = .black.withAlphaComponent(0.08)
             shadowOffset = .zero
             shadowRadius = 30

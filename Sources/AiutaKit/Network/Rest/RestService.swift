@@ -171,12 +171,6 @@ private extension RestService {
             throw ApiError(statusCode, with: errorInfo.value?.error ?? shortenString(rawResponse.value, maxLength: 300))
         }
 
-        if request.type == .plain, var raw = rawResponse.value, Response.self == String.self {
-            if !raw.hasPrefix("\"") || !raw.hasSuffix("\"") { raw = "\"\(raw)\"" }
-            let result: Response = try responseDecoder.decode(Response.self, from: Data(raw.utf8))
-            return (response: result, headers: rawResponse.response?.headers)
-        }
-
         let response = await dataRequest.decodeResponse(of: Response.self, decoder: responseDecoder)
         if isDebug, let error = response.error { requestDebugger?.responseError = rawErrorString ?? String(describing: error) }
         guard let result = response.value else { throw ApiError(response.error) }

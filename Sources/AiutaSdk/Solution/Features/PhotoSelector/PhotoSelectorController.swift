@@ -32,12 +32,15 @@ final class PhotoSelectorController: ComponentController<ContentBase> {
     private var photoPicker: PhotoPicker?
     private let imagePickerDelegate = ImagePickerControllerDelegate()
 
+    @bundle(key: "NSCameraUsageDescription")
+    private var cameraUsageDescription: String?
+
     func choosePhoto() {
         if history.uploaded.items.count > 1 {
             showBulletin(photoHistoryBulletin)
             session.delegate?.aiuta(eventOccurred: .picker(pageId: page, event: .uploadsHistoryOpened))
         } else {
-            showBulletin(selectPhotoBulletin)
+            showSelectorIfCameraAvailableOrPicker()
         }
     }
 
@@ -50,12 +53,7 @@ final class PhotoSelectorController: ComponentController<ContentBase> {
         }
 
         selectPhotoBulletin.chooseFromLibrary.onTouchUpInside.subscribe(with: self) { [unowned self] in
-            if #available(iOS 14.0, *) {
-                photoPicker?.pick(max: 1)
-                session.delegate?.aiuta(eventOccurred: .picker(pageId: page, event: .photoGalleryOpened))
-            } else {
-                chooseFromLibrary()
-            }
+            pickOrChooseFromLibrary()
         }
 
         photoHistoryBulletin.onSelect.subscribe(with: self) { [unowned self] image in
@@ -71,7 +69,7 @@ final class PhotoSelectorController: ComponentController<ContentBase> {
         }
 
         photoHistoryBulletin.newPhotosButton.onTouchUpInside.subscribe(with: self) { [unowned self] in
-            showBulletin(selectPhotoBulletin)
+            showSelectorIfCameraAvailableOrPicker()
         }
 
         photoPicker?.willPick.subscribe(with: self) { [unowned self] in
@@ -107,9 +105,28 @@ final class PhotoSelectorController: ComponentController<ContentBase> {
         photoHistoryBulletin.history = history.uploaded
     }
 
+    private func showSelectorIfCameraAvailableOrPicker() {
+        if cameraUsageDescription.isSomeAndNotEmpty {
+            showBulletin(selectPhotoBulletin)
+        } else {
+            pickOrChooseFromLibrary()
+        }
+    }
+
+    private func pickOrChooseFromLibrary() {
+        if #available(iOS 14.0, *) {
+            photoPicker?.pick(max: 1)
+            session.delegate?.aiuta(eventOccurred: .picker(pageId: page, event: .photoGalleryOpened))
+        } else {
+            chooseFromLibrary()
+        }
+    }
+
     private func pickPhotos(_ photos: [UIImage]) {
         Task {
-            await selectPhotoBulletin.dismiss()
+            if selectPhotoBulletin.isPresenting {
+                await selectPhotoBulletin.dismiss()
+            }
             guard let photo = photos.first else { return }
             didPick.fire(photo)
         }

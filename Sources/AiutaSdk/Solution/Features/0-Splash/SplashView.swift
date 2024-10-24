@@ -19,7 +19,7 @@ final class SplashView: Plane {
     let ground = Image { it, ds in
         it.isAutoSize = false
         it.contentMode = .scaleAspectFill
-        it.image = ds.image.splash(.background)
+        it.image = ds.image.images(.splashScreen)
     }
 
     let closeButton = ImageButton { it, ds in
@@ -29,7 +29,7 @@ final class SplashView: Plane {
 
     let icon = Image { it, ds in
         it.isAutoSize = false
-        it.image = ds.image.splash(.icon)
+        it.image = ds.image.icon82(.splash)
     }
 
     let title = Label { it, ds in

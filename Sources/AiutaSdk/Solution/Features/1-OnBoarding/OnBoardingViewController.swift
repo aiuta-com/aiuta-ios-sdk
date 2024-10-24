@@ -71,7 +71,7 @@ final class OnBoardingViewController: ViewController<OnBoardingView> {
     }
 
     private func updateTitle() {
-        guard ui.ds.config.appearance.extendedOnbordingNavBar else {
+        guard ui.ds.config.appearance.toggles.extendOnbordingNavBar else {
             ui.navBar.title = nil
             return
         }

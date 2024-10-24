@@ -20,7 +20,7 @@ final class GalleryView: Pager<ImageSource, GalleryPage> {
         it.image = ds.image.navigation(.close)
         it.tint = .white
     }
-    
+
     let share = LabelButton { it, ds in
         it.font = ds.font.buttonS
         it.label.color = .white
@@ -34,10 +34,16 @@ final class GalleryView: Pager<ImageSource, GalleryPage> {
 
     override func updateLayout() {
         close.layout.make { make in
+            make.square = 44
             make.top = max(layout.safe.insets.top, 10) - 10
             make.left = 2
         }
-        
+
+        close.imageView.layout.make { make in
+            make.square = 24
+            make.center = .zero
+        }
+
         share.layout.make { make in
             make.centerY = close.layout.centerY
             make.right = 16

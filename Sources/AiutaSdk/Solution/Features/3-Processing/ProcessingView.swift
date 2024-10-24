@@ -17,7 +17,7 @@ import UIKit
 
 final class ProcessingView: Plane {
     let navBar = NavBar { it, ds in
-        if ds.config.appearance.preferRightClose {
+        if ds.config.appearance.toggles.preferRightClose {
             it.style = .actionTitleClose
         } else {
             it.style = .closeTitleAction

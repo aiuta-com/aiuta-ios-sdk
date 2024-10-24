@@ -15,6 +15,8 @@
 @_spi(Aiuta) import AiutaKit
 
 final class SessionModelImpl: SessionModel {
+    let onWishlistChange = Signal<Void>()
+
     var activeSku: Aiuta.Product?
 
     weak var delegate: AiutaSdkDelegate?
@@ -41,9 +43,11 @@ final class SessionModelImpl: SessionModel {
         guard let sku else { return false }
         if wishlist.contains(sku.skuId) {
             wishlist.remove(sku.skuId)
+            onWishlistChange.fire()
             return false
         } else {
             wishlist.insert(sku.skuId)
+            onWishlistChange.fire()
             return true
         }
     }

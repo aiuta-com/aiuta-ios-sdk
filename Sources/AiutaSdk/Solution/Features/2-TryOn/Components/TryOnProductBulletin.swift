@@ -25,7 +25,8 @@ extension TryOnView {
                 gallery.scroll(to: -gallery.contentInset.left)
 
                 sku?.imageUrls.indexed.forEach { i, imageUrl in
-                    gallery.addContent(ImageCell()) { it, _ in
+                    gallery.addContent(ImageCell()) { it, ds in
+                        it.useExtraInset = ds.config.appearance.toggles.applyProductFirstImageExtraInset && i == 0
                         it.image.source = imageUrl
                         it.onTouchUpInside.subscribe(with: self) { [unowned self] in
                             onTapImage.fire(i)
@@ -127,21 +128,37 @@ extension TryOnView {
     }
 
     final class ImageCell: PlainButton {
-        let image = Image { it, ds in
-            it.view.backgroundColor = ds.color.neutral
+        var useExtraInset: Bool = false {
+            didSet {
+                image.contentMode = useExtraInset ? .scaleAspectFit : .scaleAspectFill
+            }
+        }
+
+        let image = Image { it, _ in
             it.contentMode = .scaleAspectFill
             it.desiredQuality = .thumbnails
             it.isAutoSize = false
+        }
+
+        override func setup() {
+            view.backgroundColor = ds.color.neutral
         }
 
         override func updateLayout() {
             layout.make { make in
                 make.width = 169
                 make.height = 225
+                make.radius = ds.dimensions.imagePreviewRadius
             }
 
             image.layout.make { make in
-                make.size = layout.size
+                if useExtraInset {
+                    make.top = 24
+                    make.bottom = 40
+                    make.leftRight = 24
+                } else {
+                    make.size = layout.size
+                }
                 make.radius = ds.dimensions.imagePreviewRadius
             }
         }

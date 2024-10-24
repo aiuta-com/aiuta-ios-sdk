@@ -103,6 +103,10 @@ final class ResulstsViewController: ViewController<ResultsView> {
             showBulletin(TryOnView.FitDisclaimerBulletin())
         }
 
+        session.onWishlistChange.subscribe(with: self) { [unowned self] in
+            ui.pager.pages.forEach { $0.updateWish() }
+        }
+
         ui.pager.data = tryOnModel.sessionResults
         ui.navBar.isActionAvailable = history.hasGenerations
         ui.skuSheet.sku = ui.pager.currentItem?.sku

@@ -108,12 +108,12 @@ extension OnBoardingView.StickyScroll {
 
         let check = Image { it, ds in
             it.tint = ds.color.onDark
-            it.image = ds.image.icon24(.checkSmall)
+            it.image = ds.image.icon20(.check)
             it.view.isVisible = false
         }
 
         override func setup() {
-            view.borderColor = ds.color.darkGray
+            view.borderColor = ds.color.neutral3
             view.borderWidth = 2
         }
 

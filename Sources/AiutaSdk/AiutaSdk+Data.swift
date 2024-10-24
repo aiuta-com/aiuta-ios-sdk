@@ -30,6 +30,7 @@ public protocol AiutaDataProvider: AnyObject {
     var isUserConsentObtained: Bool { get set }
     var uploadedImages: [Aiuta.UploadedImage] { get set }
     var generatedImages: [Aiuta.GeneratedImage] { get set }
+    func setProduct(_ product: Aiuta.Product, isInWishlist: Bool)
 }
 
 // MARK: - Data structs

@@ -60,7 +60,7 @@ extension DesignSystemFonts {
 }
 
 extension DesignSystemImages {
-    var config: Aiuta.Configuration.Appearance.Images {
-        SdkTheme.config.appearance.images
+    var config: Aiuta.Configuration.Appearance {
+        SdkTheme.config.appearance
     }
 }

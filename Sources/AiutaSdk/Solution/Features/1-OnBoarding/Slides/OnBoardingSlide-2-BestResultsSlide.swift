@@ -33,7 +33,7 @@ extension OnBoardingView.StickyScroll {
         }
 
         let bestResults = BestResultsView { it, ds in
-            if ds.config.appearance.reduceShadows {
+            if ds.config.appearance.toggles.reduceShadows {
                 it.style = .flat
             }
         }
@@ -194,15 +194,10 @@ extension OnBoardingView.StickyScroll {
             shadowColor = .black
             shadowOffset = .zero
 
-            mark1.icon.image = ds.image.icon24(.checkRounded)
-            mark2.icon.image = ds.image.icon24(.checkRounded)
-            mark3.icon.image = ds.image.icon24(.cross)
-            mark4.icon.image = ds.image.icon24(.cross)
-
-            mark1.color = ds.color.green
-            mark2.color = ds.color.green
-            mark3.color = ds.color.red
-            mark4.color = ds.color.red
+            mark1.icon.image = ds.image.icon24(.checkCorrect)
+            mark2.icon.image = ds.image.icon24(.checkCorrect)
+            mark3.icon.image = ds.image.icon24(.checkNotCorrect)
+            mark4.icon.image = ds.image.icon24(.checkNotCorrect)
         }
     }
 
@@ -213,6 +208,7 @@ extension OnBoardingView.StickyScroll {
 
         override func updateLayout() {
             icon.layout.make { make in
+                make.circle = layout.width
                 make.center = .zero
             }
         }

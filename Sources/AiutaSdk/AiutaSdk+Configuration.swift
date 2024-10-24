@@ -70,9 +70,6 @@ extension Aiuta.Configuration {
     /// Settings for how the SDK will be displayed.
     public struct Appearance {
         public var presentationStyle: PresentationStyle = .pageSheet
-        public var extendedOnbordingNavBar: Bool = false
-        public var preferRightClose: Bool = false
-        public var reduceShadows: Bool = false
 
         /// The language in which the SDK interface will be displayed.
         /// If not specified, the first preferred system language will be used
@@ -82,7 +79,9 @@ extension Aiuta.Configuration {
         public var colors = Colors()
         public var dimensions = Dimensions()
         public var fonts = Fonts()
+        public var icons = Icons()
         public var images = Images()
+        public var toggles = Toggles()
     }
 }
 
@@ -98,178 +97,13 @@ extension Aiuta.Configuration.Appearance {
     }
 }
 
-// MARK: - Appearance.Color
+// MARK: - Appearance.Toggles
 
 extension Aiuta.Configuration.Appearance {
-    public enum Style {
-        case light, dark
-    }
-
-    /// Color overrides
-    public struct Colors {
-        public var style: Style = .light
-
-        /// Your brand's primary color.
-        /// This color will be used for all significant interface elements,
-        /// such as the main action button on the screen, progress bars, etc.
-        public var brand: UIColor?
-
-        /// Extra special attention color. The discounted price labels
-        /// and the discount percentage background will be colored in it.
-        public var accent: UIColor?
-        public var aiuta: UIColor?
-
-        public var primary: UIColor?
-        public var secondary: UIColor?
-        public var tertiary: UIColor?
-        public var onDark: UIColor?
-
-        public var error: UIColor?
-        public var onError: UIColor?
-
-        /// The background color of all screens.
-        public var background: UIColor?
-        public var neutral: UIColor?
-        public var neutral2: UIColor?
-        public var neutral3: UIColor?
-
-        public var green: UIColor?
-        public var red: UIColor?
-        public var gray: UIColor?
-        public var lightGray: UIColor?
-        public var darkGray: UIColor?
-
-        public var loadingAnimation: [UIColor]?
-
-        public init() {}
-    }
-}
-
-// MARK: - Appearance.Dimesions
-
-extension Aiuta.Configuration.Appearance {
-    /// Varios corner radiuses, sizes, offsets, etc.
-    public struct Dimensions {
-        public var imageMainRadius: CGFloat?
-        public var imageBoardingRadius: CGFloat?
-        public var imagePreviewRadius: CGFloat?
-
-        public var bottomSheetRadius: CGFloat?
-
-        public var buttonLargeRadius: CGFloat?
-        public var buttonSmallRadius: CGFloat?
-
-        public var grabberWidth: CGFloat?
-        public var grabberOffset: CGFloat?
-
-        public var continuingSeparators: Bool?
-
-        public init() {}
-    }
-}
-
-// MARK: - Appearance.Fonts
-
-extension Aiuta.Configuration.Appearance {
-    /// Custom fonts
-    public struct Fonts {
-        public var titleXL: CustomFont?
-        public var welcome: CustomFont?
-
-        public var titleL: CustomFont?
-        public var titleM: CustomFont?
-
-        public var navBar: CustomFont?
-        public var regular: CustomFont?
-        public var button: CustomFont?
-        public var buttonS: CustomFont?
-
-        public var cells: CustomFont?
-        public var chips: CustomFont?
-
-        public var product: CustomFont?
-        public var price: CustomFont?
-        public var brand: CustomFont?
-
-        public var description: CustomFont?
-
-        public init() {}
-    }
-
-    public struct CustomFont {
-        public let font: UIFont
-        public let family: String
-        public let size: CGFloat
-        public let weight: UIFont.Weight
-        public var kern: CGFloat?
-        public var lineHeightMultiple: CGFloat?
-
-        public init(font: UIFont, family: String, size: CGFloat, weight: UIFont.Weight, kern: CGFloat? = nil, lineHeightMultiple: CGFloat? = nil) {
-            self.font = font
-            self.family = family
-            self.size = size
-            self.weight = weight
-            self.kern = kern
-            self.lineHeightMultiple = lineHeightMultiple
-        }
-    }
-}
-
-// MARK: - Appearance.Images
-
-extension Aiuta.Configuration.Appearance {
-    /// Image overrides
-    public struct Images {
-        public var icons16 = Icons16()
-        public var icons20 = Icons20()
-        public var icons24 = Icons24()
-        public var icons36 = Icons36()
-        public var icons82 = Icons82()
-        public var screens = Screens()
-
-        public init() {}
-    }
-}
-
-extension Aiuta.Configuration.Appearance.Images {
-    public struct Icons16 {
-        public var check: UIImage?
-        public var magic: UIImage?
-        public var lock: UIImage?
-        public var arrow: UIImage?
-        public var spin: UIImage?
-    }
-
-    public struct Icons20 {
-        public var info: UIImage?
-    }
-
-    public struct Icons24 {
-        public var back: UIImage?
-        public var camera: UIImage?
-        public var checkCorrect: UIImage?
-        public var checkNotCorrect: UIImage?
-        public var close: UIImage?
-        public var trash: UIImage?
-        public var takePhoto: UIImage?
-        public var history: UIImage?
-        public var photoLibrary: UIImage?
-        public var share: UIImage?
-        public var wishlist: UIImage?
-        public var wishlistFill: UIImage?
-    }
-
-    public struct Icons36 {
-        public var error: UIImage?
-        public var like: UIImage?
-        public var dislike: UIImage?
-    }
-
-    public struct Icons82 {
-        public var splash: UIImage?
-    }
-
-    public struct Screens {
-        public var splash: UIImage?
+    public struct Toggles {
+        public var reduceShadows: Bool = false
+        public var preferRightClose: Bool = false
+        public var extendOnbordingNavBar: Bool = false
+        public var applyProductFirstImageExtraInset: Bool = false
     }
 }

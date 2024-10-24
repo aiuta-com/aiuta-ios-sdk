@@ -81,7 +81,7 @@ final class SdkRegister {
         var cameraUsageDescription: String?
 
         if cameraUsageDescription.isNullOrEmpty {
-            fatalError("Please provide NSCameraUsageDescription in your Info.plist so that Aiuta can request permission to use the camera from the user.")
+            NSLog("Please provide NSCameraUsageDescription in your Info.plist so that Aiuta can request permission to use the camera from the user.")
         }
 
         @bundle(key: "NSPhotoLibraryAddUsageDescription")

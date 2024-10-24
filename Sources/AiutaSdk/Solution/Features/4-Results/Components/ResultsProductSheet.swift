@@ -26,7 +26,8 @@ extension ResultsView {
                 content.gallery.scroll(to: -content.gallery.contentInset.left)
 
                 sku?.imageUrls.indexed.forEach { i, imageUrl in
-                    content.gallery.addContent(TryOnView.ImageCell()) { it, _ in
+                    content.gallery.addContent(TryOnView.ImageCell()) { it, ds in
+                        it.useExtraInset = ds.config.appearance.toggles.applyProductFirstImageExtraInset && i == 0
                         it.image.source = imageUrl
                         it.onTouchUpInside.subscribe(with: self) { [unowned self] in
                             onTapImage.fire(i)

@@ -18,10 +18,12 @@ extension HistoryView {
     final class HistorySnack: Plane {
         let deleteButton = OptionButton { it, ds in
             it.icon.image = ds.image.icon24(.trash)
+            it.view.isMaxOpaque = false
         }
 
         let shareButton = OptionButton { it, ds in
             it.icon.image = ds.image.icon24(.share)
+            it.view.isMaxOpaque = false
         }
 
         let toggleSeletionButton = LabelButton { it, ds in
@@ -59,12 +61,12 @@ extension HistoryView {
             }
 
             shareButton.layout.make { make in
-                make.right = 11
+                make.right = 8
                 make.centerY = 0
             }
 
             deleteButton.layout.make { make in
-                make.right = shareButton.layout.leftPin + 11
+                make.right = shareButton.layout.leftPin
                 make.centerY = 0
             }
         }
@@ -82,13 +84,17 @@ extension HistoryView {
         var isEnabled = true {
             didSet {
                 guard oldValue != isEnabled else { return }
-                icon.tint = isEnabled ? ds.color.tint : ds.color.gray
+                animations.opacityTo(isEnabled ? 1 : 0.6, time: .sixthOfSecond)
             }
+        }
+
+        override func setup() {
+            view.minOpacity = 0.6
         }
 
         override func updateLayout() {
             layout.make { make in
-                make.size = .init(square: 46)
+                make.size = .init(square: 52)
             }
 
             circle.layout.make { make in
@@ -97,6 +103,7 @@ extension HistoryView {
             }
 
             icon.layout.make { make in
+                make.square = 24
                 make.center = .zero
             }
         }

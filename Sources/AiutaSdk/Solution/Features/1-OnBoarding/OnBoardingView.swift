@@ -19,7 +19,7 @@ final class OnBoardingView: Plane {
     let scroll = StickyScroll()
 
     let navBar = NavBar { it, ds in
-        if ds.config.appearance.preferRightClose {
+        if ds.config.appearance.toggles.preferRightClose {
             it.style = .backTitleClose
         } else {
             it.style = .backTitleAction

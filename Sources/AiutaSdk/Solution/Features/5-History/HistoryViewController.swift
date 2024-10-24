@@ -47,6 +47,7 @@ final class HistoryViewController: ViewController<HistoryView> {
         ui.selectionSnackbar.bar.toggleSeletionButton.onTouchUpInside.subscribe(with: self) { [unowned self] in
             if isSelectedAll { selection.removeAll() }
             else { selection = history.generated.items }
+            updateSelection()
         }
 
         ui.selectionSnackbar.bar.shareButton.onTouchUpInside.subscribe(with: self) { [unowned self] in
@@ -86,6 +87,7 @@ final class HistoryViewController: ViewController<HistoryView> {
             ui.navBar.actionStyle = .label(isEditMode ? L.cancel : L.appBarSelect)
             ui.history.updateItems()
             if !isEditMode { selection.removeAll() }
+            updateSelection()
         }
     }
 
@@ -93,7 +95,6 @@ final class HistoryViewController: ViewController<HistoryView> {
         didSet {
             guard oldValue != selection else { return }
             ui.history.updateItems()
-            updateSelection()
         }
     }
 
@@ -108,6 +109,7 @@ final class HistoryViewController: ViewController<HistoryView> {
         } else {
             selection.append(image)
         }
+        updateSelection()
     }
 
     func updateSelection() {
