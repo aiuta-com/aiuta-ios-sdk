@@ -46,6 +46,13 @@ extension Aiuta.TryOnStart {
         let uploadedImageId: String
         let skuId: String
         let skuCatalogName: String?
+
+        var secureAuthFields: [String: String]? {
+            [
+                "product_id": skuId,
+                "uploaded_image_id": uploadedImageId,
+            ]
+        }
     }
 }
 
