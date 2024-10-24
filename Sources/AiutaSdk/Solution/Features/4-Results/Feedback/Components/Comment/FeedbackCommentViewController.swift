@@ -26,13 +26,15 @@ final class FeedbackCommentViewController: ViewController<FeedbackCommentView> {
         ui.title.text = L.feedbackSheetExtraOptionTitle
 
         ui.navBar.onClose.subscribe(with: self) { [unowned self] in
-            didFeedback.fire(nil)
-            dismiss()
+            dismiss(animated: true) { [self] in
+                didFeedback.fire(nil)
+            }
         }
 
         ui.commitButton.onTouchUpInside.subscribe(with: self) { [unowned self] in
-            didFeedback.fire(ui.input.text)
-            dismiss()
+            dismiss(animated: true) { [self] in
+                didFeedback.fire(ui.input.text)
+            }
         }
     }
 

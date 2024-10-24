@@ -90,7 +90,6 @@ struct SdkEnglishLanguage: AiutaSdkLanguage {
     let historySelectorEnableButtonSelectAll = "Select all"
     let historySelectorEnableButtonUnselectAll = "Unselect all"
     let historySelectorEnableButtonCancel = "Cancel"
-    let historyEmptyDescription = "Once you try on first item your try-on history would be stored here"
 
     // MARK: - Photo picker sheet
 

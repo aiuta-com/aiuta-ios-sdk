@@ -91,7 +91,6 @@ struct SdkRussianLanguage: AiutaSdkLanguage {
     let historySelectorEnableButtonSelectAll = "Выбрать все"
     let historySelectorEnableButtonUnselectAll = "Снять выделение"
     let historySelectorEnableButtonCancel = "Отмена"
-    let historyEmptyDescription = "После того, как вы примерите первый товар, история примерок будет сохранена здесь"
 
     // MARK: - Photo picker sheet
 

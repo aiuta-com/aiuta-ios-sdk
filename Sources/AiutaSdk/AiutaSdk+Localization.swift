@@ -157,8 +157,6 @@ public protocol AiutaSdkLanguage {
     var historySelectorEnableButtonUnselectAll: String { get }
     /// `Cancel`
     var historySelectorEnableButtonCancel: String { get }
-    /// `Once you try on first item your try-on history would be stored here`
-    var historyEmptyDescription: String { get }
 
     // MARK: - Photo picker sheet
 

@@ -92,7 +92,6 @@ struct SdkTurkishLanguage: AiutaSdkLanguage {
     let historySelectorEnableButtonSelectAll = "Hepsini seç"
     let historySelectorEnableButtonUnselectAll = "Seçimi kaldır"
     let historySelectorEnableButtonCancel = "İptal"
-    let historyEmptyDescription = "İlk ürünü denedikten sonra deneme geçmişiniz burada saklanacaktır"
 
     // MARK: - Photo picker sheet
 

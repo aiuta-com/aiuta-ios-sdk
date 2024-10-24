@@ -77,8 +77,17 @@ private extension FeedbackViewController {
 
         if result?.text.isEmpty == true || (!hasDislikeOptions && hasPlaintextOption) {
             let commmentVc = FeedbackCommentViewController()
-            vc?.popover(commmentVc)
+            var feedWall: FeedWall?
+            if UIViewController.isStackingAllowed {
+                vc?.popover(commmentVc)
+            } else {
+                feedWall = FeedWall()
+                feedWall?.modalPresentationStyle = .overFullScreen
+                vc?.present(feedWall!, animated: false)
+                feedWall!.popover(commmentVc)
+            }
             let text = await commmentVc.getFeedback()
+            feedWall?.dismiss(animated: false)
             if let text, !text.isEmpty { result = (text: text, index: nil) }
             else { result = nil }
         }
@@ -124,4 +133,8 @@ private extension FeedbackViewController {
             }
         }
     }
+}
+
+private final class FeedWall: UIViewController {
+    override func loadView() { view = UIView() }
 }

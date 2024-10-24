@@ -70,7 +70,7 @@ final class FeedbackCommentView: Plane {
             make.leftRight = 16
             make.height = 50
             make.radius = ds.dimensions.buttonLargeRadius
-            make.bottom = layout.keyboard.height + 16
+            make.bottom = max(layout.keyboard.height, layout.safe.insets.bottom) + 16
         }
     }
 }
