@@ -83,8 +83,11 @@ final class TryOnViewController: ViewController<TryOnView> {
 
         ui.skuBulletin.wishButton.onTouchUpInside.subscribe(with: self) { [unowned self] in
             ui.skuBulletin.wishButton.isSelected = session.toggleWishlist(session.activeSku)
-            if ui.skuBulletin.wishButton.isSelected, let skuId = session.activeSku?.skuId {
-                session.delegate?.aiuta(eventOccurred: .results(pageId: page, event: .productAddToWishlist, productId: skuId))
+            if let skuId = session.activeSku?.skuId {
+                session.delegate?.aiuta(addToWishlist: skuId)
+                if ui.skuBulletin.wishButton.isSelected {
+                    session.delegate?.aiuta(eventOccurred: .results(pageId: page, event: .productAddToWishlist, productId: skuId))
+                }
             }
         }
 

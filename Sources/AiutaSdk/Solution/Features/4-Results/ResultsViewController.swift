@@ -116,8 +116,11 @@ final class ResulstsViewController: ViewController<ResultsView> {
 
     private func toggleCurrentWish() {
         let isWish = session.toggleWishlist(ui.pager.currentItem?.sku)
-        if isWish, let skuId = ui.pager.currentItem?.sku.skuId {
-            session.delegate?.aiuta(eventOccurred: .results(pageId: page, event: .productAddToWishlist, productId: skuId))
+        if let skuId = ui.pager.currentItem?.sku.skuId {
+            session.delegate?.aiuta(addToWishlist: skuId)
+            if isWish {
+                session.delegate?.aiuta(eventOccurred: .results(pageId: page, event: .productAddToWishlist, productId: skuId))
+            }
         }
         ui.pager.pages.forEach { page in
             page.updateWish()
