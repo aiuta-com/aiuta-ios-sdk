@@ -34,7 +34,6 @@ final class BulletinManager: PlainButton {
         }
     }
 
-    private var originalPresenterAlpha: CGFloat = 1
     private let cooldDownToken = AutoCancellationToken()
     private var canDismissByMisspan = false
     private var canDismissByMisstap = true {
@@ -90,8 +89,6 @@ final class BulletinManager: PlainButton {
             canDismissByMisspan = false
             current.contentView.dismiss()
         }
-
-        originalPresenterAlpha = vc?.navigationController?.presentingViewController?.view.alpha ?? 1
     }
 
     override func updateLayoutInternal() {
@@ -116,12 +113,6 @@ final class BulletinManager: PlainButton {
     required init(view: TouchView) {
         fatalError("init(view:) has not been implemented")
     }
-
-    deinit {
-        UIView.animate(withDuration: 0.25) { [vc, originalPresenterAlpha] in
-            vc?.navigationController?.presentingViewController?.view.alpha = originalPresenterAlpha
-        }
-    }
 }
 
 private extension BulletinManager {
@@ -133,15 +124,11 @@ private extension BulletinManager {
         ui.addContent(self)
         updateLayoutInternal()
         blur.animations.opacityTo(1)
-        blur.animations.animate { [vc, self] in
-            vc.navigationController?.presentingViewController?.view.alpha = originalPresenterAlpha / 2
-        }
+        BulletinWall.current?.increase()
     }
 
     func hideSelf() {
-        blur.animations.animate { [vc, self] in
-            vc?.navigationController?.presentingViewController?.view.alpha = originalPresenterAlpha
-        }
+        BulletinWall.current?.reduce()
         blur.animations.opacityTo(0) { [self] in
             guard currentBulletin.isNil else {
                 blur.animations.opacityTo(1)

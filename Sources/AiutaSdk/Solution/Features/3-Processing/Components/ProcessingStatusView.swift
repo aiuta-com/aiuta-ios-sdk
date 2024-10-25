@@ -37,6 +37,11 @@ extension ProcessingView {
         private let blur = Blur { it, ds in
             it.style = ds.color.blur
             it.intensity = 0.4
+
+            if ds.config.appearance.toggles.enableBlurOutlines {
+                it.view.borderColor = ds.color.neutral3
+                it.view.borderWidth = 1
+            }
         }
 
         private let spin = Spinner { it, ds in
@@ -48,13 +53,21 @@ extension ProcessingView {
 
         private let image = Image { it, ds in
             it.image = ds.image.icon14(.spin)
-            it.tint = ds.color.primary
+            if ds.config.appearance.toggles.enableBlurOutlines {
+                it.tint = ds.color.onDark
+            } else {
+                it.tint = ds.color.primary
+            }
         }
 
         private let label = Label { it, ds in
             it.isLineHeightMultipleEnabled = false
             it.font = ds.font.buttonS
-            it.color = ds.color.primary
+            if ds.config.appearance.toggles.enableBlurOutlines {
+                it.color = ds.color.onDark
+            } else {
+                it.color = ds.color.primary
+            }
         }
 
         override func attached() {

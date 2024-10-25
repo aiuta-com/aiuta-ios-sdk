@@ -35,8 +35,9 @@ final class PhotoSelectorController: ComponentController<ContentBase> {
     @bundle(key: "NSCameraUsageDescription")
     private var cameraUsageDescription: String?
 
-    func choosePhoto() {
-        if history.uploaded.items.count > 1 {
+    func choosePhoto(withHistoryPrefered: Bool = true) {
+        let minHistoryItemsToPreferHistory = withHistoryPrefered ? 1 : 2
+        if history.uploaded.items.count >= minHistoryItemsToPreferHistory {
             showBulletin(photoHistoryBulletin)
             session.delegate?.aiuta(eventOccurred: .picker(pageId: page, event: .uploadsHistoryOpened))
         } else {
@@ -106,7 +107,8 @@ final class PhotoSelectorController: ComponentController<ContentBase> {
     }
 
     private func showSelectorIfCameraAvailableOrPicker() {
-        if cameraUsageDescription.isSomeAndNotEmpty {
+        if cameraUsageDescription.isSomeAndNotEmpty,
+           ds.config.behavior.isCameraAvailable {
             showBulletin(selectPhotoBulletin)
         } else {
             pickOrChooseFromLibrary()

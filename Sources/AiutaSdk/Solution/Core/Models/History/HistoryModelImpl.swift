@@ -16,6 +16,7 @@
 
 final class HistoryModelImpl: HistoryModel {
     @injected private var sessionModel: SessionModel
+    @injected private var config: Aiuta.Configuration
 
     var uploaded = DataProvider<Aiuta.UploadedImage>()
 
@@ -44,6 +45,14 @@ final class HistoryModelImpl: HistoryModel {
             _oldUploadsHistory.erase()
         }
 
+        if !config.behavior.isTryonHistoryAvailable {
+            _generatedHistory.erase()
+        }
+
+        if !config.behavior.isUploadsHistoryAvailable {
+            _uploadedHistory.erase()
+        }
+
         uploaded.items = uploadedHistory
         generated.items = generatedHistory
 
@@ -57,6 +66,7 @@ final class HistoryModelImpl: HistoryModel {
     }
 
     func addUploaded(_ image: Aiuta.UploadedImage) {
+        guard config.behavior.isUploadsHistoryAvailable else { return }
         uploadedHistory.insert(image, at: 0)
         if #available(iOS 13.0.0, *) {
             image.prefetch(.hiResImage, breadcrumbs: Breadcrumbs())
@@ -79,10 +89,12 @@ final class HistoryModelImpl: HistoryModel {
     }
 
     func setUploaded(_ history: [Aiuta.UploadedImage]) {
+        guard config.behavior.isUploadsHistoryAvailable else { return }
         uploadedHistory = history
     }
 
     func addGenerated(_ images: [Aiuta.GeneratedImage]) {
+        guard config.behavior.isTryonHistoryAvailable else { return }
         generatedHistory.insert(contentsOf: images, at: 0)
         sessionModel.dataDelegate?.addGenerated(images: images)
     }
@@ -96,6 +108,7 @@ final class HistoryModelImpl: HistoryModel {
     }
 
     func setGenerated(_ history: [Aiuta.GeneratedImage]) {
+        guard config.behavior.isTryonHistoryAvailable else { return }
         generatedHistory = history
     }
 }

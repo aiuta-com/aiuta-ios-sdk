@@ -49,12 +49,6 @@ extension Aiuta.Configuration.Appearance {
         public var neutral2: UIColor?
         public var neutral3: UIColor?
 
-        public var green: UIColor?
-        public var red: UIColor?
-        public var gray: UIColor?
-        public var lightGray: UIColor?
-        public var darkGray: UIColor?
-
         public var loadingAnimation: [UIColor]?
 
         public init() {}

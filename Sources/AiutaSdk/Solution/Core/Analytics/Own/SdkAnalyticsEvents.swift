@@ -46,7 +46,7 @@ extension AnalyticEvent {
                     return AnalyticEvent("Configure", [
                         "has_custom_configuration": hasCustomConfiguration,
                         "is_watermark_provided": configuration.behavior.watermark.image.isSome,
-                        "is_history_enable": configuration.behavior.isHistoryAvailable,
+                        "is_history_enable": configuration.behavior.isTryonHistoryAvailable,
                     ], level: .significant)
 
                 case let .start(sku, relatedCount):

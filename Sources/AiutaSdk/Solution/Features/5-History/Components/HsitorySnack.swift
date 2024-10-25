@@ -24,6 +24,8 @@ extension HistoryView {
         let shareButton = OptionButton { it, ds in
             it.icon.image = ds.image.icon24(.share)
             it.view.isMaxOpaque = false
+
+            it.view.isVisible = ds.config.behavior.isShareAvailable
         }
 
         let toggleSeletionButton = LabelButton { it, ds in
@@ -66,7 +68,11 @@ extension HistoryView {
             }
 
             deleteButton.layout.make { make in
-                make.right = shareButton.layout.leftPin
+                if !shareButton.view.isHidden {
+                    make.right = shareButton.layout.leftPin
+                } else {
+                    make.right = 8
+                }
                 make.centerY = 0
             }
         }
@@ -84,7 +90,7 @@ extension HistoryView {
         var isEnabled = true {
             didSet {
                 guard oldValue != isEnabled else { return }
-                animations.opacityTo(isEnabled ? 1 : 0.6, time: .sixthOfSecond)
+                animations.opacityTo(isEnabled ? 1 : 0.4, time: .sixthOfSecond)
             }
         }
 

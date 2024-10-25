@@ -127,7 +127,9 @@ final class HistoryViewController: ViewController<HistoryView> {
         }
         isEditMode = false
         if !history.hasGenerations {
-            dismiss()
+            dispatch(.mainAsync) { [self] in
+                dismiss()
+            }
         }
     }
 

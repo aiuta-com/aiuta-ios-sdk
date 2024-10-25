@@ -21,14 +21,10 @@ final class SdkNavigator: UINavigationController {
     @injected private var config: Aiuta.Configuration
     @Injected private var ds: DesignSystem
 
-    private let presentingAlphaChangeDuration = 0.4
-    private let presentingOriginalAlpha: CGFloat = 1
-    private let presentingTargetAlpha: CGFloat = 0.6
-    private var presentingDimmedAlpha: CGFloat = 0.6
-    private var presentingOriginalTint: UIColor?
-
     private let touchesDismissAreaHeight: CGFloat = 52
     private var touchesBeganInsideDismissArea: Bool?
+    private var presentingOriginalTint: UIColor?
+    private var bulletinWall: BulletinWall?
 
     override init(rootViewController: UIViewController) {
         super.init(rootViewController: rootViewController)
@@ -47,39 +43,26 @@ final class SdkNavigator: UINavigationController {
     func sdkWillAppear() {
         trace("---------------")
         trace("SDK WILL APPEAR")
+        bulletinWall = BulletinWall(injectingTo: presentingViewController?.view)
         presentingOriginalTint = presentingViewController?.view.window?.tintColor
         presentingViewController?.view.window?.tintColor = ds.color.accent
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        guard config.appearance.presentationStyle == .bottomSheet else { return }
-        UIView.animate(withDuration: presentingAlphaChangeDuration) { [self] in
-            presentingViewController?.view.alpha = presentingDimmedAlpha
-        }
+        bulletinWall?.increase(max: 1)
     }
 
     func sdkWillDismiss() {
-        presentingDimmedAlpha = presentingTargetAlpha
-        guard config.appearance.presentationStyle == .bottomSheet else { return }
-        UIView.animate(withDuration: presentingAlphaChangeDuration) { [self] in
-            presentingViewController?.view.alpha = presentingOriginalAlpha
-        }
-    }
-
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        presentingDimmedAlpha = presentingViewController?.view.alpha ?? presentingDimmedAlpha
+        bulletinWall?.reduce(to: 0)
     }
 
     func sdkDidDismiss() {
         trace("SDK DID DISMISS")
         trace("===============")
+        bulletinWall?.dismiss()
         if let presentingOriginalTint {
             presentingViewController?.view.window?.tintColor = presentingOriginalTint
-        }
-        UIView.animate(withDuration: presentingAlphaChangeDuration) { [self] in
-            presentingViewController?.view.alpha = presentingOriginalAlpha
         }
         if let page = (visibleViewController as? PageRepresentable)?.page {
             @injected var session: SessionModel
@@ -111,8 +94,15 @@ extension SdkNavigator: UIAdaptivePresentationControllerDelegate {
     func presentationControllerShouldDismiss(_ presentationController: UIPresentationController) -> Bool {
         defer { touchesBeganInsideDismissArea = nil }
         if visibleViewController?.hasBulletin == true { return false }
-        if let touchesBeganInsideDismissArea { return touchesBeganInsideDismissArea }
-//        if let page = visibleViewController as? PageRepresentable { return page.isSafeToDismiss }
+        switch config.appearance.swipeToDismissPolicy {
+            case .allowAlways: return true
+            case .protectTheNecessary:
+                guard let page = visibleViewController as? PageRepresentable else { return true }
+                if page.isSafeToDismiss { return true }
+                if let touchesBeganInsideDismissArea { return touchesBeganInsideDismissArea }
+            case .allowHeaderSwipeOnly:
+                if let touchesBeganInsideDismissArea { return touchesBeganInsideDismissArea }
+        }
         return false
     }
 

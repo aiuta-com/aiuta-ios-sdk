@@ -28,6 +28,11 @@ extension ResultPage {
         let blur = Blur { it, ds in
             it.style = ds.color.blur
             it.intensity = 0.4
+            
+            if ds.config.appearance.toggles.enableBlurOutlines {
+                it.view.borderColor = ds.color.neutral3
+                it.view.borderWidth = 1
+            }
         }
 
         let stroke = Stroke { it, ds in

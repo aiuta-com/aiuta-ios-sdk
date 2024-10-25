@@ -48,7 +48,7 @@ final class ResulstsViewController: ViewController<ResultsView> {
                 if let skuId = ui.pager.currentItem?.sku.skuId {
                     session.delegate?.aiuta(eventOccurred: .results(pageId: self.page, event: .pickOtherPhoto, productId: skuId))
                 }
-                selector?.choosePhoto()
+                selector?.choosePhoto(withHistoryPrefered: false)
             }
 
             page.shadowControls.share.onTouchUpInside.subscribe(with: self) { [unowned self] in
@@ -71,9 +71,8 @@ final class ResulstsViewController: ViewController<ResultsView> {
             }
         }
 
-        originalPresenterAlpha = navigationController?.presentingViewController?.view.alpha ?? 1
-        ui.didBlackout.subscribe(with: self) { [unowned self] progress in
-            navigationController?.presentingViewController?.view.alpha = originalPresenterAlpha - (originalPresenterAlpha / 2) * progress
+        ui.didBlackout.subscribe(with: self) { progress in
+            BulletinWall.current?.intence = progress
         }
 
         history.generated.onUpdate.subscribe(with: self) { [unowned self] in
@@ -105,6 +104,12 @@ final class ResulstsViewController: ViewController<ResultsView> {
 
         session.onWishlistChange.subscribe(with: self) { [unowned self] in
             ui.pager.pages.forEach { $0.updateWish() }
+        }
+
+        tryOnModel.sessionResults.onUpdate.subscribe(with: self) { [unowned self] in
+            if tryOnModel.sessionResults.isEmpty {
+                replace(with: TryOnViewController())
+            }
         }
 
         ui.pager.data = tryOnModel.sessionResults

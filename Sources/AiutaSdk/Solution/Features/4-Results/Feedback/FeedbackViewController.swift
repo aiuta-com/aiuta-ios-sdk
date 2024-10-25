@@ -41,6 +41,7 @@ final class FeedbackViewController: ComponentController<ResultPage> {
 
 private extension FeedbackViewController {
     func isFeedbackNeeded(_ sessionResult: TryOnResult) -> Bool {
+        guard ds.config.behavior.asksForUserFeedbackOnResults else { return false }
         return !FeedbackViewController.feedbackedImages.contains(sessionResult.image.url)
     }
 

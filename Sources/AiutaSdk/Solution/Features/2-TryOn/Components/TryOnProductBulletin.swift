@@ -70,6 +70,7 @@ extension TryOnView {
             strokeOffset = ds.dimensions.grabberOffset
             cornerRadius = ds.dimensions.bottomSheetRadius
             view.backgroundColor = ds.color.ground
+            wishButton.view.isVisible = ds.config.behavior.isWishlistAvailable
         }
 
         override func updateLayout() {

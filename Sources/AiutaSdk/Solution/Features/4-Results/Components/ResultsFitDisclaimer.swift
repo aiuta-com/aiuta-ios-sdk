@@ -21,6 +21,7 @@ extension ResultsView {
 
         override func setup() {
             color = ds.color.neutral
+            view.isVisible = ds.config.behavior.showFitDisclaimerOnResults
         }
 
         override func updateLayout() {

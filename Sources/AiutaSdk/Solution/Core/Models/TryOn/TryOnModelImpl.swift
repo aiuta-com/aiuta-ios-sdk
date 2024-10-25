@@ -25,10 +25,18 @@ final class TryOnModelImpl: TryOnModel {
 
     var sessionResults = DataProvider<TryOnResult>()
 
+    init() {
+        history.generated.onUpdate.subscribe(with: self) { [unowned self] in
+            sessionResults.items.removeAll(where: { result in
+                !history.generated.items.contains(where: { $0.url == result.image.url })
+            })
+        }
+    }
+
     @MainActor func tryOn(_ source: ImageSource, with sku: Aiuta.Product?, status callback: @escaping (TryOnStatus) -> Void) async throws {
         guard let sku else { throw TryOnError.noSku }
 
-        // tracker.track(.tryOn(.start(origin: .tryOnButton, sku: sku, photosCount: 1)))
+        tracker.track(.tryOn(.start(origin: .tryOnButton, sku: sku, photosCount: 1)))
 
         let imageId: String
         if let id = source.knownRemoteId {

@@ -32,7 +32,7 @@ enum SdkPresenter {
         @injected var sessionModel: SessionModel
         sessionModel.delegate = delegate
         @injected var configuration: Aiuta.Configuration
-        guard configuration.behavior.isHistoryAvailable else { return false }
+        guard configuration.behavior.isTryonHistoryAvailable else { return false }
         viewController.present(SdkNavigator(rootViewController: HistoryViewController()), animated: true)
         return true
     }
@@ -47,7 +47,7 @@ extension SdkPresenter {
         }
 
         @injected var configuration: Aiuta.Configuration
-        if configuration.behavior.isSplashScreenEnabled {
+        if configuration.behavior.showSplashScreenBeforeOnboadring {
             return SplashViewController()
         }
 

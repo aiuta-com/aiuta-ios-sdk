@@ -20,12 +20,21 @@ extension TryOnView {
         let blur = Blur { it, ds in
             it.style = ds.color.blur
             it.intensity = 0.4
+
+            if ds.config.appearance.toggles.enableBlurOutlines {
+                it.view.borderColor = ds.color.neutral2
+                it.view.borderWidth = 1
+            }
         }
 
         let label = Label { it, ds in
             it.isLineHeightMultipleEnabled = false
             it.font = ds.font.buttonS
-            it.color = ds.color.primary
+            if ds.config.appearance.toggles.enableBlurOutlines {
+                it.color = ds.color.onDark
+            } else {
+                it.color = ds.color.primary
+            }
             it.text = L.imageSelectorChangeButton
         }
 

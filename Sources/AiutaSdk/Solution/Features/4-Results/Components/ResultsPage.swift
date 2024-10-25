@@ -93,6 +93,10 @@ final class ResultPage: Page<TryOnResult> {
             shadowColor = .black.withAlphaComponent(0.08)
             shadowOffset = .zero
             shadowRadius = 30
+
+            share.view.isVisible = ds.config.behavior.isShareAvailable
+            wish.view.isVisible = ds.config.behavior.isWishlistAvailable
+            newPhoto.view.isVisible = ds.config.behavior.allowContiniousTryOn
         }
 
         override func updateLayout() {
@@ -112,7 +116,11 @@ final class ResultPage: Page<TryOnResult> {
 
             wish.layout.make { make in
                 make.right = 4
-                make.top = share.layout.bottomPin - 8
+                if share.view.isVisible {
+                    make.top = share.layout.bottomPin - 8
+                } else {
+                    make.top = 4
+                }
             }
         }
     }

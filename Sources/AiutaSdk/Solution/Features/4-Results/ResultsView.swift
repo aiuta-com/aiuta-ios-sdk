@@ -59,12 +59,13 @@ final class ResultsView: Plane {
 
             blackout.view.isUserInteractionEnabled = !scroll.isAtTop
             let d = skuSheet.view.verticalOffsetForBottom - skuSheet.view.verticalOffsetForTop
+            guard d > 0 else { return }
             let p = skuSheet.view.verticalOffsetForBottom - skuSheet.contentOffset.y
             let progress = clamp(1 - p / d, min: 0, max: 1)
 
             skuSheet.content.gallery.view.isUserInteractionEnabled = progress > 0.5
             skuSheet.content.gallery.view.opacity = 0.1 + 0.9 * progress
-            skuSheet.content.shadowOpacity = Float(progress)
+            skuSheet.content.shadowOpacity = Float(0.6 + 0.4 * progress)
             blackout.view.opacity = progress
             didBlackout.fire(progress)
         }

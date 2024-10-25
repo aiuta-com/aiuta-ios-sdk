@@ -37,18 +37,42 @@ extension Aiuta.Configuration {
         /// When disabled the history will not be collected,
         /// the history screen will not be available and
         /// all previous generation history will be deleted.
-        public var isHistoryAvailable: Bool = true
+        public var isTryonHistoryAvailable: Bool = true
+
+        /// Controls the availability of uploads history to the user.
+        /// When disabled the history will not be collected,
+        /// the history bottomsheet will not be available and
+        /// all previous uploaded images will be deleted.
+        public var isUploadsHistoryAvailable: Bool = true
 
         /// Controls the availability of the add to wishlist button when viewing SKU information.
         public var isWishlistAvailable: Bool = true
 
+        /// Controls the availability of the share buttons on generation results.
+        public var isShareAvailable: Bool = true
+
+        /// Controls the availability of taking photo from camera.
+        /// If not, only phone gallery will be available.
+        public var isCameraAvailable: Bool = true
+
         /// While waiting for the try-on result, try to highlight the human outline
         /// using iOS system tools on the animation screen . Works locally. iOS 15+.
         /// In case of failure, the normal animation of the loader will not be affected.
-        public var tryGeneratePersonSegmentation: Bool = false
+        public var tryGeneratePersonSegmentation: Bool = true
+
+        /// Allow user to change photo on results page
+        /// to make another tryon whithin the same product.
+        public var allowContiniousTryOn: Bool = true
+
+        /// Display a clickable message bar that results may vary from real-life fit.
+        public var showFitDisclaimerOnResults: Bool = true
+
+        /// Should ask user opinion on generations results.
+        /// This options show/hide like and dislike buttons.
+        public var asksForUserFeedbackOnResults: Bool = true
 
         /// Use additional splash screen before onboarding.
-        public var isSplashScreenEnabled: Bool = false
+        public var showSplashScreenBeforeOnboadring: Bool = false
 
         public struct Watermark {
             /// Optional watermark image that will be applied to share generated image.
@@ -70,6 +94,7 @@ extension Aiuta.Configuration {
     /// Settings for how the SDK will be displayed.
     public struct Appearance {
         public var presentationStyle: PresentationStyle = .pageSheet
+        public var swipeToDismissPolicy: SwipeToDismissPolicy = .allowHeaderSwipeOnly
 
         /// The language in which the SDK interface will be displayed.
         /// If not specified, the first preferred system language will be used
@@ -89,11 +114,19 @@ extension Aiuta.Configuration {
 
 extension Aiuta.Configuration.Appearance {
     /// Defines how the SDL will be presented as modal view controller.
-    public enum PresentationStyle: Equatable, Codable {
-        ///
+    public enum PresentationStyle: Equatable, Codable, CaseIterable {
         case pageSheet
         case bottomSheet
         case fullScreen
+    }
+}
+
+extension Aiuta.Configuration.Appearance {
+    /// Defines how the SDL will be presented as modal view controller.
+    public enum SwipeToDismissPolicy: Equatable, Codable, CaseIterable {
+        case allowAlways
+        case protectTheNecessary
+        case allowHeaderSwipeOnly
     }
 }
 
@@ -105,5 +138,6 @@ extension Aiuta.Configuration.Appearance {
         public var preferRightClose: Bool = false
         public var extendOnbordingNavBar: Bool = false
         public var applyProductFirstImageExtraInset: Bool = false
+        public var enableBlurOutlines: Bool = false
     }
 }

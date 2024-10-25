@@ -70,6 +70,9 @@ final class BulletinWrapper: Plane {
                     removeFromParent()
                     contentView.didDismiss.fire()
                     contentView.appearance.unfreeze()
+                } else {
+                    // This hack will prevent unwanted deafult scroll behaviour on top...
+                    contentView.scrollView.view.setContentOffset(.init(x: 0, y: contentView.scrollView.view.verticalOffsetForTop + 1), animated: false)
                 }
             }
 
@@ -104,7 +107,7 @@ final class BulletinWrapper: Plane {
 
     override func setup() {
         contentView.scrollView.isSystemBehaviorOnTopEnabled = false
-        
+
         contentView.scrollView.didChangeOffset.subscribe(with: self) { [unowned self] offset, delta in
             guard isPreseting else { return }
             if contentView.behaviour == .floating {
@@ -193,7 +196,6 @@ final class BulletinWrapper: Plane {
         }
 
         contentView.scrollOffset = scrollOffset
-        //floatingContainer.view.opacity = appearingPercent
     }
 
     required init() {

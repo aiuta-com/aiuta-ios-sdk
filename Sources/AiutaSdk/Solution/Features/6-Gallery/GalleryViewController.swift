@@ -55,7 +55,7 @@ final class GalleryViewController: ViewController<GalleryView> {
 
         ui.data = data
         ui.pageIndex = index
-        ui.share.view.isVisible = !willShare.observers.isEmpty
+        ui.share.view.isVisible = !willShare.observers.isEmpty && ds.config.behavior.isShareAvailable
     }
 
     private func shareCurrent() {

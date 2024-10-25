@@ -96,7 +96,7 @@ struct CustomFontWrapper: FontRef {
     var size: CGFloat { font.size }
     var kern: CGFloat { font.kern ?? 0 }
     var baselineOffset: CGFloat = 0
-    var lineHeightMultiple: CGFloat { font.lineHeightMultiple ?? 0 }
+    var lineHeightMultiple: CGFloat { font.lineHeightMultiple ?? 1 }
     var color: UIColor = .black
     var underline: NSUnderlineStyle?
     var strikethrough: NSUnderlineStyle?
