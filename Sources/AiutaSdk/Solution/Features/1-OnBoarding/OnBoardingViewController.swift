@@ -59,7 +59,7 @@ final class OnBoardingViewController: ViewController<OnBoardingView> {
         ui.button.onTouchUpInside.subscribe(with: self) { [unowned self] in
             if ui.scroll.isAtEnd {
                 if isConsentGiven {
-                    sessionModel.dataDelegate?.obtainUserConsent()
+                    Task { try? await sessionModel.controller?.obtainUserConsent() }
                     sessionModel.delegate?.aiuta(eventOccurred: .onboarding(event: .consentGiven))
                     sessionModel.delegate?.aiuta(eventOccurred: .onboarding(event: .onboardingFinished))
                     replace(with: TryOnViewController())

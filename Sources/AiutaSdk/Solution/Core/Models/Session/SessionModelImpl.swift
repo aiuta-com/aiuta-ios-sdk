@@ -14,13 +14,14 @@
 
 @_spi(Aiuta) import AiutaKit
 
+@available(iOS 13.0.0, *)
 final class SessionModelImpl: SessionModel {
     let onWishlistChange = Signal<Void>()
 
     var activeSku: Aiuta.Product?
 
     weak var delegate: AiutaSdkDelegate?
-    weak var dataDelegate: AiutaDataController?
+    weak var controller: AiutaDataController?
 
     private var wishlist = Set<String>()
 

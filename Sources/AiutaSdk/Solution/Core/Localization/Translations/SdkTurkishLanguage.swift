@@ -57,8 +57,8 @@ struct SdkTurkishLanguage: AiutaSdkLanguage {
 
     var onboardingPageConsentBody: String {
         "Ürünleri dijital olarak denemek için, \(substitutions.brandName)'ın fotoğrafınızı işlemesine izin vermeyi kabul edersiniz. " +
-        "Verileriniz \(substitutions.brandName) <b><a href='\(substitutions.privacyPolicyUrl)'>Gizlilik Bildirimi</a></b> ve " +
-        "<b><a href='\(substitutions.termsOfServiceUrl)'>Kullanım Şartları</a></b> uyarınca işlenecektir."
+            "Verileriniz \(substitutions.brandName) <b><a href='\(substitutions.privacyPolicyUrl)'>Gizlilik Bildirimi</a></b> ve " +
+            "<b><a href='\(substitutions.termsOfServiceUrl)'>Kullanım Şartları</a></b> uyarınca işlenecektir."
     }
 
     var onboardingPageConsentAgreePoint: String {
@@ -80,6 +80,7 @@ struct SdkTurkishLanguage: AiutaSdkLanguage {
     let loadingUploadingImage = "Görüntü yükleniyor"
     let loadingScanningBody = "Vücudunuz taranıyor"
     let loadingGeneratingOutfit = "Kıyafet oluşturuluyor"
+    let dialogInvalidImageDescription = "Bu fotoğraftaki kimseyi tespit edemedik"
 
     // MARK: - Generation Result
 

@@ -22,7 +22,7 @@ import UIKit
 final class TryOnViewController: ViewController<TryOnView> {
     @injected private var history: HistoryModel
     @injected private var session: SessionModel
-    private var selector: PhotoSelectorController?
+    var selector: PhotoSelectorController?
 
     override func setup() {
         selector = addComponent(PhotoSelectorController(ui))

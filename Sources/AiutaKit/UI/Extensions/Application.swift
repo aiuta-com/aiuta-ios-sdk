@@ -12,20 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-@_spi(Aiuta) import AiutaKit
+import UIKit
 
-@available(iOS 13.0.0, *)
-protocol SessionModel {
-    var onWishlistChange: Signal<Void> { get }
-
-    var activeSku: Aiuta.Product? { get }
-    var delegate: AiutaSdkDelegate? { get set }
-    var controller: AiutaDataController? { get set }
-
-    func start(sku: Aiuta.Product, delegate: AiutaSdkDelegate)
-    func finish(addingToCart: Aiuta.Product?)
-
-    func isInWishlist(_ sku: Aiuta.Product?) -> Bool
-    @discardableResult
-    func toggleWishlist(_ sku: Aiuta.Product?) -> Bool
+@_spi(Aiuta) public extension UIApplication {
+    func openSettings() {
+        guard let settingsUrl = URL(string: UIApplication.openSettingsURLString),
+              canOpenURL(settingsUrl)
+        else { return }
+        open(settingsUrl)
+    }
 }

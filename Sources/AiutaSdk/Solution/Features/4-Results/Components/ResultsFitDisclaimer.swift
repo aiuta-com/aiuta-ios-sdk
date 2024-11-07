@@ -15,6 +15,7 @@
 @_spi(Aiuta) import AiutaKit
 import UIKit
 
+@available(iOS 13.0.0, *)
 extension ResultsView {
     final class FitDisclaimer: Stroke {
         let button = FitButton()

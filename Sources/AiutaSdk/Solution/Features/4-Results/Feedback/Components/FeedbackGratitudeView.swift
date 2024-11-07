@@ -25,11 +25,20 @@ final class FeedbackGratitudeView: Plane {
         it.text = "🧡"
     }
 
+    let image = Image { it, ds in
+        it.image = ds.image.feedback(.gratitude)
+        it.contentMode = .scaleAspectFit
+    }
+
     let title = Label { it, ds in
         it.font = ds.font.navBar
         it.color = .white
         it.isMultiline = true
         it.alignment = .center
+    }
+
+    override func setup() {
+        emoji.view.isMaxOpaque = !image.hasImage
     }
 
     override func updateLayout() {
@@ -52,6 +61,11 @@ final class FeedbackGratitudeView: Plane {
         emoji.layout.make { make in
             make.centerX = 0
             make.bottom = title.layout.topPin + 23
+        }
+
+        image.layout.make { make in
+            make.square = 40
+            make.center = emoji.layout.center
         }
     }
 

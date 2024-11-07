@@ -26,7 +26,7 @@ final class TryOnView: Plane {
         it.title = L.appBarVirtualTryOn
     }
 
-    let area = Stroke { it, ds in
+    let area = ErrorImage { it, ds in
         it.color = ds.color.neutral
     }
 
@@ -75,6 +75,10 @@ final class TryOnView: Plane {
         it.wishButton.view.isVisible = ds.config.behavior.isWishlistAvailable
     }
 
+    override func setup() {
+        area.link(with: lastImage)
+    }
+
     override func updateLayout() {
         area.layout.make { make in
             make.leftRight = 50
@@ -112,6 +116,8 @@ final class TryOnView: Plane {
         }
 
         placeholder.layout.make { make in
+            make.width = 113
+            make.height = 292
             make.centerX = 0
             make.centerY = area.layout.centerY - 32
         }

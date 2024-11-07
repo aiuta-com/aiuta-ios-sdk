@@ -78,6 +78,7 @@ struct SdkEnglishLanguage: AiutaSdkLanguage {
     let loadingUploadingImage = "Uploading image"
     let loadingScanningBody = "Scanning your body"
     let loadingGeneratingOutfit = "Generating outfit"
+    let dialogInvalidImageDescription = "We couldn’t detect\nanyone in this photo"
 
     // MARK: - Generation Result
 

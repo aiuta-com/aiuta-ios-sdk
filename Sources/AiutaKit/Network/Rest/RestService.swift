@@ -86,7 +86,7 @@ private extension RestService {
         var shortUrl: String?
         var requestBody: String?
         var requestDebugger: ApiDebuggerRequest?
-        let isDebug = debugger?.isEnabled == true
+        let isDebug = await debugger?.isEnabled == true
 
         if isDebug {
             shortUrl = try await shortenUrl(url)

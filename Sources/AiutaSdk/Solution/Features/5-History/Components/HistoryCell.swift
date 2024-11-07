@@ -16,8 +16,8 @@
 import Resolver
 
 extension HistoryView {
-    final class HistoryCell: Recycle<Aiuta.GeneratedImage> {
-        final class ScrollRecycler: Recycler<HistoryCell, Aiuta.GeneratedImage> {
+    final class HistoryCell: Recycle<Aiuta.Image> {
+        final class ScrollRecycler: Recycler<HistoryCell, Aiuta.Image> {
             override func setup() {
                 contentInsets = .init(inset: 8)
                 contentSpace = .init(square: 8)
@@ -25,11 +25,16 @@ extension HistoryView {
             }
         }
 
-        let generagedImage = Image { it, ds in
+        let area = ErrorImage { it, ds in
+            it.color = ds.color.neutral
+        }
+
+        let generagedImage = Image { it, _ in
             it.desiredQuality = .thumbnails
             it.contentMode = .scaleAspectFill
-            it.view.backgroundColor = ds.color.neutral
         }
+
+        let deleter = DeleteAnimator()
 
         let selector = Selector { it, _ in
             it.view.isVisible = false
@@ -51,7 +56,24 @@ extension HistoryView {
             }
         }
 
+        var isDeleting = false {
+            didSet {
+                guard oldValue != isDeleting else { return }
+                if isDeleting { isSelectable = false }
+                deleter.isAnimating = isDeleting
+            }
+        }
+
+        override func setup() {
+            area.link(with: generagedImage)
+        }
+
         override func updateLayout() {
+            area.layout.make { make in
+                make.inset = 0
+                make.radius = ds.dimensions.imagePreviewRadius
+            }
+
             generagedImage.layout.make { make in
                 make.size = layout.size
                 make.radius = ds.dimensions.imagePreviewRadius
@@ -63,7 +85,7 @@ extension HistoryView {
             }
         }
 
-        override func update(_ data: Aiuta.GeneratedImage?, at index: ItemIndex) {
+        override func update(_ data: Aiuta.Image?, at index: ItemIndex) {
             generagedImage.source = data
         }
     }

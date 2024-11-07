@@ -34,12 +34,14 @@ final class HistoryView: Scroll {
     var history = HistoryCell.ScrollRecycler()
 
     let selectionSnackbar = Snackbar<HistorySnack>()
+    let errorSnackbar = Snackbar<ErrorSnackbar>()
 
     override func setup() {
         scrollView.didScroll.subscribe(with: self) { [unowned self] scroll in
             stroke.animations.visibleTo(scroll.isAtTop, showTime: .sixthOfSecond, hideTime: .sixthOfSecond)
         }
         scrollView.addContent(selectionSnackbar.placeholder)
+        scrollView.addContent(errorSnackbar.placeholder)
     }
 
     override func updateLayout() {

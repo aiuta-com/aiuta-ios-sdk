@@ -15,10 +15,10 @@
 @_spi(Aiuta) import AiutaKit
 
 final class PhotoHistoryBulletin: PlainBulletin {
-    let onSelect = Signal<Aiuta.UploadedImage>()
-    let onDelete = Signal<Aiuta.UploadedImage>()
+    let onSelect = Signal<Aiuta.Image>()
+    let onDelete = Signal<Aiuta.Image>()
 
-    var history: DataProvider<Aiuta.UploadedImage>? {
+    var history: DataProvider<Aiuta.Image>? {
         didSet {
             oldValue?.onUpdate.cancelSubscription(for: self)
             guard let history else {
@@ -29,6 +29,19 @@ final class PhotoHistoryBulletin: PlainBulletin {
                 buildHistory()
             }
             buildHistory()
+        }
+    }
+
+    var deleting: DataProvider<Aiuta.Image>? {
+        didSet {
+            oldValue?.onUpdate.cancelSubscription(for: self)
+            guard let deleting else { return }
+            deleting.onUpdate.subscribePast(with: self) { [unowned self, deleting] in
+                cells.forEach { cell in
+                    guard let image = cell.image else { return }
+                    cell.isDeleting = deleting.items.contains(image)
+                }
+            }
         }
     }
 
@@ -50,17 +63,25 @@ final class PhotoHistoryBulletin: PlainBulletin {
         it.text = L.uploadsHistorySheetUploadNewButton
     }
 
+    let errorSnackbar = Snackbar<ErrorSnackbar>()
+
+    private var cells: [HistoryCell] {
+        gallery.findChildren()
+    }
+
     private func buildHistory() {
         if history?.isEmpty == true { dismiss() }
         gallery.removeAllContents()
-        history?.items.forEach { pack in
+        history?.items.forEach { img in
             gallery.addContent(HistoryCell()) { it, _ in
-                it.preview.source = pack
-                it.onTouchUpInside.subscribe(with: self) { [unowned self] in
-                    onSelect.fire(pack)
+                it.image = img
+                it.preview.source = img
+                it.onTouchUpInside.subscribe(with: self) { [unowned self, weak it] in
+                    guard it?.isDeleting == false else { return }
+                    onSelect.fire(img)
                 }
                 it.deleteView.onTouchUpInside.subscribe(with: self) { [unowned self] in
-                    onDelete.fire(pack)
+                    onDelete.fire(img)
                 }
             }
         }

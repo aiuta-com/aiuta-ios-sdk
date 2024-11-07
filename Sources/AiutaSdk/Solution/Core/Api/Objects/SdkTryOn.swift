@@ -24,17 +24,22 @@ extension Aiuta {
 
     struct TryOnOperation: Codable, Equatable {
         enum Status: String {
+            // pending
             case created = "CREATED"
             case inProgress = "IN_PROGRESS"
+            // ok
             case success = "SUCCESS"
+            // fails
             case failed = "FAILED"
+            case aborted = "ABORTED"
+            case cancelled = "CANCELLED"
             case unknown
         }
 
         let id: String
         let status: Status
         let error: String?
-        let generatedImages: [GeneratedImage]
+        let generatedImages: [Image]
     }
 }
 

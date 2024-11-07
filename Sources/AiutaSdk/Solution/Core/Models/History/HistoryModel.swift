@@ -14,19 +14,23 @@
 
 @_spi(Aiuta) import AiutaKit
 
+@available(iOS 13.0.0, *)
 protocol HistoryModel {
     var hasUploads: Bool { get }
     var hasGenerations: Bool { get }
 
-    var uploaded: DataProvider<Aiuta.UploadedImage> { get }
-    var generated: DataProvider<Aiuta.GeneratedImage> { get }
+    var uploaded: DataProvider<Aiuta.Image> { get }
+    var generated: DataProvider<Aiuta.Image> { get }
 
-    func addUploaded(_ image: Aiuta.UploadedImage)
-    func touchUploaded(with id: String)
-    func removeUploaded(_ image: Aiuta.UploadedImage)
-    func setUploaded(_ history: [Aiuta.UploadedImage])
+    var deletingUploaded: DataProvider<Aiuta.Image> { get }
+    var deletingGenerated: DataProvider<Aiuta.Image> { get }
 
-    func addGenerated(_ images: [Aiuta.GeneratedImage])
-    func removeGenerated(_ images: [Aiuta.GeneratedImage])
-    func setGenerated(_ history: [Aiuta.GeneratedImage])
+    func addUploaded(_ image: Aiuta.Image) async throws
+    func touchUploaded(with id: String) async throws
+    func removeUploaded(_ image: Aiuta.Image) async throws
+    func setUploaded(_ history: [Aiuta.Image])
+
+    func addGenerated(_ images: [Aiuta.Image]) async throws
+    func removeGenerated(_ images: [Aiuta.Image]) async throws
+    func setGenerated(_ history: [Aiuta.Image])
 }

@@ -16,6 +16,7 @@ import UIKit
 
 @_spi(Aiuta) public final class ImageLoader {
     let onImage = Signal<(UIImage, ImageQuality)>(retainLastData: true)
+    let onError = Signal<Void>(retainLastData: true)
 
     let source: ImageSource
     private var fetchers = [ImageQuality: ImageFetcher]()
@@ -31,8 +32,12 @@ import UIKit
 
         fetchers[quality] = fetcher
         fetcher.onImage.cancelSubscription(for: self)
+        fetcher.onError.subscribePast(with: self) { [unowned self] in
+            onError.fire()
+        }
         fetcher.onImage.subscribePast(with: self) { [unowned self] image in
             if let image { onImage.fire((image, quality)) }
+            else { onError.fire() }
         }
     }
 

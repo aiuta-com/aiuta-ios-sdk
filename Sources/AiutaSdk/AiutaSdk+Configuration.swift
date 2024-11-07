@@ -113,7 +113,7 @@ extension Aiuta.Configuration {
 // MARK: - Appearance.PresentationStyle
 
 extension Aiuta.Configuration.Appearance {
-    /// Defines how the SDL will be presented as modal view controller.
+    /// Defines how the SDK will be presented as modal view controller.
     public enum PresentationStyle: Equatable, Codable, CaseIterable {
         case pageSheet
         case bottomSheet
@@ -122,7 +122,6 @@ extension Aiuta.Configuration.Appearance {
 }
 
 extension Aiuta.Configuration.Appearance {
-    /// Defines how the SDL will be presented as modal view controller.
     public enum SwipeToDismissPolicy: Equatable, Codable, CaseIterable {
         case allowAlways
         case protectTheNecessary

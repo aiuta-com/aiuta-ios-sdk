@@ -15,7 +15,7 @@
 import Resolver
 import UIKit
 
-@_spi(Aiuta) public final class Snackbar<Body: Plane>: Plane {
+@_spi(Aiuta) public final class Snackbar<Body: Plane>: PlainButton {
     public let bar = Body()
 
     @scrollable
@@ -95,6 +95,8 @@ import UIKit
         }
     }
 
+    private var bulletin: PlainBulletin? { firstParentOfType() }
+
     override func updateLayoutInternal() {
         placeholder.height = bar.layout.height + 8
 
@@ -102,7 +104,13 @@ import UIKit
             make.height = bar.layout.height
             make.width = min(600, layout.boundary.width - 32)
             make.centerX = 0
-            make.bottom = isVisible ? max(bottomInset, layout.safe.insets.bottom) + 8 : -make.height
+
+            if bulletin.isSome {
+                make.bottom = isVisible ? 8 : -make.height
+                view.isMaxOpaque = isVisible
+            } else {
+                make.bottom = isVisible ? max(bottomInset, layout.safe.insets.bottom) + 8 : -make.height
+            }
         }
 
         bar.layout.make { make in

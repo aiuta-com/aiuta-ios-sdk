@@ -17,6 +17,10 @@ import UIKit
 
 extension ProcessingView {
     final class LoadAnimator: Plane {
+        let area = ErrorImage { it, ds in
+            it.color = ds.color.neutral
+        }
+
         let imageView = Image { it, _ in
             it.isAutoSize = true
             it.desiredQuality = .hiResImage
@@ -78,9 +82,15 @@ extension ProcessingView {
             border.view.layer.mask = borderMask
             border.view.layer.shadowColor = loader.stroke.color.cgColor
             loaderContainer.addContent(loader)
+            area.link(with: imageView)
         }
 
         override func updateLayout() {
+            area.layout.make { make in
+                make.inset = 0
+                make.radius = view.cornerRadius
+            }
+
             imageView.layout.make { make in
                 make.size = layout.bounds.size
                 make.radius = view.cornerRadius

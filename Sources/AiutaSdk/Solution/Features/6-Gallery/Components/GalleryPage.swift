@@ -16,13 +16,28 @@
 import UIKit
 
 final class GalleryPage: Page<ImageSource> {
+    let area = ErrorImage { it, _ in
+        it.color = .white.withAlphaComponent(0.1)
+        it.errorIcon.tint = .white
+    }
+
     let zoomView = ZoomImage()
+
+    override func setup() {
+        area.link(with: zoomView.imageView, whole: true)
+    }
 
     override func update(_ data: ImageSource?) {
         zoomView.imageView.source = data
     }
 
     override func updateLayout() {
+        area.layout.make { make in
+            make.leftRight = 0
+            make.top = 130
+            make.bottom = 130
+        }
+
         zoomView.layout.make { make in
             make.inset = .zero
         }

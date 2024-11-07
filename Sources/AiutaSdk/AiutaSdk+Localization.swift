@@ -58,10 +58,8 @@ public protocol AiutaSdkLanguage {
     var share: String { get }
     /// `Try again`
     var tryAgain: String { get }
-    /// ```
-    /// Something went wrong.
-    /// Please try again later
-    /// ```
+    /// `Something went wrong.`
+    /// `Please try again later`
     var defaultErrorMessage: String { get }
 
     // MARK: - App bar
@@ -77,11 +75,9 @@ public protocol AiutaSdkLanguage {
 
     /// `Try on you`
     var preOnboardingTitle: String { get }
-    /// ```
-    /// Welcome to our Virtual try-on.
-    /// Try on the item directly
-    /// on your photo
-    /// ```
+    /// `Welcome to our Virtual try-on.`
+    /// `Try on the item directly`
+    /// `on your photo`
     var preOnboardingSubtitle: String { get }
     /// `Let’s start`
     var preOnboardingButton: String { get }
@@ -106,11 +102,9 @@ public protocol AiutaSdkLanguage {
     var onboardingAppbarConsentPage: String { get }
     /// `Consent`
     var onboardingPageConsentTopic: String { get }
-    ///  ```
-    ///  In order to try on items digitally, you agree to allow $brandName to process your photo.
-    ///  Your data will be processed according to the $brandName <b><a href='$privacyPolicyUrl'>Privacy Notice</a></b>
-    ///  and <b><a href='$termsOfServiceUrl'>Terms of Use.</a></b>
-    ///  ```
+    /// `In order to try on items digitally, you agree to allow $brandName to process your photo.`
+    /// `Your data will be processed according to the $brandName <b><a href='$privacyPolicyUrl'>Privacy Notice</a></b>`
+    /// `and <b><a href='$termsOfServiceUrl'>Terms of Use.</a></b>`
     var onboardingPageConsentBody: String { get }
     /// `I agree to allow $brandName to process my photo`
     var onboardingPageConsentAgreePoint: String { get }
@@ -139,6 +133,8 @@ public protocol AiutaSdkLanguage {
     var loadingScanningBody: String { get }
     /// `Generating outfit`
     var loadingGeneratingOutfit: String { get }
+    /// `We couldn’t detect anyone in this photo`
+    var dialogInvalidImageDescription: String { get }
 
     // MARK: - Generation Result
 
@@ -176,11 +172,9 @@ public protocol AiutaSdkLanguage {
 
     /// `Can you tell us more?`
     var feedbackSheetTitle: String { get }
-    /// ```
-    /// This style isn’t for me
-    /// The item looks off
-    /// I look different
-    /// ```
+    /// `This style isn’t for me`
+    /// `The item looks off`
+    /// `I look different`
     var feedbackSheetOptions: [String] { get }
     /// `Skip`
     var feedbackSheetSkip: String { get }
@@ -200,11 +194,9 @@ public protocol AiutaSdkLanguage {
 
     /// `Results may vary from real-life fit`
     var fitDisclaimerTitle: String { get }
-    /// ```
-    /// Virtual try-on is a visualization tool that shows
-    /// how items might look and may not perfectly represent
-    /// how the item will fit in reality
-    /// ```
+    /// `Virtual try-on is a visualization tool that shows`
+    /// `how items might look and may not perfectly represent`
+    /// `how the item will fit in reality`
     var fitDisclaimerBody: String { get }
 
     // MARK: - Camera permission

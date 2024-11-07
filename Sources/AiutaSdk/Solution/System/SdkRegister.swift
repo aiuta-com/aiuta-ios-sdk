@@ -28,20 +28,17 @@ final class SdkRegister {
     }
 
     fileprivate static var instance = SdkRegister()
-    private init() {}
-
-    private var isConfigured = false
-    private let scope = ResolverScopeCache()
     fileprivate let resolver = Resolver()
+    private let scope = ResolverScopeCache()
+    private var isConfigured = false
 
     @available(iOS 13.0.0, *)
     private func setup(auth: Aiuta.AuthType, configuration: Aiuta.Configuration?, controller: AiutaDataController?) {
-        checkIfUsageDescriptionsProvided()
-
         let config = configuration ?? .default
         let isDebug = config.behavior.isDebugLogsEnabled
 
         trace(isEnabled: isDebug)
+        checkIfUsageDescriptionsProvided(config.behavior)
         setLocalization(config.appearance.localization)
         setDefaults(apiKey: auth.keyToDefaults)
         scope.reset()
@@ -63,9 +60,7 @@ final class SdkRegister {
         resolver.register { TryOnModelImpl() }.implements(TryOnModel.self).scope(scope)
         resolver.register { SubscriptionModelImpl() }.implements(SubscriptionModel.self).scope(scope)
 
-        if let controller {
-            controller.setData(provider: DataProviderImpl(delegate: controller))
-        }
+        if let controller { controller.setData(provider: DataProviderImpl(controller: controller)) }
 
         @injected var tracker: AnalyticTracker
         tracker.track(.session(.configure(hasCustomConfiguration: configuration.isSome, configuration: config)))
@@ -76,11 +71,11 @@ final class SdkRegister {
         isConfigured = true
     }
 
-    private func checkIfUsageDescriptionsProvided() {
+    private func checkIfUsageDescriptionsProvided(_ config: Aiuta.Configuration.Behavior) {
         @bundle(key: "NSCameraUsageDescription")
         var cameraUsageDescription: String?
 
-        if cameraUsageDescription.isNullOrEmpty {
+        if config.isCameraAvailable, cameraUsageDescription.isNullOrEmpty {
             NSLog("Please provide NSCameraUsageDescription in your Info.plist so that Aiuta can request permission to use the camera from the user.")
         }
 
@@ -88,9 +83,12 @@ final class SdkRegister {
         var photoLibraryAddUsageDescription: String?
 
         if photoLibraryAddUsageDescription.isNullOrEmpty {
-            NSLog("Please provide NSPhotoLibraryAddUsageDescription in your Info.plist so that Aiuta can request permission to save the generated image to the Photo Gallery from the user.")
+            NSLog("Please provide NSPhotoLibraryAddUsageDescription in your Info.plist so that Aiuta can request permission " +
+                "to save the generated image to the Photo Gallery from the user.")
         }
     }
+
+    private init() {}
 }
 
 @propertyWrapper struct injected<Service> {
@@ -100,7 +98,6 @@ final class SdkRegister {
 @available(iOS 13.0.0, *)
 private struct ApiDebuggerImpl: ApiDebugger {
     var isEnabled: Bool
-
     func startOperation(id: String?, title: String, subtitle: String?) async -> ApiDebuggerOperation? { nil }
 }
 

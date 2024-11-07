@@ -41,8 +41,9 @@ extension DesignSystemImages {
     func icon36(_ ref: SdkTheme.Icon36) -> UIImage? { ref.custom(config.icons.icons36) ?? bundleImage(ref.group, ref.rawValue) }
     func icon82(_ ref: SdkTheme.Icon82) -> UIImage? { ref.custom(config.icons.icons82) ?? bundleImage(ref.group, ref.rawValue) }
     func images(_ ref: SdkTheme.Images) -> UIImage? { ref.custom(config.images) ?? bundleImage(ref.group, ref.rawValue) }
-    func onboarding(_ ref: SdkTheme.OnBoarding) -> UIImage? { bundleImage(ref.group, ref.rawValue) }
-    func tryOn(_ ref: SdkTheme.TryOn) -> UIImage? { bundleImage("", ref.rawValue) }
+    func onboarding(_ ref: SdkTheme.OnBoarding) -> UIImage? { ref.custom(config.images.onboarding) ?? bundleImage(ref.group, ref.rawValue) }
+    func tryOn(_ ref: SdkTheme.TryOn) -> UIImage? { ref.custom(config.images) ?? bundleImage("", ref.rawValue) }
+    func feedback(_ ref: SdkTheme.Feedback) -> UIImage? { ref.custom(config.images) ?? bundleImage("", ref.rawValue) }
 }
 
 private extension DesignSystemImages {
@@ -144,12 +145,14 @@ extension SdkTheme {
         case error
         case like
         case dislike
+        case imageError
 
         func custom(_ config: Aiuta.Configuration.Appearance.Icons.Icons36) -> UIImage? {
             switch self {
                 case .error: return config.error
                 case .like: return config.like
                 case .dislike: return config.dislike
+                case .imageError: return config.imageError
             }
         }
     }
@@ -192,9 +195,40 @@ extension SdkTheme {
         case best2
         case best3
         case best4
+
+        func custom(_ config: Aiuta.Configuration.Appearance.Images.Onboarding) -> UIImage? {
+            switch self {
+                case .how1L: return config.onboardingTryOnMainImage1
+                case .how1S: return config.onboardingTryOnItemImage1
+                case .how2L: return config.onboardingTryOnMainImage2
+                case .how2S: return config.onboardingTryOnItemImage2
+                case .how3L: return config.onboardingTryOnMainImage3
+                case .how3S: return config.onboardingTryOnItemImage3
+                case .best1: return config.onboardingBestResulGoodImage1
+                case .best2: return config.onboardingBestResulGoodImage2
+                case .best3: return config.onboardingBestResulBadImage1
+                case .best4: return config.onboardingBestResulBadImage2
+            }
+        }
     }
 
     enum TryOn: String {
         case photoPlaceholder
+
+        func custom(_ config: Aiuta.Configuration.Appearance.Images) -> UIImage? {
+            switch self {
+                case .photoPlaceholder: return config.selectorPlaceholder
+            }
+        }
+    }
+
+    enum Feedback: String {
+        case gratitude
+
+        func custom(_ config: Aiuta.Configuration.Appearance.Images) -> UIImage? {
+            switch self {
+                case .gratitude: return config.feedbackGratitude
+            }
+        }
     }
 }

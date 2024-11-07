@@ -34,6 +34,7 @@ final class HistoryViewController: ViewController<HistoryView> {
 
         ui.navBar.onAction.subscribe(with: self) { [unowned self] in
             isEditMode.toggle()
+            if !isEditMode { ui.errorSnackbar.hide() }
         }
 
         ui.selectionSnackbar.bar.cancelButton.onTouchUpInside.subscribe(with: self) { [unowned self] in
@@ -46,7 +47,7 @@ final class HistoryViewController: ViewController<HistoryView> {
 
         ui.selectionSnackbar.bar.toggleSeletionButton.onTouchUpInside.subscribe(with: self) { [unowned self] in
             if isSelectedAll { selection.removeAll() }
-            else { selection = history.generated.items }
+            else { selection = Set(history.generated.items) }
             updateSelection()
         }
 
@@ -56,8 +57,7 @@ final class HistoryViewController: ViewController<HistoryView> {
         }
 
         ui.selectionSnackbar.bar.deleteButton.onTouchUpInside.subscribe(with: self) { [unowned self] in
-            guard !selection.isEmpty else { return }
-            deleteSelection()
+            Task { await deleteSelection() }
         }
 
         ui.history.onUpdateItem.subscribe(with: self) { [unowned self] cell in
@@ -65,13 +65,27 @@ final class HistoryViewController: ViewController<HistoryView> {
                 cell.isSelectable = false
                 return
             }
-            cell.isSelectable = isEditMode
-            cell.isSelected = isEditMode && selection.contains(image)
+            cell.isDeleting = history.deletingGenerated.items.contains(image)
+            cell.isSelectable = isEditMode && !cell.isDeleting
+            cell.isSelected = isEditMode && !cell.isDeleting && selection.contains(image)
         }
 
         ui.history.onTapItem.subscribe(with: self) { [unowned self] cell in
             if isEditMode { toggleSelection(cell) }
             else { enterFullscreen(cell) }
+        }
+
+        history.deletingGenerated.onUpdate.subscribe(with: self) { [unowned self] in
+            ui.history.updateItems()
+        }
+
+        ui.errorSnackbar.bar.tryAgain.onTouchUpInside.subscribe(with: self) { [unowned self] in
+            Task { await deleteSelection() }
+        }
+
+        ui.errorSnackbar.onTouchDown.subscribe(with: self) { [unowned self] in
+            if !isEditMode { selection.removeAll() }
+            ui.errorSnackbar.isVisible = false
         }
 
         ui.history.data = history.generated
@@ -91,7 +105,7 @@ final class HistoryViewController: ViewController<HistoryView> {
         }
     }
 
-    private var selection = [Aiuta.GeneratedImage]() {
+    private var selection = Set<Aiuta.Image>() {
         didSet {
             guard oldValue != selection else { return }
             ui.history.updateItems()
@@ -105,9 +119,9 @@ final class HistoryViewController: ViewController<HistoryView> {
     func toggleSelection(_ cell: HistoryView.HistoryCell) {
         guard let image = cell.data else { return }
         if selection.contains(image) {
-            selection.removeAll(where: { $0 == image })
+            selection.remove(image)
         } else {
-            selection.append(image)
+            selection.insert(image)
         }
         updateSelection()
     }
@@ -120,16 +134,23 @@ final class HistoryViewController: ViewController<HistoryView> {
         ui.selectionSnackbar.bar.view.layoutSubviews()
     }
 
-    func deleteSelection() {
-        history.removeGenerated(selection)
-        if !selection.isEmpty {
-            session.delegate?.aiuta(eventOccurred: .history(event: .generatedImageDeleted))
-        }
+    func deleteSelection() async {
+        ui.errorSnackbar.hide()
+        let candidates = selection
         isEditMode = false
-        if !history.hasGenerations {
-            dispatch(.mainAsync) { [self] in
-                dismiss()
+        guard !candidates.isEmpty else { return }
+        do {
+            try await history.removeGenerated(Array(candidates))
+            session.delegate?.aiuta(eventOccurred: .history(event: .generatedImageDeleted))
+
+            if !history.hasGenerations {
+                dispatch(.mainAsync) { [self] in
+                    dismiss()
+                }
             }
+        } catch {
+            ui.errorSnackbar.show()
+            selection.formUnion(candidates)
         }
     }
 

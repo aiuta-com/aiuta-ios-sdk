@@ -85,25 +85,25 @@ private extension UIControl {
         static var SignalDictionaryKey: Void?
     }
 
-    static let eventToKey: [UIControl.Event: NSString] = [
-        .touchDown: "TouchDown",
-        .touchDownRepeat: "TouchDownRepeat",
-        .touchDragInside: "TouchDragInside",
-        .touchDragOutside: "TouchDragOutside",
-        .touchDragEnter: "TouchDragEnter",
-        .touchDragExit: "TouchDragExit",
-        .touchUpInside: "TouchUpInside",
-        .touchUpOutside: "TouchUpOutside",
-        .touchCancel: "TouchCancel",
-        .valueChanged: "ValueChanged",
-        .editingDidBegin: "EditingDidBegin",
-        .editingChanged: "EditingChanged",
-        .editingDidEnd: "EditingDidEnd",
-        .editingDidEndOnExit: "EditingDidEndOnExit",
+    static let eventToKey: [UIControl.Event.RawValue: NSString] = [
+        UIControl.Event.touchDown.rawValue: "TouchDown",
+        UIControl.Event.touchDownRepeat.rawValue: "TouchDownRepeat",
+        UIControl.Event.touchDragInside.rawValue: "TouchDragInside",
+        UIControl.Event.touchDragOutside.rawValue: "TouchDragOutside",
+        UIControl.Event.touchDragEnter.rawValue: "TouchDragEnter",
+        UIControl.Event.touchDragExit.rawValue: "TouchDragExit",
+        UIControl.Event.touchUpInside.rawValue: "TouchUpInside",
+        UIControl.Event.touchUpOutside.rawValue: "TouchUpOutside",
+        UIControl.Event.touchCancel.rawValue: "TouchCancel",
+        UIControl.Event.valueChanged.rawValue: "ValueChanged",
+        UIControl.Event.editingDidBegin.rawValue: "EditingDidBegin",
+        UIControl.Event.editingChanged.rawValue: "EditingChanged",
+        UIControl.Event.editingDidEnd.rawValue: "EditingDidEnd",
+        UIControl.Event.editingDidEndOnExit.rawValue: "EditingDidEndOnExit",
     ]
 
     func getOrCreateSignalForUIControlEvent(_ event: UIControl.Event) -> Signal<Void> {
-        guard let key = UIControl.eventToKey[event] else {
+        guard let key = UIControl.eventToKey[event.rawValue] else {
             assertionFailure("Event type is not handled")
             return Signal()
         }
@@ -179,11 +179,5 @@ private extension UIControl {
 
     @objc private dynamic func eventHandlerEditingDidEndOnExit() {
         handleUIControlEvent(.editingDidEndOnExit)
-    }
-}
-
-@_spi(Aiuta) extension UIControl.Event: Hashable {
-    @_spi(Aiuta) public var hashValue: Int {
-        return Int(rawValue)
     }
 }

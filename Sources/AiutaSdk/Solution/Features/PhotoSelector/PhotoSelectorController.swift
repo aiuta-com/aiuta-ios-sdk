@@ -65,8 +65,7 @@ final class PhotoSelectorController: ComponentController<ContentBase> {
         }
 
         photoHistoryBulletin.onDelete.subscribe(with: self) { [unowned self] image in
-            history.removeUploaded(image)
-            session.delegate?.aiuta(eventOccurred: .picker(pageId: page, event: .uploadedPhotoDeleted))
+            Task { await deleteHistory(image) }
         }
 
         photoHistoryBulletin.newPhotosButton.onTouchUpInside.subscribe(with: self) { [unowned self] in
@@ -103,7 +102,12 @@ final class PhotoSelectorController: ComponentController<ContentBase> {
             pickPhotos([photo])
         }
 
+        photoHistoryBulletin.errorSnackbar.onTouchDown.subscribe(with: self) { [unowned self] in
+            photoHistoryBulletin.errorSnackbar.hide()
+        }
+
         photoHistoryBulletin.history = history.uploaded
+        photoHistoryBulletin.deleting = history.deletingUploaded
     }
 
     private func showSelectorIfCameraAvailableOrPicker() {
@@ -133,6 +137,20 @@ final class PhotoSelectorController: ComponentController<ContentBase> {
             didPick.fire(photo)
         }
     }
+
+    private func deleteHistory(_ image: Aiuta.Image) async {
+        photoHistoryBulletin.errorSnackbar.hide()
+        do {
+            try await history.removeUploaded(image)
+            session.delegate?.aiuta(eventOccurred: .picker(pageId: page, event: .uploadedPhotoDeleted))
+        } catch {
+            photoHistoryBulletin.errorSnackbar.bar.tryAgain.onTouchUpInside.cancelSubscription(for: self)
+            photoHistoryBulletin.errorSnackbar.bar.tryAgain.onTouchUpInside.subscribe(with: self) { [unowned self] in
+                photoHistoryBulletin.onDelete.fire(image)
+            }
+            photoHistoryBulletin.errorSnackbar.show()
+        }
+    }
 }
 
 @available(iOS 13.0, *)
@@ -149,16 +167,12 @@ private extension PhotoSelectorController {
     }
 
     func showPermissionAlert() {
-        let alert = UIAlertController(title: L.dialogCameraPermissionTitle, message: L.dialogCameraPermissionDescription, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: L.dialogCameraPermissionConfirmButton, style: .default, handler: { _ in
-            let app = UIApplication.shared
-            guard let settingsUrl = URL(string: UIApplication.openSettingsURLString),
-                  app.canOpenURL(settingsUrl)
-            else { return }
-            app.open(settingsUrl)
-        }))
-        alert.addAction(UIAlertAction(title: L.cancel, style: .cancel, handler: nil))
-        vc?.present(alert, animated: true, completion: nil)
+        vc?.showAlert(title: L.dialogCameraPermissionTitle, message: L.dialogCameraPermissionDescription) { alert in
+            alert.addAction(title: L.dialogCameraPermissionConfirmButton, style: .default).subscribe(with: self) {
+                UIApplication.shared.openSettings()
+            }
+            alert.addAction(title: L.cancel, style: .cancel)
+        }
     }
 
     func takeNewPhoto() {

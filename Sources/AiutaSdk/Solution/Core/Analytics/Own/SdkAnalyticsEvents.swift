@@ -131,7 +131,7 @@ extension AnalyticEvent {
         }
 
         enum Error: String {
-            case skuUnknown, skuNotReady, uploadFailed, tryOnStartFailed, tryOnOperationFailed
+            case skuUnknown, skuNotReady, uploadFailed, tryOnStartFailed, tryOnOperationFailed, tryOnOperationAborted
         }
 
         case start(origin: Origin, sku: Aiuta.Product, photosCount: Int)

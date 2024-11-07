@@ -26,15 +26,15 @@ enum TryOnStatus {
 }
 
 enum TryOnError: Error {
-    case noSku, prepareImageFailed, uploadImageFailed, tryOnFailed
+    case noSku, prepareImageFailed, uploadImageFailed, tryOnFailed, tryOnAborted
 }
 
 struct TryOnResult {
     private let id: String
-    let image: Aiuta.GeneratedImage
+    let image: Aiuta.Image
     let sku: Aiuta.Product
 
-    init(id: String, image: Aiuta.GeneratedImage, sku: Aiuta.Product) {
+    init(id: String, image: Aiuta.Image, sku: Aiuta.Product) {
         self.id = id
         self.image = image
         self.sku = sku

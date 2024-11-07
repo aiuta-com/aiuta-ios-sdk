@@ -32,6 +32,9 @@ extension Aiuta.Configuration.Appearance {
     /// Image overrides
     public struct Images {
         public var splashScreen: UIImage?
+        public var onboarding = Onboarding()
+        public var selectorPlaceholder: UIImage?
+        public var feedbackGratitude: UIImage?
 
         public init() {}
     }
@@ -72,9 +75,27 @@ extension Aiuta.Configuration.Appearance.Icons {
         public var error: UIImage?
         public var like: UIImage?
         public var dislike: UIImage?
+        public var imageError: UIImage?
     }
 
     public struct Icons82 {
         public var splash: UIImage?
+    }
+}
+
+extension Aiuta.Configuration.Appearance.Images {
+    public struct Onboarding {
+        public var onboardingTryOnMainImage1: UIImage?
+        public var onboardingTryOnMainImage2: UIImage?
+        public var onboardingTryOnMainImage3: UIImage?
+
+        public var onboardingTryOnItemImage1: UIImage?
+        public var onboardingTryOnItemImage2: UIImage?
+        public var onboardingTryOnItemImage3: UIImage?
+
+        public var onboardingBestResulGoodImage1: UIImage?
+        public var onboardingBestResulGoodImage2: UIImage?
+        public var onboardingBestResulBadImage1: UIImage?
+        public var onboardingBestResulBadImage2: UIImage?
     }
 }

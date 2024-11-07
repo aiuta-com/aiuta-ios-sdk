@@ -24,28 +24,35 @@ final class TryOnModelImpl: TryOnModel {
     @injected private var tracker: AnalyticTracker
 
     var sessionResults = DataProvider<TryOnResult>()
+    private let jpegCompressionQuality: CGFloat = 65
 
     init() {
         history.generated.onUpdate.subscribe(with: self) { [unowned self] in
             sessionResults.items.removeAll(where: { result in
-                !history.generated.items.contains(where: { $0.url == result.image.url })
+                !history.generated.items.contains(where: { $0.id == result.image.id })
             })
         }
     }
 
-    @MainActor func tryOn(_ source: ImageSource, with sku: Aiuta.Product?, status callback: @escaping (TryOnStatus) -> Void) async throws {
+    @MainActor func tryOn(_ source: ImageSource,
+                          with sku: Aiuta.Product?,
+                          status callback: @escaping (TryOnStatus) -> Void) async throws {
         guard let sku else { throw TryOnError.noSku }
 
         tracker.track(.tryOn(.start(origin: .tryOnButton, sku: sku, photosCount: 1)))
 
         let imageId: String
+        let uploadedImage: Aiuta.Image?
         if let id = source.knownRemoteId {
-            history.touchUploaded(with: id)
+            Task { try? await history.touchUploaded(with: id) }
+            uploadedImage = nil
             imageId = id
         } else {
             callback(.uploadingImage)
             do {
-                imageId = try await upload(source)
+                let image = try await upload(source)
+                uploadedImage = image
+                imageId = image.id
             } catch {
                 tracker.track(.tryOn(.error(sku: sku, type: .uploadFailed)))
                 throw error
@@ -78,50 +85,61 @@ final class TryOnModelImpl: TryOnModel {
 
             guard let operation: Aiuta.TryOnOperation = try? await api.request(Aiuta.TryOnOperation.Get(operationId: start.operationId)) else { continue }
 
-            guard operation.status != .failed else {
-                tracker.track(.tryOn(.error(sku: sku, type: .tryOnOperationFailed)))
-                throw TryOnError.tryOnFailed
-            }
-
-            if operation.status == .success {
-                guard !operation.generatedImages.isEmpty else {
+            switch operation.status {
+                case .created, .inProgress:
+                    break
+                case .success:
+                    try await success(operation, with: sku, uploadedImage: uploadedImage, from: startTime)
+                    return
+                case .aborted:
+                    tracker.track(.tryOn(.error(sku: sku, type: .tryOnOperationAborted)))
+                    throw TryOnError.tryOnAborted
+                case .failed, .cancelled, .unknown:
                     tracker.track(.tryOn(.error(sku: sku, type: .tryOnOperationFailed)))
                     throw TryOnError.tryOnFailed
-                }
-
-                let duration = -startTime.timeIntervalSinceNow
-                tracker.track(.tryOn(.finish(sku: sku, time: duration)))
-
-                history.addGenerated(operation.generatedImages)
-
-                _ = try await operation.generatedImages.concurrentMap { generatedImage in
-                    try await generatedImage.prefetch(.hiResImage, breadcrumbs: Breadcrumbs())
-                }
-
-                sessionResults.items.insert(contentsOf: operation.generatedImages.map { gen in
-                    .init(id: gen.url, image: gen, sku: sku)
-                }, at: 0)
-                return
             }
 
             checkCount += 1
         } while true
     }
 
-    @MainActor func upload(_ source: ImageSource) async throws -> String {
+    @MainActor func success(_ operation: Aiuta.TryOnOperation,
+                            with sku: Aiuta.Product,
+                            uploadedImage: Aiuta.Image?,
+                            from startTime: Date) async throws {
+        guard !operation.generatedImages.isEmpty else {
+            tracker.track(.tryOn(.error(sku: sku, type: .tryOnOperationFailed)))
+            throw TryOnError.tryOnFailed
+        }
+
+        let duration = -startTime.timeIntervalSinceNow
+        tracker.track(.tryOn(.finish(sku: sku, time: duration)))
+
+        if let uploadedImage { Task { try? await history.addUploaded(uploadedImage) } }
+        Task { try? await history.addGenerated(operation.generatedImages) }
+
+        _ = try await operation.generatedImages.concurrentMap { generatedImage in
+            try await generatedImage.prefetch(.hiResImage, breadcrumbs: Breadcrumbs())
+        }
+
+        sessionResults.items.insert(contentsOf: operation.generatedImages.map { gen in
+            .init(id: gen.url, image: gen, sku: sku)
+        }, at: 0)
+    }
+
+    @MainActor func upload(_ source: ImageSource) async throws -> Aiuta.Image {
         guard let imageData = await compress(try await source.fetch(breadcrumbs: Breadcrumbs())) else {
             throw TryOnError.prepareImageFailed
         }
-        let uploadedImage: Aiuta.UploadedImage = try await api.request(Aiuta.UploadedImage.Post(imageData: imageData))
-        history.addUploaded(uploadedImage)
+        let uploadedImage: Aiuta.Image = try await api.request(Aiuta.Image.Post(imageData: imageData))
         session.delegate?.aiuta(eventOccurred: .tryOn(event: .photoUploaded))
-        return uploadedImage.id
+        return uploadedImage
     }
 
     @MainActor func compress(_ image: UIImage) async -> Data? {
         await withCheckedContinuation { continuation in
-            dispatch(.user) {
-                let imageData = image.jpegData(compressionQuality: 65)
+            dispatch(.user) { [jpegCompressionQuality] in
+                let imageData = image.jpegData(compressionQuality: jpegCompressionQuality)
                 continuation.resume(returning: imageData)
             }
         }

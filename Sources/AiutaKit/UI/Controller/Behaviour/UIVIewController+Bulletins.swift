@@ -83,7 +83,7 @@ import UIKit
         }
 
         let mail = MFMailComposeViewController()
-        mail.mailComposeDelegate = self
+        mail.mailComposeDelegate = MailComposeViewControllerDefaultDelegate.shared
         mail.setToRecipients([mailto])
         if let subject { mail.setSubject(subject) }
         if let body { mail.setMessageBody("\n\n---\n\(body)", isHTML: false) }
@@ -96,8 +96,10 @@ import UIKit
     }
 }
 
-@_spi(Aiuta) extension UIViewController: MFMailComposeViewControllerDelegate {
-    public func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+private final class MailComposeViewControllerDefaultDelegate: NSObject, MFMailComposeViewControllerDelegate {
+    static let shared = MailComposeViewControllerDefaultDelegate()
+
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
         controller.dismiss(animated: true)
     }
 }

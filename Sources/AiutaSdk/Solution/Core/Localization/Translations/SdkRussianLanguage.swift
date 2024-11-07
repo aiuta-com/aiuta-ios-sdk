@@ -57,7 +57,7 @@ struct SdkRussianLanguage: AiutaSdkLanguage {
 
     var onboardingPageConsentBody: String {
         "Чтобы примерить товары в цифровом виде, вы соглашаетесь разрешить \(substitutions.brandName) обрабатывать вашу фотографию. " +
-        "Ваши данные будут обработаны в соответствии с <b><a href='\(substitutions.privacyPolicyUrl)'>Политикой конфиденциальности</a></b> и <b><a href='\(substitutions.termsOfServiceUrl)'>Условиями использования</a></b> \(substitutions.brandName)."
+            "Ваши данные будут обработаны в соответствии с <b><a href='\(substitutions.privacyPolicyUrl)'>Политикой конфиденциальности</a></b> и <b><a href='\(substitutions.termsOfServiceUrl)'>Условиями использования</a></b> \(substitutions.brandName)."
     }
 
     var onboardingPageConsentAgreePoint: String {
@@ -79,6 +79,7 @@ struct SdkRussianLanguage: AiutaSdkLanguage {
     let loadingUploadingImage = "Загрузка изображения"
     let loadingScanningBody = "Сканирование вашего тела"
     let loadingGeneratingOutfit = "Создание образа"
+    let dialogInvalidImageDescription = "Мы не смогли обнаружить\nникого на этом фото"
 
     // MARK: - Generation Result
 

@@ -16,16 +16,35 @@
 
 extension PhotoHistoryBulletin {
     final class HistoryCell: PlainButton {
-        let preview = Image { it, ds in
+        let area = ErrorImage { it, ds in
+            it.color = ds.color.neutral
+        }
+
+        let preview = Image { it, _ in
             it.desiredQuality = .thumbnails
             it.contentMode = .scaleAspectFill
-            it.view.backgroundColor = ds.color.neutral
         }
 
         let deleteView = ImageButton { it, ds in
             it.imageView.isAutoSize = false
             it.image = ds.image.icon24(.trash)
             it.tint = .white
+        }
+
+        let deleter = DeleteAnimator()
+
+        var image: Aiuta.Image?
+
+        var isDeleting = false {
+            didSet {
+                guard oldValue != isDeleting else { return }
+                deleter.isAnimating = isDeleting
+                deleteView.animations.visibleTo(!isDeleting)
+            }
+        }
+
+        override func setup() {
+            area.link(with: preview)
         }
 
         override func updateLayout() {
@@ -35,17 +54,21 @@ extension PhotoHistoryBulletin {
                 make.radius = ds.dimensions.imagePreviewRadius
             }
 
+            area.layout.make { make in
+                make.inset = 0
+            }
+
             preview.layout.make { make in
                 make.inset = 0
                 make.radius = ds.dimensions.imagePreviewRadius
             }
-            
+
             deleteView.layout.make { make in
                 make.square = 44
                 make.right = -5
                 make.bottom = -2
             }
-            
+
             deleteView.imageView.layout.make { make in
                 make.square = 24
                 make.center = .zero

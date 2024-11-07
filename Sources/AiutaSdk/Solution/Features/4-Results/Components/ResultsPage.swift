@@ -15,6 +15,7 @@
 @_spi(Aiuta) import AiutaKit
 import UIKit
 
+@available(iOS 13.0.0, *)
 final class ResultPage: Page<TryOnResult> {
     @injected private var session: SessionModel
 

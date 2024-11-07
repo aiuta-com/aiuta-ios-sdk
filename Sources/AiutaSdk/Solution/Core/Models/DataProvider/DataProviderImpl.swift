@@ -14,13 +14,14 @@
 
 @_spi(Aiuta) import AiutaKit
 
+@available(iOS 13.0.0, *)
 final class DataProviderImpl: AiutaDataProvider {
     @injected private var sessionModel: SessionModel
     @injected private var consentModel: ConsentModel
     @injected private var historyModel: HistoryModel
 
-    init(delegate: AiutaDataController) {
-        sessionModel.dataDelegate = delegate
+    init(controller: AiutaDataController) {
+        sessionModel.controller = controller
     }
 
     var isUserConsentObtained: Bool {
@@ -28,12 +29,12 @@ final class DataProviderImpl: AiutaDataProvider {
         set { consentModel.isConsentGiven = newValue }
     }
 
-    var uploadedImages: [Aiuta.UploadedImage] {
+    var uploadedImages: [Aiuta.Image] {
         get { historyModel.uploaded.items }
         set { historyModel.setUploaded(newValue) }
     }
 
-    var generatedImages: [Aiuta.GeneratedImage] {
+    var generatedImages: [Aiuta.Image] {
         get { historyModel.generated.items }
         set { historyModel.setGenerated(newValue) }
     }

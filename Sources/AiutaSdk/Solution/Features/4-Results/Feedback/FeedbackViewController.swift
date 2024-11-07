@@ -15,6 +15,7 @@
 @_spi(Aiuta) import AiutaKit
 import UIKit
 
+@available(iOS 13.0.0, *)
 final class FeedbackViewController: ComponentController<ResultPage> {
     @injected private var subscription: SubscriptionModel
     @injected private var tracker: AnalyticTracker
@@ -39,6 +40,7 @@ final class FeedbackViewController: ComponentController<ResultPage> {
     }
 }
 
+@available(iOS 13.0.0, *)
 private extension FeedbackViewController {
     func isFeedbackNeeded(_ sessionResult: TryOnResult) -> Bool {
         guard ds.config.behavior.asksForUserFeedbackOnResults else { return false }
@@ -60,12 +62,7 @@ private extension FeedbackViewController {
         let sku = sessionResult.sku
         FeedbackViewController.feedbackedImages.append(generatedImage.url)
         tracker.track(.feedback(.dislike(sku: sku)))
-        if #available(iOS 13.0, *) {
-            Task { await dislike(sku, cell) }
-        } else {
-            gratiture(cell)
-            session.delegate?.aiuta(eventOccurred: .feedback(event: .negative(option: nil, text: nil)))
-        }
+        Task { await dislike(sku, cell) }
     }
 
     @available(iOS 13.0.0, *)

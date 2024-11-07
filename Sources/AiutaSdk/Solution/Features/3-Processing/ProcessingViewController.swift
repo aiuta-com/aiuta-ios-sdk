@@ -78,6 +78,15 @@ final class ProcessingViewController: ViewController<ProcessingView> {
             ui.animator.isAnimating = false
             session.delegate?.aiuta(eventOccurred: .tryOn(event: .tryOnFinished))
             replace(with: ResulstsViewController(), crossFadeDuration: .quarterOfSecond)
+        } catch TryOnError.tryOnAborted {
+            ui.status.text = nil
+            ui.animator.isAnimating = false
+            session.delegate?.aiuta(eventOccurred: .tryOn(event: .tryOnError))
+            showAlert(message: L.dialogInvalidImageDescription) { alert in
+                alert.addAction(title: L.imageSelectorChangeButton, style: .cancel).subscribe(with: self) { [unowned self] in
+                    replace(with: TryOnViewController(), crossFadeDuration: .quarterOfSecond)
+                }
+            }
         } catch {
             ui.status.text = nil
             ui.errorSnackbar.isVisible = true

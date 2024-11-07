@@ -15,7 +15,9 @@
 import UIKit
 
 @_spi(Aiuta) open class Image: Content<PlainImageView> {
-    public let gotImage = Signal<Void>()
+    public let gotImage = Signal<Void>(retainLastData: true)
+    public let onError = Signal<Void>(retainLastData: true)
+    public let onChange = Signal<Void>(retainLastData: true)
 
     public var image: UIImage? {
         get { view.image }

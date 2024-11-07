@@ -16,7 +16,7 @@
 import Alamofire
 import Foundation
 
-extension Aiuta.UploadedImage {
+extension Aiuta.Image {
     struct Post: Encodable, ApiRequest {
         var urlPath: String { "uploaded_images" }
         var type: ApiRequestType { .upload }
@@ -30,70 +30,12 @@ extension Aiuta.UploadedImage {
     }
 }
 
-extension Aiuta.UploadedImage: Codable {
-    private enum CodingKeys: String, CodingKey {
-        case id, url
-    }
-
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        id = try container.decode(String.self, forKey: .id)
-        url = try container.decode(String.self, forKey: .url)
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(id, forKey: .id)
-        try container.encode(url, forKey: .url)
-    }
-}
-
-extension Aiuta.GeneratedImage: Codable {
-    private enum CodingKeys: String, CodingKey {
-        case url = "imageUrl"
-    }
-
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        url = try container.decode(String.self, forKey: .url)
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(url, forKey: .url)
-    }
-}
-
-extension Aiuta.UploadedImage: Equatable {
-    public static func == (lhs: Aiuta.UploadedImage, rhs: Aiuta.UploadedImage) -> Bool {
-        lhs.id == rhs.id
-    }
-}
-
-extension Aiuta.GeneratedImage: Equatable {
-    public static func == (lhs: Aiuta.GeneratedImage, rhs: Aiuta.GeneratedImage) -> Bool {
-        lhs.url == rhs.url
-    }
-}
-
-@_spi(Aiuta) extension Aiuta.GeneratedImage: TransitionRef {
+@_spi(Aiuta) extension Aiuta.Image: TransitionRef {
     public var transitionId: String { url }
 }
 
-@_spi(Aiuta) extension Aiuta.UploadedImage: ImageSource {
+@_spi(Aiuta) extension Aiuta.Image: ImageSource {
     public var knownRemoteId: String? { id }
-
-    public func fetcher(for quality: ImageQuality, breadcrumbs: Breadcrumbs) -> ImageFetcher {
-        UrlFetcher(url, quality: quality, breadcrumbs: breadcrumbs)
-    }
-}
-
-@_spi(Aiuta) extension Aiuta.UploadedImage: TransitionRef {
-    public var transitionId: String { url }
-}
-
-@_spi(Aiuta) extension Aiuta.GeneratedImage: ImageSource {
-    public var knownRemoteId: String? { nil }
 
     public func fetcher(for quality: ImageQuality, breadcrumbs: Breadcrumbs) -> ImageFetcher {
         UrlFetcher(url, quality: quality, breadcrumbs: breadcrumbs)
