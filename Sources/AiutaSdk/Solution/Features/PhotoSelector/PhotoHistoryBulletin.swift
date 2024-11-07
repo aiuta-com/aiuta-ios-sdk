@@ -35,13 +35,18 @@ final class PhotoHistoryBulletin: PlainBulletin {
     var deleting: DataProvider<Aiuta.Image>? {
         didSet {
             oldValue?.onUpdate.cancelSubscription(for: self)
+            updateDeleting()
             guard let deleting else { return }
-            deleting.onUpdate.subscribePast(with: self) { [unowned self, deleting] in
-                cells.forEach { cell in
-                    guard let image = cell.image else { return }
-                    cell.isDeleting = deleting.items.contains(image)
-                }
+            deleting.onUpdate.subscribe(with: self) { [unowned self] in
+                updateDeleting()
             }
+        }
+    }
+
+    private func updateDeleting() {
+        cells.forEach { cell in
+            guard let image = cell.image else { return }
+            cell.isDeleting = deleting?.items.contains(image) ?? false
         }
     }
 
