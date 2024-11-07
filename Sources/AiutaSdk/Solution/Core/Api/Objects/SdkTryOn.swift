@@ -53,10 +53,14 @@ extension Aiuta.TryOnStart {
         let skuCatalogName: String?
 
         var secureAuthFields: [String: String]? {
-            [
-                "product_id": skuId,
+            var fields = [
+                "sku_id": skuId,
                 "uploaded_image_id": uploadedImageId,
             ]
+            if let skuCatalogName {
+                fields["sku_catalog_name"] = skuCatalogName
+            }
+            return fields
         }
     }
 }
