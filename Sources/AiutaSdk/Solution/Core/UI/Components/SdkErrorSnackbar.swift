@@ -70,6 +70,7 @@ final class ErrorSnackbar: Plane {
             }
 
             icon.layout.make { make in
+                make.square = 36
                 make.center = .zero
             }
         }
