@@ -37,8 +37,8 @@ final class ErrorImage: Stroke {
         errorIcon.view.isVisible = whole
         isLargeIcon = whole
 
-        imageView.gotImage.subscribePast(with: self) { [unowned self] in
-            (whole ? self : errorIcon).animations.visibleTo(!imageView.hasImage)
+        imageView.gotImage.subscribePast(with: self) { [unowned self, weak imageView] in
+            (whole ? self : errorIcon).animations.visibleTo(imageView?.hasImage == false)
         }
 
         imageView.onChange.subscribePast(with: self) { [unowned self] in
