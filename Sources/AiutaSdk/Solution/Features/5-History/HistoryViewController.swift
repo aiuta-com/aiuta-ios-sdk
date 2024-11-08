@@ -92,6 +92,7 @@ final class HistoryViewController: ViewController<HistoryView> {
         ui.navBar.isActionAvailable = true
 
         session.delegate?.aiuta(eventOccurred: .page(pageId: page))
+        tracker.track(.history(.open))
     }
 
     private var isEditMode = false {

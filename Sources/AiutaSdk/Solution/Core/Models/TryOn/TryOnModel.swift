@@ -13,6 +13,7 @@
 // limitations under the License.
 
 @_spi(Aiuta) import AiutaKit
+import Foundation
 
 @available(iOS 13.0.0, *)
 protocol TryOnModel {
@@ -26,7 +27,20 @@ enum TryOnStatus {
 }
 
 enum TryOnError: Error {
-    case noSku, prepareImageFailed, uploadImageFailed, tryOnFailed, tryOnAborted
+    case noSku, prepareImageFailed, uploadImageFailed, tryOnFailed, emptyResults, tryOnAborted
+}
+
+extension TryOnError: LocalizedError {
+    public var errorDescription: String? {
+        switch self {
+            case .noSku: return "No SKU provided."
+            case .prepareImageFailed: return "Failed to prepare image."
+            case .uploadImageFailed: return "Failed to upload image."
+            case .tryOnFailed: return "Opertaion status failed or cancelled."
+            case .emptyResults: return "Completed with empty results."
+            case .tryOnAborted: return "No people were found in the image."
+        }
+    }
 }
 
 struct TryOnResult {

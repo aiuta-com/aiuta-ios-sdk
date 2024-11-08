@@ -22,6 +22,7 @@ import UIKit
 final class TryOnViewController: ViewController<TryOnView> {
     @injected private var history: HistoryModel
     @injected private var session: SessionModel
+    @injected private var tracker: AnalyticTracker
     var selector: PhotoSelectorController?
 
     override func setup() {
@@ -36,10 +37,12 @@ final class TryOnViewController: ViewController<TryOnView> {
         }
 
         ui.uploadButton.onTouchUpInside.subscribe(with: self) { [unowned self] in
+            tracker.track(.mainScreen(.changePhoto(hasCurrent: false, hasHistory: history.hasUploads)))
             selector?.choosePhoto()
         }
 
         ui.changeButton.onTouchUpInside.subscribe(with: self) { [unowned self] in
+            tracker.track(.mainScreen(.changePhoto(hasCurrent: true, hasHistory: history.hasUploads)))
             selector?.choosePhoto()
         }
 
@@ -76,8 +79,9 @@ final class TryOnViewController: ViewController<TryOnView> {
             if let skuId = session.activeSku?.skuId {
                 session.delegate?.aiuta(eventOccurred: .results(pageId: page, event: .productAddToCart, productId: skuId))
             }
-            dismissAll { [session] in
+            dismissAll { [session, tracker] in
                 session.finish(addingToCart: session.activeSku)
+                tracker.track(.session(.finish(action: .addToCart, origin: .mainScreen, sku: session.activeSku)))
             }
         }
 
@@ -102,6 +106,7 @@ final class TryOnViewController: ViewController<TryOnView> {
         ui.skuBulletin.wishButton.isSelected = session.isInWishlist(session.activeSku)
 
         session.delegate?.aiuta(eventOccurred: .page(pageId: page))
+        tracker.track(.mainScreen(.open(lastPhotosCount: history.uploaded.items.count)))
     }
 
     private func updateUploads(animated: Bool = false) {

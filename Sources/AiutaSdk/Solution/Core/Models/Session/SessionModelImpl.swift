@@ -16,6 +16,7 @@
 
 @available(iOS 13.0.0, *)
 final class SessionModelImpl: SessionModel {
+    @injected var tracker: AnalyticTracker
     let onWishlistChange = Signal<Void>()
 
     var activeSku: Aiuta.Product?
@@ -28,6 +29,7 @@ final class SessionModelImpl: SessionModel {
     func start(sku: Aiuta.Product, delegate: AiutaSdkDelegate) {
         self.delegate = delegate
         activeSku = sku
+        tracker.track(.session(.start(sku: sku, relatedCount: 0)))
     }
 
     func finish(addingToCart sku: Aiuta.Product?) {

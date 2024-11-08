@@ -134,7 +134,7 @@ extension AnalyticEvent {
             case skuUnknown, skuNotReady, uploadFailed, tryOnStartFailed, tryOnOperationFailed, tryOnOperationAborted
         }
 
-        case start(origin: Origin, sku: Aiuta.Product, photosCount: Int)
+        case start(origin: Origin, sku: Aiuta.Product?, photosCount: Int)
         case generate(sku: Aiuta.Product)
         case finish(sku: Aiuta.Product, time: TimeInterval)
         case error(sku: Aiuta.Product, type: Error)
@@ -144,8 +144,8 @@ extension AnalyticEvent {
                 case let .start(origin, sku, photosCount):
                     return AnalyticEvent("StartUITryOn", [
                         "origin": origin.rawValue.firstCapitalized,
-                        "sku_id": sku.skuId,
-                        "sku_catalog_name": sku.skuCatalog,
+                        "sku_id": sku?.skuId,
+                        "sku_catalog_name": sku?.skuCatalog,
                         "photos_count": photosCount,
                     ])
 
@@ -177,8 +177,8 @@ extension AnalyticEvent {
             case thumbnail, swipe
         }
 
-        case open(sku: Aiuta.Product, time: TimeInterval, generatedCount: Int, processingCount: Int, relatedCount: Int)
-        case view(sku: Aiuta.Product, index: Int, navigation: NavigationType)
+        case open(sku: Aiuta.Product?)
+        case view(sku: Aiuta.Product?, index: Int)
         case update(sku: Aiuta.Product, generatedCount: Int)
         case showRelated
         case tapRelated(sku: Aiuta.Product)
@@ -186,22 +186,17 @@ extension AnalyticEvent {
 
         var event: AnalyticEvent {
             switch self {
-                case let .open(sku, time, generatedCount, processingCount, relatedCount):
+                case let .open(sku):
                     return AnalyticEvent("OpenResultsScreen", [
-                        "sku_id": sku.skuId,
-                        "sku_catalog_name": sku.skuCatalog,
-                        "elapsed_time": time.seconds,
-                        "generated_photos": generatedCount,
-                        "photos_in_progress": processingCount,
-                        "more_to_try_on": relatedCount,
+                        "sku_id": sku?.skuId,
+                        "sku_catalog_name": sku?.skuCatalog,
                     ])
 
-                case let .view(sku, index, navigation):
+                case let .view(sku, index):
                     return AnalyticEvent("ViewGeneratedImage", [
-                        "sku_id": sku.skuId,
-                        "sku_catalog_name": sku.skuCatalog,
+                        "sku_id": sku?.skuId,
+                        "sku_catalog_name": sku?.skuCatalog,
                         "image_number": index + 1,
-                        "navigation_type": navigation.rawValue.firstCapitalized,
                     ])
 
                 case let .update(sku, generatedCount):

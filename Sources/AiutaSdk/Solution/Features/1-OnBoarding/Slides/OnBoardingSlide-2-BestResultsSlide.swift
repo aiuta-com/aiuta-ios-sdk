@@ -136,18 +136,22 @@ extension OnBoardingView.StickyScroll {
     final class CollageImage: Plane {
         let image1 = Image { it, ds in
             it.image = ds.image.onboarding(.best1)
+            it.contentMode = .scaleAspectFill
         }
 
         let image2 = Image { it, ds in
             it.image = ds.image.onboarding(.best2)
+            it.contentMode = .scaleAspectFill
         }
 
         let image3 = Image { it, ds in
             it.image = ds.image.onboarding(.best3)
+            it.contentMode = .scaleAspectFill
         }
 
         let image4 = Image { it, ds in
             it.image = ds.image.onboarding(.best4)
+            it.contentMode = .scaleAspectFill
         }
 
         override func updateLayout() {

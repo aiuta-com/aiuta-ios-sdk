@@ -39,7 +39,7 @@ final class TryOnModelImpl: TryOnModel {
                           status callback: @escaping (TryOnStatus) -> Void) async throws {
         guard let sku else { throw TryOnError.noSku }
 
-        tracker.track(.tryOn(.start(origin: .tryOnButton, sku: sku, photosCount: 1)))
+        tracker.track(.tryOn(.generate(sku: sku)))
 
         let imageId: String
         let uploadedImage: Aiuta.Image?
@@ -109,7 +109,7 @@ final class TryOnModelImpl: TryOnModel {
                             from startTime: Date) async throws {
         guard !operation.generatedImages.isEmpty else {
             tracker.track(.tryOn(.error(sku: sku, type: .tryOnOperationFailed)))
-            throw TryOnError.tryOnFailed
+            throw TryOnError.emptyResults
         }
 
         let duration = -startTime.timeIntervalSinceNow
@@ -132,7 +132,7 @@ final class TryOnModelImpl: TryOnModel {
             throw TryOnError.prepareImageFailed
         }
         let uploadedImage: Aiuta.Image = try await api.request(Aiuta.Image.Post(imageData: imageData))
-        session.delegate?.aiuta(eventOccurred: .tryOn(event: .photoUploaded))
+        session.delegate?.aiuta(eventOccurred: .tryOn(event: .photoUploaded, message: nil))
         return uploadedImage
     }
 

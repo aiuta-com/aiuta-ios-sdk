@@ -19,6 +19,7 @@ import UIKit
 final class OnBoardingViewController: ViewController<OnBoardingView> {
     @injected private var consentModel: ConsentModel
     @injected private var sessionModel: SessionModel
+    @injected private var tracker: AnalyticTracker
 
     private var trackedPage: Aiuta.Event.Page?
     private var isConsentGiven: Bool {
@@ -62,12 +63,15 @@ final class OnBoardingViewController: ViewController<OnBoardingView> {
                     Task { try? await sessionModel.controller?.obtainUserConsent() }
                     sessionModel.delegate?.aiuta(eventOccurred: .onboarding(event: .consentGiven))
                     sessionModel.delegate?.aiuta(eventOccurred: .onboarding(event: .onboardingFinished))
+                    tracker.track(.onBoarding(.finish))
                     replace(with: TryOnViewController())
                 }
             } else {
                 ui.scroll.scrollToNext()
             }
         }
+
+        tracker.track(.onBoarding(.start))
     }
 
     private func updateTitle() {
@@ -94,6 +98,7 @@ final class OnBoardingViewController: ViewController<OnBoardingView> {
     private func trackPage() {
         guard page != trackedPage else { return }
         sessionModel.delegate?.aiuta(eventOccurred: .page(pageId: page))
+        tracker.track(.onBoarding(.next(index: ui.scroll.slideIndex)))
         trackedPage = page
     }
 }

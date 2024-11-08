@@ -81,6 +81,7 @@ final class ResulstsViewController: ViewController<ResultsView> {
 
         ui.pager.onSwipePage.subscribe(with: self) { [unowned self] _ in
             ui.skuSheet.sku = ui.pager.currentItem?.sku
+            tracker.track(.results(.view(sku: ui.skuSheet.sku, index: ui.pager.pageIndex)))
         }
 
         ui.skuSheet.onTapImage.subscribe(with: self) { [unowned self] index in
@@ -93,8 +94,9 @@ final class ResulstsViewController: ViewController<ResultsView> {
             if let skuId = sku?.skuId {
                 session.delegate?.aiuta(eventOccurred: .results(pageId: page, event: .productAddToCart, productId: skuId))
             }
-            dismissAll { [session] in
+            dismissAll { [session, tracker] in
                 session.finish(addingToCart: sku)
+                tracker.track(.session(.finish(action: .addToCart, origin: .resultsScreen, sku: sku)))
             }
         }
 
@@ -117,6 +119,8 @@ final class ResulstsViewController: ViewController<ResultsView> {
         ui.skuSheet.sku = ui.pager.currentItem?.sku
 
         session.delegate?.aiuta(eventOccurred: .page(pageId: page))
+        tracker.track(.results(.open(sku: ui.skuSheet.sku)))
+        tracker.track(.results(.view(sku: ui.skuSheet.sku, index: 0)))
     }
 
     private func toggleCurrentWish() {
@@ -166,12 +170,12 @@ final class ResulstsViewController: ViewController<ResultsView> {
                                             additions: [sku?.additionalShareInfo].compactMap { $0 })
                 switch result {
                     case let .succeeded(activity):
-                        tracker.track(.share(.success(origin: .resultsScreen, count: 1, activity: activity, text: sku?.additionalShareInfo)))
+                        tracker.track(.share(.success(origin: .resultsFullScreen, count: 1, activity: activity, text: sku?.additionalShareInfo)))
                         if let skuId = sku?.skuId { session.delegate?.aiuta(eventOccurred: .results(pageId: page, event: .resultShared, productId: skuId)) }
                     case let .canceled(activity):
-                        tracker.track(.share(.cancelled(origin: .resultsScreen, count: 1, activity: activity)))
+                        tracker.track(.share(.cancelled(origin: .resultsFullScreen, count: 1, activity: activity)))
                     case let .failed(activity, error):
-                        tracker.track(.share(.failed(origin: .resultsScreen, count: 1, activity: activity, error: error)))
+                        tracker.track(.share(.failed(origin: .resultsFullScreen, count: 1, activity: activity, error: error)))
                 }
             }
         }

@@ -21,7 +21,7 @@ extension Aiuta {
         case page(pageId: Page),
              onboarding(event: Onboarding),
              picker(pageId: Page, event: Picker),
-             tryOn(event: TryOn),
+             tryOn(event: TryOn, message: String?),
              results(pageId: Page, event: Results, productId: String),
              feedback(event: Feedback),
              history(event: History),
@@ -61,6 +61,7 @@ extension Aiuta.Event {
         case photoUploaded,
              tryOnStarted,
              tryOnFinished,
+             tryOnAborted,
              tryOnError
     }
 
@@ -101,8 +102,9 @@ public extension Aiuta.Event {
             case let .picker(pageId, event):
                 params[event.codingKey.rawValue] = event.rawValue
                 params[pageId.codingKey.rawValue] = pageId.rawValue
-            case let .tryOn(event):
+            case let .tryOn(event, message):
                 params[event.codingKey.rawValue] = event.rawValue
+                if let message { params[event.codingErrorMessageKey.rawValue] = message }
             case let .results(pageId, event, productId):
                 params[event.codingKey.rawValue] = event.rawValue
                 params[pageId.codingKey.rawValue] = pageId.rawValue
@@ -194,6 +196,7 @@ public extension Aiuta.Event.History {
 
 public extension Aiuta.Event.TryOn {
     var codingKey: Aiuta.Event.CodingKeys { .event }
+    var codingErrorMessageKey: Aiuta.Event.CodingKeys { .errorMessage }
 }
 
 public extension Aiuta.Event.Picker {
@@ -214,7 +217,8 @@ public extension Aiuta.Event.Results {
 extension Aiuta.Event: Encodable {
     public enum CodingKeys: String, CodingKey {
         case type, event, pageId, productId,
-             negativeFeedbackOptionIndex, negativeFeedbackText
+             negativeFeedbackOptionIndex, negativeFeedbackText,
+             errorMessage
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -228,8 +232,9 @@ extension Aiuta.Event: Encodable {
             case let .picker(pageId, event):
                 try container.encode(event.rawValue, forKey: event.codingKey)
                 try container.encode(pageId.rawValue, forKey: pageId.codingKey)
-            case let .tryOn(event):
+            case let .tryOn(event, message):
                 try container.encode(event.rawValue, forKey: event.codingKey)
+                try container.encodeIfPresent(message, forKey: event.codingErrorMessageKey)
             case let .results(pageId, event, productId):
                 try container.encode(event.rawValue, forKey: event.codingKey)
                 try container.encode(pageId.rawValue, forKey: pageId.codingKey)

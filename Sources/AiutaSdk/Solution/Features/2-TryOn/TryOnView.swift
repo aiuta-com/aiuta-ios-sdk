@@ -32,6 +32,7 @@ final class TryOnView: Plane {
 
     let placeholder = Image { it, ds in
         it.image = ds.image.tryOn(.photoPlaceholder)
+        it.contentMode = .scaleAspectFit
         it.tint = ds.color.neutral3
         it.view.maxOpacity = 0.5
     }

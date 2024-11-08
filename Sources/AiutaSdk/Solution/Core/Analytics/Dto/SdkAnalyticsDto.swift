@@ -20,22 +20,6 @@ struct SdkAnalyticDto: Encodable, ApiRequest {
     var urlPath: String { "ios-sdk-analytics" }
     var method: HTTPMethod { .post }
 
-    struct Event: Encodable {
-        let name: String
-        let parameters: [String: Any]?
-
-        enum CodingKeys: String, CodingKey {
-            case name
-            case parameters
-        }
-
-        func encode(to encoder: Encoder) throws {
-            var container = encoder.container(keyedBy: CodingKeys.self)
-            try container.encodeIfPresent(name, forKey: .name)
-            try container.encodeIfPresent(parameters, forKey: .parameters)
-        }
-    }
-
     struct Env: Encodable {
         let platform = "ios"
         let sdkVersion = Aiuta.sdkVersion
@@ -52,11 +36,13 @@ struct SdkAnalyticDto: Encodable, ApiRequest {
     }
 
     let env = Env()
-    let event: Event
+    let event: [String: Any]
     let localDateTime: String
 
     init(_ event: AnalyticEvent) {
-        self.event = Event(name: event.name, parameters: event.parameters)
+        var rawEvent: [String: Any] = event.parameters ?? [:]
+        rawEvent["type"] = event.name
+        self.event = rawEvent
         if #available(iOS 15.0, *) {
             localDateTime = event.timestamp.ISO8601Format(.init(includingFractionalSeconds: true,
                                                                 timeZone: .current))
@@ -69,6 +55,17 @@ struct SdkAnalyticDto: Encodable, ApiRequest {
                                       .withTimeZone]
             localDateTime = formater.string(from: event.timestamp)
         }
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case env, event, localDateTime
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(env, forKey: .env)
+        try container.encodeIfPresent(event, forKey: .event)
+        try container.encode(localDateTime, forKey: .localDateTime)
     }
 }
 
