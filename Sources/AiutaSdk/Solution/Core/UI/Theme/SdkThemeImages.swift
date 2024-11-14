@@ -17,15 +17,20 @@ import UIKit
 
 struct SdkThemeImages: DesignSystemImages {
     static let resourceBundle: Bundle? = {
-        let bundleName = "AiutaSdk_AiutaSdk"
+        let bundleNames = [
+            "AiutaSdk",
+            "AiutaSdk_AiutaSdk",
+        ]
         let candidates = [
             Bundle.main.resourceURL,
             Bundle(for: SdkRegister.self).resourceURL,
         ]
 
         for candidate in candidates {
-            let bundlePath = candidate?.appendingPathComponent("\(bundleName).bundle")
-            if let bundle = bundlePath.flatMap(Bundle.init(url:)) { return bundle }
+            for bundleName in bundleNames {
+                let bundlePath = candidate?.appendingPathComponent("\(bundleName).bundle")
+                if let bundle = bundlePath.flatMap(Bundle.init(url:)) { return bundle }
+            }
         }
 
         return Bundle(for: SdkRegister.self)
@@ -70,13 +75,11 @@ extension SdkTheme {
 
         case arrow
         case lock
-        case magic
 
         func custom(_ config: Aiuta.Configuration.Appearance.Icons.Icons16) -> UIImage? {
             switch self {
                 case .arrow: return config.arrow
                 case .lock: return config.lock
-                case .magic: return config.magic
             }
         }
     }
@@ -86,11 +89,13 @@ extension SdkTheme {
 
         case check
         case info
+        case magic
 
         func custom(_ config: Aiuta.Configuration.Appearance.Icons.Icons20) -> UIImage? {
             switch self {
                 case .check: return config.check
                 case .info: return config.info
+                case .magic: return config.magic
             }
         }
     }

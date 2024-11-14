@@ -132,7 +132,7 @@ final class TryOnModelImpl: TryOnModel {
             throw TryOnError.prepareImageFailed
         }
         let uploadedImage: Aiuta.Image = try await api.request(Aiuta.Image.Post(imageData: imageData))
-        session.delegate?.aiuta(eventOccurred: .tryOn(event: .photoUploaded, message: nil))
+        session.delegate?.aiuta(eventOccurred: .tryOn(event: .photoUploaded, message: nil, page: .loading, product: session.activeSku))
         return uploadedImage
     }
 

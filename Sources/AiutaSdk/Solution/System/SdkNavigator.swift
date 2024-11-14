@@ -66,7 +66,7 @@ final class SdkNavigator: UINavigationController {
         }
         if let page = (visibleViewController as? PageRepresentable)?.page {
             @injected var session: SessionModel
-            session.delegate?.aiuta(eventOccurred: .exit(pageId: page))
+            session.delegate?.aiuta(eventOccurred: .exit(page: page, product: session.activeSku))
         }
     }
 

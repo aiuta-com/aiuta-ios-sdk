@@ -54,7 +54,7 @@ private extension FeedbackViewController {
         tracker.track(.feedback(.like(sku: sku)))
         haptic(notification: .success)
         gratiture(cell)
-        session.delegate?.aiuta(eventOccurred: .feedback(event: .positive))
+        session.delegate?.aiuta(eventOccurred: .feedback(event: .positive, page: .results, product: session.activeSku))
     }
 
     func dislike(_ sessionResult: TryOnResult, _ cell: ResultPage?) {
@@ -93,10 +93,10 @@ private extension FeedbackViewController {
         if let result, !result.text.isEmpty {
             let text = String(result.text.prefix(1200))
             tracker.track(.feedback(.comment(sku: sku, text: text)))
-            session.delegate?.aiuta(eventOccurred: .feedback(event: .negative(option: result.index, text: text)))
+            session.delegate?.aiuta(eventOccurred: .feedback(event: .negative(option: result.index, text: text), page: .results, product: session.activeSku))
         } else {
             tracker.track(.feedback(.comment(sku: sku, text: nil)))
-            session.delegate?.aiuta(eventOccurred: .feedback(event: .negative(option: nil, text: nil)))
+            session.delegate?.aiuta(eventOccurred: .feedback(event: .negative(option: nil, text: nil), page: .results, product: session.activeSku))
         }
 
         gratiture(cell)

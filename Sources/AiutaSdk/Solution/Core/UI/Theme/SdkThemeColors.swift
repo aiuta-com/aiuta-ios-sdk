@@ -48,11 +48,15 @@ extension DesignSystemColors {
     }
 
     var loadingAnimation: [UIColor] {
-        if config.loadingAnimation.isSomeAndNotEmpty {
-            return config.loadingAnimation ?? loadingAnimationDefaults
+        if config.tryOnAnimationGradient.isSomeAndNotEmpty {
+            return config.tryOnAnimationGradient ?? loadingAnimationDefaults
         } else {
             return loadingAnimationDefaults
         }
+    }
+
+    var tryOnButtonGradient: [UIColor]? {
+        config.tryOnButtonGradient
     }
 }
 

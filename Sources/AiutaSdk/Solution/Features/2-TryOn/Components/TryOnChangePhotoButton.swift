@@ -20,28 +20,27 @@ extension TryOnView {
         let blur = Blur { it, ds in
             it.style = ds.color.blur
             it.intensity = 0.4
-
-            if ds.config.appearance.toggles.enableBlurOutlines {
-                it.view.borderColor = ds.color.neutral2
-                it.view.borderWidth = 1
-            }
         }
 
         let label = Label { it, ds in
             it.isLineHeightMultipleEnabled = false
             it.font = ds.font.buttonS
-            if ds.config.appearance.toggles.enableBlurOutlines {
-                it.color = ds.color.onDark
-            } else {
-                it.color = ds.color.primary
-            }
+            it.color = ds.color.onDark
             it.text = L.imageSelectorChangeButton
+        }
+
+        override func setup() {
+            if ds.config.appearance.toggles.enableBlurOutlines {
+                view.backgroundColor = ds.color.brand
+                blur.removeFromParent()
+            }
         }
 
         override func updateLayout() {
             layout.make { make in
                 make.width = label.layout.width + 48
                 make.height = label.layout.height + 24
+                make.radius = ds.dimensions.buttonSmallRadius
             }
 
             label.layout.make { make in

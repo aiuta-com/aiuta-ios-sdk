@@ -53,21 +53,13 @@ extension ProcessingView {
 
         private let image = Image { it, ds in
             it.image = ds.image.icon14(.spin)
-            if ds.config.appearance.toggles.enableBlurOutlines {
-                it.tint = ds.color.onDark
-            } else {
-                it.tint = ds.color.primary
-            }
+            it.tint = ds.color.primary
         }
 
         private let label = Label { it, ds in
             it.isLineHeightMultipleEnabled = false
             it.font = ds.font.buttonS
-            if ds.config.appearance.toggles.enableBlurOutlines {
-                it.color = ds.color.onDark
-            } else {
-                it.color = ds.color.primary
-            }
+            it.color = ds.color.primary
         }
 
         override func attached() {

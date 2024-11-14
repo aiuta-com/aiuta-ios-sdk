@@ -46,12 +46,12 @@ extension Aiuta.Configuration.Appearance.Icons {
     }
 
     public struct Icons16 {
-        public var magic: UIImage?
         public var lock: UIImage?
         public var arrow: UIImage?
     }
 
     public struct Icons20 {
+        public var magic: UIImage?
         public var check: UIImage?
         public var info: UIImage?
     }

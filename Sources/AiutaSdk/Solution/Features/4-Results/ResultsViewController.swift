@@ -45,9 +45,7 @@ final class ResulstsViewController: ViewController<ResultsView> {
             addComponent(FeedbackViewController(page))
 
             page.shadowControls.newPhoto.onTouchUpInside.subscribe(with: self) { [unowned self] in
-                if let skuId = ui.pager.currentItem?.sku.skuId {
-                    session.delegate?.aiuta(eventOccurred: .results(pageId: self.page, event: .pickOtherPhoto, productId: skuId))
-                }
+                session.delegate?.aiuta(eventOccurred: .results(event: .pickOtherPhoto, page: self.page, product: ui.pager.currentItem?.sku))
                 selector?.choosePhoto(withHistoryPrefered: false)
             }
 
@@ -91,9 +89,7 @@ final class ResulstsViewController: ViewController<ResultsView> {
 
         ui.skuSheet.content.addToCart.onTouchUpInside.subscribe(with: self) { [unowned self] in
             let sku = ui.pager.currentItem?.sku
-            if let skuId = sku?.skuId {
-                session.delegate?.aiuta(eventOccurred: .results(pageId: page, event: .productAddToCart, productId: skuId))
-            }
+            session.delegate?.aiuta(eventOccurred: .results(event: .productAddToCart, page: page, product: sku))
             dismissAll { [session, tracker] in
                 session.finish(addingToCart: sku)
                 tracker.track(.session(.finish(action: .addToCart, origin: .resultsScreen, sku: sku)))
@@ -118,7 +114,7 @@ final class ResulstsViewController: ViewController<ResultsView> {
         ui.navBar.isActionAvailable = history.hasGenerations
         ui.skuSheet.sku = ui.pager.currentItem?.sku
 
-        session.delegate?.aiuta(eventOccurred: .page(pageId: page))
+        session.delegate?.aiuta(eventOccurred: .page(page: page, product: ui.skuSheet.sku))
         tracker.track(.results(.open(sku: ui.skuSheet.sku)))
         tracker.track(.results(.view(sku: ui.skuSheet.sku, index: 0)))
     }
@@ -128,7 +124,7 @@ final class ResulstsViewController: ViewController<ResultsView> {
         if let skuId = ui.pager.currentItem?.sku.skuId {
             session.delegate?.aiuta(addToWishlist: skuId)
             if isWish {
-                session.delegate?.aiuta(eventOccurred: .results(pageId: page, event: .productAddToWishlist, productId: skuId))
+                session.delegate?.aiuta(eventOccurred: .results(event: .productAddToWishlist, page: page, product: ui.pager.currentItem?.sku))
             }
         }
         ui.pager.pages.forEach { page in
@@ -150,7 +146,7 @@ final class ResulstsViewController: ViewController<ResultsView> {
             switch result {
                 case let .succeeded(activity):
                     tracker.track(.share(.success(origin: .resultsScreen, count: 1, activity: activity, text: sku.additionalShareInfo)))
-                    session.delegate?.aiuta(eventOccurred: .results(pageId: page, event: .resultShared, productId: sku.skuId))
+                    session.delegate?.aiuta(eventOccurred: .results(event: .resultShared, page: page, product: sku))
                 case let .canceled(activity):
                     tracker.track(.share(.cancelled(origin: .resultsScreen, count: 1, activity: activity)))
                 case let .failed(activity, error):
@@ -171,7 +167,7 @@ final class ResulstsViewController: ViewController<ResultsView> {
                 switch result {
                     case let .succeeded(activity):
                         tracker.track(.share(.success(origin: .resultsFullScreen, count: 1, activity: activity, text: sku?.additionalShareInfo)))
-                        if let skuId = sku?.skuId { session.delegate?.aiuta(eventOccurred: .results(pageId: page, event: .resultShared, productId: skuId)) }
+                        session.delegate?.aiuta(eventOccurred: .results(event: .resultShared, page: page, product: sku))
                     case let .canceled(activity):
                         tracker.track(.share(.cancelled(origin: .resultsFullScreen, count: 1, activity: activity)))
                     case let .failed(activity, error):

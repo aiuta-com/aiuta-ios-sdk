@@ -18,14 +18,14 @@ extension Aiuta {
     /// A event occurring in the SDK in respond to user action or state changes
     /// that an host application can send to its own analytics.
     public enum Event {
-        case page(pageId: Page),
-             onboarding(event: Onboarding),
-             picker(pageId: Page, event: Picker),
-             tryOn(event: TryOn, message: String?),
-             results(pageId: Page, event: Results, productId: String),
-             feedback(event: Feedback),
-             history(event: History),
-             exit(pageId: Page)
+        case page(page: Page, product: Aiuta.Product?),
+             onboarding(event: Onboarding, page: Page, product: Aiuta.Product?),
+             picker(event: Picker, page: Page, product: Aiuta.Product?),
+             tryOn(event: TryOn, message: String?, page: Page, product: Aiuta.Product?),
+             results(event: Results, page: Page, product: Aiuta.Product?),
+             feedback(event: Feedback, page: Page, product: Aiuta.Product?),
+             history(event: History, page: Page, product: Aiuta.Product?),
+             exit(page: Page, product: Aiuta.Product?)
     }
 }
 
@@ -92,37 +92,65 @@ public extension Aiuta.Event {
         return "\(prefix)\(name)\(suffix)"
     }
 
-    func parameters() -> [String: Any?] {
-        var params = [String: Any?]()
+    func parameters() -> [String: Any] {
+        Dictionary(uniqueKeysWithValues: codingParameters().compactMap { k, v in
+            guard let v else { return nil }
+            return (k.rawValue, v)
+        })
+    }
+
+    fileprivate func codingParameters() -> [CodingKeys: Any?] {
         switch self {
-            case let .page(pageId):
-                params[pageId.codingKey.rawValue] = pageId.rawValue
-            case let .onboarding(event):
-                params[event.codingKey.rawValue] = event.rawValue
-            case let .picker(pageId, event):
-                params[event.codingKey.rawValue] = event.rawValue
-                params[pageId.codingKey.rawValue] = pageId.rawValue
-            case let .tryOn(event, message):
-                params[event.codingKey.rawValue] = event.rawValue
-                if let message { params[event.codingErrorMessageKey.rawValue] = message }
-            case let .results(pageId, event, productId):
-                params[event.codingKey.rawValue] = event.rawValue
-                params[pageId.codingKey.rawValue] = pageId.rawValue
-                params[event.codingPriductKey.rawValue] = productId
-            case let .feedback(event):
-                params[event.codingKey.rawValue] = event.rawValue
+            case let .page(page, product): return [
+                    .pageId: page.rawValue,
+                    .productId: product?.skuId,
+                ]
+            case let .onboarding(event, page, product): return [
+                    .event: event.rawValue,
+                    .pageId: page.rawValue,
+                    .productId: product?.skuId,
+                ]
+            case let .picker(event, page, product): return [
+                    .event: event.rawValue,
+                    .pageId: page.rawValue,
+                    .productId: product?.skuId,
+                ]
+            case let .tryOn(event, message, page, product): return [
+                    .event: event.rawValue,
+                    .pageId: page.rawValue,
+                    .productId: product?.skuId,
+                    .errorMessage: message,
+                ]
+            case let .results(event, page, product): return [
+                    .event: event.rawValue,
+                    .pageId: page.rawValue,
+                    .productId: product?.skuId,
+                ]
+            case let .feedback(event, page, product):
                 switch event {
-                    case .positive: break
-                    case let .negative(option, text):
-                        if let text { params[event.codingNegativeTextKey.rawValue] = text }
-                        if let option { params[event.codingNegativeOptionKey.rawValue] = option }
+                    case .positive: return [
+                            .event: event.rawValue,
+                            .pageId: page.rawValue,
+                            .productId: product?.skuId,
+                        ]
+                    case let .negative(option, text): return [
+                            .event: event.rawValue,
+                            .pageId: page.rawValue,
+                            .productId: product?.skuId,
+                            .negativeFeedbackText: text,
+                            .negativeFeedbackOptionIndex: option,
+                        ]
                 }
-            case let .history(event):
-                params[event.codingKey.rawValue] = event.rawValue
-            case let .exit(pageId):
-                params[pageId.codingKey.rawValue] = pageId.rawValue
+            case let .history(event, page, product): return [
+                    .event: event.rawValue,
+                    .pageId: page.rawValue,
+                    .productId: product?.skuId,
+                ]
+            case let .exit(page, product): return [
+                    .pageId: page.rawValue,
+                    .productId: product?.skuId,
+                ]
         }
-        return params
     }
 }
 
@@ -180,38 +208,6 @@ public extension Aiuta.Event.Feedback {
     }
 }
 
-public extension Aiuta.Event.Page {
-    var codingKey: Aiuta.Event.CodingKeys { .pageId }
-}
-
-public extension Aiuta.Event.Feedback {
-    var codingKey: Aiuta.Event.CodingKeys { .event }
-    var codingNegativeTextKey: Aiuta.Event.CodingKeys { .negativeFeedbackText }
-    var codingNegativeOptionKey: Aiuta.Event.CodingKeys { .negativeFeedbackOptionIndex }
-}
-
-public extension Aiuta.Event.History {
-    var codingKey: Aiuta.Event.CodingKeys { .event }
-}
-
-public extension Aiuta.Event.TryOn {
-    var codingKey: Aiuta.Event.CodingKeys { .event }
-    var codingErrorMessageKey: Aiuta.Event.CodingKeys { .errorMessage }
-}
-
-public extension Aiuta.Event.Picker {
-    var codingKey: Aiuta.Event.CodingKeys { .event }
-}
-
-public extension Aiuta.Event.Onboarding {
-    var codingKey: Aiuta.Event.CodingKeys { .event }
-}
-
-public extension Aiuta.Event.Results {
-    var codingKey: Aiuta.Event.CodingKeys { .event }
-    var codingPriductKey: Aiuta.Event.CodingKeys { .productId }
-}
-
 // MARK: - Custom Encodable implementation
 
 extension Aiuta.Event: Encodable {
@@ -225,32 +221,43 @@ extension Aiuta.Event: Encodable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(name(firstCapitalized: false), forKey: .type)
         switch self {
-            case let .page(pageId):
-                try container.encode(pageId.rawValue, forKey: pageId.codingKey)
-            case let .onboarding(event):
-                try container.encode(event.rawValue, forKey: event.codingKey)
-            case let .picker(pageId, event):
-                try container.encode(event.rawValue, forKey: event.codingKey)
-                try container.encode(pageId.rawValue, forKey: pageId.codingKey)
-            case let .tryOn(event, message):
-                try container.encode(event.rawValue, forKey: event.codingKey)
-                try container.encodeIfPresent(message, forKey: event.codingErrorMessageKey)
-            case let .results(pageId, event, productId):
-                try container.encode(event.rawValue, forKey: event.codingKey)
-                try container.encode(pageId.rawValue, forKey: pageId.codingKey)
-                try container.encode(productId, forKey: event.codingPriductKey)
-            case let .feedback(event):
-                try container.encode(event.rawValue, forKey: event.codingKey)
+            case let .page(page, product):
+                try container.encode(page.rawValue, forKey: .pageId)
+                try container.encode(product?.skuId ?? "", forKey: .productId)
+            case let .onboarding(event, page, product):
+                try container.encode(event.rawValue, forKey: .event)
+                try container.encode(page.rawValue, forKey: .pageId)
+                try container.encode(product?.skuId ?? "", forKey: .productId)
+            case let .picker(event, page, product):
+                try container.encode(event.rawValue, forKey: .event)
+                try container.encode(page.rawValue, forKey: .pageId)
+                try container.encode(product?.skuId ?? "", forKey: .productId)
+            case let .tryOn(event, message, page, product):
+                try container.encode(event.rawValue, forKey: .event)
+                try container.encodeIfPresent(message, forKey: .errorMessage)
+                try container.encode(page.rawValue, forKey: .pageId)
+                try container.encode(product?.skuId ?? "", forKey: .productId)
+            case let .results(event, page, product):
+                try container.encode(event.rawValue, forKey: .event)
+                try container.encode(page.rawValue, forKey: .pageId)
+                try container.encode(product?.skuId ?? "", forKey: .productId)
+            case let .feedback(event, page, product):
+                try container.encode(event.rawValue, forKey: .event)
+                try container.encode(page.rawValue, forKey: .pageId)
+                try container.encode(product?.skuId ?? "", forKey: .productId)
                 switch event {
                     case .positive: break
                     case let .negative(option, text):
-                        try container.encodeIfPresent(text, forKey: event.codingNegativeTextKey)
-                        try container.encodeIfPresent(option, forKey: event.codingNegativeOptionKey)
+                        try container.encodeIfPresent(text, forKey: .negativeFeedbackText)
+                        try container.encodeIfPresent(option, forKey: .negativeFeedbackOptionIndex)
                 }
-            case let .history(event):
-                try container.encode(event.rawValue, forKey: event.codingKey)
-            case let .exit(pageId):
-                try container.encode(pageId.rawValue, forKey: pageId.codingKey)
+            case let .history(event, page, product):
+                try container.encode(event.rawValue, forKey: .event)
+                try container.encode(page.rawValue, forKey: .pageId)
+                try container.encode(product?.skuId ?? "", forKey: .productId)
+            case let .exit(page, product):
+                try container.encode(page.rawValue, forKey: .pageId)
+                try container.encode(product?.skuId ?? "", forKey: .productId)
         }
     }
 }

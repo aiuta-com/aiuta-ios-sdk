@@ -27,11 +27,11 @@ final class SplashViewController: ViewController<SplashView> {
             replace(with: OnBoardingViewController(), backstack: self)
         }
 
-        session.delegate?.aiuta(eventOccurred: .page(pageId: page))
+        session.delegate?.aiuta(eventOccurred: .page(page: page, product: session.activeSku))
     }
 
     override func whenPopback() {
-        session.delegate?.aiuta(eventOccurred: .page(pageId: page))
+        session.delegate?.aiuta(eventOccurred: .page(page: page, product: session.activeSku))
     }
 }
 
