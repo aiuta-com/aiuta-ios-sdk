@@ -17,20 +17,15 @@ import UIKit
 
 struct SdkThemeImages: DesignSystemImages {
     static let resourceBundle: Bundle? = {
-        let bundleNames = [
-            "AiutaSdk",
-            "AiutaSdk_AiutaSdk",
-        ]
+        let bundleName = "AiutaSdk_AiutaSdk"
         let candidates = [
             Bundle.main.resourceURL,
             Bundle(for: SdkRegister.self).resourceURL,
         ]
 
         for candidate in candidates {
-            for bundleName in bundleNames {
-                let bundlePath = candidate?.appendingPathComponent("\(bundleName).bundle")
-                if let bundle = bundlePath.flatMap(Bundle.init(url:)) { return bundle }
-            }
+            let bundlePath = candidate?.appendingPathComponent("\(bundleName).bundle")
+            if let bundle = bundlePath.flatMap(Bundle.init(url:)) { return bundle }
         }
 
         return Bundle(for: SdkRegister.self)
