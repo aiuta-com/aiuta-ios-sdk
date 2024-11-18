@@ -41,9 +41,9 @@ extension Aiuta.Event {
              history
     }
 
-    public enum Onboarding: String, Encodable, RawRepresentable {
+    public enum Onboarding {
         case welcomeStartClicked,
-             consentGiven,
+             consentGiven(supplementary: [Aiuta.Consent]?),
              onboardingFinished
     }
 
@@ -72,7 +72,7 @@ extension Aiuta.Event {
              pickOtherPhoto
     }
 
-    public enum Feedback: RawRepresentable {
+    public enum Feedback {
         case positive,
              negative(option: Int?, text: String?)
     }
@@ -184,13 +184,13 @@ public extension Aiuta.Event {
     }
 }
 
-public extension Aiuta.Event.Feedback {
+extension Aiuta.Event.Feedback: RawRepresentable {
     private enum Raw: String {
         case positive,
              negative
     }
 
-    init?(rawValue: String) {
+    public init?(rawValue: String) {
         switch rawValue {
             case Raw.positive.rawValue: self = .positive
             case Raw.negative.rawValue: self = .negative(option: nil, text: nil)
@@ -198,11 +198,38 @@ public extension Aiuta.Event.Feedback {
         }
     }
 
-    var rawValue: String {
+    public var rawValue: String {
         let raw: Raw
         switch self {
             case .positive: raw = .positive
             case .negative: raw = .negative
+        }
+        return raw.rawValue
+    }
+}
+
+extension Aiuta.Event.Onboarding: RawRepresentable {
+    private enum Raw: String {
+        case welcomeStartClicked,
+             consentGiven,
+             onboardingFinished
+    }
+
+    public init?(rawValue: String) {
+        switch rawValue {
+            case Raw.welcomeStartClicked.rawValue: self = .welcomeStartClicked
+            case Raw.consentGiven.rawValue: self = .consentGiven(supplementary: nil)
+            case Raw.onboardingFinished.rawValue: self = .onboardingFinished
+            default: return nil
+        }
+    }
+
+    public var rawValue: String {
+        let raw: Raw
+        switch self {
+            case .welcomeStartClicked: raw = .welcomeStartClicked
+            case .consentGiven: raw = .consentGiven
+            case .onboardingFinished: raw = .onboardingFinished
         }
         return raw.rawValue
     }
@@ -214,7 +241,8 @@ extension Aiuta.Event: Encodable {
     public enum CodingKeys: String, CodingKey {
         case type, event, pageId, productId,
              negativeFeedbackOptionIndex, negativeFeedbackText,
-             errorMessage
+             errorMessage,
+             supplementaryConsents
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -228,6 +256,11 @@ extension Aiuta.Event: Encodable {
                 try container.encode(event.rawValue, forKey: .event)
                 try container.encode(page.rawValue, forKey: .pageId)
                 try container.encode(product?.skuId ?? "", forKey: .productId)
+                switch event {
+                    case .welcomeStartClicked, .onboardingFinished: break
+                    case let .consentGiven(supplementary):
+                        try container.encode(supplementary, forKey: .supplementaryConsents)
+                }
             case let .picker(event, page, product):
                 try container.encode(event.rawValue, forKey: .event)
                 try container.encode(page.rawValue, forKey: .pageId)
