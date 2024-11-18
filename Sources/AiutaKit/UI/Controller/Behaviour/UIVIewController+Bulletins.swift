@@ -15,6 +15,7 @@
 import MessageUI
 import Photos
 import PhotosUI
+import Resolver
 import SafariServices
 import UIKit
 
@@ -23,6 +24,7 @@ import UIKit
         bulletinManager.currentBulletin.isSome
     }
 
+    @available(iOS 13.0.0, *)
     @discardableResult
     func showBulletin<T>(_ content: ResultBulletin<T>, untilDismissed: Bool = false, overrideVc: UIViewController? = nil) async -> T {
         if let overrideVc {
@@ -54,10 +56,10 @@ import UIKit
         bulletinManager.showBulletin(content)
     }
 
-    func openUrl(_ str: String, anchor: ContentBase?, inApp: Bool = true) {
+    func openUrl(_ str: String, anchor: ContentBase? = nil, inApp: Bool = true) {
         guard let url = URL(string: str) else { return }
 
-        guard inApp, let anchor else {
+        guard inApp else {
             let app = UIApplication.shared
             if app.canOpenURL(url) { app.open(url) }
             return
@@ -65,40 +67,39 @@ import UIKit
 
         let config = SFSafariViewController.Configuration()
         let safari = SFSafariViewController(url: url, configuration: config)
-        safari.modalPresentationStyle = .popover
-        if let popover = safari.popoverPresentationController {
-            popover.sourceView = anchor.container
-            popover.canOverlapSourceViewRect = true
-            popover.permittedArrowDirections = .any
+        if #available(iOS 13.0, *) {
+            @Injected var ds: DesignSystem
+            safari.overrideUserInterfaceStyle = ds.color.style
+            safari.preferredControlTintColor = ds.color.accent
+            safari.preferredBarTintColor = ds.color.ground
         }
-
-        present(safari, animated: true)
+        popover(safari)
     }
 
-    func composeEmail(_ mailto: String, subject: String? = nil, body: String? = nil, anchor: ContentBase?) {
-        guard let anchor, MFMailComposeViewController.canSendMail() else {
+    func composeEmail(_ mailto: String, subject: String? = nil, body: String? = nil, anchor: ContentBase? = nil) {
+        guard MFMailComposeViewController.canSendMail() else {
             openUrl("mailto:\(mailto)", anchor: nil, inApp: false)
             return
         }
 
         let mail = MFMailComposeViewController()
-        mail.mailComposeDelegate = self
+        mail.mailComposeDelegate = MailComposeViewControllerDefaultDelegate.shared
         mail.setToRecipients([mailto])
         if let subject { mail.setSubject(subject) }
         if let body { mail.setMessageBody("\n\n---\n\(body)", isHTML: false) }
-        mail.modalPresentationStyle = .popover
-        if let popover = mail.popoverPresentationController {
-            popover.sourceView = anchor.container
-            popover.canOverlapSourceViewRect = true
-            popover.permittedArrowDirections = .any
-        }
 
-        present(mail, animated: true)
+        if #available(iOS 13.0, *) {
+            @Injected var ds: DesignSystem
+            mail.overrideUserInterfaceStyle = ds.color.style
+        }
+        popover(mail)
     }
 }
 
-@_spi(Aiuta) extension UIViewController: MFMailComposeViewControllerDelegate {
-    public func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+private final class MailComposeViewControllerDefaultDelegate: NSObject, MFMailComposeViewControllerDelegate {
+    static let shared = MailComposeViewControllerDefaultDelegate()
+
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
         controller.dismiss(animated: true)
     }
 }

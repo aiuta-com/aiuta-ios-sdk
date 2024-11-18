@@ -23,7 +23,10 @@ import UIKit
     public internal(set) var isPresenting: Bool = false
 
     public var hasStroke = true
+    public var strokeWidth: CGFloat = 36
+    public var strokeOffset: CGFloat = 6
     public var maxWidth: CGFloat?
+    public var cornerRadius: CGFloat = 24
     public var behaviour: Bulletin.Behaviour = .dynamic
     public var isDismissableByPan = true
     fileprivate var memColor: UIColor?
@@ -40,6 +43,7 @@ import UIKit
         true
     }
 
+    @available(iOS 13.0.0, *)
     public func dismiss() async {
         wantsDismiss.fire()
         await withCheckedContinuation { continuation in
@@ -79,14 +83,17 @@ final class PlainBulletinWrapper: Bulletin {
 
     override func setup() {
         view.backgroundColor = scrollContent.view.backgroundColor ?? scrollContent.memColor
+        blurStroke.color = view.backgroundColor ?? .clear
         scrollContent.memColor = view.backgroundColor
         scrollContent.view.backgroundColor = nil
         if !scrollContent.hasStroke {
             stroke.view.isHidden = true
             blurStroke.view.isHidden = true
-            blurBody.view.isHidden = true
         }
         maxWidth = scrollContent.maxWidth
+        cornerRadius = scrollContent.cornerRadius
+        strokeWidth = scrollContent.strokeWidth
+        strokeOffset = scrollContent.strokeOffset
         behaviour = scrollContent.behaviour
         isDismissableByPan = scrollContent.isDismissableByPan
     }

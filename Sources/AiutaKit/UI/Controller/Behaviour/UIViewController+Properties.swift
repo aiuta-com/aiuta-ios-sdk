@@ -108,4 +108,8 @@ import UIKit
         }
         return bulletinManager!
     }
+    
+    public var hasBulletin: Bool {
+        bulletinManager.currentBulletin.isSome
+    }
 }

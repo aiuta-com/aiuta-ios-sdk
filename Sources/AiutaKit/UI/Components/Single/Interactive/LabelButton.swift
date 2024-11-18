@@ -19,7 +19,10 @@ import UIKit
     public var onTouchUpInside: Signal<Void> { view.onTouchUpInside }
     public var onLongTouch: Signal<Void> { view.onLongTouch }
 
-    public let label = Label()
+    public let label = Label { it, _ in
+        it.isLineHeightMultipleEnabled = false
+    }
+
     public var labelInsets = UIEdgeInsets(horizontal: 16, vertical: 9)
 
     public var text: String? {
@@ -48,7 +51,11 @@ import UIKit
         set { view.backgroundColor = newValue }
     }
 
+    public var customLayout = false
+
     override func sizeToFit() {
+        guard !customLayout else { return }
+
         label.appearance.make { make in
             make.sizeToFit()
         }
@@ -62,9 +69,9 @@ import UIKit
     }
 
     override open func updateLayout() {
+        guard !customLayout else { return }
         label.layout.make { make in
-            make.centerX = 0
-            make.centerY = -1
+            make.center = .zero
         }
     }
 

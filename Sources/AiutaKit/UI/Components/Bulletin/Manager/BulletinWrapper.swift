@@ -70,11 +70,14 @@ final class BulletinWrapper: Plane {
                     removeFromParent()
                     contentView.didDismiss.fire()
                     contentView.appearance.unfreeze()
+                } else {
+                    // This hack will prevent unwanted deafult scroll behaviour on top...
+                    contentView.scrollView.view.setContentOffset(.init(x: 0, y: contentView.scrollView.view.verticalOffsetForTop + 1), animated: false)
                 }
             }
 
             if isPreseting {
-                animations.animate(dampingRatio: 0.75, time: 0.6, delay: .sixthOfSecond, changes: animation, complete: finalization)
+                animations.animate(dampingRatio: 0.8, time: 0.5, changes: animation, complete: finalization)
             } else {
                 contentView.appearance.freeze()
                 animations.animate(time: .quarterOfSecond, changes: animation, complete: finalization)
@@ -103,6 +106,8 @@ final class BulletinWrapper: Plane {
     }
 
     override func setup() {
+        contentView.scrollView.isSystemBehaviorOnTopEnabled = false
+
         contentView.scrollView.didChangeOffset.subscribe(with: self) { [unowned self] offset, delta in
             guard isPreseting else { return }
             if contentView.behaviour == .floating {
@@ -130,7 +135,6 @@ final class BulletinWrapper: Plane {
         }
 
         floatingContainer.addContent(contentView)
-        contentView.blurBody.sendBelow(contentView.scrollView)
     }
 
     override func invalidateLayout() {
@@ -152,7 +156,7 @@ final class BulletinWrapper: Plane {
         }
 
         contentView.layout.make { make in
-            make.radius = isFloating ? 32 : 24
+            make.radius = isFloating ? contentView.cornerRadius * 1.5 : contentView.cornerRadius
         }
 
         layout.make { make in
@@ -192,7 +196,6 @@ final class BulletinWrapper: Plane {
         }
 
         contentView.scrollOffset = scrollOffset
-        floatingContainer.view.opacity = appearingPercent
     }
 
     required init() {

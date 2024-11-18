@@ -13,15 +13,18 @@
 // limitations under the License.
 
 import LinkPresentation
+import Resolver
 import UIKit
 import UniformTypeIdentifiers
 
 @_spi(Aiuta) public extension UIViewController {
+    @available(iOS 13.0.0, *)
     @discardableResult
     func share(image: UIImage, title: String? = nil, additions: [Any] = []) async -> ShareResult {
         await share(images: [image], title: title, additions: additions)
     }
 
+    @available(iOS 13.0.0, *)
     @discardableResult
     func share(images: [UIImage], title: String? = nil, additions: [Any] = []) async -> ShareResult {
         var isWaitingForResult = true
@@ -41,11 +44,15 @@ import UniformTypeIdentifiers
         let activityViewController = UIActivityViewController(
             activityItems: [filePath],
             applicationActivities: nil)
-        activityViewController.popoverPresentationController?.sourceView = view
         activityViewController.completionWithItemsHandler = { _, _, _, _ in
             try? FileManager.default.removeItem(at: filePath)
         }
-        present(activityViewController, animated: true, completion: nil)
+        if #available(iOS 13.0, *) {
+            @Injected var ds: DesignSystem
+            activityViewController.overrideUserInterfaceStyle = ds.color.style
+            activityViewController.view.tintColor = ds.color.accent
+        }
+        popover(activityViewController, withMediumDetent: true)
     }
 
     func share(image: UIImage, title: String? = nil, additions: [Any] = [], completion: ((ShareResult) -> Void)? = nil) {
@@ -54,17 +61,40 @@ import UniformTypeIdentifiers
 
     func share(images: [UIImage], title: String? = nil, additions: [Any] = [], completion: ((ShareResult) -> Void)? = nil) {
         trace(i: "<", "Sharing")
+        var window: UIWindow?
+        var interfaceStyle: UIUserInterfaceStyle?
         let activityViewController = UIActivityViewController(
             activityItems: images.compactMap {
                 ShareableImage($0, title: title)
             } + additions.compactMap { ShareableAddition(some: $0) }, applicationActivities: nil)
-        activityViewController.popoverPresentationController?.sourceView = view
-        activityViewController.completionWithItemsHandler = { activityType, completed, _, activityError in
+        if #available(iOS 13.0, *) {
+            @Injected var ds: DesignSystem
+            activityViewController.overrideUserInterfaceStyle = ds.color.style
+            activityViewController.view.tintColor = ds.color.accent
+            window = UIApplication.shared.windows.first
+            interfaceStyle = window?.overrideUserInterfaceStyle
+            window?.overrideUserInterfaceStyle = ds.color.style
+        }
+        var shareWall: ShareWall?
+        if UIViewController.isStackingAllowed {
+            popover(activityViewController, withMediumDetent: true)
+        } else {
+            shareWall = ShareWall()
+            shareWall?.modalPresentationStyle = .overFullScreen
+            present(shareWall!, animated: false)
+            shareWall!.popover(activityViewController, withMediumDetent: true)
+        }
+        activityViewController.completionWithItemsHandler = { [weak shareWall] activityType, completed, _, activityError in
             let result = ShareResult(activity: activityType?.rawValue, completed: completed, error: activityError)
+            if #available(iOS 13.0, *), let interfaceStyle { window?.overrideUserInterfaceStyle = interfaceStyle }
+            shareWall?.dismiss(animated: false)
             trace(i: "<", result)
             completion?(result)
         }
-        present(activityViewController, animated: true, completion: nil)
+    }
+
+    private final class ShareWall: UIViewController {
+        override func loadView() { view = UIView() }
     }
 
     /** Alternative way

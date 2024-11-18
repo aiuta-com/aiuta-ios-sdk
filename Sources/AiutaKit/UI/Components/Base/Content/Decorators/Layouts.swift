@@ -179,8 +179,8 @@ import UIKit
         if let radius = maker.radius {
             view.cornerRadius = radius
             if #available(iOS 13.0, *) {
-                if let curve = maker.curve {
-                    view.cornerCurve = curve
+                if let curve = maker.continuousCurve {
+                    view.cornerCurve = curve ? .continuous : .circular
                 } else if rect.size.width == 2 * radius && rect.size.height == 2 * radius {
                     view.cornerCurve = .circular
                 } else {
@@ -435,7 +435,7 @@ private let sharedAdjustments = SafeArea.Adjustments()
     public var scale: CGFloat? = nil
     public var rotation: CGFloat? = nil
     public var radius: CGFloat? = nil
-    public var curve: CALayerCornerCurve? = nil
+    public var continuousCurve: Bool? = nil
 
     private var x: CGFloat = 0
     private var y: CGFloat = 0

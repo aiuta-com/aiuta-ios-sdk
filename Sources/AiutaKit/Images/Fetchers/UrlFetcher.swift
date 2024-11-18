@@ -20,6 +20,7 @@ import UIKit
     private var downloadTask: DownloadTask?
     private let fetcher = KingfisherManager.shared
     private let breadcrumbs: Breadcrumbs
+    private let maxRetry = 3
 
     public init(_ string: String, quality: ImageQuality, isRounded: Bool = false, breadcrumbs: Breadcrumbs) {
         self.breadcrumbs = breadcrumbs
@@ -40,9 +41,9 @@ import UIKit
 }
 
 private extension UrlFetcher {
-    func load(_ url: URL, quality: ImageQuality, isRounded: Bool = false) {
+    func load(_ url: URL, quality: ImageQuality, isRounded: Bool = false, retry: Int = 0) {
         var options: KingfisherOptionsInfo = [
-            .retryStrategy(DelayRetryStrategy(maxRetryCount: 3, retryInterval: .accumulated(1))),
+            .retryStrategy(DelayRetryStrategy(maxRetryCount: retry, retryInterval: .accumulated(1))),
             .processor(DownsamplingImageProcessor(size: .init(square: imageTraits.largestSize(for: quality)))),
             .backgroundDecode,
         ]
@@ -52,14 +53,23 @@ private extension UrlFetcher {
         }
 
         downloadTask = fetcher.retrieveImage(with: url, options: options) { [weak self] result in
-            self?.downloadTask = nil
-            switch result {
-                case let .success(result):
-                    self?.onImage.fire(result.image)
-                case let .failure(error):
-                    self?.breadcrumbs.fire(error, label: "Failed to fetch image from url")
-                    self?.onImage.fire(nil)
-            }
+            self?.didLoad(url, quality: quality, isRounded: isRounded, retry: retry, result: result)
+        }
+    }
+
+    func didLoad(_ url: URL, quality: ImageQuality, isRounded: Bool, retry: Int, result: Result<RetrieveImageResult, KingfisherError>) {
+        downloadTask = nil
+        switch result {
+            case let .success(result):
+                onImage.fire(result.image)
+            case let .failure(error):
+                if retry < maxRetry {
+                    onError.fire()
+                    load(url, quality: quality, isRounded: isRounded, retry: maxRetry)
+                } else {
+                    breadcrumbs.fire(error, label: "Failed to fetch image from url")
+                    onImage.fire(nil)
+                }
         }
     }
 }

@@ -15,7 +15,9 @@
 import UIKit
 
 @_spi(Aiuta) open class Image: Content<PlainImageView> {
-    public let gotImage = Signal<Void>()
+    public let gotImage = Signal<Void>(retainLastData: true)
+    public let onError = Signal<Void>(retainLastData: true)
+    public let onChange = Signal<Void>(retainLastData: true)
 
     public var image: UIImage? {
         get { view.image }
@@ -38,6 +40,10 @@ import UIKit
     public var contentMode: UIView.ContentMode {
         get { view.contentMode }
         set { view.contentMode = newValue }
+    }
+
+    public var hasImage: Bool {
+        image.isSome
     }
 
     public var isAutoSize = true

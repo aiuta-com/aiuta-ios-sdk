@@ -16,15 +16,23 @@ import Foundation
 import Resolver
 
 @_spi(Aiuta) public enum AiutaKit {
-    private static let scope = ResolverScopeCache()
+    private static let dsScope = ResolverScopeCache()
+    private static let heroScope = ResolverScopeCache()
 
     public static func register(ds: @escaping () -> DesignSystem,
-                                heroic: @escaping () -> Heroic,
+                                heroic: (() -> Heroic)? = nil,
                                 imageTraits: (() -> ImageTraits)? = nil) {
-        scope.reset()
+        dsScope.reset()
 
-        Resolver.register(factory: ds).scope(scope)
-        Resolver.register(factory: heroic).scope(scope)
-        if let imageTraits { Resolver.register(factory: imageTraits).scope(scope) }
+        Resolver.register(factory: ds).scope(dsScope)
+
+        if let heroic {
+            heroScope.reset()
+            Resolver.register(factory: heroic).scope(heroScope)
+        } else if Resolver.optional(Heroic.self).isNil {
+            Resolver.register { NoHeroes() }.implements(Heroic.self).scope(heroScope)
+        }
+
+        if let imageTraits { Resolver.register(factory: imageTraits).scope(dsScope) }
     }
 }

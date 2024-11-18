@@ -58,6 +58,7 @@ import UIKit
             guard loader != newValue else { return }
             loader?.onImage.cancelSubscription(for: self)
             setAssociatedProperty(&Property.loader, newValue: newValue)
+            onChange.fire()
 
             @Injected var heroic: Heroic
 
@@ -81,6 +82,10 @@ import UIKit
                 image = newImage
                 guard !heroic.isTransitioning, !layout.visibleBounds.size.isAnyZero else { return }
                 animations.transition(.transitionCrossDissolve, duration: .thirdOfSecond)
+            }
+
+            newValue?.onError.subscribe(with: self) { [unowned self] in
+                onError.fire()
             }
 
             newValue?.load(desiredQuality, breadcrumbs: breadcrumbs.fork())

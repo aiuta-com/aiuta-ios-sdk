@@ -21,8 +21,9 @@ import UIKit
         get { stroke.color }
         set { stroke.color = newValue }
     }
-    
+
     public var isAutoSize = false
+    public var customLayout = false
 
     public var cornerRadius: CGFloat {
         get { stroke.cornerRadius }
@@ -59,9 +60,11 @@ import UIKit
                 make.size = layout.boundary.size
             }
         }
-        stroke.layout.make { make in
-            make.size = layout.size
-            make.radius = cornerRadius
+        if !customLayout {
+            stroke.layout.make { make in
+                make.size = layout.size
+                make.radius = cornerRadius
+            }
         }
     }
 

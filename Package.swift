@@ -22,7 +22,6 @@ let package = Package(
         .package(url: "https://github.com/Alamofire/Alamofire.git", from: "5.0.0"),
         .package(url: "https://github.com/onevcat/Kingfisher.git", from: "8.0.0"),
         .package(url: "https://github.com/hmlongco/Resolver.git", from: "1.0.0"),
-        .package(url: "https://github.com/HeroTransitions/Hero.git", from: "1.6.2")
     ],
     targets: [
         .target(
@@ -31,7 +30,8 @@ let package = Package(
                 "Alamofire",
                 "Kingfisher",
                 "Resolver",
-            ]
+            ],
+            resources: [.process("Resources")]
         ),
         .target(
             name: "AiutaSdk",
@@ -40,7 +40,6 @@ let package = Package(
                 "Alamofire",
                 "Kingfisher",
                 "Resolver",
-                "Hero"
             ],
             resources: [.process("Resources")]
         )

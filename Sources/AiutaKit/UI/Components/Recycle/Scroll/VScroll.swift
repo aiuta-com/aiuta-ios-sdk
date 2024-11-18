@@ -74,6 +74,11 @@ import UIKit
         set { view.tapThroughTopInset = newValue }
     }
 
+    public var isSystemBehaviorOnTopEnabled: Bool {
+        get { proxy.isSystemBehaviorOnTopEnabled }
+        set { proxy.isSystemBehaviorOnTopEnabled = newValue }
+    }
+
     public var isLayoutEnabled = true
     public var flexibleWidth = true
     public var customLayout = false
@@ -124,6 +129,12 @@ import UIKit
 
     public func scrollToBottom(animated: Bool = true) {
         view.setContentOffset(.init(x: 0, y: view.verticalOffsetForBottom), animated: animated)
+    }
+
+    public func keepOffset(_ changes: () -> Void) {
+        let offsetY = contentOffset.y + contentInset.top
+        changes()
+        contentOffset = .init(x: 0, y: offsetY - contentInset.top)
     }
 
     public func update() {
@@ -200,9 +211,11 @@ private final class ScrollDelegate: NSObject, UIScrollViewDelegate {
     let didEndDragging = Signal<(velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>)>()
     let didEndScrollingAnimation = Signal<Void>()
 
+    var isSystemBehaviorOnTopEnabled = true
+    var isTouching: Bool = false
+
     private var prevOffset: CGFloat = 0
     private var startOffset: CGFloat = 0
-    var isTouching: Bool = false
 
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         nil
@@ -226,7 +239,12 @@ private final class ScrollDelegate: NSObject, UIScrollViewDelegate {
     }
 
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        startOffset = scrollView.contentOffset.y + scrollView.contentInset.top
+        let offset = scrollView.contentOffset
+        if !isSystemBehaviorOnTopEnabled {
+            // This hack will prevent unwanted deafult scroll behaviour on top...
+            scrollView.setContentOffset(.init(x: offset.x, y: offset.y + 1), animated: false)
+        }
+        startOffset = offset.y + scrollView.contentInset.top
         isTouching = true
         willBeginDragging.fire()
     }

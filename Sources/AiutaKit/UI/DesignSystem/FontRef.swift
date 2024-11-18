@@ -20,9 +20,10 @@ import UIKit
     case light
     case bold
     case semibold
+    case heavy
     case blackOblique
 
-    fileprivate var descriptor: String {
+    public var descriptor: String {
         rawValue.firstCapitalized
     }
 }
@@ -38,10 +39,6 @@ import UIKit
     var underline: NSUnderlineStyle? { get }
     var strikethrough: NSUnderlineStyle? { get }
 
-    func changing(size: CGFloat) -> Self
-    func changing(color: UIColor) -> Self
-    func changing(color: Int64) -> Self
-    
     func uiFont() -> UIFont?
 }
 

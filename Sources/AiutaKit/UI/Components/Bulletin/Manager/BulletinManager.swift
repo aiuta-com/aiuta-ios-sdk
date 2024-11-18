@@ -17,9 +17,8 @@ import UIKit
 final class BulletinManager: PlainButton {
     weak var vc: UIViewController?
 
-    let blur = Blur { it, _ in
-        it.style = .dark
-        it.intensity = 0.75
+    let blur = Stroke { it, _ in
+        it.color = .black.withAlphaComponent(0.5)
     }
 
     private(set) var currentBulletin: BulletinWrapper? {
@@ -58,7 +57,7 @@ final class BulletinManager: PlainButton {
 
     override func setup() {
         view.pressedOpacity = nil
-        
+
         onTouchDown.subscribe(with: self) { [unowned self] in
             guard canDismissByMisstap,
                   let current = currentBulletin, current.canDismissByMisstap
@@ -68,7 +67,7 @@ final class BulletinManager: PlainButton {
             canDismissByMisspan = false
             current.contentView.dismiss()
         }
-        
+
         onTouchUpInside.subscribe(with: self) { [unowned self] in
             canDismissByMisspan = true
         }
@@ -125,9 +124,11 @@ private extension BulletinManager {
         ui.addContent(self)
         updateLayoutInternal()
         blur.animations.opacityTo(1)
+        BulletinWall.current?.increase()
     }
 
     func hideSelf() {
+        BulletinWall.current?.reduce()
         blur.animations.opacityTo(0) { [self] in
             guard currentBulletin.isNil else {
                 blur.animations.opacityTo(1)

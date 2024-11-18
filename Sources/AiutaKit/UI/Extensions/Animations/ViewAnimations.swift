@@ -40,6 +40,7 @@ import UIKit
         rotationAnimation.toValue = Double.pi * 2
         rotationAnimation.duration = duration
         rotationAnimation.repeatCount = .infinity
+        rotationAnimation.isRemovedOnCompletion = false
         layer.add(rotationAnimation, forKey: "rotate")
     }
 }

@@ -2,12 +2,6 @@
 
 This repo distributes the [Aiuta Digital Try On](https://developer.aiuta.com/products/digital-try-on/Documentation) library via Swift Package Manager.
 
-## Requirements
-
-- iOS 13.0+
-- Swift 5.9+
-
-
 ## Installation
 
 ### Swift Package Manager
@@ -16,7 +10,7 @@ Add AiutaSdk as a `dependencies` value of your `Package.swift`.
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/aiuta-com/aiuta-ios-sdk.git", from: "2.0.0")
+    .package(url: "https://github.com/aiuta-com/aiuta-ios-sdk.git", from: "1.1.7")
 ]
 ```
 
@@ -140,18 +134,19 @@ If not specified, the first preferred system language will be used if it is supp
 import AiutaSdk
 
 // Setup the Aiuta SDK with your API key and custom configuration
-var configuration = Aiuta.Configuration()
-configuration.appearance.brandColor = .red
-configuration.appearance.accentColor = .green
-configuration.appearance.navigationBar.logoImage = UIImage(named: "your_logo")
-configuration.appearance.language = .English
-configuration.appearance.legalDisclaimerUrl = URL(string: "https://aiuta.com/legal/terms-of-service.html")
-
-configuration.behavior.photoSelectionLimit = 4
-configuration.behavior.watermark.image = UIImage(named: "your_watermark")
-
-Aiuta.setup(apiKey: "your_api_key", configuration: configuration)
-
+if #available(iOS 13.0.0, *) {
+    var configuration = Aiuta.Configuration()
+    configuration.appearance.brandColor = .red
+    configuration.appearance.accentColor = .green
+    configuration.appearance.navigationBar.logoImage = UIImage(named: "your_logo")
+    configuration.appearance.language = .English
+    configuration.appearance.legalDisclaimerUrl = URL(string: "https://aiuta.com/legal/terms-of-service.html")
+    
+    configuration.behavior.photoSelectionLimit = 4
+    configuration.behavior.watermark.image = UIImage(named: "your_watermark")
+    
+    Aiuta.setup(apiKey: "your_api_key", configuration: configuration)
+}
 
 // Define a delegate for handling Aiuta SDK callbacks
 class MyAiutaDelegate: AiutaSdkDelegate {
@@ -172,7 +167,6 @@ class MyAiutaDelegate: AiutaSdkDelegate {
     }
 }
 
-
 // Use Aiuta's try-on feature in your view controller
 class MyViewController: UIViewController {
     let delegate = MyAiutaDelegate()
@@ -180,8 +174,10 @@ class MyViewController: UIViewController {
     func tryOnFeature() {
         let sku = Aiuta.SkuInfo(skuId: "123", skuCatalog: "catalog1", imageUrls: ["url1", "url2"], 
                                 localizedTitle: "Title", localizedBrand: "Brand", localizedPrice: "$12.99"
-                                additionalShareInfo: "Love this look? Get more on aiuta.com!")        
-        Aiuta.tryOn(sku: sku, in: self, delegate: delegate)
+                                additionalShareInfo: "Love this look? Get more on aiuta.com!")
+        if #available(iOS 13.0.0, *) {
+            Aiuta.tryOn(sku: sku, in: self, delegate: delegate)
+        }
     }
 }
 ```

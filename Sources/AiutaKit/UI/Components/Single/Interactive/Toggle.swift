@@ -27,6 +27,21 @@ import UIKit
         }
     }
 
+    public func on() {
+        view.setOn(true, animated: true)
+        didChange.fire()
+    }
+
+    public func off() {
+        view.setOn(false, animated: true)
+        didChange.fire()
+    }
+
+    public func toggle() {
+        view.setOn(!view.isOn, animated: true)
+        didChange.fire()
+    }
+
     override func setupInternal() {
         view.tintColor = 0x666666FF.uiColor
         view.onTintColor = ds.color.accent

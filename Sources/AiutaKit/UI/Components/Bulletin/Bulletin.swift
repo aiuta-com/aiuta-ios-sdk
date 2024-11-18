@@ -33,22 +33,14 @@ import UIKit
     public var behaviour: Behaviour = .dynamic
     public var isDismissableByPan = true
 
-    public let blurStroke = Blur { it, _ in
-        it.style = .extraLight
-        it.appearance.make { make in
-            make.isUserInteractionEnabled = false
-        }
-    }
-
-    public let blurBody = Blur { it, _ in
-        it.style = .extraLight
+    public let blurStroke = Stroke { it, _ in
         it.appearance.make { make in
             make.isUserInteractionEnabled = false
         }
     }
 
     public let stroke = Stroke { it, _ in
-        it.color = 0xD9D9D9FF.uiColor
+        it.color = 0xCCCCCCFF.uiColor
     }
 
     public func dismiss() {
@@ -72,12 +64,18 @@ import UIKit
     }
 
     public var blurHeight: CGFloat = 24
+    public var cornerRadius: CGFloat = 24
+    public var strokeWidth: CGFloat = 36
+    public var strokeOffset: CGFloat = 6
+
+    override open func setup() {
+        blurStroke.color = view.backgroundColor ?? .clear
+    }
 
     override func updateLayoutInternal() {
         if behaviour == .floating {
             stroke.view.isHidden = true
             blurStroke.view.isHidden = true
-            blurBody.view.isHidden = true
         }
 
         blurStroke.layout.make { make in
@@ -85,17 +83,11 @@ import UIKit
             make.height = blurHeight
         }
 
-        blurBody.layout.make { make in
-            make.width = layout.width
-            make.top = blurStroke.layout.bottomPin
-            make.bottom = 0
-        }
-
         stroke.layout.make { make in
-            make.size = .init(width: 30, height: 3)
+            make.size = .init(width: strokeWidth, height: 3)
             make.radius = 1.5
             make.centerX = 0
-            make.top = 8
+            make.top = strokeOffset
         }
 
         scrollView.layout.make { make in

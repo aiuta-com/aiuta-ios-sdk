@@ -17,6 +17,7 @@ import UIKit
 
 @_spi(Aiuta) open class BaseFetcher: ImageFetcher {
     public let onImage = Signal<UIImage?>(retainLastData: true)
+    public let onError = Signal<Void>(retainLastData: true)
 
     @OptionalInjected
     private var explicitTraits: ImageTraits?

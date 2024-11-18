@@ -16,8 +16,10 @@ import UIKit
 
 @_spi(Aiuta) public protocol ImageFetcher: AnyObject {
     var onImage: Signal<UIImage?> { get }
+    var onError: Signal<Void> { get }
 }
 
+@available(iOS 13.0.0, *)
 @_spi(Aiuta) public extension ImageFetcher {
     @MainActor func fetch() async throws -> UIImage {
         try await withCheckedThrowingContinuation { continuation in

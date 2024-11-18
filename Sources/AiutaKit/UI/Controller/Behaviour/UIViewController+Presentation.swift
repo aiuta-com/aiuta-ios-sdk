@@ -17,6 +17,8 @@ import Resolver
 import UIKit
 
 @_spi(Aiuta) public extension UIViewController {
+    static var isStackingAllowed: Bool = true
+
     func replace(with viewController: UIViewController, backstack: UIViewController? = nil) {
         if let bctrl = viewController as? BulletinController {
             bctrl.presenter = self
@@ -51,21 +53,27 @@ import UIKit
         }
     }
 
-    func popover(_ viewController: UIViewController & UIPopoverPresentationControllerDelegate, attachedTo sender: ContentBase? = nil) {
-        viewController.modalPresentationStyle = .popover
-        viewController.modalTransitionStyle = .coverVertical
-        if let pres = viewController.presentationController {
-            pres.delegate = viewController
-        }
-        present(viewController, animated: true)
-        if let pop = viewController.popoverPresentationController {
-            pop.delegate = viewController
-            pop.sourceView = sender?.container
-            pop.sourceRect = sender?.container.bounds ?? .init(square: 100)
+    func replace(with viewController: UIViewController, crossFadeDuration: AsyncDelayTime?) {
+        if let crossFadeDuration, let navigationController {
+            var vcs = navigationController.children
+            if !vcs.isEmpty { vcs.removeLast() }
+            vcs.append(viewController)
+            let transition: CATransition = CATransition()
+            transition.duration = crossFadeDuration.seconds
+            transition.type = CATransitionType.fade
+            navigationController.view.layer.add(transition, forKey: nil)
+            navigationController.setViewControllers(vcs, animated: false)
+        } else {
+            replace(with: viewController, backstack: nil)
         }
     }
 
-    func present(_ viewController: UIViewController, attachedTo sender: ContentBase? = nil) {
+    func popover(_ viewController: UIViewController, withMediumDetent: Bool = false) {
+        viewController.applyPrefferedSheetPresentationStyle(withMediumDetent: withMediumDetent)
+        present(viewController, animated: true)
+    }
+
+    func present(_ viewController: UIViewController) { // , attachedTo sender: ContentBase? = nil) {
         if let bctrl = viewController as? BulletinController {
             bctrl.presenter = self
             if let bulletin = bctrl.bulletin {
@@ -81,15 +89,15 @@ import UIKit
 
         heroic.copyAnimation(from: viewController, to: navigationController)
 
-        if viewController is UIImagePickerController {
-            viewController.modalPresentationStyle = .popover
-        }
-
-        if let popover = viewController.popoverPresentationController {
-            popover.sourceView = sender?.container ?? view
-            popover.canOverlapSourceViewRect = true
-            popover.permittedArrowDirections = .any
-        }
+//        if viewController is UIImagePickerController {
+//            viewController.modalPresentationStyle = .popover
+//        }
+//
+//        if let popover = viewController.popoverPresentationController {
+//            popover.sourceView = sender?.container ?? view
+//            popover.canOverlapSourceViewRect = true
+//            popover.permittedArrowDirections = .any
+//        }
 
         view.layer.pauseAnimations()
         let child = childViewController
@@ -184,6 +192,24 @@ private extension UIViewController {
             whenCancelDismiss()
         } else {
             whenDettached()
+        }
+    }
+}
+
+public extension UIViewController {
+    func applyPrefferedSheetPresentationStyle(withMediumDetent: Bool = false) {
+        modalTransitionStyle = .coverVertical
+        modalPresentationStyle = .pageSheet
+        applyNonStackDetendsIfNeeded(withMediumDetent: withMediumDetent)
+    }
+
+    func applyNonStackDetendsIfNeeded(withMediumDetent: Bool = false) {
+        if #available(iOS 16.0, *), !UIViewController.isStackingAllowed {
+            let nonStack = UISheetPresentationController.Detent.Identifier("nonStackDetent")
+            let nonStackDetent = UISheetPresentationController.Detent.custom(identifier: nonStack) { context in
+                context.maximumDetentValue - 1 // this will make the view controllers not stack up
+            }
+            sheetPresentationController?.detents = withMediumDetent ? [.medium(), nonStackDetent] : [nonStackDetent]
         }
     }
 }

@@ -15,6 +15,7 @@
 import Alamofire
 import Foundation
 
+@available(iOS 13.0.0, *)
 @_spi(Aiuta) public actor RestService {
     private let provider: ApiProvider
     private let debugger: ApiDebugger?
@@ -22,6 +23,7 @@ import Foundation
     private let responseDecoder = JSONDecoder()
     private let parameterEncoder = JSONParameterEncoder()
     private let requestModifier: Session.RequestModifier
+    private let uploadsModifier: Session.RequestModifier
 
     private let codeOk = 200
     private let codeNotModified = 304
@@ -63,9 +65,15 @@ import Foundation
             urlRequest.cachePolicy = .reloadIgnoringLocalCacheData
             urlRequest.timeoutInterval = 10
         }
+
+        uploadsModifier = { urlRequest in
+            urlRequest.cachePolicy = .reloadIgnoringLocalCacheData
+            urlRequest.timeoutInterval = 60
+        }
     }
 }
 
+@available(iOS 13.0.0, *)
 private extension RestService {
     @MainActor func sendRequest<Request: ApiRequest & Encodable, Response: Decodable>(_ request: Request,
                                                                                       debugger debugOperation: ApiDebuggerOperation?) async throws -> ApiResponse<Response> {
@@ -78,7 +86,7 @@ private extension RestService {
         var shortUrl: String?
         var requestBody: String?
         var requestDebugger: ApiDebuggerRequest?
-        let isDebug = debugger?.isEnabled == true
+        let isDebug = await debugger?.isEnabled == true
 
         if isDebug {
             shortUrl = try await shortenUrl(url)
@@ -91,19 +99,19 @@ private extension RestService {
 
         switch request.type {
             case .plain:
-                if isDebug { trace(i: "▸", request.method.rawValue, shortUrl) }
+                if isDebug { trace(i: "▸", request.method.rawValue, shortUrl, headers.keys) }
                 dataRequest = session.request(url, method: request.method,
                                               headers: headers, requestModifier: requestModifier)
             case .json:
-                if isDebug { trace(i: "▷", request.method.rawValue, shortUrl, requestBody) }
+                if isDebug { trace(i: "▷", request.method.rawValue, shortUrl, headers.keys, requestBody ?? "") }
                 dataRequest = session.request(url, method: request.method,
                                               parameters: parameters, encoder: parameterEncoder,
                                               headers: headers, requestModifier: requestModifier)
             case .upload:
-                if isDebug { trace(i: "▸", request.method.rawValue, shortUrl) }
+                if isDebug { trace(i: "▸", request.method.rawValue, shortUrl, headers.keys) }
                 dataRequest = session.upload(multipartFormData: { request.multipartFormData($0) },
                                              to: url, method: request.method,
-                                             headers: headers, requestModifier: requestModifier)
+                                             headers: headers, requestModifier: uploadsModifier)
         }
 
         /// response
@@ -113,7 +121,7 @@ private extension RestService {
 
         if statusCode == codeNotModified {
             if isDebug { trace(i: "◁", "Response",
-                               "\n\n ▷", request.method.rawValue, shortUrl, requestBody,
+                               "\n\n ▷", request.method.rawValue, shortUrl, headers.keys, requestBody ?? "",
                                "\n ◁", statusCode,
                                "\n") }
 
@@ -125,19 +133,19 @@ private extension RestService {
             switch request.type {
                 case .plain:
                     trace(i: "◂", "PLAIN Response",
-                          "\n\n ▸", request.method.rawValue, shortUrl,
+                          "\n\n ▸", request.method.rawValue, shortUrl, headers.keys,
                           "\n ◂", statusCode, shortenString(rawResponse.value) ?? rawResponse.error,
                           "\n")
 
                 case .json:
                     trace(i: "◁", "JSON Response",
-                          "\n\n ▷", request.method.rawValue, shortUrl, requestBody,
-                          "\n\n ◁", statusCode, shortenString(rawResponse.value) ?? rawResponse.error,
+                          "\n\n ▷", request.method.rawValue, shortUrl, headers.keys, requestBody ?? "",
+                          "\n ◁", statusCode, shortenString(rawResponse.value) ?? rawResponse.error,
                           "\n")
 
                 case .upload:
                     trace(i: "◂", "UPLOAD Response",
-                          "\n\n ▸", request.method.rawValue, shortUrl,
+                          "\n\n ▸", request.method.rawValue, shortUrl, headers.keys,
                           "\n ◂", statusCode, shortenString(rawResponse.value) ?? rawResponse.error,
                           "\n")
             }
@@ -170,6 +178,7 @@ private extension RestService {
     }
 }
 
+@available(iOS 13.0.0, *)
 @MainActor private extension RestService {
     func buildUrl(_ request: ApiRequest) async throws -> String {
         let urlString = "\(try await provider.baseUrl)/\(request.urlPath)"
@@ -185,7 +194,7 @@ private extension RestService {
     func buildHeaders(_ request: ApiRequest) async throws -> HTTPHeaders {
         guard request.requireAuth else { return request.headers }
         var headers = request.headers
-        try await provider.authorize(headers: &headers)
+        try await provider.authorize(headers: &headers, for: request)
         return headers
     }
 
@@ -215,6 +224,7 @@ private extension RestService {
     }
 }
 
+@available(iOS 13.0.0, *)
 @_spi(Aiuta) extension RestService: ApiService {
     @MainActor public func request<Request: ApiRequest & Encodable, Response: Decodable>(_ request: Request,
                                                                                          debugger debugOperation: ApiDebuggerOperation?,

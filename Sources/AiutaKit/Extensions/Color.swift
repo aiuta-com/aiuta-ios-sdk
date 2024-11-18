@@ -114,9 +114,10 @@ import UIKit
 
     var hexString: String? {
         if let components = cgColor.components {
+            let isRGB = components.count >= 3
             let r = components[0]
-            let g = components[1]
-            let b = components[2]
+            let g = components[isRGB ? 1 : 0]
+            let b = components[isRGB ? 2 : 0]
             return String(format: "%02X%02X%02X", Int(r * 255), Int(g * 255), Int(b * 255))
         }
         return nil

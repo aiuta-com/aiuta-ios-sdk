@@ -23,8 +23,16 @@ import Foundation
     static func authorization(xApiKey value: String) -> HTTPHeader {
         HTTPHeader(name: "x-api-key", value: value)
     }
+
+    static func authorization(xUserId value: String) -> HTTPHeader {
+        HTTPHeader(name: "x-user-id", value: value)
+    }
 }
 
 @_spi(Aiuta) public extension HTTPHeaders {
     var etag: String? { value(for: "Etag") }
+
+    var keys: [String] {
+        Array(dictionary.keys)
+    }
 }

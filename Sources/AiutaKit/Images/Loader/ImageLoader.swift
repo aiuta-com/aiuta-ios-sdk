@@ -16,6 +16,7 @@ import UIKit
 
 @_spi(Aiuta) public final class ImageLoader {
     let onImage = Signal<(UIImage, ImageQuality)>(retainLastData: true)
+    let onError = Signal<Void>(retainLastData: true)
 
     let source: ImageSource
     private var fetchers = [ImageQuality: ImageFetcher]()
@@ -31,15 +32,21 @@ import UIKit
 
         fetchers[quality] = fetcher
         fetcher.onImage.cancelSubscription(for: self)
+        fetcher.onError.subscribePast(with: self) { [unowned self] in
+            onError.fire()
+        }
         fetcher.onImage.subscribePast(with: self) { [unowned self] image in
             if let image { onImage.fire((image, quality)) }
+            else { onError.fire() }
         }
     }
 
+    @available(iOS 13.0.0, *)
     @MainActor func prefetch(_ quality: ImageQuality = .thumbnails, breadcrumbs: Breadcrumbs) async throws {
         _ = try await fetch(quality, breadcrumbs: breadcrumbs)
     }
 
+    @available(iOS 13.0.0, *)
     @MainActor func fetch(_ quality: ImageQuality = .hiResImage, breadcrumbs: Breadcrumbs) async throws -> UIImage {
         let fetcher: ImageFetcher = fetchers[quality] ?? source.fetcher(for: quality, breadcrumbs: breadcrumbs)
         fetchers[quality] = fetcher

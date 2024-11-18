@@ -4,6 +4,7 @@
 
 import Foundation
 import PhotosUI
+import Resolver
 
 @MainActor @_spi(Aiuta) public final class PhotoPicker {
     public enum PickError: Error {
@@ -17,11 +18,10 @@ import PhotosUI
     public var concurrentLoadChunkSize = 4
 
     private weak var vc: UIViewController?
-    private weak var anchor: ContentBase?
+    @Injected private var ds: DesignSystem
 
-    public init(vc: UIViewController?, anchor: ContentBase?) {
+    public init(vc: UIViewController?) {
         self.vc = vc
-        self.anchor = anchor
     }
 
     @available(iOS 14.0, *)
@@ -30,6 +30,8 @@ import PhotosUI
         openPHPicker(vc: vc, selectionLimit: selectionLimit)
     }
 }
+
+// MARK: - PHPicker
 
 @available(iOS 14.0, *)
 extension PhotoPicker: PHPickerViewControllerDelegate {
@@ -45,9 +47,10 @@ extension PhotoPicker: PHPickerViewControllerDelegate {
         phPickerConfig.selectionLimit = selectionLimit
         phPickerConfig.filter = PHPickerFilter.images
         let phPickerVC = PHPickerViewController(configuration: phPickerConfig)
+        phPickerVC.overrideUserInterfaceStyle = ds.color.style
+        phPickerVC.view.tintColor = ds.color.accent
         phPickerVC.delegate = self
-        phPickerVC.modalPresentationStyle = .popover
-        vc.present(phPickerVC, attachedTo: anchor)
+        vc.popover(phPickerVC)
     }
 
     func pick(_ results: [PHPickerResult], from picker: PHPickerViewController) async {
@@ -59,7 +62,7 @@ extension PhotoPicker: PHPickerViewControllerDelegate {
             }
         }.flattened()
         var loaders = await images.concurrentMap { image in
-            try? await image.prefetch(.thumbnails, breadcrumbs: Breadcrumbs())
+            try? await image.prefetch(.hiResImage, breadcrumbs: Breadcrumbs())
         }
         if await isDismissed {
             didPick.fire(images)

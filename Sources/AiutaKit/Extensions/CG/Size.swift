@@ -125,8 +125,12 @@ import UIKit
     }
 }
 
-@_spi(Aiuta) extension CGSize: Comparable {
+@_spi(Aiuta) extension CGSize {
     @_spi(Aiuta) public static func < (lhs: CGSize, rhs: CGSize) -> Bool {
         lhs.width * lhs.height < rhs.width * rhs.height
+    }
+    
+    @_spi(Aiuta) public static func > (lhs: CGSize, rhs: CGSize) -> Bool {
+        lhs.width * lhs.height > rhs.width * rhs.height
     }
 }

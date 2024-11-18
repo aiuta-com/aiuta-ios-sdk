@@ -30,7 +30,7 @@ import UIKit
             let downsampledImage = downsample(data, quality)
             dispatch(.mainAsync) { [self] in
                 if let downsampledImage {
-                    onImage.fire(UIImage(cgImage: downsampledImage))
+                    onImage.fire(downsampledImage)
                 } else if let image = UIImage(data: data) {
                     onImage.fire(image)
                 } else {
@@ -56,29 +56,24 @@ private extension Downsampler {
 
     func downsample(_ image: UIImage, quality: ImageQuality) {
         dispatch(quality == .thumbnails ? .user : .medium) { [self] in
-            let downsampledImage = downsample(image.pngData(), quality)
+            let downsampledImage = downsample(image, quality)
             dispatch(.mainAsync) { [self] in
-                let result: UIImage
-                if let downsampledImage { result = UIImage(cgImage: downsampledImage) } else { result = image }
+                let result: UIImage = downsampledImage ?? image
                 imageCache.store(result, forKey: image.cacheKey(for: quality), toDisk: false)
                 onImage.fire(result)
             }
         }
     }
 
-    func downsample(_ data: Data?, _ quality: ImageQuality) -> CGImage? {
-        let imageSourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
-        guard let data, let imageSource = CGImageSourceCreateWithData(data as CFData, imageSourceOptions) else {
-            return nil
-        }
+    func downsample(_ image: UIImage, _ quality: ImageQuality) -> UIImage? {
+        let processor = DownsamplingImageProcessor(size: .init(square: imageTraits.largestSize(for: quality)))
+        return processor.process(item: .image(image), options: .init(nil))
+    }
 
-        let size = imageTraits.largestSize(for: quality)
-        let downsampledOptions = [kCGImageSourceCreateThumbnailFromImageAlways: true,
-                                  kCGImageSourceShouldCacheImmediately: true,
-                                  kCGImageSourceCreateThumbnailWithTransform: true,
-                                  kCGImageSourceThumbnailMaxPixelSize: size] as CFDictionary
-
-        return CGImageSourceCreateThumbnailAtIndex(imageSource, 0, downsampledOptions)
+    func downsample(_ data: Data?, _ quality: ImageQuality) -> UIImage? {
+        guard let data else { return nil }
+        let processor = DownsamplingImageProcessor(size: .init(square: imageTraits.largestSize(for: quality)))
+        return processor.process(item: .data(data), options: .init(nil))
     }
 }
 
