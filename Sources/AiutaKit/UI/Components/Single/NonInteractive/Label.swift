@@ -226,6 +226,10 @@ private extension Label {
             }
         }
     }
+
+    public static func br(_ count: Int = 1) -> String {
+        Array(repeating: "<br/>", count: count).joined()
+    }
 }
 
 extension FontStyle {

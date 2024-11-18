@@ -196,6 +196,9 @@ final class BulletinWrapper: Plane {
         }
 
         contentView.scrollOffset = scrollOffset
+        if isFloating {
+            floatingContainer.view.opacity = appearingPercent
+        }
     }
 
     required init() {

@@ -137,5 +137,5 @@ private final class UserDefaultsHistoryController: AiutaDataController {
     }
 
     func setData(provider: any AiutaDataProvider) { }
-    func obtainUserConsent() async throws { }
+    func obtainUserConsent(supplementary: [Aiuta.Consent]) async throws { }
 }

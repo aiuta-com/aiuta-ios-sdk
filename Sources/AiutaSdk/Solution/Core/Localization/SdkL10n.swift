@@ -52,11 +52,3 @@ private func getPrefferedLanguageCode() -> String? {
         return Locale.current.languageCode
     }
 }
-
-private extension Aiuta.Localization.Builtin.Substitutions {
-    static func aiuta() -> Aiuta.Localization.Builtin.Substitutions {
-        .init(brandName: "Aiuta",
-              termsOfServiceUrl: "https://aiuta.com/legal/terms-of-service.html",
-              privacyPolicyUrl: "https://aiuta.com/legal/privacy-policy.html")
-    }
-}

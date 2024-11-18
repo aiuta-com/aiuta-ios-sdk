@@ -61,6 +61,10 @@ struct SdkEnglishLanguage: AiutaSdkLanguage {
             "and <b><a href='\(substitutions.termsOfServiceUrl)'>Terms of Use.</a></b>"
     }
 
+    var onboardingPageConsentSupplementaryPoints: [String] {
+        substitutions.supplementaryConsents
+    }
+
     var onboardingPageConsentAgreePoint: String { "I agree to allow \(substitutions.brandName) to process my photo" }
 
     let onboardingButtonNext = "Next"
@@ -87,10 +91,8 @@ struct SdkEnglishLanguage: AiutaSdkLanguage {
 
     // MARK: - History
 
-    let historySelectorDisabledButton = "Select"
     let historySelectorEnableButtonSelectAll = "Select all"
     let historySelectorEnableButtonUnselectAll = "Unselect all"
-    let historySelectorEnableButtonCancel = "Cancel"
 
     // MARK: - Photo picker sheet
 

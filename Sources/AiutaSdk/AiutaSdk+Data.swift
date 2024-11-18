@@ -18,7 +18,7 @@ import Foundation
 public protocol AiutaDataController: AnyObject {
     func setData(provider: AiutaDataProvider)
 
-    func obtainUserConsent() async throws
+    func obtainUserConsent(supplementary: [Aiuta.Consent]) async throws
 
     func addUploaded(images: [Aiuta.Image]) async throws
     func selectUploaded(image: Aiuta.Image) async throws
@@ -37,7 +37,7 @@ public protocol AiutaDataProvider: AnyObject {
     func setProduct(_ product: Aiuta.Product, isInWishlist: Bool)
 }
 
-// MARK: - Data structs
+// MARK: - Aiuta Image
 
 extension Aiuta {
     public struct Image: Codable {
@@ -60,5 +60,14 @@ extension Aiuta.Image: Equatable {
 extension Aiuta.Image: Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
+    }
+}
+
+// MARK: - Aiuta Consent (Supplementary)
+
+extension Aiuta {
+    public struct Consent: Codable {
+        public let consentText: String
+        public let isObtained: Bool
     }
 }

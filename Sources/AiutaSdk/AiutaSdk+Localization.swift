@@ -34,12 +34,22 @@ extension Aiuta.Localization.Builtin {
         let brandName: String
         let termsOfServiceUrl: String
         let privacyPolicyUrl: String
+        let supplementaryConsents: [String]
 
-        public init(brandName: String, termsOfServiceUrl: String, privacyPolicyUrl: String) {
+        public init(brandName: String, termsOfServiceUrl: String, privacyPolicyUrl: String, supplementaryConsents: [String] = []) {
             self.brandName = brandName
             self.termsOfServiceUrl = termsOfServiceUrl
             self.privacyPolicyUrl = privacyPolicyUrl
+            self.supplementaryConsents = supplementaryConsents
         }
+    }
+}
+
+public extension Aiuta.Localization.Builtin.Substitutions {
+    static func aiuta() -> Aiuta.Localization.Builtin.Substitutions {
+        .init(brandName: "Aiuta",
+              termsOfServiceUrl: "https://aiuta.com/legal/terms-of-service.html",
+              privacyPolicyUrl: "https://aiuta.com/legal/privacy-policy.html")
     }
 }
 
@@ -108,6 +118,8 @@ public protocol AiutaSdkLanguage {
     var onboardingPageConsentBody: String { get }
     /// `I agree to allow $brandName to process my photo`
     var onboardingPageConsentAgreePoint: String { get }
+    /// `I agree to ...`
+    var onboardingPageConsentSupplementaryPoints: [String] { get }
 
     /// `Next`
     var onboardingButtonNext: String { get }
@@ -145,14 +157,10 @@ public protocol AiutaSdkLanguage {
 
     // MARK: - History
 
-    /// `Select`
-    var historySelectorDisabledButton: String { get }
     /// `Select all`
     var historySelectorEnableButtonSelectAll: String { get }
     /// `Unselect all`
     var historySelectorEnableButtonUnselectAll: String { get }
-    /// `Cancel`
-    var historySelectorEnableButtonCancel: String { get }
 
     // MARK: - Photo picker sheet
 
