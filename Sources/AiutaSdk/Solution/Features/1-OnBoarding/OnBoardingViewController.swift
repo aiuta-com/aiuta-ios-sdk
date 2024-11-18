@@ -64,7 +64,8 @@ final class OnBoardingViewController: ViewController<OnBoardingView> {
                     } else {
                         consentModel.isConsentGiven = true
                     }
-                    sessionModel.delegate?.aiuta(eventOccurred: .onboarding(event: .consentGiven, page: .consent, product: sessionModel.activeSku))
+                    sessionModel.delegate?.aiuta(eventOccurred: .onboarding(event: .consentGiven(supplementary: ui.scroll.consent.supplementaryConsents),
+                                                                            page: .consent, product: sessionModel.activeSku))
                     sessionModel.delegate?.aiuta(eventOccurred: .onboarding(event: .onboardingFinished, page: .consent, product: sessionModel.activeSku))
                     tracker.track(.onBoarding(.finish))
                     replace(with: TryOnViewController())
