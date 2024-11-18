@@ -64,6 +64,10 @@ struct SdkRussianLanguage: AiutaSdkLanguage {
         "Я даю согласие \(substitutions.brandName) на обработку моей фотографии"
     }
 
+    var onboardingPageConsentSupplementaryPoints: [String] {
+        substitutions.supplementaryConsents
+    }
+
     let onboardingButtonNext = "Далее"
     let onboardingButtonStart = "Начать"
 
@@ -88,10 +92,8 @@ struct SdkRussianLanguage: AiutaSdkLanguage {
 
     // MARK: - History
 
-    let historySelectorDisabledButton = "Выбрать"
     let historySelectorEnableButtonSelectAll = "Выбрать все"
     let historySelectorEnableButtonUnselectAll = "Снять выделение"
-    let historySelectorEnableButtonCancel = "Отмена"
 
     // MARK: - Photo picker sheet
 

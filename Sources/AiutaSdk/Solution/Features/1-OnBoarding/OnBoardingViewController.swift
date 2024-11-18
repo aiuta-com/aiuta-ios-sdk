@@ -23,7 +23,7 @@ final class OnBoardingViewController: ViewController<OnBoardingView> {
 
     private var trackedPage: Aiuta.Event.Page?
     private var isConsentGiven: Bool {
-        ui.scroll.consent.checkBox.isSelected
+        ui.scroll.consent.isConsentGiven
     }
 
     override func setup() {
@@ -52,15 +52,18 @@ final class OnBoardingViewController: ViewController<OnBoardingView> {
             openUrl(url)
         }
 
-        ui.scroll.consent.onConsentChange.subscribe(with: self) { [unowned self] isGiven in
-            consentModel.isConsentGiven = isGiven
+        ui.scroll.consent.onConsentChange.subscribe(with: self) { [unowned self] _ in
             updateButton()
         }
 
         ui.button.onTouchUpInside.subscribe(with: self) { [unowned self] in
             if ui.scroll.isAtEnd {
                 if isConsentGiven {
-                    Task { try? await sessionModel.controller?.obtainUserConsent() }
+                    if sessionModel.controller.isSome {
+                        Task { try? await sessionModel.controller?.obtainUserConsent(supplementary: ui.scroll.consent.supplementaryConsents) }
+                    } else {
+                        consentModel.isConsentGiven = true
+                    }
                     sessionModel.delegate?.aiuta(eventOccurred: .onboarding(event: .consentGiven, page: .consent, product: sessionModel.activeSku))
                     sessionModel.delegate?.aiuta(eventOccurred: .onboarding(event: .onboardingFinished, page: .consent, product: sessionModel.activeSku))
                     tracker.track(.onBoarding(.finish))

@@ -61,6 +61,10 @@ struct SdkTurkishLanguage: AiutaSdkLanguage {
             "<b><a href='\(substitutions.termsOfServiceUrl)'>Kullanım Şartları</a></b> uyarınca işlenecektir."
     }
 
+    var onboardingPageConsentSupplementaryPoints: [String] {
+        substitutions.supplementaryConsents
+    }
+
     var onboardingPageConsentAgreePoint: String {
         "Fotoğrafımın işlenmesine \(substitutions.brandName)'a izin vermeyi kabul ediyorum"
     }
@@ -89,10 +93,8 @@ struct SdkTurkishLanguage: AiutaSdkLanguage {
 
     // MARK: - History
 
-    let historySelectorDisabledButton = "Seç"
     let historySelectorEnableButtonSelectAll = "Hepsini seç"
     let historySelectorEnableButtonUnselectAll = "Seçimi kaldır"
-    let historySelectorEnableButtonCancel = "İptal"
 
     // MARK: - Photo picker sheet
 

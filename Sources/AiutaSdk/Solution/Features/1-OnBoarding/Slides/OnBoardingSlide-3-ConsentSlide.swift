@@ -17,11 +17,34 @@ import UIKit
 
 extension OnBoardingView.StickyScroll {
     final class ConsentSlide: Plane {
-        let onConsentChange = Signal<Bool>()
-        var onLinkTapped: Signal<String> {
-            description.onLink
+        var onConsentChange: Signal<Bool> {
+            scroll.checkBox.onConsentChange
         }
 
+        var onLinkTapped: Signal<String> {
+            scroll.description.onLink
+        }
+
+        var isConsentGiven: Bool {
+            scroll.checkBox.isSelected
+        }
+
+        var supplementaryConsents: [Aiuta.Consent] {
+            scroll.supplementaryBoxes.map { $0.consent }
+        }
+
+        private let scroll = ConsentSlideScroll()
+
+        override func updateLayout() {
+            scroll.layout.make { make in
+                make.top = 0
+                make.bottom = 0
+                make.leftRight = 24
+            }
+        }
+    }
+
+    final class ConsentSlideScroll: VScroll {
         let title = Label { it, ds in
             it.font = ds.font.titleL
             it.color = ds.color.primary
@@ -34,34 +57,33 @@ extension OnBoardingView.StickyScroll {
             it.text = L.onboardingPageConsentBody
         }
 
-        let checkBox = CheckBoxArea()
+        let checkBox = CheckBoxArea { it, _ in
+            it.text = L.onboardingPageConsentAgreePoint
+        }
+
+        var supplementaryBoxes: [CheckBoxArea] = []
 
         override func setup() {
-            checkBox.onTouchUpInside.subscribe(with: self) { [unowned self] in
-                checkBox.isSelected.toggle()
-                onConsentChange.fire(checkBox.isSelected)
+            contentInset = .init(top: 64, bottom: 48)
+            itemSpace = 16
+
+            L.onboardingPageConsentSupplementaryPoints.forEach { text in
+                let box = CheckBoxArea { it, _ in
+                    it.text = text
+                }
+                addContent(box)
+                supplementaryBoxes.append(box)
             }
         }
 
         override func updateLayout() {
-            title.layout.make { make in
-                make.leftRight = 24
-                make.top = 64
-            }
-
-            description.layout.make { make in
-                make.leftRight = title.layout.left
-                make.top = title.layout.bottomPin + 16
-            }
-
-            checkBox.layout.make { make in
-                make.top = description.layout.bottomPin + 28
-                make.leftRight = description.layout.left
-            }
+            view.isScrollEnabled = contentSize.height + contentInset.verticalInsetsSum > view.bounds.height
         }
     }
 
     final class CheckBoxArea: PlainButton {
+        let onConsentChange = Signal<Bool>()
+
         var isSelected: Bool {
             get { box.isSelected }
             set { box.isSelected = newValue }
@@ -74,7 +96,21 @@ extension OnBoardingView.StickyScroll {
             it.isMultiline = true
             it.font = ds.font.regular
             it.color = ds.color.primary
-            it.text = L.onboardingPageConsentAgreePoint
+        }
+
+        var text: String = "" {
+            didSet { label.text = text }
+        }
+
+        var consent: Aiuta.Consent {
+            .init(consentText: text, isObtained: isSelected)
+        }
+
+        override func setup() {
+            onTouchUpInside.subscribe(with: self) { [unowned self] in
+                isSelected.toggle()
+                onConsentChange.fire(isSelected)
+            }
         }
 
         override func updateLayout() {
@@ -92,6 +128,11 @@ extension OnBoardingView.StickyScroll {
             layout.make { make in
                 make.height = label.layout.bottomPin + box.layout.top
             }
+        }
+
+        convenience init(_ builder: (_ it: CheckBoxArea, _ ds: DesignSystem) -> Void) {
+            self.init()
+            builder(self, ds)
         }
     }
 
