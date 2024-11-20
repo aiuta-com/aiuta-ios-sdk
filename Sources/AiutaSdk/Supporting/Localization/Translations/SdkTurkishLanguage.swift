@@ -29,7 +29,7 @@ struct SdkTurkishLanguage: SdkLanguage {
     let aiuta = "Aiuta"
     let settings = "Ayarlar" // Settings
     let cancel = "İptal" // Cancel
-    let send = "Göndermek" // Send
+    let send = "Gönder" // Send
     let skip = "Atla" // Skip
 
     // App bar
