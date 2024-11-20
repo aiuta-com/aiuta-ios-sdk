@@ -23,7 +23,6 @@ final class SdkNavigator: UINavigationController {
 
     private let touchesDismissAreaHeight: CGFloat = 52
     private var touchesBeganInsideDismissArea: Bool?
-    private var presentingOriginalTint: UIColor?
     private var bulletinWall: BulletinWall?
 
     override init(rootViewController: UIViewController) {
@@ -44,8 +43,6 @@ final class SdkNavigator: UINavigationController {
         trace("---------------")
         trace("SDK WILL APPEAR")
         bulletinWall = BulletinWall(injectingTo: presentingViewController?.view)
-        presentingOriginalTint = presentingViewController?.view.window?.tintColor
-        presentingViewController?.view.window?.tintColor = ds.color.accent
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -61,9 +58,6 @@ final class SdkNavigator: UINavigationController {
         trace("SDK DID DISMISS")
         trace("===============")
         bulletinWall?.dismiss()
-        if let presentingOriginalTint {
-            presentingViewController?.view.window?.tintColor = presentingOriginalTint
-        }
         if let page = (visibleViewController as? PageRepresentable)?.page {
             @injected var session: SessionModel
             session.delegate?.aiuta(eventOccurred: .exit(page: page, product: session.activeSku))
