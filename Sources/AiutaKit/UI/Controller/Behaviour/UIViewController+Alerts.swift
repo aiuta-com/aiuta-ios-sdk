@@ -37,6 +37,10 @@ import UIKit
                    preferredStyle style: UIAlertController.Style = .alert,
                    builder: (AlertBuilder) -> Void) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: style)
+        if #available(iOS 13.0, *) {
+            @Injected var ds: DesignSystem
+            alert.overrideUserInterfaceStyle = ds.color.style
+        }
         builder(AlertBuilder(alert: alert))
         present(alert, animated: true)
     }
