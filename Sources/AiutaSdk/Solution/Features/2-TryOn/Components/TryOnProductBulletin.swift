@@ -167,9 +167,7 @@ extension TryOnView {
 
     final class WishlistButton: PlainButton {
         var isSelected = false {
-            didSet {
-                labelWithIcon.icon.image = ds.image.icon24(isSelected ? .wishlistFill : .wishlist)
-            }
+            didSet { updateWishIcon() }
         }
 
         let labelWithIcon = LabelWithIcon()
@@ -178,8 +176,9 @@ extension TryOnView {
             labelWithIcon.label.font = ds.font.button
             labelWithIcon.label.color = ds.color.primary
             labelWithIcon.label.text = L.addToWish
-            labelWithIcon.icon.image = ds.image.icon24(.wishlist)
             labelWithIcon.icon.tint = ds.color.primary
+            updateWishIcon()
+            
             view.borderColor = ds.color.neutral2
             view.borderWidth = 1
         }
@@ -192,6 +191,10 @@ extension TryOnView {
             labelWithIcon.layout.make { make in
                 make.center = .zero
             }
+        }
+
+        private func updateWishIcon() {
+            labelWithIcon.icon.image = ds.image.icon24(isSelected ? .wishlistFill : .wishlist)
         }
     }
 }
