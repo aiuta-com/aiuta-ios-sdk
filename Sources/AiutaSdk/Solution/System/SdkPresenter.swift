@@ -23,6 +23,8 @@ enum SdkPresenter {
         guard SdkRegister.ensureConfigured() else { return }
         @injected var sessionModel: SessionModel
         sessionModel.start(sku: sku, delegate: delegate)
+        @injected var tryOnModel: TryOnModel
+        tryOnModel.sessionResults.removeAll()
         viewController.present(SdkNavigator(rootViewController: entryViewController()), animated: true)
     }
 
