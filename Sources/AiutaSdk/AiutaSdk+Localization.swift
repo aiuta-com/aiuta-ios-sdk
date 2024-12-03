@@ -120,6 +120,8 @@ public protocol AiutaSdkLanguage {
     var onboardingPageConsentAgreePoint: String { get }
     /// `I agree to ...`
     var onboardingPageConsentSupplementaryPoints: [String] { get }
+    /// `Further information ...`
+    var onboardingPageConsentFooter: String? { get }
 
     /// `Next`
     var onboardingButtonNext: String { get }

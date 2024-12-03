@@ -206,6 +206,7 @@ private extension Label {
         case color(UIColor)
         case bold
         case italic
+        case link(String)
     }
 
     public var description: String { result }
@@ -219,6 +220,8 @@ private extension Label {
                     if let hexString = color.hexString {
                         result = "<font color='#\(hexString)'>\(result)</font>"
                     }
+                case let .link(url):
+                    result = "<a href='\(url)'>\(result)</a>"
                 case .bold:
                     result = "<b>\(result)</b>"
                 case .italic:
