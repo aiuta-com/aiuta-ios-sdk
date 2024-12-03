@@ -68,6 +68,8 @@ struct SdkRussianLanguage: AiutaSdkLanguage {
         substitutions.supplementaryConsents
     }
 
+    let onboardingPageConsentFooter: String? = nil
+
     let onboardingButtonNext = "Далее"
     let onboardingButtonStart = "Начать"
 

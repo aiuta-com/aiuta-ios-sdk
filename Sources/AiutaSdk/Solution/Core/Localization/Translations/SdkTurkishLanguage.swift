@@ -69,6 +69,8 @@ struct SdkTurkishLanguage: AiutaSdkLanguage {
         "Fotoğrafımın işlenmesine \(substitutions.brandName)'a izin vermeyi kabul ediyorum"
     }
 
+    let onboardingPageConsentFooter: String? = nil
+
     let onboardingButtonNext = "İleri"
     let onboardingButtonStart = "Başla"
 

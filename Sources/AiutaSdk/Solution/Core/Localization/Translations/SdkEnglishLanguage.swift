@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+@_spi(Aiuta) import AiutaKit
 import Foundation
 
 struct SdkEnglishLanguage: AiutaSdkLanguage {
@@ -44,28 +45,31 @@ struct SdkEnglishLanguage: AiutaSdkLanguage {
 
     // MARK: - Onboarding
 
-    let onboardingAppbarTryonPage = "<b>Step 1/3</b> - How it works"
+    let onboardingAppbarTryonPage = "\(Html("Step 1/3", .bold)) - How it works"
     let onboardingPageTryonTopic = "Try on before buying"
     let onboardingPageTryonSubtopic = "Upload a photo and see how items look on you"
 
-    let onboardingAppbarBestResultPage = "<b>Step 2/3</b> - For best result"
+    let onboardingAppbarBestResultPage = "\(Html("Step 2/3", .bold)) - For best result"
     let onboardingPageBestResultTopic = "For best results"
     let onboardingPageBestResultSubtopic = "Use a photo with good lighting, stand straight a plain background"
 
-    let onboardingAppbarConsentPage = "<b>Step 3/3</b> - Consent"
+    let onboardingAppbarConsentPage = "\(Html("Step 3/3", .bold)) - Consent"
     let onboardingPageConsentTopic = "Consent"
 
-    var onboardingPageConsentBody: String {
-        "In order to try on items digitally, you agree to allow \(substitutions.brandName) to process your photo. " +
-            "Your data will be processed according to the \(substitutions.brandName) <b><a href='\(substitutions.privacyPolicyUrl)'>Privacy Notice</a></b> " +
-            "and <b><a href='\(substitutions.termsOfServiceUrl)'>Terms of Use.</a></b>"
+    var onboardingPageConsentBody: String { """
+        In order to try on items digitally, you agree to allow \(substitutions.brandName) to process your photo.
+        Your data will be processed according to the \(substitutions.brandName) \(Html("Privacy Notice", .link(substitutions.privacyPolicyUrl), .bold))
+        and <b><a href='\(substitutions.termsOfServiceUrl)'>Terms of Use.</a></b>
+    """
     }
+
+    var onboardingPageConsentAgreePoint: String { "I agree to allow \(substitutions.brandName) to process my photo" }
 
     var onboardingPageConsentSupplementaryPoints: [String] {
         substitutions.supplementaryConsents
     }
 
-    var onboardingPageConsentAgreePoint: String { "I agree to allow \(substitutions.brandName) to process my photo" }
+    let onboardingPageConsentFooter: String? = nil
 
     let onboardingButtonNext = "Next"
     let onboardingButtonStart = "Start"

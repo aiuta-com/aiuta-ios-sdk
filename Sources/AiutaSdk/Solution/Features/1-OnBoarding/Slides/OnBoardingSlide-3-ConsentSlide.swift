@@ -21,9 +21,7 @@ extension OnBoardingView.StickyScroll {
             scroll.checkBox.onConsentChange
         }
 
-        var onLinkTapped: Signal<String> {
-            scroll.description.onLink
-        }
+        let onLinkTapped = Signal<String>()
 
         var isConsentGiven: Bool {
             scroll.checkBox.isSelected
@@ -38,8 +36,18 @@ extension OnBoardingView.StickyScroll {
         override func updateLayout() {
             scroll.layout.make { make in
                 make.top = 0
-                make.bottom = 0
+                make.bottom = 8
                 make.leftRight = 24
+            }
+        }
+
+        override func setup() {
+            scroll.description.onLink.subscribe(with: self) { [unowned self] link in
+                onLinkTapped.fire(link)
+            }
+
+            scroll.footer.onLink.subscribe(with: self) { [unowned self] link in
+                onLinkTapped.fire(link)
             }
         }
     }
@@ -63,8 +71,14 @@ extension OnBoardingView.StickyScroll {
 
         var supplementaryBoxes: [CheckBoxArea] = []
 
+        let footer = TextView { it, ds in
+            it.font = ds.font.regular
+            it.color = ds.color.primary
+            it.text = L.onboardingPageConsentFooter
+        }
+
         override func setup() {
-            contentInset = .init(top: 64, bottom: 48)
+            contentInset = .init(top: L.onboardingPageConsentSupplementaryPoints.isEmpty ? 32 : 24, bottom: 48)
             itemSpace = 16
 
             L.onboardingPageConsentSupplementaryPoints.forEach { text in
@@ -74,6 +88,9 @@ extension OnBoardingView.StickyScroll {
                 addContent(box)
                 supplementaryBoxes.append(box)
             }
+
+            footer.removeFromParent()
+            addContent(footer)
         }
 
         override func updateLayout() {
