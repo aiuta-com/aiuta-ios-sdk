@@ -137,13 +137,17 @@ extension OnBoardingView.StickyScroll {
             }
 
             label.layout.make { make in
-                make.top = box.layout.top
+                if let lh = label.font?.lineHeightMultiple, lh > 1 {
+                    make.top = box.layout.top - 1.5 * lh
+                } else {
+                    make.top = box.layout.top
+                }
                 make.left = box.layout.rightPin + 16
                 make.right = 0
             }
 
             layout.make { make in
-                make.height = label.layout.bottomPin + box.layout.top
+                make.height = max(label.layout.bottomPin, box.layout.bottomPin) + box.layout.top
             }
         }
 
