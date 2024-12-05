@@ -60,7 +60,7 @@ final class ProcessingViewController: ViewController<ProcessingView> {
         }
 
         ui.animator.imageView.source = source
-        session.delegate?.aiuta(eventOccurred: .page(page: page, product: session.activeSku))
+        session.track(.page(page: page, product: session.activeSku))
         tracker.track(.tryOn(.start(origin: .selectPhotos, sku: session.activeSku, photosCount: 1)))
     }
 
@@ -74,17 +74,17 @@ final class ProcessingViewController: ViewController<ProcessingView> {
                 switch status {
                     case .uploadingImage: self?.ui.status.text = L.loadingUploadingImage
                     case .scanningBody: self?.ui.status.text = L.loadingScanningBody
-                        self?.session.delegate?.aiuta(eventOccurred: .tryOn(event: .tryOnStarted, message: nil, page: .loading, product: sku))
+                        self?.session.track(.tryOn(event: .tryOnStarted, message: nil, page: .loading, product: sku))
                     case .generatingOutfit: self?.ui.status.text = L.loadingGeneratingOutfit
                 }
             }
             ui.animator.isAnimating = false
-            session.delegate?.aiuta(eventOccurred: .tryOn(event: .tryOnFinished, message: nil, page: .loading, product: sku))
+            session.track(.tryOn(event: .tryOnFinished, message: nil, page: .loading, product: sku))
             replace(with: ResulstsViewController(), crossFadeDuration: .quarterOfSecond)
         } catch TryOnError.tryOnAborted {
             ui.status.text = nil
             ui.animator.isAnimating = false
-            session.delegate?.aiuta(eventOccurred: .tryOn(event: .tryOnAborted, message: TryOnError.tryOnAborted.localizedDescription, page: .loading, product: sku))
+            session.track(.tryOn(event: .tryOnAborted, message: TryOnError.tryOnAborted.localizedDescription, page: .loading, product: sku))
             showAlert(message: L.dialogInvalidImageDescription) { alert in
                 alert.addAction(title: L.imageSelectorChangeButton, style: .cancel).subscribe(with: self) { [unowned self] in
                     replace(with: TryOnViewController(), crossFadeDuration: .quarterOfSecond)
@@ -94,7 +94,7 @@ final class ProcessingViewController: ViewController<ProcessingView> {
             ui.status.text = nil
             ui.errorSnackbar.isVisible = true
             ui.animator.isAnimating = false
-            session.delegate?.aiuta(eventOccurred: .tryOn(event: .tryOnError, message: error.localizedDescription, page: .loading, product: sku))
+            session.track(.tryOn(event: .tryOnError, message: error.localizedDescription, page: .loading, product: sku))
         }
     }
 }

@@ -19,7 +19,8 @@ import UIKit
 final class FeedbackCommentViewController: ViewController<FeedbackCommentView> {
     @injected private var subscription: SubscriptionModel
 
-    private let didFeedback = Signal<String?>()
+    private let didFeedback = Signal<Void>()
+    private var result: String?
 
     override func setup() {
         ui.input.becomeFirstResponder()
@@ -27,19 +28,20 @@ final class FeedbackCommentViewController: ViewController<FeedbackCommentView> {
 
         ui.navBar.onClose.subscribe(with: self) { [unowned self] in
             dismiss(animated: true) { [self] in
-                didFeedback.fire(nil)
+                didFeedback.fire()
             }
         }
 
         ui.commitButton.onTouchUpInside.subscribe(with: self) { [unowned self] in
+            result = ui.input.text
             dismiss(animated: true) { [self] in
-                didFeedback.fire(ui.input.text)
+                didFeedback.fire()
             }
         }
     }
 
     override func whenDidDisappear() {
-        didFeedback.fire(nil)
+        didFeedback.fire()
     }
 
     override func whenDidAppear() {
@@ -48,8 +50,8 @@ final class FeedbackCommentViewController: ViewController<FeedbackCommentView> {
 
     func getFeedback() async -> String? {
         await withCheckedContinuation { continuation in
-            didFeedback.subscribeOnce(with: self) { feedback in
-                continuation.resume(returning: feedback)
+            didFeedback.subscribeOnce(with: self) { [unowned self] in
+                continuation.resume(returning: result)
             }
         }
     }
