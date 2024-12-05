@@ -28,4 +28,6 @@ protocol SessionModel {
     func isInWishlist(_ sku: Aiuta.Product?) -> Bool
     @discardableResult
     func toggleWishlist(_ sku: Aiuta.Product?) -> Bool
+    
+    func track(_ event: Aiuta.Event)
 }

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 @_spi(Aiuta) import AiutaKit
+import Foundation
 
 @available(iOS 13.0.0, *)
 final class SessionModelImpl: SessionModel {
@@ -53,5 +54,9 @@ final class SessionModelImpl: SessionModel {
             onWishlistChange.fire()
             return true
         }
+    }
+    
+    func track(_ event: Aiuta.Event) {
+        delegate?.aiuta(eventOccurred: event)
     }
 }

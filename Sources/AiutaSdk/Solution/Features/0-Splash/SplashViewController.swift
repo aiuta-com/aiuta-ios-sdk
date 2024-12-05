@@ -24,14 +24,15 @@ final class SplashViewController: ViewController<SplashView> {
         }
 
         ui.startButton.onTouchUpInside.subscribe(with: self) { [unowned self] in
+            session.track(.onboarding(event: .welcomeStartClicked, page: page, product: session.activeSku))
             replace(with: OnBoardingViewController(), backstack: self)
         }
 
-        session.delegate?.aiuta(eventOccurred: .page(page: page, product: session.activeSku))
+        session.track(.page(page: page, product: session.activeSku))
     }
 
     override func whenPopback() {
-        session.delegate?.aiuta(eventOccurred: .page(page: page, product: session.activeSku))
+        session.track(.page(page: page, product: session.activeSku))
     }
 }
 

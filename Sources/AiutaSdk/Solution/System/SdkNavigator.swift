@@ -60,7 +60,7 @@ final class SdkNavigator: UINavigationController {
         bulletinWall?.dismiss()
         if let page = (visibleViewController as? PageRepresentable)?.page {
             @injected var session: SessionModel
-            session.delegate?.aiuta(eventOccurred: .exit(page: page, product: session.activeSku))
+            session.track(.exit(page: page, product: session.activeSku))
         }
     }
 

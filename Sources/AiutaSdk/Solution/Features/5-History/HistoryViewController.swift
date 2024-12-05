@@ -91,7 +91,7 @@ final class HistoryViewController: ViewController<HistoryView> {
         ui.history.data = history.generated
         ui.navBar.isActionAvailable = true
 
-        session.delegate?.aiuta(eventOccurred: .page(page: page, product: session.activeSku))
+        session.track(.page(page: page, product: session.activeSku))
         tracker.track(.history(.open))
     }
 
@@ -142,7 +142,7 @@ final class HistoryViewController: ViewController<HistoryView> {
         guard !candidates.isEmpty else { return }
         do {
             try await history.removeGenerated(Array(candidates))
-            session.delegate?.aiuta(eventOccurred: .history(event: .generatedImageDeleted, page: page, product: session.activeSku))
+            session.track(.history(event: .generatedImageDeleted, page: page, product: session.activeSku))
 
             if !history.hasGenerations {
                 dispatch(.mainAsync) { [self] in
@@ -165,7 +165,7 @@ final class HistoryViewController: ViewController<HistoryView> {
             tracker.track(.share(.failed(origin: .history, count: 0, activity: nil, error: nil)))
             return
         }
-        session.delegate?.aiuta(eventOccurred: .history(event: .generatedImageShared, page: page, product: session.activeSku))
+        session.track(.history(event: .generatedImageShared, page: page, product: session.activeSku))
         let result = await share(images: imagesToShare)
         if result.isSucceeded {
             isEditMode = false
@@ -190,7 +190,7 @@ final class HistoryViewController: ViewController<HistoryView> {
                 switch result {
                     case let .succeeded(activity):
                         tracker.track(.share(.success(origin: .history, count: 1, activity: activity, text: nil)))
-                        session.delegate?.aiuta(eventOccurred: .history(event: .generatedImageShared, page: page, product: session.activeSku))
+                        session.track(.history(event: .generatedImageShared, page: page, product: session.activeSku))
                     case let .canceled(activity):
                         tracker.track(.share(.cancelled(origin: .history, count: 1, activity: activity)))
                     case let .failed(activity, error):

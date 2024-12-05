@@ -54,13 +54,13 @@ private extension FeedbackViewController {
         tracker.track(.feedback(.like(sku: sku)))
         haptic(notification: .success)
         gratiture(cell)
-        session.delegate?.aiuta(eventOccurred: .feedback(event: .positive, page: .results, product: session.activeSku))
+        session.track(.feedback(event: .positive, page: .results, product: session.activeSku))
     }
 
     func dislike(_ sessionResult: TryOnResult, _ cell: ResultPage?) {
         let generatedImage = sessionResult.image
         let sku = sessionResult.sku
-        FeedbackViewController.feedbackedImages.append(generatedImage.url)
+//        FeedbackViewController.feedbackedImages.append(generatedImage.url)
         tracker.track(.feedback(.dislike(sku: sku)))
         Task { await dislike(sku, cell) }
     }
@@ -93,10 +93,10 @@ private extension FeedbackViewController {
         if let result, !result.text.isEmpty {
             let text = String(result.text.prefix(1200))
             tracker.track(.feedback(.comment(sku: sku, text: text)))
-            session.delegate?.aiuta(eventOccurred: .feedback(event: .negative(option: result.index, text: text), page: .results, product: session.activeSku))
+            session.track(.feedback(event: .negative(option: result.index, text: text), page: .results, product: session.activeSku))
         } else {
             tracker.track(.feedback(.comment(sku: sku, text: nil)))
-            session.delegate?.aiuta(eventOccurred: .feedback(event: .negative(option: nil, text: nil), page: .results, product: session.activeSku))
+            session.track(.feedback(event: .negative(option: nil, text: nil), page: .results, product: session.activeSku))
         }
 
         gratiture(cell)
@@ -121,9 +121,9 @@ private extension FeedbackViewController {
         cell.addContent(gratitudeView)
 
         gratitudeView.animations.visibleTo(true)
-        cell.feedback.animations.visibleTo(false, hideTime: .thirdOfSecond) { [weak cell] in
-            cell?.hasFeedback = false
-        }
+//        cell.feedback.animations.visibleTo(false, hideTime: .thirdOfSecond) { [weak cell] in
+//            cell?.hasFeedback = false
+//        }
 
         delay(.twoSeconds) { [gratitudeView] in
             gratitudeView.animations.visibleTo(false, hideTime: .thirdOfSecond) { [gratitudeView] in

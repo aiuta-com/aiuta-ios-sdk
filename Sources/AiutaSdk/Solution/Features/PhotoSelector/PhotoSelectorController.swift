@@ -39,7 +39,7 @@ final class PhotoSelectorController: ComponentController<ContentBase> {
         let minHistoryItemsToPreferHistory = withHistoryPrefered ? 1 : 2
         if history.uploaded.items.count >= minHistoryItemsToPreferHistory {
             showBulletin(photoHistoryBulletin)
-            session.delegate?.aiuta(eventOccurred: .picker(event: .uploadsHistoryOpened, page: page, product: session.activeSku))
+            session.track(.picker(event: .uploadsHistoryOpened, page: page, product: session.activeSku))
         } else {
             showSelectorIfCameraAvailableOrPicker()
         }
@@ -59,7 +59,7 @@ final class PhotoSelectorController: ComponentController<ContentBase> {
 
         photoHistoryBulletin.onSelect.subscribe(with: self) { [unowned self] image in
             tracker.track(.mainScreen(.selectOldPhotos(count: 1)))
-            session.delegate?.aiuta(eventOccurred: .picker(event: .uploadedPhotoSelected, page: page, product: session.activeSku))
+            session.track(.picker(event: .uploadedPhotoSelected, page: page, product: session.activeSku))
             photoHistoryBulletin.dismiss()
             didPick.fire(image)
         }
@@ -84,7 +84,7 @@ final class PhotoSelectorController: ComponentController<ContentBase> {
             tracker.track(.mainScreen(.selectNewPhotos(camera: 0, gallery: photos.count)))
             lock?.dismiss()
             if photos.isEmpty { return }
-            session.delegate?.aiuta(eventOccurred: .picker(event: .galleryPhotoSelected, page: page, product: session.activeSku))
+            session.track(.picker(event: .galleryPhotoSelected, page: page, product: session.activeSku))
             pickPhotos(photos)
         }
 
@@ -92,10 +92,10 @@ final class PhotoSelectorController: ComponentController<ContentBase> {
             switch source {
                 case .camera:
                     tracker.track(.mainScreen(.selectNewPhotos(camera: 1, gallery: 0)))
-                    session.delegate?.aiuta(eventOccurred: .picker(event: .newPhotoTaken, page: page, product: session.activeSku))
+                    session.track(.picker(event: .newPhotoTaken, page: page, product: session.activeSku))
                 case .photoLibrary:
                     tracker.track(.mainScreen(.selectNewPhotos(camera: 0, gallery: 1)))
-                    session.delegate?.aiuta(eventOccurred: .picker(event: .galleryPhotoSelected, page: page, product: session.activeSku))
+                    session.track(.picker(event: .galleryPhotoSelected, page: page, product: session.activeSku))
                 default: break
             }
             lock?.dismiss()
@@ -122,7 +122,7 @@ final class PhotoSelectorController: ComponentController<ContentBase> {
     private func pickOrChooseFromLibrary() {
         if #available(iOS 14.0, *) {
             photoPicker?.pick(max: 1)
-            session.delegate?.aiuta(eventOccurred: .picker(event: .photoGalleryOpened, page: page, product: session.activeSku))
+            session.track(.picker(event: .photoGalleryOpened, page: page, product: session.activeSku))
         } else {
             chooseFromLibrary()
         }
@@ -142,7 +142,7 @@ final class PhotoSelectorController: ComponentController<ContentBase> {
         photoHistoryBulletin.errorSnackbar.hide()
         do {
             try await history.removeUploaded(image)
-            session.delegate?.aiuta(eventOccurred: .picker(event: .uploadedPhotoDeleted, page: page, product: session.activeSku))
+            session.track(.picker(event: .uploadedPhotoDeleted, page: page, product: session.activeSku))
         } catch {
             photoHistoryBulletin.errorSnackbar.bar.tryAgain.onTouchUpInside.cancelSubscription(for: self)
             photoHistoryBulletin.errorSnackbar.bar.tryAgain.onTouchUpInside.subscribe(with: self) { [unowned self] in
@@ -185,7 +185,7 @@ private extension PhotoSelectorController {
         picker.sourceType = .camera
         picker.overrideUserInterfaceStyle = config.appearance.colors.style.userInterface
         vc?.present(picker, animated: true)
-        session.delegate?.aiuta(eventOccurred: .picker(event: .cameraOpened, page: page, product: session.activeSku))
+        session.track(.picker(event: .cameraOpened, page: page, product: session.activeSku))
     }
 
     func chooseFromLibrary() {
@@ -196,7 +196,7 @@ private extension PhotoSelectorController {
         picker.sourceType = .photoLibrary
         picker.overrideUserInterfaceStyle = config.appearance.colors.style.userInterface
         vc?.popover(picker)
-        session.delegate?.aiuta(eventOccurred: .picker(event: .photoGalleryOpened, page: page, product: session.activeSku))
+        session.track(.picker(event: .photoGalleryOpened, page: page, product: session.activeSku))
     }
 }
 

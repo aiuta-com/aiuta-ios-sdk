@@ -76,7 +76,7 @@ final class TryOnViewController: ViewController<TryOnView> {
         }
 
         ui.skuBulletin.cartButton.onTouchUpInside.subscribe(with: self) { [unowned self] in
-            session.delegate?.aiuta(eventOccurred: .results(event: .productAddToCart, page: page, product: session.activeSku))
+            session.track(.results(event: .productAddToCart, page: page, product: session.activeSku))
             dismissAll { [session, tracker] in
                 session.finish(addingToCart: session.activeSku)
                 tracker.track(.session(.finish(action: .addToCart, origin: .mainScreen, sku: session.activeSku)))
@@ -88,7 +88,7 @@ final class TryOnViewController: ViewController<TryOnView> {
             if let skuId = session.activeSku?.skuId {
                 session.delegate?.aiuta(addToWishlist: skuId)
                 if ui.skuBulletin.wishButton.isSelected {
-                    session.delegate?.aiuta(eventOccurred: .results(event: .productAddToWishlist, page: page, product: session.activeSku))
+                    session.track(.results(event: .productAddToWishlist, page: page, product: session.activeSku))
                 }
             }
         }
@@ -103,7 +103,7 @@ final class TryOnViewController: ViewController<TryOnView> {
         ui.skuBulletin.sku = session.activeSku
         ui.skuBulletin.wishButton.isSelected = session.isInWishlist(session.activeSku)
 
-        session.delegate?.aiuta(eventOccurred: .page(page: page, product: session.activeSku))
+        session.track(.page(page: page, product: session.activeSku))
         tracker.track(.mainScreen(.open(lastPhotosCount: history.uploaded.items.count)))
     }
 
