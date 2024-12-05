@@ -60,7 +60,7 @@ private extension FeedbackViewController {
     func dislike(_ sessionResult: TryOnResult, _ cell: ResultPage?) {
         let generatedImage = sessionResult.image
         let sku = sessionResult.sku
-//        FeedbackViewController.feedbackedImages.append(generatedImage.url)
+        FeedbackViewController.feedbackedImages.append(generatedImage.url)
         tracker.track(.feedback(.dislike(sku: sku)))
         Task { await dislike(sku, cell) }
     }
@@ -121,9 +121,9 @@ private extension FeedbackViewController {
         cell.addContent(gratitudeView)
 
         gratitudeView.animations.visibleTo(true)
-//        cell.feedback.animations.visibleTo(false, hideTime: .thirdOfSecond) { [weak cell] in
-//            cell?.hasFeedback = false
-//        }
+        cell.feedback.animations.visibleTo(false, hideTime: .thirdOfSecond) { [weak cell] in
+            cell?.hasFeedback = false
+        }
 
         delay(.twoSeconds) { [gratitudeView] in
             gratitudeView.animations.visibleTo(false, hideTime: .thirdOfSecond) { [gratitudeView] in
