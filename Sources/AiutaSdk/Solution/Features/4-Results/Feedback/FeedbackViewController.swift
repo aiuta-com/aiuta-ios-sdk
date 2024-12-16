@@ -53,7 +53,7 @@ private extension FeedbackViewController {
         FeedbackViewController.feedbackedImages.append(generatedImage.url)
         haptic(notification: .success)
         gratiture(cell)
-        session.track(.feedback(event: .positive, page: .results, product: session.activeSku))
+        session.track(.feedback(event: .positive, page: .results, product: sku))
     }
 
     func dislike(_ sessionResult: TryOnResult, _ cell: ResultPage?) {
@@ -90,9 +90,9 @@ private extension FeedbackViewController {
 
         if let result, !result.text.isEmpty {
             let text = String(result.text.prefix(1200))
-            session.track(.feedback(event: .negative(option: result.index ?? L.feedbackSheetOptions.count, text: text), page: .results, product: session.activeSku))
+            session.track(.feedback(event: .negative(option: result.index ?? L.feedbackSheetOptions.count, text: text), page: .results, product: sku))
         } else {
-            session.track(.feedback(event: .negative(option: -1, text: nil), page: .results, product: session.activeSku))
+            session.track(.feedback(event: .negative(option: -1, text: nil), page: .results, product: sku))
         }
 
         gratiture(cell)

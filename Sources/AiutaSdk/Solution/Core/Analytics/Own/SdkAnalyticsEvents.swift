@@ -16,12 +16,14 @@
 import Foundation
 
 extension AnalyticTracker {
+    @available(iOS 13.0.0, *)
     func track(_ event: AnalyticEvent.Internal) {
         track(event.internalEvent())
     }
 }
 
 extension AnalyticEvent {
+    @available(iOS 13.0.0, *)
     enum Internal {
         enum Flow: String {
             case tryOn, history
@@ -74,6 +76,7 @@ extension AnalyticEvent {
     }
 }
 
+@available(iOS 13.0.0, *)
 extension AnalyticEvent.Internal {
     enum Key: String {
         case type, mode, authentication, pageId, productId,
@@ -109,6 +112,7 @@ extension AnalyticEvent.Internal {
     }
 }
 
+@available(iOS 13.0.0, *)
 extension AnalyticEvent.Internal {
     func name(withPrefix prefix: String = "", suffix: String = "Event", firstCapitalized: Bool = true) -> String {
         let isFirstCapitalized = !prefix.isEmpty || firstCapitalized
@@ -164,6 +168,7 @@ extension AnalyticEvent.Internal {
     }
 }
 
+@available(iOS 13.0.0, *)
 private extension Aiuta.AuthType {
     var rawValue: String {
         switch self {
@@ -179,6 +184,7 @@ extension Optional where Wrapped == Aiuta.Product {
     }
 }
 
+@available(iOS 13.0.0, *)
 extension AnalyticEvent.Internal {
     func internalEvent() -> AnalyticEvent {
         AnalyticEvent(name(firstCapitalized: false), parameters())
