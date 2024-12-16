@@ -114,7 +114,7 @@ extension Aiuta.Configuration {
 
 extension Aiuta.Configuration.Appearance {
     /// Defines how the SDK will be presented as modal view controller.
-    public enum PresentationStyle: Equatable, Codable, CaseIterable {
+    public enum PresentationStyle: String, Equatable, Codable, CaseIterable {
         case pageSheet
         case bottomSheet
         case fullScreen
@@ -122,7 +122,7 @@ extension Aiuta.Configuration.Appearance {
 }
 
 extension Aiuta.Configuration.Appearance {
-    public enum SwipeToDismissPolicy: Equatable, Codable, CaseIterable {
+    public enum SwipeToDismissPolicy: String, Equatable, Codable, CaseIterable {
         case allowAlways
         case protectTheNecessary
         case allowHeaderSwipeOnly

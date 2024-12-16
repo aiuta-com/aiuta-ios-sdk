@@ -21,6 +21,7 @@ final class TryOnModelImpl: TryOnModel {
     @injected private var api: ApiService
     @injected private var history: HistoryModel
     @injected private var session: SessionModel
+    @injected private var subscription: SubscriptionModel
     @injected private var tracker: AnalyticTracker
 
     var sessionResults = DataProvider<TryOnResult>()
@@ -36,10 +37,12 @@ final class TryOnModelImpl: TryOnModel {
 
     @MainActor func tryOn(_ source: ImageSource,
                           with sku: Aiuta.Product?,
-                          status callback: @escaping (TryOnStatus) -> Void) async throws {
-        guard let sku else { throw TryOnError.noSku }
-
-        tracker.track(.tryOn(.generate(sku: sku)))
+                          status callback: @escaping (TryOnStatus) -> Void) async throws -> TryOnStats {
+        guard let sku else {
+            tracker.track(.error(error: .noActiveSku, product: sku))
+            throw TryOnError.noSku
+        }
+        let stats = TryOnStatsImpl()
 
         let imageId: String
         let uploadedImage: Aiuta.Image?
@@ -49,54 +52,64 @@ final class TryOnModelImpl: TryOnModel {
             imageId = id
         } else {
             callback(.uploadingImage)
-            do {
-                let image = try await upload(source)
-                uploadedImage = image
-                imageId = image.id
-            } catch {
-                tracker.track(.tryOn(.error(sku: sku, type: .uploadFailed)))
-                throw error
-            }
+            stats.uploadStarted()
+            let image = try await upload(source, with: sku)
+            stats.uploadFinished()
+            uploadedImage = image
+            imageId = image.id
         }
 
-        let startTime = Date()
-        tracker.track(.tryOn(.generate(sku: sku)))
         callback(.scanningBody)
 
         let start: Aiuta.TryOnStart
+        stats.tryOnStarted()
         do {
             start = try await api.request(Aiuta.TryOnStart.Post(uploadedImageId: imageId, skuId: sku.skuId, skuCatalogName: sku.skuCatalog))
         } catch {
-            tracker.track(.tryOn(.error(sku: sku, type: .tryOnStartFailed)))
+            tracker.track(.error(error: .startOperationFailed, product: sku))
             throw error
         }
 
-        var delays: [TimeInterval] = .init(repeating: 0.5, count: 12) + [1, 1, 2]
+        var delays = subscription.operationDelays
         var isGenerating = false
         var checkCount = 0
 
         repeat {
+            guard let delay = delays.next() else {
+                tracker.track(.error(error: .operationTimeout, product: sku))
+                throw TryOnError.tryOnTimeout
+            }
+
             if checkCount > 2, !isGenerating {
                 isGenerating = true
                 callback(.generatingOutfit)
             }
 
-            await asleep(.custom(delays.popLast() ?? 3))
+            await asleep(delay)
 
-            guard let operation: Aiuta.TryOnOperation = try? await api.request(Aiuta.TryOnOperation.Get(operationId: start.operationId)) else { continue }
+            do {
+                let operation: Aiuta.TryOnOperation = try await api.request(Aiuta.TryOnOperation.Get(operationId: start.operationId))
 
-            switch operation.status {
-                case .created, .inProgress:
-                    break
-                case .success:
-                    try await success(operation, with: sku, uploadedImage: uploadedImage, from: startTime)
-                    return
-                case .aborted:
-                    tracker.track(.tryOn(.error(sku: sku, type: .tryOnOperationAborted)))
-                    throw TryOnError.tryOnAborted
-                case .failed, .cancelled, .unknown:
-                    tracker.track(.tryOn(.error(sku: sku, type: .tryOnOperationFailed)))
-                    throw TryOnError.tryOnFailed
+                switch operation.status {
+                    case .created, .inProgress:
+                        break
+                    case .success:
+                        stats.tryOnFinished()
+                        stats.downloadStarted()
+                        try await success(operation, with: sku, uploadedImage: uploadedImage)
+                        stats.downloadFinished()
+                        return stats
+                    case .aborted:
+                        tracker.track(.error(error: .operationAborted, product: sku))
+                        throw TryOnError.tryOnAborted
+                    case .failed, .cancelled, .unknown:
+                        tracker.track(.error(error: .operationFailed, product: sku))
+                        throw TryOnError.tryOnFailed
+                }
+
+            } catch {
+                tracker.track(.error(error: .requestOperationFailed, product: sku))
+                throw error
             }
 
             checkCount += 1
@@ -105,21 +118,22 @@ final class TryOnModelImpl: TryOnModel {
 
     @MainActor func success(_ operation: Aiuta.TryOnOperation,
                             with sku: Aiuta.Product,
-                            uploadedImage: Aiuta.Image?,
-                            from startTime: Date) async throws {
+                            uploadedImage: Aiuta.Image?) async throws {
         guard !operation.generatedImages.isEmpty else {
-            tracker.track(.tryOn(.error(sku: sku, type: .tryOnOperationFailed)))
+            tracker.track(.error(error: .operationEmptyResults, product: sku))
             throw TryOnError.emptyResults
         }
-
-        let duration = -startTime.timeIntervalSinceNow
-        tracker.track(.tryOn(.finish(sku: sku, time: duration)))
 
         if let uploadedImage { Task { try? await history.addUploaded(uploadedImage) } }
         Task { try? await history.addGenerated(operation.generatedImages) }
 
-        _ = try await operation.generatedImages.concurrentMap { generatedImage in
-            try await generatedImage.prefetch(.hiResImage, breadcrumbs: Breadcrumbs())
+        do {
+            _ = try await operation.generatedImages.concurrentMap { generatedImage in
+                try await generatedImage.prefetch(.hiResImage, breadcrumbs: Breadcrumbs())
+            }
+        } catch {
+            tracker.track(.error(error: .downloadResultFailed, product: sku))
+            throw error
         }
 
         sessionResults.items.insert(contentsOf: operation.generatedImages.map { gen in
@@ -127,13 +141,23 @@ final class TryOnModelImpl: TryOnModel {
         }, at: 0)
     }
 
-    @MainActor func upload(_ source: ImageSource) async throws -> Aiuta.Image {
-        guard let imageData = await compress(try await source.fetch(breadcrumbs: Breadcrumbs())) else {
+    @MainActor func upload(_ source: ImageSource, with sku: Aiuta.Product?) async throws -> Aiuta.Image {
+        guard let image = try? await source.fetch(breadcrumbs: Breadcrumbs()) else {
+            tracker.track(.error(error: .preparePhotoFailed, product: sku))
             throw TryOnError.prepareImageFailed
         }
-        let uploadedImage: Aiuta.Image = try await api.request(Aiuta.Image.Post(imageData: imageData))
-        session.track(.tryOn(event: .photoUploaded, message: nil, page: .loading, product: session.activeSku))
-        return uploadedImage
+        guard let imageData = await compress(image) else {
+            tracker.track(.error(error: .preparePhotoFailed, product: sku))
+            throw TryOnError.prepareImageFailed
+        }
+        do {
+            let uploadedImage: Aiuta.Image = try await api.request(Aiuta.Image.Post(imageData: imageData))
+            session.track(.tryOn(event: .photoUploaded, message: nil, page: .loading, product: session.activeSku))
+            return uploadedImage
+        } catch {
+            tracker.track(.error(error: .uploadPhotoFailed, product: sku))
+            throw error
+        }
     }
 
     @MainActor func compress(_ image: UIImage) async -> Data? {
@@ -144,4 +168,45 @@ final class TryOnModelImpl: TryOnModel {
             }
         }
     }
+}
+
+final class TryOnStatsImpl: TryOnStats {
+    private var uploadStart: TimeInterval = .now
+    private var uploadFinish: TimeInterval = .now
+
+    func uploadStarted() {
+        uploadStart = .now
+    }
+
+    func uploadFinished() {
+        uploadFinish = .now
+    }
+
+    var uploadDuration: TimeInterval { uploadFinish - uploadStart }
+
+    private var tryOnStart: TimeInterval = .now
+    private var tryOnFinish: TimeInterval = .now
+
+    func tryOnStarted() {
+        tryOnStart = .now
+    }
+
+    func tryOnFinished() {
+        tryOnFinish = .now
+    }
+
+    var tryOnDuration: TimeInterval { tryOnFinish - tryOnStart }
+
+    private var downloadStart: TimeInterval = .now
+    private var downloadFinish: TimeInterval = .now
+
+    func downloadStarted() {
+        downloadStart = .now
+    }
+
+    func downloadFinished() {
+        downloadFinish = .now
+    }
+
+    var downloadDuration: TimeInterval { downloadFinish - downloadStart }
 }

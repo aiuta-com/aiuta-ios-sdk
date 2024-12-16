@@ -19,7 +19,7 @@ import Foundation
 protocol TryOnModel {
     var sessionResults: DataProvider<TryOnResult> { get }
 
-    func tryOn(_ source: ImageSource, with sku: Aiuta.Product?, status callback: @escaping (TryOnStatus) -> Void) async throws
+    func tryOn(_ source: ImageSource, with sku: Aiuta.Product?, status callback: @escaping (TryOnStatus) -> Void) async throws -> TryOnStats
 }
 
 enum TryOnStatus {
@@ -27,7 +27,17 @@ enum TryOnStatus {
 }
 
 enum TryOnError: Error {
-    case noSku, prepareImageFailed, uploadImageFailed, tryOnFailed, emptyResults, tryOnAborted
+    case noSku, prepareImageFailed, uploadImageFailed, tryOnFailed, tryOnTimeout, emptyResults, tryOnAborted
+}
+
+protocol TryOnStats {
+    var uploadDuration: TimeInterval { get }
+    var tryOnDuration: TimeInterval { get }
+    var downloadDuration: TimeInterval { get }
+}
+
+extension TryOnStats {
+    var totalDuration: TimeInterval { uploadDuration + tryOnDuration + downloadDuration }
 }
 
 extension TryOnError: LocalizedError {
@@ -39,6 +49,7 @@ extension TryOnError: LocalizedError {
             case .tryOnFailed: return "Opertaion status failed or cancelled."
             case .emptyResults: return "Completed with empty results."
             case .tryOnAborted: return "No people were found in the image."
+            case .tryOnTimeout: return "Operation timed out."
         }
     }
 }

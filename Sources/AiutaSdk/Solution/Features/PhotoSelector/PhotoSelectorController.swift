@@ -58,7 +58,6 @@ final class PhotoSelectorController: ComponentController<ContentBase> {
         }
 
         photoHistoryBulletin.onSelect.subscribe(with: self) { [unowned self] image in
-            tracker.track(.mainScreen(.selectOldPhotos(count: 1)))
             session.track(.picker(event: .uploadedPhotoSelected, page: page, product: session.activeSku))
             photoHistoryBulletin.dismiss()
             didPick.fire(image)
@@ -81,7 +80,6 @@ final class PhotoSelectorController: ComponentController<ContentBase> {
         }
 
         photoPicker?.didPick.subscribe(with: self) { [unowned self] photos in
-            tracker.track(.mainScreen(.selectNewPhotos(camera: 0, gallery: photos.count)))
             lock?.dismiss()
             if photos.isEmpty { return }
             session.track(.picker(event: .galleryPhotoSelected, page: page, product: session.activeSku))
@@ -91,10 +89,8 @@ final class PhotoSelectorController: ComponentController<ContentBase> {
         imagePickerDelegate.didPick.subscribe(with: self) { [unowned self] photo, source in
             switch source {
                 case .camera:
-                    tracker.track(.mainScreen(.selectNewPhotos(camera: 1, gallery: 0)))
                     session.track(.picker(event: .newPhotoTaken, page: page, product: session.activeSku))
                 case .photoLibrary:
-                    tracker.track(.mainScreen(.selectNewPhotos(camera: 0, gallery: 1)))
                     session.track(.picker(event: .galleryPhotoSelected, page: page, product: session.activeSku))
                 default: break
             }

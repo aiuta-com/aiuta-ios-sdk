@@ -51,7 +51,6 @@ private extension FeedbackViewController {
         let generatedImage = sessionResult.image
         let sku = sessionResult.sku
         FeedbackViewController.feedbackedImages.append(generatedImage.url)
-        tracker.track(.feedback(.like(sku: sku)))
         haptic(notification: .success)
         gratiture(cell)
         session.track(.feedback(event: .positive, page: .results, product: session.activeSku))
@@ -61,7 +60,6 @@ private extension FeedbackViewController {
         let generatedImage = sessionResult.image
         let sku = sessionResult.sku
         FeedbackViewController.feedbackedImages.append(generatedImage.url)
-        tracker.track(.feedback(.dislike(sku: sku)))
         Task { await dislike(sku, cell) }
     }
 
@@ -92,11 +90,9 @@ private extension FeedbackViewController {
 
         if let result, !result.text.isEmpty {
             let text = String(result.text.prefix(1200))
-            tracker.track(.feedback(.comment(sku: sku, text: text)))
-            session.track(.feedback(event: .negative(option: result.index, text: text), page: .results, product: session.activeSku))
+            session.track(.feedback(event: .negative(option: result.index ?? L.feedbackSheetOptions.count, text: text), page: .results, product: session.activeSku))
         } else {
-            tracker.track(.feedback(.comment(sku: sku, text: nil)))
-            session.track(.feedback(event: .negative(option: nil, text: nil), page: .results, product: session.activeSku))
+            session.track(.feedback(event: .negative(option: -1, text: nil), page: .results, product: session.activeSku))
         }
 
         gratiture(cell)

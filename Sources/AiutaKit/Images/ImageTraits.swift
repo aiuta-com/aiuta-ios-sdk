@@ -16,4 +16,5 @@ import UIKit
 
 @_spi(Aiuta) public protocol ImageTraits {
     func largestSize(for quality: ImageQuality) -> CGFloat
+    func retryCount(for quality: ImageQuality) -> Int
 }

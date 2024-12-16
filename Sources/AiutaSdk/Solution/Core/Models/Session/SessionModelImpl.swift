@@ -30,7 +30,6 @@ final class SessionModelImpl: SessionModel {
     func start(sku: Aiuta.Product, delegate: AiutaSdkDelegate) {
         self.delegate = delegate
         activeSku = sku
-        tracker.track(.session(.start(sku: sku, relatedCount: 0)))
     }
 
     func finish(addingToCart sku: Aiuta.Product?) {
@@ -55,8 +54,9 @@ final class SessionModelImpl: SessionModel {
             return true
         }
     }
-    
+
     func track(_ event: Aiuta.Event) {
         delegate?.aiuta(eventOccurred: event)
+        tracker.track(event.internalEvent())
     }
 }

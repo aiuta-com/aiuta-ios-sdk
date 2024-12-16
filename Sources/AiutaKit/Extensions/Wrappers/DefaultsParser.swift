@@ -16,7 +16,7 @@ import CryptoKit
 import Foundation
 
 @propertyWrapper
-@_spi(Aiuta) public final class defaults<T: Codable> {
+@_spi(Aiuta) public final class defaults<T: Codable>: CustomStringConvertible {
     public let onValueChanged = Signal<T>(retainLastData: true)
 
     private let key: String
@@ -37,11 +37,13 @@ import Foundation
 
             guard let data = userDefaults.object(forKey: key) as? Data else {
                 cachedValue = defaultValue
+                etag = nil
                 return defaultValue
             }
 
             let value = try? JSONDecoder().decode(T.self, from: data)
             cachedValue = value ?? defaultValue
+            if value.isNil { etag = nil }
             return value ?? defaultValue
         }
         set {
@@ -64,6 +66,13 @@ import Foundation
 
     public var projectedValue: defaults<T> {
         self
+    }
+
+    public var description: String {
+        guard let data = userDefaults.object(forKey: key) as? Data else {
+            return "{}"
+        }
+        return String(decoding: data, as: UTF8.self)
     }
 
     public func erase() {

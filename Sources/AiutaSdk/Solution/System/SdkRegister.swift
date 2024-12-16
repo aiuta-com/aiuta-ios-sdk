@@ -54,16 +54,16 @@ final class SdkRegister {
         resolver.register { SdkAnalyticsEnvImpl() }.implements(SdkAnalyticsEnv.self).scope(scope)
         resolver.register { AnalyticRouter(.ordinary(SdkAnalyticsTarget(auth, logging: isDebug))) }.implements(AnalyticTracker.self).scope(scope)
 
+        resolver.register { SubscriptionModelImpl() }.implements(SubscriptionModel.self).scope(scope)
         resolver.register { SessionModelImpl() }.implements(SessionModel.self).scope(scope)
         resolver.register { ConsentModelImpl() }.implements(ConsentModel.self).scope(scope)
         resolver.register { HistoryModelImpl() }.implements(HistoryModel.self).scope(scope)
         resolver.register { TryOnModelImpl() }.implements(TryOnModel.self).scope(scope)
-        resolver.register { SubscriptionModelImpl() }.implements(SubscriptionModel.self).scope(scope)
 
         if let controller { controller.setData(provider: DataProviderImpl(controller: controller)) }
 
         @injected var tracker: AnalyticTracker
-        tracker.track(.session(.configure(hasCustomConfiguration: configuration.isSome, configuration: config)))
+        tracker.track(.configure(configuration: config, auth: auth, hasExternalDataProvider: controller.isSome))
 
         @injected var subscription: SubscriptionModel
         subscription.load()

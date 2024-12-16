@@ -25,6 +25,8 @@ enum SdkPresenter {
         sessionModel.start(sku: sku, delegate: delegate)
         @injected var tryOnModel: TryOnModel
         tryOnModel.sessionResults.removeAll()
+        @injected var tracker: AnalyticTracker
+        tracker.track(.session(flow: .tryOn, product: sku))
         viewController.present(SdkNavigator(rootViewController: entryViewController()), animated: true)
     }
 
@@ -35,6 +37,8 @@ enum SdkPresenter {
         sessionModel.delegate = delegate
         @injected var configuration: Aiuta.Configuration
         guard configuration.behavior.isTryonHistoryAvailable else { return false }
+        @injected var tracker: AnalyticTracker
+        tracker.track(.session(flow: .history, product: nil))
         viewController.present(SdkNavigator(rootViewController: HistoryViewController()), animated: true)
         return true
     }

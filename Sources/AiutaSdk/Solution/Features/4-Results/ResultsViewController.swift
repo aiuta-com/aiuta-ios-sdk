@@ -65,7 +65,7 @@ final class ResulstsViewController: ViewController<ResultsView> {
         selector?.didPick.subscribe(with: self) { [unowned self] source in
             Task {
                 _ = try? await source.prefetch(.hiResImage, breadcrumbs: .init())
-                replace(with: ProcessingViewController(source))
+                replace(with: ProcessingViewController(source, origin: .retakeButton))
             }
         }
 
@@ -79,7 +79,6 @@ final class ResulstsViewController: ViewController<ResultsView> {
 
         ui.pager.onSwipePage.subscribe(with: self) { [unowned self] _ in
             ui.skuSheet.sku = ui.pager.currentItem?.sku
-            tracker.track(.results(.view(sku: ui.skuSheet.sku, index: ui.pager.pageIndex)))
         }
 
         ui.skuSheet.onTapImage.subscribe(with: self) { [unowned self] index in
@@ -90,9 +89,8 @@ final class ResulstsViewController: ViewController<ResultsView> {
         ui.skuSheet.content.addToCart.onTouchUpInside.subscribe(with: self) { [unowned self] in
             let sku = ui.pager.currentItem?.sku
             session.track(.results(event: .productAddToCart, page: page, product: sku))
-            dismissAll { [session, tracker] in
+            dismissAll { [session] in
                 session.finish(addingToCart: sku)
-                tracker.track(.session(.finish(action: .addToCart, origin: .resultsScreen, sku: sku)))
             }
         }
 
@@ -115,8 +113,6 @@ final class ResulstsViewController: ViewController<ResultsView> {
         ui.skuSheet.sku = ui.pager.currentItem?.sku
 
         session.track(.page(page: page, product: ui.skuSheet.sku))
-        tracker.track(.results(.open(sku: ui.skuSheet.sku)))
-        tracker.track(.results(.view(sku: ui.skuSheet.sku, index: 0)))
     }
 
     private func toggleCurrentWish() {
@@ -138,19 +134,18 @@ final class ResulstsViewController: ViewController<ResultsView> {
         let sku = result.sku
         Task {
             guard let image = try? await generatedImage.fetch(breadcrumbs: Breadcrumbs()) else { return }
-            tracker.track(.share(.start(origin: .resultsScreen, count: 1, text: sku.additionalShareInfo)))
+            session.track(.results(event: .resultShared, page: page, product: sku))
             ui.canBlackout = false
             let result = await share(image: watermarker.watermark(image),
                                      additions: [sku.additionalShareInfo].compactMap { $0 })
             ui.canBlackout = true
             switch result {
                 case let .succeeded(activity):
-                    tracker.track(.share(.success(origin: .resultsScreen, count: 1, activity: activity, text: sku.additionalShareInfo)))
-                    session.track(.results(event: .resultShared, page: page, product: sku))
+                    tracker.track(.share(result: .succeeded, product: sku, page: page, target: activity))
                 case let .canceled(activity):
-                    tracker.track(.share(.cancelled(origin: .resultsScreen, count: 1, activity: activity)))
+                    tracker.track(.share(result: .canceled, product: sku, page: page, target: activity))
                 case let .failed(activity, error):
-                    tracker.track(.share(.failed(origin: .resultsScreen, count: 1, activity: activity, error: error)))
+                    tracker.track(.share(result: .failed(error: error), product: sku, page: page, target: activity))
             }
         }
     }
@@ -161,17 +156,16 @@ final class ResulstsViewController: ViewController<ResultsView> {
             Task {
                 guard let image = try? await generatedImage.fetch(breadcrumbs: Breadcrumbs()) else { return }
                 let sku = tryOnModel.sessionResults.items[safe: index]?.sku
-                tracker.track(.share(.start(origin: .history, count: 1, text: sku?.additionalShareInfo)))
+                session.track(.results(event: .resultShared, page: page, product: sku))
                 let result = await vc.share(image: watermarker.watermark(image),
                                             additions: [sku?.additionalShareInfo].compactMap { $0 })
                 switch result {
                     case let .succeeded(activity):
-                        tracker.track(.share(.success(origin: .resultsFullScreen, count: 1, activity: activity, text: sku?.additionalShareInfo)))
-                        session.track(.results(event: .resultShared, page: page, product: sku))
+                        tracker.track(.share(result: .succeeded, product: sku, page: page, target: activity))
                     case let .canceled(activity):
-                        tracker.track(.share(.cancelled(origin: .resultsFullScreen, count: 1, activity: activity)))
+                        tracker.track(.share(result: .canceled, product: sku, page: page, target: activity))
                     case let .failed(activity, error):
-                        tracker.track(.share(.failed(origin: .resultsFullScreen, count: 1, activity: activity, error: error)))
+                        tracker.track(.share(result: .failed(error: error), product: sku, page: page, target: activity))
                 }
             }
         }

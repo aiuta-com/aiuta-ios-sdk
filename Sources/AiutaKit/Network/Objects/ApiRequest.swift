@@ -28,6 +28,7 @@ import Foundation
     var headers: HTTPHeaders { get }
     var requireAuth: Bool { get }
     var hasBody: Bool { get }
+    var retryCount: Int { get }
 
     var title: String { get }
     var subtitle: String? { get }
@@ -50,6 +51,8 @@ import Foundation
             default: return false
         }
     }
+
+    var retryCount: Int { 0 }
 
     var idString: String { "\(urlPath)-\(self)" }
     var title: String { "\(method.rawValue.lowercased().firstCapitalized) \(urlPath.replacingOccurrences(of: "_", with: " "))" }

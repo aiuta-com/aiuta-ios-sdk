@@ -37,17 +37,15 @@ final class TryOnViewController: ViewController<TryOnView> {
         }
 
         ui.uploadButton.onTouchUpInside.subscribe(with: self) { [unowned self] in
-            tracker.track(.mainScreen(.changePhoto(hasCurrent: false, hasHistory: history.hasUploads)))
             selector?.choosePhoto()
         }
 
         ui.changeButton.onTouchUpInside.subscribe(with: self) { [unowned self] in
-            tracker.track(.mainScreen(.changePhoto(hasCurrent: true, hasHistory: history.hasUploads)))
             selector?.choosePhoto()
         }
 
         selector?.didPick.subscribe(with: self) { [unowned self] source in
-            replace(with: ProcessingViewController(source))
+            replace(with: ProcessingViewController(source, origin: .selectedPhoto))
         }
 
         ui.tryOnBar.tryOnButton.onTouchUpInside.subscribe(with: self) { [unowned self] in
@@ -55,7 +53,7 @@ final class TryOnViewController: ViewController<TryOnView> {
                 selector?.choosePhoto()
                 return
             }
-            replace(with: ProcessingViewController(source))
+            replace(with: ProcessingViewController(source, origin: .tryOnButton))
         }
 
         ui.tryOnBar.productButton.onTouchUpInside.subscribe(with: self) { [unowned self] in
@@ -77,9 +75,8 @@ final class TryOnViewController: ViewController<TryOnView> {
 
         ui.skuBulletin.cartButton.onTouchUpInside.subscribe(with: self) { [unowned self] in
             session.track(.results(event: .productAddToCart, page: page, product: session.activeSku))
-            dismissAll { [session, tracker] in
+            dismissAll { [session] in
                 session.finish(addingToCart: session.activeSku)
-                tracker.track(.session(.finish(action: .addToCart, origin: .mainScreen, sku: session.activeSku)))
             }
         }
 
@@ -104,7 +101,6 @@ final class TryOnViewController: ViewController<TryOnView> {
         ui.skuBulletin.wishButton.isSelected = session.isInWishlist(session.activeSku)
 
         session.track(.page(page: page, product: session.activeSku))
-        tracker.track(.mainScreen(.open(lastPhotosCount: history.uploaded.items.count)))
     }
 
     private func updateUploads(animated: Bool = false) {

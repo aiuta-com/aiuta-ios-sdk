@@ -13,47 +13,160 @@
 // limitations under the License.
 
 @_spi(Aiuta) import AiutaKit
-import Alamofire
+import Foundation
 
 extension Aiuta {
     struct SubscriptionDetails: Codable {
-        struct PoweredBySticker: Codable {
-            let urlIos: String?
-        }
+        let poweredBySticker: PoweredBySticker
+        let retryCounts: RetryCounts
+        let operationDelaysSequence: OperationDelaysSequence
 
-        struct Feedback: Codable {
-            let title: StringVariants?
-            let mainOptions: [StringVariants]?
-            let plaintextOption: StringVariants?
-            let plaintextTitle: StringVariants?
-            let gratitudeMessage: StringVariants?
+        init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            poweredBySticker = try container.decodeIfPresent(PoweredBySticker.self, forKey: .poweredBySticker) ?? PoweredBySticker()
+            retryCounts = try container.decodeIfPresent(RetryCounts.self, forKey: .retryCounts) ?? RetryCounts()
+            operationDelaysSequence = try container.decodeIfPresent(OperationDelaysSequence.self, forKey: .operationDelaysSequence) ?? OperationDelaysSequence()
         }
-
-        struct Disclaimer: Codable {
-            let title: StringVariants?
-            let text: StringVariants?
-        }
-
-        let poweredBySticker: PoweredBySticker?
-        let feedback: Feedback?
-        let sizeAndFitDisclaimer: Disclaimer?
     }
 }
 
+// MARK: - PoweredBySticker
+
 extension Aiuta.SubscriptionDetails {
-    struct Get: Encodable, ApiRequest {
-        var urlPath: String { "subscription_details" }
+    struct PoweredBySticker: Codable {
+        let urlIos: String?
+        let isVisible: Bool
 
-        let etag: String?
+        init(from decoder: Decoder) throws {
+            let defaults = PoweredBySticker()
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            urlIos = try container.decodeIfPresent(String.self, forKey: .urlIos) ?? defaults.urlIos
+            isVisible = try container.decodeIfPresent(Bool.self, forKey: .isVisible) ?? defaults.isVisible
+        }
+    }
+}
 
-        var headers: HTTPHeaders {
-            var headers = HTTPHeaders()
-            if let etag { headers.add(.ifNoneMatch(etag)) }
-            return headers
+// MARK: - RetryCounts
+
+extension Aiuta.SubscriptionDetails {
+    struct RetryCounts: Codable {
+        let photoUpload: Int
+        let operationStart: Int
+        let operationStatus: Int
+        let resultDownload: Int
+
+        init(from decoder: Decoder) throws {
+            let defaults = RetryCounts()
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            photoUpload = try container.decodeIfPresent(Int.self, forKey: .photoUpload) ?? defaults.photoUpload
+            operationStart = try container.decodeIfPresent(Int.self, forKey: .operationStart) ?? defaults.operationStart
+            operationStatus = try container.decodeIfPresent(Int.self, forKey: .operationStatus) ?? defaults.operationStatus
+            resultDownload = try container.decodeIfPresent(Int.self, forKey: .resultDownload) ?? defaults.resultDownload
+        }
+    }
+}
+
+// MARK: - OperationDelaysSequence
+
+extension Aiuta.SubscriptionDetails {
+    struct OperationDelaysSequence {
+        private var sequence: [OperationDelay]
+        private var index: Int = 0
+
+        init() {
+            sequence = OperationDelay.defaultSequence
+        }
+    }
+}
+
+extension Aiuta.SubscriptionDetails.OperationDelaysSequence: IteratorProtocol {
+    mutating func next() -> AsyncDelayTime? {
+        while index < sequence.count {
+            if let time = sequence[index].next() {
+                return .custom(time)
+            }
+            index += 1
+        }
+        return nil
+    }
+}
+
+extension Aiuta.SubscriptionDetails.OperationDelaysSequence: Codable {
+    init(from decoder: any Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let sequence = try container.decode([OperationDelay].self)
+        self.sequence = sequence.isEmpty ? OperationDelay.defaultSequence : sequence
+    }
+
+    func encode(to encoder: any Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(sequence)
+    }
+}
+
+// MARK: - OperationDelay
+
+extension Aiuta.SubscriptionDetails.OperationDelaysSequence {
+    struct OperationDelay {
+        enum Mode {
+            case recurring(Int), infinite, unknown
         }
 
-        init(etag: String?) {
-            self.etag = etag
+        let mode: Mode
+        let delay: TimeInterval
+        private var index: Int = 0
+    }
+}
+
+extension Aiuta.SubscriptionDetails.OperationDelaysSequence.OperationDelay: IteratorProtocol {
+    mutating func next() -> TimeInterval? {
+        switch mode {
+            case let .recurring(count):
+                defer { index += 1 }
+                return index < count ? delay : nil
+            case .infinite:
+                return delay
+            case .unknown:
+                return nil
         }
+    }
+}
+
+extension Aiuta.SubscriptionDetails.OperationDelaysSequence.OperationDelay: Codable {
+    private enum CodingKeys: String, CodingKey {
+        case mode, delay, count = "repeat"
+    }
+
+    private enum ModeKeys: String {
+        case recurring, infinite
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let modeString = try container.decodeIfPresent(String.self, forKey: .mode)
+        switch modeString {
+            case ModeKeys.recurring.rawValue:
+                let count = try container.decodeIfPresent(Int.self, forKey: .count) ?? 0
+                mode = count > 0 ? .recurring(count) : .unknown
+            case ModeKeys.infinite.rawValue:
+                mode = .infinite
+            default:
+                mode = .unknown
+        }
+        delay = try container.decodeIfPresent(TimeInterval.self, forKey: .delay) ?? 0
+    }
+
+    func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        switch mode {
+            case let .recurring(count):
+                try container.encode(ModeKeys.recurring.rawValue, forKey: .mode)
+                try container.encode(count, forKey: .count)
+            case .infinite:
+                try container.encode(ModeKeys.infinite.rawValue, forKey: .mode)
+            default:
+                break
+        }
+        try container.encode(delay, forKey: .delay)
     }
 }
