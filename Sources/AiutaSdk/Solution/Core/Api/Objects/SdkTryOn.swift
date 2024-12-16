@@ -13,7 +13,7 @@
 // limitations under the License.
 
 @_spi(Aiuta) import AiutaKit
-import Alamofire
+import Foundation
 
 extension Aiuta {
     struct TryOnStart: Codable {
@@ -40,36 +40,6 @@ extension Aiuta {
         let status: Status
         let error: String?
         let generatedImages: [Image]
-    }
-}
-
-extension Aiuta.TryOnStart {
-    struct Post: Encodable, ApiRequest {
-        var urlPath: String { "sku_images_operations" }
-        var method: HTTPMethod { .post }
-
-        let uploadedImageId: String
-        let skuId: String
-        let skuCatalogName: String?
-
-        var secureAuthFields: [String: String]? {
-            var fields = [
-                "sku_id": skuId,
-                "uploaded_image_id": uploadedImageId,
-            ]
-            if let skuCatalogName {
-                fields["sku_catalog_name"] = skuCatalogName
-            }
-            return fields
-        }
-    }
-}
-
-extension Aiuta.TryOnOperation {
-    struct Get: Encodable, ApiRequest {
-        var urlPath: String { "sku_images_operations/\(operationId)" }
-
-        let operationId: String
     }
 }
 

@@ -92,7 +92,6 @@ final class HistoryViewController: ViewController<HistoryView> {
         ui.navBar.isActionAvailable = true
 
         session.track(.page(page: page, product: session.activeSku))
-        tracker.track(.history(.open))
     }
 
     private var isEditMode = false {
@@ -156,15 +155,11 @@ final class HistoryViewController: ViewController<HistoryView> {
     }
 
     func shareSelection() async {
-        tracker.track(.share(.start(origin: .history, count: selection.count, text: nil)))
         let imagesToShare: [UIImage] = await selection.concurrentCompactMap { [watermarker, breadcrumbs] in
             guard let image = try? await $0.fetch(breadcrumbs: breadcrumbs.fork()) else { return nil }
             return watermarker.watermark(image)
         }
-        guard !imagesToShare.isEmpty else {
-            tracker.track(.share(.failed(origin: .history, count: 0, activity: nil, error: nil)))
-            return
-        }
+        guard !imagesToShare.isEmpty else { return }
         session.track(.history(event: .generatedImageShared, page: page, product: session.activeSku))
         let result = await share(images: imagesToShare)
         if result.isSucceeded {
@@ -172,11 +167,11 @@ final class HistoryViewController: ViewController<HistoryView> {
         }
         switch result {
             case let .succeeded(activity):
-                tracker.track(.share(.success(origin: .history, count: imagesToShare.count, activity: activity, text: nil)))
+                tracker.track(.share(result: .succeeded, product: nil, page: page, target: activity))
             case let .canceled(activity):
-                tracker.track(.share(.cancelled(origin: .history, count: imagesToShare.count, activity: activity)))
+                tracker.track(.share(result: .canceled, product: nil, page: page, target: activity))
             case let .failed(activity, error):
-                tracker.track(.share(.failed(origin: .history, count: imagesToShare.count, activity: activity, error: error)))
+                tracker.track(.share(result: .failed(error: error), product: nil, page: page, target: activity))
         }
     }
 
@@ -185,16 +180,15 @@ final class HistoryViewController: ViewController<HistoryView> {
         gallery.willShare.subscribe(with: self) { [unowned self] generatedImage, _, gallery in
             Task {
                 guard let image = try? await generatedImage.fetch(breadcrumbs: breadcrumbs.fork()) else { return }
-                tracker.track(.share(.start(origin: .history, count: 1, text: nil)))
+                session.track(.history(event: .generatedImageShared, page: page, product: session.activeSku))
                 let result = await gallery.share(image: watermarker.watermark(image))
                 switch result {
                     case let .succeeded(activity):
-                        tracker.track(.share(.success(origin: .history, count: 1, activity: activity, text: nil)))
-                        session.track(.history(event: .generatedImageShared, page: page, product: session.activeSku))
+                        tracker.track(.share(result: .succeeded, product: nil, page: page, target: activity))
                     case let .canceled(activity):
-                        tracker.track(.share(.cancelled(origin: .history, count: 1, activity: activity)))
+                        tracker.track(.share(result: .canceled, product: nil, page: page, target: activity))
                     case let .failed(activity, error):
-                        tracker.track(.share(.failed(origin: .history, count: 1, activity: activity, error: error)))
+                        tracker.track(.share(result: .failed(error: error), product: nil, page: page, target: activity))
                 }
             }
         }

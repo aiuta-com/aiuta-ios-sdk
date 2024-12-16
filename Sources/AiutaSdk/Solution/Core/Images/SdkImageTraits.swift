@@ -13,6 +13,7 @@
 // limitations under the License.
 
 @_spi(Aiuta) import AiutaKit
+import Resolver
 import UIKit
 
 final class SdkImageTraits: ImageTraits {
@@ -20,6 +21,16 @@ final class SdkImageTraits: ImageTraits {
         switch quality {
             case .thumbnails: return 400
             case .hiResImage: return 1500
+        }
+    }
+
+    func retryCount(for quality: ImageQuality) -> Int {
+        switch quality {
+            case .thumbnails:
+                return 5
+            case .hiResImage:
+                @injected var subscription: SubscriptionModel
+                return subscription.retryCounts.resultDownload
         }
     }
 }

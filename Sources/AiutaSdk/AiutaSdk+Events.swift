@@ -74,7 +74,7 @@ extension Aiuta.Event {
 
     public enum Feedback {
         case positive,
-             negative(option: Int?, text: String?)
+             negative(option: Int, text: String?)
     }
 
     public enum History: String, Encodable, RawRepresentable {
@@ -99,7 +99,7 @@ public extension Aiuta.Event {
         })
     }
 
-    fileprivate func codingParameters() -> [CodingKeys: Any?] {
+    private func codingParameters() -> [CodingKeys: Any?] {
         switch self {
             case let .page(page, product): return [
                     .pageId: page.rawValue,
@@ -193,7 +193,7 @@ extension Aiuta.Event.Feedback: RawRepresentable {
     public init?(rawValue: String) {
         switch rawValue {
             case Raw.positive.rawValue: self = .positive
-            case Raw.negative.rawValue: self = .negative(option: nil, text: nil)
+            case Raw.negative.rawValue: self = .negative(option: -1, text: nil)
             default: return nil
         }
     }
@@ -251,11 +251,11 @@ extension Aiuta.Event: Encodable {
         switch self {
             case let .page(page, product):
                 try container.encode(page.rawValue, forKey: .pageId)
-                try container.encode(product?.skuId ?? "", forKey: .productId)
+                try container.encode(product.id, forKey: .productId)
             case let .onboarding(event, page, product):
                 try container.encode(event.rawValue, forKey: .event)
                 try container.encode(page.rawValue, forKey: .pageId)
-                try container.encode(product?.skuId ?? "", forKey: .productId)
+                try container.encode(product.id, forKey: .productId)
                 switch event {
                     case .welcomeStartClicked, .onboardingFinished: break
                     case let .consentGiven(supplementary):
@@ -264,33 +264,33 @@ extension Aiuta.Event: Encodable {
             case let .picker(event, page, product):
                 try container.encode(event.rawValue, forKey: .event)
                 try container.encode(page.rawValue, forKey: .pageId)
-                try container.encode(product?.skuId ?? "", forKey: .productId)
+                try container.encode(product.id, forKey: .productId)
             case let .tryOn(event, message, page, product):
                 try container.encode(event.rawValue, forKey: .event)
                 try container.encodeIfPresent(message, forKey: .errorMessage)
                 try container.encode(page.rawValue, forKey: .pageId)
-                try container.encode(product?.skuId ?? "", forKey: .productId)
+                try container.encode(product.id, forKey: .productId)
             case let .results(event, page, product):
                 try container.encode(event.rawValue, forKey: .event)
                 try container.encode(page.rawValue, forKey: .pageId)
-                try container.encode(product?.skuId ?? "", forKey: .productId)
+                try container.encode(product.id, forKey: .productId)
             case let .feedback(event, page, product):
                 try container.encode(event.rawValue, forKey: .event)
                 try container.encode(page.rawValue, forKey: .pageId)
-                try container.encode(product?.skuId ?? "", forKey: .productId)
+                try container.encode(product.id, forKey: .productId)
                 switch event {
                     case .positive: break
                     case let .negative(option, text):
                         try container.encodeIfPresent(text, forKey: .negativeFeedbackText)
-                        try container.encodeIfPresent(option, forKey: .negativeFeedbackOptionIndex)
+                        try container.encode(option, forKey: .negativeFeedbackOptionIndex)
                 }
             case let .history(event, page, product):
                 try container.encode(event.rawValue, forKey: .event)
                 try container.encode(page.rawValue, forKey: .pageId)
-                try container.encode(product?.skuId ?? "", forKey: .productId)
+                try container.encode(product.id, forKey: .productId)
             case let .exit(page, product):
                 try container.encode(page.rawValue, forKey: .pageId)
-                try container.encode(product?.skuId ?? "", forKey: .productId)
+                try container.encode(product.id, forKey: .productId)
         }
     }
 }

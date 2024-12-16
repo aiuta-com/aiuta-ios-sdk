@@ -21,16 +21,25 @@ final class SubscriptionModelImpl: SubscriptionModel {
     let didResolveDetails = Signal<Void>(retainLastData: true)
 
     var shouldDisplayPoweredBy: Bool {
-        powerdByLink.isSomeAndNotEmpty
+        details.poweredBySticker.isVisible
     }
 
     var powerdByLink: String? {
-        details?.poweredBySticker?.urlIos
+        details.poweredBySticker.urlIos
     }
 
-    @defaults(key: "subscriptionDetails", defaultValue: nil)
-    var details: Aiuta.SubscriptionDetails?
+    var retryCounts: Aiuta.SubscriptionDetails.RetryCounts {
+        details.retryCounts
+    }
+
+    var operationDelays: any IteratorProtocol<AsyncDelayTime> {
+        details.operationDelaysSequence
+    }
+
     @injected private var api: ApiService
+
+    @defaults(key: "subscriptionDetails", defaultValue: Aiuta.SubscriptionDetails())
+    var details: Aiuta.SubscriptionDetails
 
     @defaults(key: "subscriptionVersion", defaultValue: 1)
     private var detailsVersion: Int
@@ -40,17 +49,20 @@ final class SubscriptionModelImpl: SubscriptionModel {
         Task { await load() }
     }
 
-    func load() async {
-        if details.isNil || detailsVersion < targetVersion { $details.etag = nil }
+    @MainActor func load() async {
+        if detailsVersion < targetVersion { _details.etag = nil }
         let (config, headers): (Aiuta.SubscriptionDetails, HTTPHeaders?)
         do {
-            (config, headers) = try await api.request(Aiuta.SubscriptionDetails.Get(etag: $details.etag))
-            $details.etag = headers?.etag
+            (config, headers) = try await api.request(Aiuta.SubscriptionDetails.Get(etag: _details.etag))
+            _details.etag = headers?.etag
             detailsVersion = targetVersion
             details = config
-        } catch ApiError.notModified {
             trace(details)
+            didResolveDetails.fire()
+        } catch ApiError.notModified {
+            trace(_details, details)
         } catch {
+            trace(error)
             await asleep(.severalSeconds)
             await load()
         }

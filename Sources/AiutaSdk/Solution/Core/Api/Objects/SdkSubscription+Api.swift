@@ -12,22 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import UIKit
+@_spi(Aiuta) import AiutaKit
+import Alamofire
+import Foundation
 
-@_spi(Aiuta) public struct DefaultImageTraits: ImageTraits {
-    public static let `default` = DefaultImageTraits()
+extension Aiuta.SubscriptionDetails {
+    struct Get: Encodable, ApiRequest {
+        var urlPath: String { "subscription_details" }
 
-    public func largestSize(for quality: ImageQuality) -> CGFloat {
-        switch quality {
-            case .thumbnails: return 400
-            case .hiResImage: return 2000
+        let etag: String?
+
+        var headers: HTTPHeaders {
+            var headers = HTTPHeaders()
+            if let etag { headers.add(.ifNoneMatch(etag)) }
+            return headers
         }
-    }
 
-    public func retryCount(for quality: ImageQuality) -> Int {
-        switch quality {
-            case .thumbnails: return 2
-            case .hiResImage: return 4
+        var retryCount: Int { 3 }
+
+        init(etag: String?) {
+            self.etag = etag
         }
     }
 }

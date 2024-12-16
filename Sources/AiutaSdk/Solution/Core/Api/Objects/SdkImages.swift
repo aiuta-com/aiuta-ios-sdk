@@ -13,22 +13,7 @@
 // limitations under the License.
 
 @_spi(Aiuta) import AiutaKit
-import Alamofire
 import Foundation
-
-extension Aiuta.Image {
-    struct Post: Encodable, ApiRequest {
-        var urlPath: String { "uploaded_images" }
-        var type: ApiRequestType { .upload }
-        var method: HTTPMethod { .post }
-
-        let imageData: Data
-
-        func multipartFormData(_ data: MultipartFormData) {
-            data.append(imageData, withName: "image_data", fileName: "image.jpg", mimeType: "image/jpeg")
-        }
-    }
-}
 
 @_spi(Aiuta) extension Aiuta.Image: TransitionRef {
     public var transitionId: String { url }

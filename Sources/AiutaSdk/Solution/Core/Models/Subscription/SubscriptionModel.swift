@@ -20,6 +20,8 @@ protocol SubscriptionModel {
 
     var shouldDisplayPoweredBy: Bool { get }
     var powerdByLink: String? { get }
+    var retryCounts: Aiuta.SubscriptionDetails.RetryCounts { get }
+    var operationDelays: any IteratorProtocol<AsyncDelayTime> { get }
 
     func load()
 }

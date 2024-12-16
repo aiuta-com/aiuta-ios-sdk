@@ -27,10 +27,12 @@ final class ProcessingViewController: ViewController<ProcessingView> {
     @injected private var config: Aiuta.Configuration
 
     private var source: ImageSource?
+    private var origin: AnalyticEvent.Internal.Origin = .unknown
 
-    convenience init(_ source: ImageSource) {
+    convenience init(_ source: ImageSource, origin: AnalyticEvent.Internal.Origin) {
         self.init()
         self.source = source
+        self.origin = origin
     }
 
     override func setup() {
@@ -50,6 +52,7 @@ final class ProcessingViewController: ViewController<ProcessingView> {
         }
 
         ui.errorSnackbar.bar.tryAgain.onTouchUpInside.subscribe(with: self) { [unowned self] in
+            origin = .retryNotification
             Task { await start() }
         }
 
@@ -61,16 +64,20 @@ final class ProcessingViewController: ViewController<ProcessingView> {
 
         ui.animator.imageView.source = source
         session.track(.page(page: page, product: session.activeSku))
-        tracker.track(.tryOn(.start(origin: .selectPhotos, sku: session.activeSku, photosCount: 1)))
     }
 
     override func start() async {
         let sku = session.activeSku
+        let start = TimeInterval.now
+        tracker.track(.startTryOnProcess(origin: origin, product: sku))
         do {
-            guard let source else { throw TryOnError.prepareImageFailed }
+            guard let source else {
+                tracker.track(.error(error: .preparePhotoFailed, product: sku))
+                throw TryOnError.prepareImageFailed
+            }
             ui.errorSnackbar.isVisible = false
             ui.animator.isAnimating = true
-            try await tryOnModel.tryOn(source, with: session.activeSku) { [weak self] status in
+            let stats = try await tryOnModel.tryOn(source, with: session.activeSku) { [weak self] status in
                 switch status {
                     case .uploadingImage: self?.ui.status.text = L.loadingUploadingImage
                     case .scanningBody: self?.ui.status.text = L.loadingScanningBody
@@ -81,6 +88,9 @@ final class ProcessingViewController: ViewController<ProcessingView> {
             ui.animator.isAnimating = false
             session.track(.tryOn(event: .tryOnFinished, message: nil, page: .loading, product: sku))
             replace(with: ResulstsViewController(), crossFadeDuration: .quarterOfSecond)
+            let totalDuration = TimeInterval.now - start
+            trace(totalDuration - stats.totalDuration)
+            tracker.track(.success(stats: stats, total: totalDuration, product: sku))
         } catch TryOnError.tryOnAborted {
             ui.status.text = nil
             ui.animator.isAnimating = false

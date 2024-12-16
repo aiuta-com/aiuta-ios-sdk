@@ -12,17 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+@_spi(Aiuta) import AiutaKit
 import Alamofire
 import Foundation
+import Resolver
 
-@available(iOS 13.0.0, *)
-@_spi(Aiuta) public protocol ApiProvider {
-    var baseUrl: String { get async throws }
-    var keyCodingStrategy: ApiCodingStrategy { get }
+extension Aiuta.Image {
+    struct Post: Encodable, ApiRequest {
+        var urlPath: String { "uploaded_images" }
+        var type: ApiRequestType { .upload }
+        var method: HTTPMethod { .post }
 
-    func authorize(headers: inout HTTPHeaders, for request: ApiRequest) async throws
-}
+        let imageData: Data
 
-@_spi(Aiuta) public enum ApiCodingStrategy {
-    case convertSnakeCase, useDefaultKeys
+        func multipartFormData(_ data: MultipartFormData) {
+            data.append(imageData, withName: "image_data", fileName: "image.jpg", mimeType: "image/jpeg")
+        }
+
+        var retryCount: Int {
+            @injected var subscription: SubscriptionModel
+            return subscription.retryCounts.photoUpload
+        }
+    }
 }

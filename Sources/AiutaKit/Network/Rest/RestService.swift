@@ -58,8 +58,13 @@ import Foundation
             throw ApiError.failed("Unsupported date format")
         }
 
-        responseDecoder.keyDecodingStrategy = .convertFromSnakeCase
-        parameterEncoder.encoder.keyEncodingStrategy = .convertToSnakeCase
+        switch provider.keyCodingStrategy {
+            case .convertSnakeCase:
+                responseDecoder.keyDecodingStrategy = .convertFromSnakeCase
+                parameterEncoder.encoder.keyEncodingStrategy = .convertToSnakeCase
+            case .useDefaultKeys:
+                break
+        }
 
         requestModifier = { urlRequest in
             urlRequest.cachePolicy = .reloadIgnoringLocalCacheData
@@ -75,7 +80,7 @@ import Foundation
 
 @available(iOS 13.0.0, *)
 private extension RestService {
-    @MainActor func sendRequest<Request: ApiRequest & Encodable, Response: Decodable>(_ request: Request,
+    @MainActor func sendRequest<Request: ApiRequest & Encodable, Response: Decodable>(_ request: Request, tryCount: Int,
                                                                                       debugger debugOperation: ApiDebuggerOperation?) async throws -> ApiResponse<Response> {
         /// request
 
@@ -162,7 +167,11 @@ private extension RestService {
 
         guard let statusCode else {
             requestDebugger?.responseError = "<no response>"
-            throw ApiError(rawResponse.error)
+            if tryCount < request.retryCount {
+                throw ApiError.retry
+            } else {
+                throw ApiError(rawResponse.error)
+            }
         }
 
         guard statusCode == codeOk else {
@@ -231,14 +240,21 @@ private extension RestService {
                                                                                          breadcrumbs: Breadcrumbs?) async throws -> ApiResponse<Response> {
         let source = String(reflecting: type(of: request))
         breadcrumbs?.add(on: source)
-        do {
-            return try await sendRequest(request, debugger: debugOperation)
-        } catch ApiError.notModified {
-            throw ApiError.notModified
-        } catch {
-            let breadcrumbs = breadcrumbs ?? Breadcrumbs(on: source)
-            breadcrumbs.fire(error, label: error.localizedDescription, on: source)
-            throw error
+        var tryCount = 0
+        while true {
+            do {
+                return try await sendRequest(request, tryCount: tryCount, debugger: debugOperation)
+            } catch ApiError.retry {
+                await asleep(.oneSecond)
+                tryCount += 1
+                continue
+            } catch ApiError.notModified {
+                throw ApiError.notModified
+            } catch {
+                let breadcrumbs = breadcrumbs ?? Breadcrumbs(on: source)
+                breadcrumbs.fire(error, label: error.localizedDescription, on: source)
+                throw error
+            }
         }
     }
 }

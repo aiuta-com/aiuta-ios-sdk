@@ -18,6 +18,7 @@ import Foundation
 @available(iOS 13.0.0, *)
 @_spi(Aiuta) public enum ApiError: Error {
     case notModified
+    case retry
 
     case badRequest(String?)
     case unauthorized(String?)
@@ -70,7 +71,7 @@ import Foundation
 @available(iOS 13.0.0, *) extension ApiError: LocalizedError {
     public var errorDescription: String? {
         switch self {
-            case .notModified: return nil
+            case .notModified, .retry: return nil
             case let .badRequest(info): return info ?? "Bad request"
             case let .unauthorized(info): return info ?? "Please sign in"
             case let .paymentRequired(info): return info ?? "Please subscribe"

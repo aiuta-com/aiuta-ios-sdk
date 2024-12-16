@@ -15,297 +15,178 @@
 @_spi(Aiuta) import AiutaKit
 import Foundation
 
-extension AnalyticEvent {
-    static func session(_ event: AnalyticEvent.Session) -> AnalyticEvent { event.event }
-    static func onBoarding(_ event: AnalyticEvent.OnBoarding) -> AnalyticEvent { event.event }
-    static func mainScreen(_ event: AnalyticEvent.MainScreen) -> AnalyticEvent { event.event }
-    static func tryOn(_ event: AnalyticEvent.TryOn) -> AnalyticEvent { event.event }
-    static func results(_ event: AnalyticEvent.ResultsScreen) -> AnalyticEvent { event.event }
-    static func history(_ event: AnalyticEvent.History) -> AnalyticEvent { event.event }
-    static func share(_ event: AnalyticEvent.Share) -> AnalyticEvent { event.event }
-    static func feedback(_ event: AnalyticEvent.Feedback) -> AnalyticEvent { event.event }
+extension AnalyticTracker {
+    func track(_ event: AnalyticEvent.Internal) {
+        track(event.internalEvent())
+    }
 }
 
 extension AnalyticEvent {
-    enum Session {
-        enum Action: String {
-            case none, addToCart, addToWishlist, showSkuInfo
+    enum Internal {
+        enum Flow: String {
+            case tryOn, history
         }
 
         enum Origin: String {
-            case skuPopup, resultsScreen, moreToTry, mainScreen
+            case selectedPhoto, tryOnButton, retakeButton, retryNotification, unknown
         }
 
-        case configure(hasCustomConfiguration: Bool, configuration: Aiuta.Configuration)
-        case start(sku: Aiuta.Product, relatedCount: Int)
-        case finish(action: Action, origin: Origin, sku: Aiuta.Product?)
+        enum Result {
+            case succeeded, canceled, failed(error: Error?)
 
-        var event: AnalyticEvent {
-            switch self {
-                case let .configure(hasCustomConfiguration, configuration):
-                    return AnalyticEvent("Configure", [
-                        "has_custom_configuration": hasCustomConfiguration,
-                        "is_watermark_provided": configuration.behavior.watermark.image.isSome,
-                        "is_history_enable": configuration.behavior.isTryonHistoryAvailable,
-                    ], level: .significant)
+            var rawValue: String {
+                switch self {
+                    case .succeeded: return "succeeded"
+                    case .canceled: return "canceled"
+                    case .failed: return "failed"
+                }
+            }
 
-                case let .start(sku, relatedCount):
-                    return AnalyticEvent("StartSession", [
-                        "sku_id": sku.skuId,
-                        "sku_catalog_name": sku.skuCatalog,
-                        "related_sku_count": relatedCount,
-                        "price": sku.localizedOldPrice.isSome ? sku.localizedOldPrice! : sku.localizedPrice,
-                        "price_discounted": sku.localizedOldPrice.isSome ? sku.localizedPrice : nil,
-                        "store": sku.localizedBrand,
-                        "additional_share_info": sku.additionalShareInfo,
-                    ], level: .significant)
-
-                case let .finish(action, origin, sku):
-                    return AnalyticEvent("FinishSession", [
-                        "action": action.rawValue.firstCapitalized,
-                        "origin": origin.rawValue.firstCapitalized,
-                        "sku_id": sku?.skuId,
-                        "sku_catalog_name": sku?.skuCatalog,
-                    ], level: .significant)
+            var error: String? {
+                switch self {
+                    case .succeeded, .canceled:
+                        return nil
+                    case let .failed(error):
+                        return error?.localizedDescription
+                }
             }
         }
+
+        enum ProcessError: String {
+            case preparePhotoFailed,
+                 uploadPhotoFailed,
+                 noActiveSku,
+                 requestOperationFailed,
+                 startOperationFailed,
+                 operationFailed,
+                 operationAborted,
+                 operationTimeout,
+                 operationEmptyResults,
+                 downloadResultFailed
+        }
+
+        case configure(configuration: Aiuta.Configuration, auth: Aiuta.AuthType, hasExternalDataProvider: Bool)
+        case session(flow: Flow, product: Aiuta.Product?)
+        case startTryOnProcess(origin: Origin, product: Aiuta.Product?)
+        case error(error: Internal.ProcessError, product: Aiuta.Product?)
+        case success(stats: TryOnStats, total: TimeInterval, product: Aiuta.Product?)
+        case share(result: Result, product: Aiuta.Product?, page: Aiuta.Event.Page, target: String?)
+    }
+}
+
+extension AnalyticEvent.Internal {
+    enum Key: String {
+        case type, mode, authentication, pageId, productId,
+             flow, origin, error, result, target,
+             uploadDuration, tryOnDuration, downloadDuration, totalDuration,
+             isHistoryAvailable,
+             isWishlistAvailable,
+             isPreOnboardingAvailable,
+             isShareAvailable,
+             isHostDataProviderEnabled
     }
 
-    enum OnBoarding {
-        case start
-        case next(index: Int)
-        case finish
-
-        var event: AnalyticEvent {
-            switch self {
-                case .start:
-                    return AnalyticEvent("StartOnBoarding")
-
-                case let .next(index: index):
-                    return AnalyticEvent("ContinueOnBoarding", [
-                        "page": index + 1,
-                    ])
-
-                case .finish:
-                    return AnalyticEvent("FinishOnBoarding")
-            }
-        }
+    private enum Raw: String {
+        case configure,
+             session,
+             startTryOnProcess,
+             error,
+             success,
+             share
     }
 
-    enum MainScreen {
-        case open(lastPhotosCount: Int)
-        case changePhoto(hasCurrent: Bool, hasHistory: Bool)
-        case selectOldPhotos(count: Int)
-        case selectNewPhotos(camera: Int, gallery: Int)
-
-        var event: AnalyticEvent {
-            switch self {
-                case let .open(lastPhotosCount: lastPhotosCount):
-                    return AnalyticEvent("OpenMainScreen", [
-                        "last_photos_selection": lastPhotosCount,
-                    ])
-
-                case let .changePhoto(hasCurrent: hasCurrent, hasHistory: hasHistory):
-                    return AnalyticEvent("TapChangePhoto", [
-                        "has_current_photos": hasCurrent,
-                        "has_history_photos": hasHistory,
-                    ])
-
-                case let .selectOldPhotos(count: count):
-                    return AnalyticEvent("SelectOldPhotos", [
-                        "count": count,
-                    ])
-
-                case let .selectNewPhotos(camera: camera, gallery: gallery):
-                    return AnalyticEvent("SelectNewPhotos", [
-                        "from_camera": camera,
-                        "from_gallery": gallery,
-                    ])
-            }
+    var rawValue: String {
+        let raw: Raw
+        switch self {
+            case .configure: raw = .configure
+            case .session: raw = .session
+            case .startTryOnProcess: raw = .startTryOnProcess
+            case .error: raw = .error
+            case .success: raw = .success
+            case .share: raw = .share
         }
+        return raw.rawValue
+    }
+}
+
+extension AnalyticEvent.Internal {
+    func name(withPrefix prefix: String = "", suffix: String = "Event", firstCapitalized: Bool = true) -> String {
+        let isFirstCapitalized = !prefix.isEmpty || firstCapitalized
+        let name = isFirstCapitalized ? rawValue.firstCapitalized : rawValue
+        return "\(prefix)\(name)\(suffix)"
     }
 
-    enum TryOn {
-        enum Origin: String {
-            case tryOnButton, selectPhotos
-        }
-
-        enum Error: String {
-            case skuUnknown, skuNotReady, uploadFailed, tryOnStartFailed, tryOnOperationFailed, tryOnOperationAborted
-        }
-
-        case start(origin: Origin, sku: Aiuta.Product?, photosCount: Int)
-        case generate(sku: Aiuta.Product)
-        case finish(sku: Aiuta.Product, time: TimeInterval)
-        case error(sku: Aiuta.Product, type: Error)
-
-        var event: AnalyticEvent {
-            switch self {
-                case let .start(origin, sku, photosCount):
-                    return AnalyticEvent("StartUITryOn", [
-                        "origin": origin.rawValue.firstCapitalized,
-                        "sku_id": sku?.skuId,
-                        "sku_catalog_name": sku?.skuCatalog,
-                        "photos_count": photosCount,
-                    ])
-
-                case let .generate(sku):
-                    return AnalyticEvent("StartTryOn", [
-                        "sku_id": sku.skuId,
-                        "sku_catalog_name": sku.skuCatalog,
-                    ])
-
-                case let .finish(sku, time):
-                    return AnalyticEvent("FinishTryOn", [
-                        "sku_id": sku.skuId,
-                        "sku_catalog_name": sku.skuCatalog,
-                        "generation_time": time.seconds,
-                    ])
-
-                case let .error(sku, type):
-                    return AnalyticEvent("TryOnError", [
-                        "sku_id": sku.skuId,
-                        "sku_catalog_name": sku.skuCatalog,
-                        "type": type.rawValue.firstCapitalized,
-                    ])
-            }
-        }
+    func parameters() -> [String: Any] {
+        Dictionary(uniqueKeysWithValues: codingParameters().compactMap { k, v in
+            guard let v else { return nil }
+            return (k.rawValue, v)
+        })
     }
 
-    enum ResultsScreen {
-        enum NavigationType: String {
-            case thumbnail, swipe
-        }
-
-        case open(sku: Aiuta.Product?)
-        case view(sku: Aiuta.Product?, index: Int)
-        case update(sku: Aiuta.Product, generatedCount: Int)
-        case showRelated
-        case tapRelated(sku: Aiuta.Product)
-        case selectRelated(sku: Aiuta.Product)
-
-        var event: AnalyticEvent {
-            switch self {
-                case let .open(sku):
-                    return AnalyticEvent("OpenResultsScreen", [
-                        "sku_id": sku?.skuId,
-                        "sku_catalog_name": sku?.skuCatalog,
-                    ])
-
-                case let .view(sku, index):
-                    return AnalyticEvent("ViewGeneratedImage", [
-                        "sku_id": sku?.skuId,
-                        "sku_catalog_name": sku?.skuCatalog,
-                        "image_number": index + 1,
-                    ])
-
-                case let .update(sku, generatedCount):
-                    return AnalyticEvent("UpdateResultsScreen", [
-                        "sku_id": sku.skuId,
-                        "sku_catalog_name": sku.skuCatalog,
-                        "generated_photos": generatedCount,
-                    ])
-
-                case .showRelated:
-                    return AnalyticEvent("ViewMoreToTryOn")
-
-                case let .tapRelated(sku):
-                    return AnalyticEvent("TapMoreToTryOn", [
-                        "sku_id": sku.skuId,
-                        "sku_catalog_name": sku.skuCatalog,
-                    ])
-
-                case let .selectRelated(sku):
-                    return AnalyticEvent("SelectMoreToTryOn", [
-                        "sku_id": sku.skuId,
-                        "sku_catalog_name": sku.skuCatalog,
-                    ])
-            }
+    private func codingParameters() -> [Key: Any?] {
+        switch self {
+            case let .configure(configuration, auth, hasExternalDataProvider): return [
+                    .authentication: auth.rawValue,
+                    .mode: configuration.appearance.presentationStyle.rawValue,
+                    .isHistoryAvailable: configuration.behavior.isTryonHistoryAvailable,
+                    .isWishlistAvailable: configuration.behavior.isWishlistAvailable,
+                    .isPreOnboardingAvailable: configuration.behavior.showSplashScreenBeforeOnboadring,
+                    .isShareAvailable: configuration.behavior.isShareAvailable,
+                    .isHostDataProviderEnabled: hasExternalDataProvider,
+                ]
+            case let .session(flow, product): return [
+                    .flow: flow.rawValue,
+                    .productId: product.id,
+                ]
+            case let .startTryOnProcess(origin, product): return [
+                    .origin: origin.rawValue,
+                    .productId: product.id,
+                ]
+            case let .error(error, product): return [
+                    .error: error.rawValue,
+                    .productId: product.id,
+                ]
+            case let .success(stats, total, product): return [
+                    .productId: product.id,
+                    .uploadDuration: stats.uploadDuration,
+                    .tryOnDuration: stats.tryOnDuration,
+                    .downloadDuration: stats.downloadDuration,
+                    .totalDuration: total,
+                ]
+            case let .share(result, product, page, target): return [
+                    .result: result.rawValue,
+                    .productId: product.id,
+                    .pageId: page.rawValue,
+                    .target: target,
+                    .error: result.error,
+                ]
         }
     }
+}
 
-    enum History {
-        case open
-
-        var event: AnalyticEvent {
-            switch self {
-                case .open: return AnalyticEvent("OpenHistoryScreen")
-            }
+private extension Aiuta.AuthType {
+    var rawValue: String {
+        switch self {
+            case .apiKey: return "apiKey"
+            case .jwt: return "jwt"
         }
     }
+}
 
-    enum Share {
-        enum Origin: String {
-            case resultsScreen, resultsFullScreen, history
-        }
-
-        case start(origin: Origin, count: Int, text: String?)
-        case success(origin: Origin, count: Int, activity: String?, text: String?)
-        case cancelled(origin: Origin, count: Int, activity: String?)
-        case failed(origin: Origin, count: Int, activity: String?, error: Error?)
-
-        var event: AnalyticEvent {
-            switch self {
-                case let .start(origin, count, text):
-                    return AnalyticEvent("ShareGeneratedImage", [
-                        "origin": origin.rawValue.firstCapitalized,
-                        "count": count,
-                        "additional_share_info": text,
-                    ])
-
-                case let .success(origin, count, activity, text):
-                    return AnalyticEvent("ShareSuccessfully", [
-                        "origin": origin.rawValue.firstCapitalized,
-                        "count": count,
-                        "target": activity,
-                        "additional_share_info": text,
-                    ])
-
-                case let .cancelled(origin, count, activity):
-                    return AnalyticEvent("ShareCanceled", [
-                        "origin": origin.rawValue.firstCapitalized,
-                        "count": count,
-                        "target": activity,
-                    ])
-
-                case let .failed(origin, count, activity, error):
-                    return AnalyticEvent("ShareFailed", [
-                        "origin": origin.rawValue.firstCapitalized,
-                        "count": count,
-                        "target": activity,
-                        "error": error?.localizedDescription,
-                    ])
-            }
-        }
+extension Optional where Wrapped == Aiuta.Product {
+    var id: String {
+        self?.skuId ?? ""
     }
+}
 
-    enum Feedback {
-        case like(sku: Aiuta.Product)
-        case dislike(sku: Aiuta.Product)
-        case comment(sku: Aiuta.Product, text: String?)
+extension AnalyticEvent.Internal {
+    func internalEvent() -> AnalyticEvent {
+        AnalyticEvent(name(firstCapitalized: false), parameters())
+    }
+}
 
-        var event: AnalyticEvent {
-            switch self {
-                case let .like(sku):
-                    return AnalyticEvent("LikeGenerationFeedback", [
-                        "sku_id": sku.skuId,
-                        "sku_catalog_name": sku.skuCatalog,
-                        "generated_photo_position": 0,
-                    ])
-                case let .dislike(sku):
-                    return AnalyticEvent("DislikeGenerationFeedback", [
-                        "sku_id": sku.skuId,
-                        "sku_catalog_name": sku.skuCatalog,
-                        "generated_photo_position": 0,
-                    ])
-                case let .comment(sku, text):
-                    return AnalyticEvent("GenerationFeedback", [
-                        "sku_id": sku.skuId,
-                        "sku_catalog_name": sku.skuCatalog,
-                        "generated_photo_position": 0,
-                        "feedback": text as Any,
-                    ])
-            }
-        }
+extension Aiuta.Event {
+    func internalEvent() -> AnalyticEvent {
+        AnalyticEvent(name(firstCapitalized: false), parameters())
     }
 }

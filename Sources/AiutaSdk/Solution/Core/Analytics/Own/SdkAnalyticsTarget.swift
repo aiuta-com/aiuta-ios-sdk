@@ -20,29 +20,26 @@ import Foundation
 final class SdkAnalyticsTarget: AnalyticTarget {
     private let api: ApiService
     private let logsEnabled: Bool
-    private let maxRetryCount: Int
 
-    init(_ auth: Aiuta.AuthType, retryCount: Int = 5, logging: Bool = false) {
-        api = RestService(SdkApiProvider(auth: auth, baseUrl: "https://api.aiuta.com/analytics/v1"))
-        maxRetryCount = retryCount
+    init(_ auth: Aiuta.AuthType, logging: Bool = false) {
+        api = RestService(SdkApiProvider(
+            auth: auth,
+            baseUrl: "https://api.aiuta.com/analytics/v1",
+            keyCodingStrategy: .useDefaultKeys
+        ), debugger: SdkAnalyticsDebuggerImpl())
         logsEnabled = logging
     }
 
     func eventOccured(_ event: AnalyticEvent) {
         let dto = SdkAnalyticDto(event)
-        Task { await send(dto) }
+        Task { let _: SdkAnalyticResponse? = try? await api.request(dto) }
         guard logsEnabled, let data = try? JSONEncoder().encode(dto) else { return }
         trace(event.name, "\n\n\(String(decoding: data, as: UTF8.self))\n")
     }
+}
 
-    func send(_ dto: SdkAnalyticDto, retry: Int = 0) async {
-        do {
-            let _: SdkAnalyticResponse = try await api.request(dto)
-        } catch {
-            let nextTry = retry + 1
-            guard nextTry <= maxRetryCount else { return }
-            await asleep(.custom(TimeInterval(nextTry)))
-            await send(dto, retry: nextTry)
-        }
-    }
+@available(iOS 13.0.0, *)
+private struct SdkAnalyticsDebuggerImpl: ApiDebugger {
+    let isEnabled: Bool = false
+    func startOperation(id: String?, title: String, subtitle: String?) async -> ApiDebuggerOperation? { nil }
 }

@@ -20,7 +20,6 @@ import UIKit
     private var downloadTask: DownloadTask?
     private let fetcher = KingfisherManager.shared
     private let breadcrumbs: Breadcrumbs
-    private let maxRetry = 3
 
     public init(_ string: String, quality: ImageQuality, isRounded: Bool = false, breadcrumbs: Breadcrumbs) {
         self.breadcrumbs = breadcrumbs
@@ -43,7 +42,7 @@ import UIKit
 private extension UrlFetcher {
     func load(_ url: URL, quality: ImageQuality, isRounded: Bool = false, retry: Int = 0) {
         var options: KingfisherOptionsInfo = [
-            .retryStrategy(DelayRetryStrategy(maxRetryCount: retry, retryInterval: .accumulated(1))),
+            .retryStrategy(DelayRetryStrategy(maxRetryCount: retry, retryInterval: .seconds(1))),
             .processor(DownsamplingImageProcessor(size: .init(square: imageTraits.largestSize(for: quality)))),
             .backgroundDecode,
         ]
@@ -63,6 +62,7 @@ private extension UrlFetcher {
             case let .success(result):
                 onImage.fire(result.image)
             case let .failure(error):
+                let maxRetry = imageTraits.retryCount(for: quality)
                 if retry < maxRetry {
                     onError.fire()
                     load(url, quality: quality, isRounded: isRounded, retry: maxRetry)

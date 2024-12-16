@@ -19,6 +19,7 @@ import Foundation
 struct SdkAnalyticDto: Encodable, ApiRequest {
     var urlPath: String { "ios-sdk-analytics" }
     var method: HTTPMethod { .post }
+    var retryCount: Int { 5 }
 
     struct Env: Encodable {
         let platform = "ios"
@@ -36,13 +37,13 @@ struct SdkAnalyticDto: Encodable, ApiRequest {
     }
 
     let env = Env()
-    let event: [String: Any]
+    let data: [String: Any]
     let localDateTime: String
 
     init(_ event: AnalyticEvent) {
         var rawEvent: [String: Any] = event.parameters ?? [:]
         rawEvent["type"] = event.name
-        self.event = rawEvent
+        data = rawEvent
         if #available(iOS 15.0, *) {
             localDateTime = event.timestamp.ISO8601Format(.init(includingFractionalSeconds: true,
                                                                 timeZone: .current))
@@ -58,13 +59,13 @@ struct SdkAnalyticDto: Encodable, ApiRequest {
     }
 
     enum CodingKeys: String, CodingKey {
-        case env, event, localDateTime
+        case env, data, localDateTime
     }
 
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(env, forKey: .env)
-        try container.encodeIfPresent(event, forKey: .event)
+        try container.encodeIfPresent(data, forKey: .data)
         try container.encode(localDateTime, forKey: .localDateTime)
     }
 }

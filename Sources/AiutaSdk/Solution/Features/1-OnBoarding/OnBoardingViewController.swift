@@ -67,15 +67,12 @@ final class OnBoardingViewController: ViewController<OnBoardingView> {
                     sessionModel.delegate?.aiuta(eventOccurred: .onboarding(event: .consentGiven(supplementary: ui.scroll.consent.supplementaryConsents),
                                                                             page: .consent, product: sessionModel.activeSku))
                     sessionModel.delegate?.aiuta(eventOccurred: .onboarding(event: .onboardingFinished, page: .consent, product: sessionModel.activeSku))
-                    tracker.track(.onBoarding(.finish))
                     replace(with: TryOnViewController())
                 }
             } else {
                 ui.scroll.scrollToNext()
             }
         }
-
-        tracker.track(.onBoarding(.start))
     }
 
     private func updateTitle() {
@@ -102,7 +99,6 @@ final class OnBoardingViewController: ViewController<OnBoardingView> {
     private func trackPage() {
         guard page != trackedPage else { return }
         sessionModel.delegate?.aiuta(eventOccurred: .page(page: page, product: sessionModel.activeSku))
-        tracker.track(.onBoarding(.next(index: ui.scroll.slideIndex)))
         trackedPage = page
     }
 }

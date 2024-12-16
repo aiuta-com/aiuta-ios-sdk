@@ -18,6 +18,7 @@ import Alamofire
 @available(iOS 13.0.0, *)
 @_spi(Aiuta) public struct SdkApiProvider: ApiProvider {
     public let baseUrl: String
+    public let keyCodingStrategy: ApiCodingStrategy
     private let auth: Aiuta.AuthType
 
     public func authorize(headers: inout HTTPHeaders, for request: ApiRequest) async throws {
@@ -34,8 +35,9 @@ import Alamofire
         }
     }
 
-    public init(auth: Aiuta.AuthType, baseUrl: String = "https://api.aiuta.com/digital-try-on/v1") {
-        self.baseUrl = baseUrl
+    public init(auth: Aiuta.AuthType, baseUrl: String = "https://api.aiuta.com/digital-try-on/v1", keyCodingStrategy: ApiCodingStrategy = .convertSnakeCase) {
         self.auth = auth
+        self.baseUrl = baseUrl
+        self.keyCodingStrategy = keyCodingStrategy
     }
 }
