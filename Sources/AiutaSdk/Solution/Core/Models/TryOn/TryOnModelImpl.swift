@@ -26,6 +26,8 @@ final class TryOnModelImpl: TryOnModel {
 
     var sessionResults = DataProvider<TryOnResult>()
     private let jpegCompressionQuality: CGFloat = 65
+    private let generationStatusTime: TimeInterval = 3
+    private var isAborted: Bool = false
 
     init() {
         history.generated.onUpdate.subscribe(with: self) { [unowned self] in
@@ -35,6 +37,10 @@ final class TryOnModelImpl: TryOnModel {
         }
     }
 
+    func abortAll() {
+        isAborted = true
+    }
+
     @MainActor func tryOn(_ source: ImageSource,
                           with sku: Aiuta.Product?,
                           status callback: @escaping (TryOnStatus) -> Void) async throws -> TryOnStats {
@@ -42,6 +48,7 @@ final class TryOnModelImpl: TryOnModel {
             tracker.track(.error(error: .noActiveSku, product: sku))
             throw TryOnError.noSku
         }
+        isAborted = false
         let stats = TryOnStatsImpl()
 
         let imageId: String
@@ -59,6 +66,8 @@ final class TryOnModelImpl: TryOnModel {
             imageId = image.id
         }
 
+        if isAborted { throw TryOnError.terminated }
+
         callback(.scanningBody)
 
         let start: Aiuta.TryOnStart
@@ -75,14 +84,16 @@ final class TryOnModelImpl: TryOnModel {
         var checkCount = 0
 
         repeat {
+            if isAborted { throw TryOnError.terminated }
+
             guard let delay = delays.next() else {
                 tracker.track(.error(error: .operationTimeout, product: sku))
                 throw TryOnError.tryOnTimeout
             }
 
-            if checkCount > 2, !isGenerating {
-                isGenerating = true
+            if !isGenerating, stats.currentDuration > generationStatusTime {
                 callback(.generatingOutfit)
+                isGenerating = true
             }
 
             await asleep(delay)
@@ -124,8 +135,10 @@ final class TryOnModelImpl: TryOnModel {
             throw TryOnError.emptyResults
         }
 
+        if isAborted { throw TryOnError.terminated }
+
         if let uploadedImage { Task { try? await history.addUploaded(uploadedImage) } }
-        Task { try? await history.addGenerated(operation.generatedImages) }
+        Task { try? await history.addGenerated(operation.generatedImages, for: sku) }
 
         do {
             _ = try await operation.generatedImages.concurrentMap { generatedImage in
@@ -195,6 +208,7 @@ final class TryOnStatsImpl: TryOnStats {
         tryOnFinish = .now
     }
 
+    var currentDuration: TimeInterval { .now - tryOnStart }
     var tryOnDuration: TimeInterval { tryOnFinish - tryOnStart }
 
     private var downloadStart: TimeInterval = .now

@@ -69,10 +69,16 @@ extension Aiuta.Configuration {
 
         /// Should ask user opinion on generations results.
         /// This options show/hide like and dislike buttons.
-        public var asksForUserFeedbackOnResults: Bool = true
+        public var askForUserFeedbackOnResults: Bool = true
 
         /// Use additional splash screen before onboarding.
         public var showSplashScreenBeforeOnboadring: Bool = false
+
+        /// When the user closes the SDK during the generation process, the SDK can wait
+        /// for the generation to complete in the background and provide the data to the host application.
+        /// If disable this, the SDK will stop tracking the status of the operation and stop all activity on closing.
+        /// Note that the backend will still complete the operation.
+        public var allowBackgroundExecution: Bool = true
 
         public struct Watermark {
             /// Optional watermark image that will be applied to share generated image.

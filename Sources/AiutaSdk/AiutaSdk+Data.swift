@@ -24,7 +24,7 @@ public protocol AiutaDataController: AnyObject {
     func selectUploaded(image: Aiuta.Image) async throws
     func deleteUploaded(images: [Aiuta.Image]) async throws
 
-    func addGenerated(images: [Aiuta.Image]) async throws
+    func addGenerated(images: [Aiuta.Image], for productId: String) async throws
     func deleteGenerated(images: [Aiuta.Image]) async throws
 }
 

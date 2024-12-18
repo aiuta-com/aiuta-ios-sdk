@@ -20,6 +20,8 @@ protocol TryOnModel {
     var sessionResults: DataProvider<TryOnResult> { get }
 
     func tryOn(_ source: ImageSource, with sku: Aiuta.Product?, status callback: @escaping (TryOnStatus) -> Void) async throws -> TryOnStats
+
+    func abortAll()
 }
 
 enum TryOnStatus {
@@ -27,7 +29,7 @@ enum TryOnStatus {
 }
 
 enum TryOnError: Error {
-    case noSku, prepareImageFailed, uploadImageFailed, tryOnFailed, tryOnTimeout, emptyResults, tryOnAborted
+    case noSku, prepareImageFailed, uploadImageFailed, tryOnFailed, tryOnTimeout, emptyResults, tryOnAborted, terminated
 }
 
 protocol TryOnStats {
@@ -50,6 +52,7 @@ extension TryOnError: LocalizedError {
             case .emptyResults: return "Completed with empty results."
             case .tryOnAborted: return "No people were found in the image."
             case .tryOnTimeout: return "Operation timed out."
+            case .terminated: return "Operation terminated."
         }
     }
 }

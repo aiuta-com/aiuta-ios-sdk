@@ -71,6 +71,7 @@ extension AnalyticEvent {
         case session(flow: Flow, product: Aiuta.Product?)
         case startTryOnProcess(origin: Origin, product: Aiuta.Product?)
         case error(error: Internal.ProcessError, product: Aiuta.Product?)
+        case terminate(product: Aiuta.Product?)
         case success(stats: TryOnStats, total: TimeInterval, product: Aiuta.Product?)
         case share(result: Result, product: Aiuta.Product?, page: Aiuta.Event.Page, target: String?)
     }
@@ -94,6 +95,7 @@ extension AnalyticEvent.Internal {
              session,
              startTryOnProcess,
              error,
+             terminate,
              success,
              share
     }
@@ -105,6 +107,7 @@ extension AnalyticEvent.Internal {
             case .session: raw = .session
             case .startTryOnProcess: raw = .startTryOnProcess
             case .error: raw = .error
+            case .terminate: raw = .terminate
             case .success: raw = .success
             case .share: raw = .share
         }
@@ -148,6 +151,9 @@ extension AnalyticEvent.Internal {
                 ]
             case let .error(error, product): return [
                     .error: error.rawValue,
+                    .productId: product.id,
+                ]
+            case let .terminate(product): return [
                     .productId: product.id,
                 ]
             case let .success(stats, total, product): return [

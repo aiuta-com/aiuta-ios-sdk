@@ -51,9 +51,9 @@ final class HistoryModelImpl: HistoryModel {
         deletingUploaded.removeAll(where: { !history.contains($0) })
     }
 
-    @MainActor func addGenerated(_ images: [Aiuta.Image]) async throws {
+    @MainActor func addGenerated(_ images: [Aiuta.Image], for product: Aiuta.Product) async throws {
         guard config.behavior.isTryonHistoryAvailable else { return }
-        try await controller.addGenerated(images: images)
+        try await controller.addGenerated(images: images, for: product.skuId)
     }
 
     @MainActor func removeGenerated(_ selection: [Aiuta.Image]) async throws {
@@ -128,7 +128,7 @@ private final class UserDefaultsHistoryController: AiutaDataController {
         uploadedHistory.removeAll { image in images.contains(image) }
     }
 
-    @MainActor func addGenerated(images: [Aiuta.Image]) async throws {
+    @MainActor func addGenerated(images: [Aiuta.Image], for _: String) async throws {
         generatedHistory.insert(contentsOf: images, at: 0)
     }
 
