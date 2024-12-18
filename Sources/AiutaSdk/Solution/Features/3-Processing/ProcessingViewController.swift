@@ -91,6 +91,10 @@ final class ProcessingViewController: ViewController<ProcessingView> {
             let totalDuration = TimeInterval.now - start
             trace(totalDuration - stats.totalDuration)
             tracker.track(.success(stats: stats, total: totalDuration, product: sku))
+        } catch TryOnError.terminated {
+            ui.status.text = nil
+            ui.animator.isAnimating = false
+            tracker.track(.terminate(product: sku))
         } catch TryOnError.tryOnAborted {
             ui.status.text = nil
             ui.animator.isAnimating = false

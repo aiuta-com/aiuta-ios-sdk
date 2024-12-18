@@ -17,6 +17,8 @@ import UIKit
 
 @available(iOS 13.0.0, *)
 enum SdkPresenter {
+    public static var isForeground: Bool = false
+    
     public static func tryOn(sku: Aiuta.Product,
                              in viewController: UIViewController,
                              delegate: AiutaSdkDelegate) {

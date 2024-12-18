@@ -30,7 +30,7 @@ protocol HistoryModel {
     func removeUploaded(_ image: Aiuta.Image) async throws
     func setUploaded(_ history: [Aiuta.Image])
 
-    func addGenerated(_ images: [Aiuta.Image]) async throws
+    func addGenerated(_ images: [Aiuta.Image], for product: Aiuta.Product) async throws
     func removeGenerated(_ images: [Aiuta.Image]) async throws
     func setGenerated(_ history: [Aiuta.Image])
 }

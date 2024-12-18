@@ -42,6 +42,7 @@ final class SdkNavigator: UINavigationController {
     func sdkWillAppear() {
         trace("---------------")
         trace("SDK WILL APPEAR")
+        SdkPresenter.isForeground = true
         bulletinWall = BulletinWall(injectingTo: presentingViewController?.view)
     }
 
@@ -58,6 +59,11 @@ final class SdkNavigator: UINavigationController {
         trace("SDK DID DISMISS")
         trace("===============")
         bulletinWall?.dismiss()
+        SdkPresenter.isForeground = false
+        if !config.behavior.allowBackgroundExecution {
+            @injected var tryOnModel: TryOnModel
+            tryOnModel.abortAll()
+        }
         if let page = (visibleViewController as? PageRepresentable)?.page {
             @injected var session: SessionModel
             session.track(.exit(page: page, product: session.activeSku))
