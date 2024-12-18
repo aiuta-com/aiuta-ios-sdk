@@ -16,11 +16,15 @@ import UIKit
 
 public enum Aiuta {
     /// Aiuta SDK Version
-    public static let sdkVersion = "3.4.0"
+    public static let sdkVersion = "3.4.1"
 
     /// Check if the SDK is currently displayed.
     public static var isForeground: Bool {
-        SdkPresenter.isForeground
+        if #available(iOS 13.0.0, *) {
+            return SdkPresenter.isForeground
+        } else {
+            return false
+        }
     }
 
     /// This function configures the Aiuta SDK with the necessary auth type and sets up the required services.
