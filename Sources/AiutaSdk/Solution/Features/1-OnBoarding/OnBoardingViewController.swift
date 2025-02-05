@@ -64,9 +64,9 @@ final class OnBoardingViewController: ViewController<OnBoardingView> {
                     } else {
                         consentModel.isConsentGiven = true
                     }
-                    sessionModel.delegate?.aiuta(eventOccurred: .onboarding(event: .consentGiven(supplementary: ui.scroll.consent.supplementaryConsents),
-                                                                            page: .consent, product: sessionModel.activeSku))
-                    sessionModel.delegate?.aiuta(eventOccurred: .onboarding(event: .onboardingFinished, page: .consent, product: sessionModel.activeSku))
+                    sessionModel.track(.onboarding(event: .consentGiven(supplementary: ui.scroll.consent.supplementaryConsents),
+                                                   page: .consent, product: sessionModel.activeSku))
+                    sessionModel.track(.onboarding(event: .onboardingFinished, page: .consent, product: sessionModel.activeSku))
                     replace(with: TryOnViewController())
                 }
             } else {
@@ -98,7 +98,7 @@ final class OnBoardingViewController: ViewController<OnBoardingView> {
 
     private func trackPage() {
         guard page != trackedPage else { return }
-        sessionModel.delegate?.aiuta(eventOccurred: .page(page: page, product: sessionModel.activeSku))
+        sessionModel.track(.page(page: page, product: sessionModel.activeSku))
         trackedPage = page
     }
 }
