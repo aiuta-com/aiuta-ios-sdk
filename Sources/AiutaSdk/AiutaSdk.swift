@@ -16,7 +16,7 @@ import UIKit
 
 public enum Aiuta {
     /// Aiuta SDK Version
-    public static let sdkVersion = "3.4.1"
+    public static let sdkVersion = "3.4.3"
 
     /// Check if the SDK is currently displayed.
     public static var isForeground: Bool {
