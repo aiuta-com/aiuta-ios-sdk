@@ -104,7 +104,7 @@ private class AsyncTimerItem {
     func reduce(_ time: TimeInterval) {
         remain -= time
         if remain < 0 { callbacks.forEach { $0.work() } }
-        while remain < 0, period > .instant { remain += period.seconds }
+        while remain < 0, period > AsyncDelayTime.instant { remain += period.seconds }
         if remain < 0 { remain = 0 }
     }
 

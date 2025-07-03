@@ -125,7 +125,7 @@ private extension RestService {
         let statusCode = rawResponse.response?.statusCode
 
         if statusCode == codeNotModified {
-            if isDebug { trace(i: "◁", "Response",
+            if isDebug { trace(i: "◁", "NOT MODIFIED", shortUrl,
                                "\n\n ▷", request.method.rawValue, shortUrl, headers.keys, requestBody ?? "",
                                "\n ◁", statusCode,
                                "\n") }
@@ -137,19 +137,19 @@ private extension RestService {
         if isDebug {
             switch request.type {
                 case .plain:
-                    trace(i: "◂", "PLAIN Response",
+                    trace(i: "◂", "PLAIN", shortUrl,
                           "\n\n ▸", request.method.rawValue, shortUrl, headers.keys,
                           "\n ◂", statusCode, shortenString(rawResponse.value) ?? rawResponse.error,
                           "\n")
 
                 case .json:
-                    trace(i: "◁", "JSON Response",
+                    trace(i: "◁", "JSON", shortUrl,
                           "\n\n ▷", request.method.rawValue, shortUrl, headers.keys, requestBody ?? "",
                           "\n ◁", statusCode, shortenString(rawResponse.value) ?? rawResponse.error,
                           "\n")
 
                 case .upload:
-                    trace(i: "◂", "UPLOAD Response",
+                    trace(i: "◂", "UPLOAD", shortUrl,
                           "\n\n ▸", request.method.rawValue, shortUrl, headers.keys,
                           "\n ◂", statusCode, shortenString(rawResponse.value) ?? rawResponse.error,
                           "\n")
@@ -226,7 +226,7 @@ private extension RestService {
         urlString.replacingOccurrences(of: try await provider.baseUrl, with: "")
     }
 
-    func shortenString(_ string: String?, maxLength: Int = 1200) -> String? {
+    func shortenString(_ string: String?, maxLength: Int = 1800) -> String? {
         guard let string else { return nil }
         guard string.count > maxLength else { return string }
         return string.prefix(maxLength) + "..."

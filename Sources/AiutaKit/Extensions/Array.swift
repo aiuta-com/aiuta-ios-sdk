@@ -93,8 +93,19 @@ import Foundation
 }
 
 @_spi(Aiuta) public extension Array where Element: Hashable {
-    func uniqued() -> [Element] {
+    func uniqueHashed() -> [Element] {
         var seen = Set<Element>()
         return filter { seen.insert($0).inserted }
+    }
+}
+
+@_spi(Aiuta) public extension Array where Element: Equatable {
+    func uniqued() -> [Element] {
+        var uniqueValues: [Element] = []
+        forEach { item in
+            guard !uniqueValues.contains(item) else { return }
+            uniqueValues.append(item)
+        }
+        return uniqueValues
     }
 }

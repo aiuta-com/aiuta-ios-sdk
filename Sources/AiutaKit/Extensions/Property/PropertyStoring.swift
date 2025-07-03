@@ -21,11 +21,9 @@ import Foundation
         objc_getAssociatedObject(self, key) as? Property
     }
 
-    func getAssociatedProperty<Property>(_ key: UnsafeRawPointer, defaultValue: Property) -> Property {
-        if let value = objc_getAssociatedObject(self, key) as? Property {
-            return value
-        }
-        return defaultValue
+    func getAssociatedProperty<Property>(_ key: UnsafeRawPointer, defaultValue: @autoclosure () -> Property) -> Property {
+        if let value = objc_getAssociatedObject(self, key) as? Property { return value }
+        return defaultValue()
     }
 
     @discardableResult

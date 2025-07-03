@@ -18,7 +18,10 @@ import Foundation
 @available(iOS 13.0.0, *)
 @_spi(Aiuta) public protocol ApiDebugger {
     var isEnabled: Bool { get }
-    func startOperation(id: String?, title: String, subtitle: String?) async -> ApiDebuggerOperation?
+    func startOperation(id: String?,
+                        title: String,
+                        subtitle: String?
+    ) async -> ApiDebuggerOperation?
 }
 
 @available(iOS 13.0.0, *)

@@ -46,6 +46,10 @@ import UIKit
         image.isSome
     }
 
+    public var aspectRatio: CGFloat {
+        image?.size.aspectRatio ?? 1
+    }
+
     public var isAutoSize = true
 
     public convenience init(_ builder: (_ it: Image, _ ds: DesignSystem) -> Void) {

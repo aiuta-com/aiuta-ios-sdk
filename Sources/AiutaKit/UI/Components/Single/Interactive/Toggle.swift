@@ -44,7 +44,7 @@ import UIKit
 
     override func setupInternal() {
         view.tintColor = 0x666666FF.uiColor
-        view.onTintColor = ds.color.accent
+        view.onTintColor = ds.kit.accent
     }
 
     public convenience init(_ builder: (_ it: Toggle, _ ds: DesignSystem) -> Void) {

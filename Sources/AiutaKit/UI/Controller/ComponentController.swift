@@ -82,7 +82,7 @@ import UIKit
 @_spi(Aiuta) public extension UIViewController {
     @discardableResult
     func addComponent<Component: ComponentControllerBase>(_ componentController: Component) -> Component {
-        trace(i: "+", componentController, "-<", self)
+//        trace(i: "+", componentController, "-<", self)
 
         componentController.vc = self
         componentController.setup()

@@ -108,7 +108,7 @@ import UIKit
             child?.view.layer.resumeAnimations()
         }
 
-        trace(i: "#", viewController)
+//        trace(i: "#", viewController)
 
         if #available(iOS 14, *) {
             if let navigationController,

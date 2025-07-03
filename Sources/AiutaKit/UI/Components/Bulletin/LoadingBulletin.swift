@@ -16,7 +16,7 @@ import UIKit
 
 @_spi(Aiuta) public final class LoadingBulletin: PlainBulletin {
     let spinner = Spinner { it, ds in
-        it.view.color = ds.color.item
+        it.view.color = ds.kit.item
     }
 
     private var hasSpinner = true

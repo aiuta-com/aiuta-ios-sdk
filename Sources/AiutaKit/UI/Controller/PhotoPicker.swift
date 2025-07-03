@@ -47,8 +47,8 @@ extension PhotoPicker: PHPickerViewControllerDelegate {
         phPickerConfig.selectionLimit = selectionLimit
         phPickerConfig.filter = PHPickerFilter.images
         let phPickerVC = PHPickerViewController(configuration: phPickerConfig)
-        phPickerVC.overrideUserInterfaceStyle = ds.color.style
-        phPickerVC.view.tintColor = ds.color.accent
+        phPickerVC.overrideUserInterfaceStyle = ds.kit.style
+        phPickerVC.view.tintColor = ds.kit.accent
         phPickerVC.delegate = self
         vc.popover(phPickerVC)
     }

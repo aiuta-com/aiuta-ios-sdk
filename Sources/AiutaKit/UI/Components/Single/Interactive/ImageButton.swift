@@ -17,13 +17,14 @@ import UIKit
 @_spi(Aiuta) open class ImageButton: Content<TouchView> {
     public var onTouchDown: Signal<Void> { view.onTouchDown }
     public var onTouchUpInside: Signal<Void> { view.onTouchUpInside }
+    public var onTouchUp: Signal<Void> { view.onTouchUp }
     public var onLongTouch: Signal<Void> { view.onLongTouch }
 
     public var image: UIImage? {
         get { imageView.image }
         set {
             imageView.image = newValue
-            imageView.tint = ds.color.tint
+            imageView.tint = ds.kit.tint
         }
     }
 

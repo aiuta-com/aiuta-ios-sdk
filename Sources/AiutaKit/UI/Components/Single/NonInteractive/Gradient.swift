@@ -16,8 +16,14 @@ import UIKit
 
 @_spi(Aiuta) open class Gradient: Content<GradientView> {
     public enum Direction {
+        public enum Tilt {
+            case ascending, descending
+        }
+
         case vertical
         case horizontal
+        case tilt(Tilt)
+        case diagonal(Tilt)
     }
 
     public var cornerRadius: CGFloat {
@@ -54,6 +60,18 @@ import UIKit
                 case .horizontal:
                     view.startPoint = .init(x: 0, y: 0.5)
                     view.endPoint = .init(x: 1, y: 0.5)
+                case .tilt(.ascending):
+                    view.startPoint = .init(x: 0, y: 0.55)
+                    view.endPoint = .init(x: 1, y: 0.45)
+                case .tilt(.descending):
+                    view.startPoint = .init(x: 0, y: 0.45)
+                    view.endPoint = .init(x: 1, y: 0.55)
+                case .diagonal(.ascending):
+                    view.startPoint = .init(x: 0, y: 0.7)
+                    view.endPoint = .init(x: 1, y: 0.3)
+                case .diagonal(.descending):
+                    view.startPoint = .init(x: 0, y: 0.3)
+                    view.endPoint = .init(x: 1, y: 0.7)
             }
         }
     }

@@ -93,6 +93,14 @@ import UIKit
         view.setContentOffset(.init(x: tagetOffset, y: 0), animated: animated)
     }
 
+    public func scrollToLeft(animated: Bool = true) {
+        view.setContentOffset(.init(x: view.horizontalOffsetForLeft, y: 0), animated: animated)
+    }
+
+    public func scrollToRight(animated: Bool = true) {
+        view.setContentOffset(.init(x: view.horizontalOffsetForRight, y: 0), animated: animated)
+    }
+
     public func update() {
         updateLayoutRecursive()
     }

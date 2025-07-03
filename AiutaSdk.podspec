@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = 'AiutaSdk'
-  s.version      = '3.4.3'
+  s.version      = '4.2.0'
   s.summary      = 'Aiuta Virtual Try-On SDK.'
   s.description  = 'Virtual Try-On Solution for Apparel and Fashion Businesses.'
   s.homepage     = 'https://github.com/aiuta-com/aiuta-ios-sdk'
@@ -14,13 +14,12 @@ Pod::Spec.new do |s|
   }
   s.module_name   = 'AiutaSdk'
   
-  s.dependency    'AiutaKit', '3.4.0'
+  s.dependency    'AiutaKit', '4.2.0'
   s.dependency    'Alamofire', '~> 5.8.1'
   s.dependency    'Kingfisher', '~> 7.12.0'
   s.dependency    'Resolver', '~> 1.5.1'
   
-  s.swift_version = '5.9'
-
+  s.swift_version = '5.10'
   s.ios.deployment_target = '12.0'
   s.ios.framework  = 'UIKit'
 end

@@ -49,9 +49,9 @@ import UIKit
         _ui = ViewContent()
         ui.isRoot = true
         view = ui.container
-        view.backgroundColor = ds.color.ground
+        view.backgroundColor = ds.kit.ground
         if #available(iOS 13.0, *) {
-            view.overrideUserInterfaceStyle = ds.color.style
+            view.overrideUserInterfaceStyle = ds.kit.style
         }
         ui.addChildren(to: view)
         assert(view is ContentView, "ViewController base view content must be ContentView")

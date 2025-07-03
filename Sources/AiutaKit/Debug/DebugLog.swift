@@ -126,6 +126,22 @@ import Foundation
     trace(statusSymbol: " ", anything: [a0(), a1(), a2(), a3(), a4(), a5(), a6(), a7(), a8(), a9()], file: file, line: line, function: function)
 }
 
+@_spi(Aiuta) public func trace(_ a0: @autoclosure () -> Any?,
+                               _ a1: @autoclosure () -> Any?,
+                               _ a2: @autoclosure () -> Any?,
+                               _ a3: @autoclosure () -> Any?,
+                               _ a4: @autoclosure () -> Any?,
+                               _ a5: @autoclosure () -> Any?,
+                               _ a6: @autoclosure () -> Any?,
+                               _ a7: @autoclosure () -> Any?,
+                               _ a8: @autoclosure () -> Any?,
+                               _ a9: @autoclosure () -> Any?,
+                               _ aA: @autoclosure () -> Any?,
+                               file: String = #file, line: Int = #line, function: String = #function) {
+    guard isTraceEnabled else { return }
+    trace(statusSymbol: " ", anything: [a0(), a1(), a2(), a3(), a4(), a5(), a6(), a7(), a8(), a9(), aA()], file: file, line: line, function: function)
+}
+
 // MARK: - Symbolic wrappers
 
 @_spi(Aiuta) public func trace(i: String,
@@ -243,6 +259,23 @@ import Foundation
     trace(statusSymbol: i, anything: [a0(), a1(), a2(), a3(), a4(), a5(), a6(), a7(), a8(), a9()], file: file, line: line, function: function)
 }
 
+@_spi(Aiuta) public func trace(i: String,
+                               _ a0: @autoclosure () -> Any?,
+                               _ a1: @autoclosure () -> Any?,
+                               _ a2: @autoclosure () -> Any?,
+                               _ a3: @autoclosure () -> Any?,
+                               _ a4: @autoclosure () -> Any?,
+                               _ a5: @autoclosure () -> Any?,
+                               _ a6: @autoclosure () -> Any?,
+                               _ a7: @autoclosure () -> Any?,
+                               _ a8: @autoclosure () -> Any?,
+                               _ a9: @autoclosure () -> Any?,
+                               _ aA: @autoclosure () -> Any?,
+                               file: String = #file, line: Int = #line, function: String = #function) {
+    guard isTraceEnabled else { return }
+    trace(statusSymbol: i, anything: [a0(), a1(), a2(), a3(), a4(), a5(), a6(), a7(), a8(), a9(), aA()], file: file, line: line, function: function)
+}
+
 // MARK: - Implementations
 
 @_spi(Aiuta) public func trace(measure work: () -> Void,
@@ -263,7 +296,7 @@ private func trace(statusSymbol: String, anything: [Any?], file: String, line: I
     let logLine = "\(fileName):\(line) .\(funcName)".padding(toLength: 50, withPad: " ", startingAt: 0) +
         "  | \(" \(statusSymbol)  |") " + anything.map { any in String(describing: any ?? "<nil>") }.joined(separator: " ")
 
-    print(Thread.isMainThread ? "🔲" : "🧵", " | ", Date().timeIntervalSince1970.format("HH:mm:ss.SSS"), " | ", logLine)
+    print(Thread.isMainThread ? "📱" : "🧵", "| Aiuta | ", Date().timeIntervalSince1970.format("HH:mm:ss.SSS"), " | ", logLine)
 }
 
 @_spi(Aiuta) public func trace_call(_ fromFile: String, _ fromLine: Int, _ fromFunction: String,
@@ -273,10 +306,10 @@ private func trace(statusSymbol: String, anything: [Any?], file: String, line: I
     let fileName = (file as NSString).lastPathComponent
     let fromFuncName = String(fromFunction.split(separator: "(").first ?? "fromFunc")
     let funcName = String(function.split(separator: "(").first ?? "func")
-    print(
-        Date().timeIntervalSince1970.format("HH:mm:ss.SSS"),
-        " | ", "\(fromFileName):\(fromLine) .\(fromFuncName)".padding(toLength: 49, withPad: " ", startingAt: 0),
-        " -> ", "\(fileName):\(line) .\(funcName)"
+    print("Aiuta | ",
+          Date().timeIntervalSince1970.format("HH:mm:ss.SSS"),
+          " | ", "\(fromFileName):\(fromLine) .\(fromFuncName)".padding(toLength: 49, withPad: " ", startingAt: 0),
+          " -> ", "\(fileName):\(line) .\(funcName)"
     )
 }
 

@@ -34,7 +34,7 @@ final class BulletinWrapper: Plane {
             if #available(iOS 13.0, *) {
                 make.cornerCurve = .continuous
             }
-            make.backgroundColor = ds.color.popup
+            make.backgroundColor = ds.kit.popup
         }
 
         contentView.scrollView.contentInset = .init(vertical: contentView.view.cornerRadius)

@@ -36,7 +36,7 @@ import UIKit
 
             guard let font else {
                 view.text = newValue
-                font = ds.font.default
+                font = ds.kit.font
                 return
             }
 
@@ -46,30 +46,15 @@ import UIKit
                 return
             }
 
-            var viewAttributes: [NSAttributedString.Key: Any] = [
-                NSAttributedString.Key.kern: font.kern,
-            ]
-
-            let paragraphStyle = NSMutableParagraphStyle()
-            paragraphStyle.alignment = view.textAlignment
-            if isLineHeightMultipleEnabled, isMultiline {
-                paragraphStyle.lineHeightMultiple = font.lineHeightMultiple
-            }
-            paragraphStyle.lineBreakMode = view.lineBreakMode
-            viewAttributes[NSAttributedString.Key.paragraphStyle] = paragraphStyle
-            viewAttributes[NSAttributedString.Key.baselineOffset] = font.baselineOffset
-            if let underline = font.underline {
-                viewAttributes[NSAttributedString.Key.underlineStyle] = underline.rawValue
-            }
-            if let strikethrough = font.strikethrough {
-                viewAttributes[NSAttributedString.Key.strikethroughStyle] = strikethrough.rawValue
-            }
+            let attributes = font.attributes(withAlignment: view.textAlignment,
+                                             lineBreakMode: view.lineBreakMode,
+                                             lineHeightSupport: isLineHeightMultipleEnabled && isMultiline)
 
             let attributedText: NSAttributedString
             if isHtml {
-                attributedText = htmlAttributed(string: newValue, attributes: viewAttributes)
+                attributedText = Html(newValue).attributedString(withFont: font, color: color, attributes: attributes)
             } else {
-                attributedText = NSMutableAttributedString(string: newValue, attributes: viewAttributes)
+                attributedText = NSMutableAttributedString(string: newValue, attributes: attributes)
             }
 
             if let leadingAttachment {
@@ -152,44 +137,8 @@ import UIKit
         view.isUserInteractionEnabled = false
         builder(self, ds)
     }
-}
 
-private extension Label {
-    enum ParseError: Error {
-        case badData
-    }
-
-    func htmlAttributed(string input: String, attributes viewAttributes: [NSAttributedString.Key: Any]) -> NSAttributedString {
-        var html = input
-
-        if let font {
-            let color = (color ?? font.color).hexString ?? "black"
-            html = "<span style=\"font-family: '\(font.family)-\(font.style.descriptor)', '-apple-system', 'HelveticaNeue'; font-weight: \(font.style.weight); font-size: \(font.size); color: \(color)\">\(html)</span>"
-        }
-
-        do {
-            guard let data = html.data(using: String.Encoding.utf8) else {
-                throw ParseError.badData
-            }
-            let result = try NSMutableAttributedString(
-                data: data,
-                options: [.documentType: NSAttributedString.DocumentType.html,
-                          .characterEncoding: String.Encoding.utf8.rawValue],
-                documentAttributes: nil
-            )
-            let range = NSRange(location: 0, length: result.length)
-            for key in viewAttributes.keys { result.removeAttribute(key, range: range) }
-            result.addAttributes(viewAttributes, range: range)
-            return result
-        } catch {
-            return NSMutableAttributedString(
-                string: input,
-                attributes: viewAttributes
-            )
-        }
-    }
-
-    func updateParentLayout() {
+    private func updateParentLayout() {
         guard willLayoutParentOnChanges else { return }
         if isAnimatedChanges {
             animations.animate { [weak self] in
@@ -197,54 +146,6 @@ private extension Label {
             }
         } else {
             parent?.updateLayoutRecursive()
-        }
-    }
-}
-
-@_spi(Aiuta) public final class Html: CustomStringConvertible {
-    public enum Tags {
-        case color(UIColor)
-        case bold
-        case italic
-        case link(String)
-    }
-
-    public var description: String { result }
-    private var result: String
-
-    public init(_ input: String, _ tags: Tags...) {
-        result = input
-        for tag in tags {
-            switch tag {
-                case let .color(color):
-                    if let hexString = color.hexString {
-                        result = "<font color='#\(hexString)'>\(result)</font>"
-                    }
-                case let .link(url):
-                    result = "<a href='\(url)'>\(result)</a>"
-                case .bold:
-                    result = "<b>\(result)</b>"
-                case .italic:
-                    result = "<i>\(result)</i>"
-            }
-        }
-    }
-
-    public static func br(_ count: Int = 1) -> String {
-        Array(repeating: "<br/>", count: count).joined()
-    }
-}
-
-extension FontStyle {
-    var weight: Int {
-        switch self {
-            case .light: return 300
-            case .regular: return 400
-            case .medium: return 500
-            case .semibold: return 600
-            case .bold: return 700
-            case .heavy: return 900
-            case .blackOblique: return 950
         }
     }
 }

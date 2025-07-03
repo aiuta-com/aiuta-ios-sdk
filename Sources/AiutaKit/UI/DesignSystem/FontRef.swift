@@ -15,16 +15,46 @@
 import UIKit
 
 @_spi(Aiuta) public enum FontStyle: String {
-    case medium
-    case regular
+    case ultraLight
+    case thin
     case light
-    case bold
+    case regular
+    case medium
     case semibold
+    case bold
     case heavy
     case blackOblique
 
     public var descriptor: String {
         rawValue.firstCapitalized
+    }
+
+    public var weight: UIFont.Weight {
+        switch self {
+            case .ultraLight: return .ultraLight
+            case .thin: return .thin
+            case .light: return .light
+            case .regular: return .regular
+            case .medium: return .medium
+            case .semibold: return .semibold
+            case .bold: return .bold
+            case .heavy: return .heavy
+            case .blackOblique: return .black
+        }
+    }
+
+    public var numeric: Int {
+        switch self {
+            case .thin: return 100
+            case .ultraLight: return 200
+            case .light: return 300
+            case .regular: return 400
+            case .medium: return 500
+            case .semibold: return 600
+            case .bold: return 700
+            case .heavy: return 900
+            case .blackOblique: return 950
+        }
     }
 }
 
@@ -49,5 +79,33 @@ import UIKit
 
     func uiFontDescriptor() -> UIFontDescriptor {
         UIFontDescriptor(name: "\(family)-\(style.descriptor)", size: size)
+    }
+}
+
+@_spi(Aiuta) public extension FontRef {
+    func attributes(withAlignment textAlignment: NSTextAlignment,
+                    lineBreakMode: NSLineBreakMode? = nil,
+                    lineHeightSupport: Bool) -> [NSAttributedString.Key: Any] {
+        var viewAttributes: [NSAttributedString.Key: Any] = [
+            NSAttributedString.Key.kern: kern,
+        ]
+
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = textAlignment
+        if lineHeightSupport {
+            paragraphStyle.lineHeightMultiple = lineHeightMultiple
+        }
+        if let lineBreakMode {
+            paragraphStyle.lineBreakMode = lineBreakMode
+        }
+        viewAttributes[.paragraphStyle] = paragraphStyle
+        viewAttributes[.baselineOffset] = baselineOffset
+        if let underline {
+            viewAttributes[.underlineStyle] = underline.rawValue
+        }
+        if let strikethrough {
+            viewAttributes[.strikethroughStyle] = strikethrough.rawValue
+        }
+        return viewAttributes
     }
 }

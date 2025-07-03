@@ -33,8 +33,8 @@ import UIKit
         super.loadView()
         tabBar.isHidden = true
         ui.isRoot = true
-        view.backgroundColor = ds.color.ground
-        ui.container.backgroundColor = ds.color.ground
+        view.backgroundColor = ds.kit.ground
+        ui.container.backgroundColor = ds.kit.ground
         view.addSubview(ui.container)
         ui.addChildren(to: ui.container)
     }
