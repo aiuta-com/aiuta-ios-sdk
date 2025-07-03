@@ -39,6 +39,11 @@ import UIKit
         get { getAssociatedProperty(&Property.isAutoColor, defaultValue: Property.isAutoColor) }
         set { setAssociatedProperty(&Property.isAutoColor, newValue: newValue) }
     }
+
+    var crossDissolveChanges: Bool {
+        get { getAssociatedProperty(&Property.crossDissolveChanges, defaultValue: Property.crossDissolveChanges) }
+        set { setAssociatedProperty(&Property.crossDissolveChanges, newValue: newValue) }
+    }
 }
 
 @_spi(Aiuta) extension Image: PropertyStoring {
@@ -50,6 +55,7 @@ import UIKit
         static var retrievedQuality: Void?
         static var keepCurrentImage: Bool = false
         static var isAutoColor: Bool = false
+        static var crossDissolveChanges: Bool = true
     }
 
     var loader: ImageLoader? {
@@ -80,7 +86,7 @@ import UIKit
 
                 guard image != newImage else { return }
                 image = newImage
-                guard !heroic.isTransitioning, !layout.visibleBounds.size.isAnyZero else { return }
+                guard crossDissolveChanges, !heroic.isTransitioning, !layout.visibleBounds.size.isAnyZero else { return }
                 animations.transition(.transitionCrossDissolve, duration: .thirdOfSecond)
             }
 

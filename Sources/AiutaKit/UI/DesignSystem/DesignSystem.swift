@@ -15,16 +15,12 @@
 import UIKit
 
 @_spi(Aiuta) public protocol DesignSystem {
-    var style: DesignSystemStyles { get }
-    var image: DesignSystemImages { get }
-    var color: DesignSystemColors { get }
-    var font: DesignSystemFonts { get }
-    var dimensions: DesignSystemDimensions { get }
-    var transition: DesignSystemTransitions { get }
+    var kit: DesignSystemKit { get }
 }
 
-@_spi(Aiuta) public protocol DesignSystemColors {
+@_spi(Aiuta) public protocol DesignSystemKit: PropertyStoring {
     var style: UIUserInterfaceStyle { get }
+
     var ground: UIColor { get }
     var popup: UIColor { get }
     var item: UIColor { get }
@@ -32,16 +28,6 @@ import UIKit
     var tint: UIColor { get }
     var highlight: UIColor { get }
     var error: UIColor { get }
+
+    var font: FontRef { get }
 }
-
-@_spi(Aiuta) public protocol DesignSystemFonts {
-    var `default`: FontRef { get }
-}
-
-@_spi(Aiuta) public protocol DesignSystemDimensions {}
-
-@_spi(Aiuta) public protocol DesignSystemStyles {}
-
-@_spi(Aiuta) public protocol DesignSystemImages {}
-
-@_spi(Aiuta) public protocol DesignSystemTransitions {}

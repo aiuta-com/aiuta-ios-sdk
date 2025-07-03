@@ -69,9 +69,9 @@ import UIKit
         let safari = SFSafariViewController(url: url, configuration: config)
         if #available(iOS 13.0, *) {
             @Injected var ds: DesignSystem
-            safari.overrideUserInterfaceStyle = ds.color.style
-            safari.preferredControlTintColor = ds.color.accent
-            safari.preferredBarTintColor = ds.color.ground
+            safari.overrideUserInterfaceStyle = ds.kit.style
+            safari.preferredControlTintColor = ds.kit.accent
+            safari.preferredBarTintColor = ds.kit.ground
         }
         popover(safari)
     }
@@ -90,7 +90,7 @@ import UIKit
 
         if #available(iOS 13.0, *) {
             @Injected var ds: DesignSystem
-            mail.overrideUserInterfaceStyle = ds.color.style
+            mail.overrideUserInterfaceStyle = ds.kit.style
         }
         popover(mail)
     }

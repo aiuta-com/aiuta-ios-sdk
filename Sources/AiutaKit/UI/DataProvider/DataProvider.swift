@@ -19,7 +19,7 @@ import Foundation
 
     public var items: [DataType] {
         didSet {
-            onUpdate.fireInMainThread()
+            onUpdate.fire()
             wasUpdated = true
             needUpate = false
         }

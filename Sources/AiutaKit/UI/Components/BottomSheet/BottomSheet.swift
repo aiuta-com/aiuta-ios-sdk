@@ -114,7 +114,7 @@ import UIKit
             if #available(iOS 13.0, *) {
                 make.cornerCurve = .continuous
             }
-            make.backgroundColor = ds.color.item
+            make.backgroundColor = ds.kit.item
         }
     }
 

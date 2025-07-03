@@ -59,7 +59,6 @@ import UIKit
             guard newValue != isAppearing else { return }
             setAssociatedProperty(&Property.isAppearing, newValue: newValue)
             if newValue { whenDidAppear() } else { whenDidDisappear() }
-            if newValue { trace(i: "#", self) }
         }
     }
 

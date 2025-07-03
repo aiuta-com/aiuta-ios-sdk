@@ -26,6 +26,7 @@ final class BulletinManager: PlainButton {
             guard oldValue !== currentBulletin else { return }
             if let oldValue { hideWrapper(oldValue) }
             if let currentBulletin {
+                updateBlur()
                 showSelf()
                 showWrapper(currentBulletin)
             } else {
@@ -116,6 +117,16 @@ final class BulletinManager: PlainButton {
 }
 
 private extension BulletinManager {
+    func updateBlur() {
+        guard let currentBulletin else { return }
+        blur.animations.animate(time: parent.isSome ? .quarterOfSecond : .instant) { [blur] in
+            switch currentBulletin.contentView.dim {
+                case let .blackout(op):
+                    blur.color = .black.withAlphaComponent(op)
+            }
+        }
+    }
+
     func showSelf() {
         guard parent.isNil, let vc,
               let ui = vc.viewAsUI

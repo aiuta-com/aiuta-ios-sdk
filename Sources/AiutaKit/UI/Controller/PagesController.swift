@@ -47,7 +47,7 @@ import UIKit
         _ui = ViewContent()
         super.loadView()
         ui.isRoot = true
-        view.backgroundColor = ds.color.ground
+        view.backgroundColor = ds.kit.ground
         ui.container.backgroundColor = nil
         view.addSubview(ui.container)
         ui.addChildren(to: ui.container)

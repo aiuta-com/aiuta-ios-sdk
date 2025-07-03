@@ -44,3 +44,34 @@ import Foundation
         items = underliyngDataProvider.items.map(transform)
     }
 }
+
+@_spi(Aiuta) open class FlatMapDataProvider<InDataType, OutDataType>: DataProvider<OutDataType> {
+    private let underliyngDataProvider: DataProvider<InDataType>
+    private let transform: (InDataType) -> [OutDataType]
+
+    override open var canUpdate: Bool {
+        underliyngDataProvider.canUpdate
+    }
+
+    public init(input underliyngDataProvider: DataProvider<InDataType>, transform: @escaping (InDataType) -> [OutDataType]) {
+        self.transform = transform
+        self.underliyngDataProvider = underliyngDataProvider
+        super.init(underliyngDataProvider.items.flatMap(transform))
+        underliyngDataProvider.onUpdate.subscribe(with: self) { [unowned self] in
+            updateItemsFromUnderliyng()
+        }
+    }
+
+    public convenience init?(input underliyngDataProvider: DataProvider<InDataType>?, transform: @escaping (InDataType) -> OutDataType) {
+        guard let underliyngDataProvider else { return nil }
+        self.init(input: underliyngDataProvider, transform: transform)
+    }
+
+    override open func implementUpdate() {
+        underliyngDataProvider.implementUpdate()
+    }
+
+    private func updateItemsFromUnderliyng() {
+        items = underliyngDataProvider.items.flatMap(transform)
+    }
+}

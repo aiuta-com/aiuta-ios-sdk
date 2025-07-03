@@ -19,6 +19,10 @@ import UIKit
         case dynamic, floating, fullscreen
     }
 
+    public enum Dim {
+        case blackout(CGFloat)
+    }
+
     private let _didDismiss = Signal<Void>()
     private let _willDismiss = Signal<Void>()
     private let _wantsDismiss = Signal<Void>()
@@ -32,6 +36,7 @@ import UIKit
 
     public var behaviour: Behaviour = .dynamic
     public var isDismissableByPan = true
+    open var dim: Dim { .blackout(0.5) }
 
     public let blurStroke = Stroke { it, _ in
         it.appearance.make { make in

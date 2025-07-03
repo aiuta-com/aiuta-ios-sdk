@@ -19,10 +19,6 @@ import UIKit
         proxy.onLink
     }
 
-    private enum ParseError: Error {
-        case badData
-    }
-
     public var font: FontRef? {
         didSet {
             guard let font else { return }
@@ -44,6 +40,11 @@ import UIKit
     public var isAnimatedChanges = false
     public var willLayoutParentOnChanges = true
 
+    public var alignment: NSTextAlignment {
+        get { view.textAlignment }
+        set { view.textAlignment = newValue }
+    }
+
     public var text: String? {
         get { view.text }
         set {
@@ -51,7 +52,7 @@ import UIKit
 
             guard let font else {
                 view.text = newValue
-                font = ds.font.default
+                font = ds.kit.font
                 return
             }
 
@@ -61,58 +62,11 @@ import UIKit
                 return
             }
 
-            var viewAttributes: [NSAttributedString.Key: Any] = [
-                NSAttributedString.Key.kern: font.kern,
-            ]
-
-            let paragraphStyle = NSMutableParagraphStyle()
-            paragraphStyle.alignment = view.textAlignment
-            if isLineHeightMultipleEnabled {
-                paragraphStyle.lineHeightMultiple = font.lineHeightMultiple
-            }
-            viewAttributes[NSAttributedString.Key.paragraphStyle] = paragraphStyle
-            viewAttributes[NSAttributedString.Key.baselineOffset] = font.baselineOffset
-            if let underline = font.underline {
-                viewAttributes[NSAttributedString.Key.underlineStyle] = underline.rawValue
-            }
-            if let strikethrough = font.strikethrough {
-                viewAttributes[NSAttributedString.Key.strikethroughStyle] = strikethrough.rawValue
-            }
-
-            view.linkTextAttributes = [.underlineStyle: 0, .underlineColor: UIColor.clear, .foregroundColor: color ?? font.color]
-            view.attributedText = htmlAttributed(input: newValue, viewAttributes: viewAttributes)
+            view.linkTextAttributes = [.foregroundColor: color ?? font.color]
+            let attributes = font.attributes(withAlignment: alignment, lineHeightSupport: isLineHeightMultipleEnabled)
+            view.attributedText = Html(newValue).attributedString(withFont: font, color: color, attributes: attributes)
 
             if needLayout { updateParentLayout() }
-        }
-    }
-
-    private func htmlAttributed(input: String, viewAttributes: [NSAttributedString.Key: Any]) -> NSAttributedString {
-        var html = input
-
-        if let font {
-            let color = (color ?? font.color).hexString ?? "black"
-            html = "<span style=\"font-family: '\(font.family)-\(font.style.descriptor)', '-apple-system', 'HelveticaNeue'; font-weight: \(font.style.weight); font-size: \(font.size); color: \(color)\">\(html)</span>"
-        }
-
-        do {
-            guard let data = html.data(using: String.Encoding.utf8) else {
-                throw ParseError.badData
-            }
-            let result = try NSMutableAttributedString(
-                data: data,
-                options: [.documentType: NSAttributedString.DocumentType.html,
-                          .characterEncoding: String.Encoding.utf8.rawValue],
-                documentAttributes: nil
-            )
-            let range = NSRange(location: 0, length: result.length)
-            for key in viewAttributes.keys { result.removeAttribute(key, range: range) }
-            result.addAttributes(viewAttributes, range: range)
-            return result
-        } catch {
-            return NSMutableAttributedString(
-                string: input,
-                attributes: viewAttributes
-            )
         }
     }
 
@@ -177,6 +131,43 @@ import UIKit
         // gestureRecognizer.isEnabled = false
         return false
     }
+
+    override public func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
+        guard let attributedText else { return false }
+
+        var touchedCharacterRange: NSRange?
+
+        // Get the range of characters that were tapped
+        // Using textContainer's hit test instead of layoutManager directly
+        if let textPosition = closestPosition(to: point),
+           let textRange = tokenizer.rangeEnclosingPosition(textPosition, with: .character, inDirection: UITextDirection(rawValue: 1)) {
+            let startIndex = offset(from: beginningOfDocument, to: textRange.start)
+            let endIndex = offset(from: beginningOfDocument, to: textRange.end)
+            touchedCharacterRange = NSRange(location: startIndex, length: endIndex - startIndex)
+        }
+
+        if let touchedRange = touchedCharacterRange, touchedRange.location < attributedText.length {
+            var effectiveRange = NSRange(location: 0, length: 0)
+            let link = attributedText.attribute(.link, at: touchedRange.location, effectiveRange: &effectiveRange)
+
+            return link != nil
+        }
+
+        return false
+    }
+
+    /** Alternative way uses layoutManager wich is switching UITextView to TextKit 1 compatibility mode
+      override public func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
+          // Only capture touches if the text contains links or some other interaction.
+          let glyphIndex = layoutManager.glyphIndex(for: point, in: textContainer)
+          let charIndex = layoutManager.characterIndexForGlyph(at: glyphIndex)
+          if let attributedText, charIndex < attributedText.length,
+             attributedText.attribute(.link, at: charIndex, effectiveRange: nil) != nil {
+              return true
+          }
+          return false
+      }
+     **/
 }
 
 private final class TextViewProxy: NSObject, UITextViewDelegate {

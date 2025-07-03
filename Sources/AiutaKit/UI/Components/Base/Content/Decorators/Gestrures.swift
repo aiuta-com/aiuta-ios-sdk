@@ -52,7 +52,7 @@ import UIKit
 // MARK: Taps
 
 public extension Gestures {
-    func onTap(with target: AnyObject, callback: @escaping Signal<UITapGestureRecognizer>.SignalCallback) {
+    func onTap(with target: AnyObject, callback: @escaping Signal<UITapGestureRecognizer>.SyncCallback) {
         on(&tap, target: target, callback: callback)
     }
 
@@ -62,7 +62,7 @@ public extension Gestures {
 }
 
 public extension Gestures {
-    func onDoubleTap(with target: AnyObject, callback: @escaping Signal<UITapGestureRecognizer>.SignalCallback) {
+    func onDoubleTap(with target: AnyObject, callback: @escaping Signal<UITapGestureRecognizer>.SyncCallback) {
         on(&doubleTap, target: target, callback: callback) { doubleTap in
             doubleTap.numberOfTapsRequired = 2
         }
@@ -74,7 +74,7 @@ public extension Gestures {
 }
 
 public extension Gestures {
-    func onLongPress(with target: AnyObject, callback: @escaping Signal<UILongPressGestureRecognizer>.SignalCallback) {
+    func onLongPress(with target: AnyObject, callback: @escaping Signal<UILongPressGestureRecognizer>.SyncCallback) {
         on(&longPress, target: target, callback: callback) { longPress in
             longPress.minimumPressDuration = 2
         }
@@ -88,7 +88,7 @@ public extension Gestures {
 // MARK: Pan
 
 public extension Gestures {
-    func onPan(_ direction: PanDirectionGestureRecognizer.PanDirection, with target: AnyObject, callback: @escaping Signal<PanDirectionGestureRecognizer>.SignalCallback) {
+    func onPan(_ direction: PanDirectionGestureRecognizer.PanDirection, with target: AnyObject, callback: @escaping Signal<PanDirectionGestureRecognizer>.SyncCallback) {
         let config = { (pan: PanDirectionGestureRecognizer) in
             pan.direction = direction
             if #available(iOS 13.4, *) { pan.allowedScrollTypesMask = .continuous }
@@ -112,7 +112,7 @@ public extension Gestures {
 // MARK: Pinch
 
 public extension Gestures {
-    func onPinch(with target: AnyObject, callback: @escaping Signal<UIPinchGestureRecognizer>.SignalCallback) {
+    func onPinch(with target: AnyObject, callback: @escaping Signal<UIPinchGestureRecognizer>.SyncCallback) {
         on(&pinch, target: target, callback: callback)
     }
 
@@ -124,7 +124,7 @@ public extension Gestures {
 // MARK: Swipe
 
 public extension Gestures {
-    func onSwipe(_ direction: UISwipeGestureRecognizer.Direction, with target: AnyObject, callback: @escaping Signal<UISwipeGestureRecognizer>.SignalCallback) {
+    func onSwipe(_ direction: UISwipeGestureRecognizer.Direction, with target: AnyObject, callback: @escaping Signal<UISwipeGestureRecognizer>.SyncCallback) {
         let config = { (swipe: UISwipeGestureRecognizer) in
             swipe.direction = direction
         }
@@ -153,7 +153,7 @@ public extension Gestures {
 private extension Gestures {
     func on<GestureRecognizer: UIGestureRecognizer>(_ proxy: inout GestureProxy<GestureRecognizer>?,
                                                     target: AnyObject,
-                                                    callback: @escaping Signal<GestureRecognizer>.SignalCallback,
+                                                    callback: @escaping Signal<GestureRecognizer>.SyncCallback,
                                                     configurator: ((GestureRecognizer) -> Void)? = nil) {
         if proxy.isNil { proxy = GestureProxy(target: view, configurator: configurator) }
         proxy?.signal.subscribe(with: target, callback: callback)

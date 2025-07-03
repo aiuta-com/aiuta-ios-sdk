@@ -25,6 +25,9 @@ import UIKit
         set { view.cornerRadius = newValue }
     }
 
+    public var fixedHeight: CGFloat?
+    public var fixedWidth: CGFloat?
+
     private var gradientLayer: CAGradientLayer?
 
     public func gradient(_ closure: (_ make: CAGradientLayer) -> Void) {
@@ -39,6 +42,20 @@ import UIKit
 
     override func sizeToFit() {
         gradientLayer?.frame = view.bounds
+    }
+
+    override func updateLayoutInternal() {
+        if let fixedHeight {
+            layout.make { make in
+                make.height = fixedHeight
+            }
+        }
+
+        if let fixedWidth {
+            layout.make { make in
+                make.width = fixedWidth
+            }
+        }
     }
 
     public convenience init(_ builder: (_ it: Stroke, _ ds: DesignSystem) -> Void) {

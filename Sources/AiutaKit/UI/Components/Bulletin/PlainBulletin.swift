@@ -28,11 +28,12 @@ import UIKit
     public var maxWidth: CGFloat?
     public var cornerRadius: CGFloat = 24
     public var behaviour: Bulletin.Behaviour = .dynamic
+    open var dim: Bulletin.Dim { .blackout(0.5) }
     public var isDismissableByPan = true
     fileprivate var memColor: UIColor?
 
     override open func setup() {
-        view.backgroundColor = ds.color.popup
+        view.backgroundColor = ds.kit.popup
     }
 
     public func dismiss() {
@@ -61,6 +62,8 @@ final class PlainBulletinWrapper: Bulletin {
     override var wantsDismiss: Signal<Void> { scrollContent.wantsDismiss }
     override var willDismiss: Signal<Void> { scrollContent.willDismiss }
     override var didDismiss: Signal<Void> { scrollContent.didDismiss }
+
+    override var dim: Bulletin.Dim { scrollContent.dim }
 
     required init(content: PlainBulletin) {
         scrollContent = content

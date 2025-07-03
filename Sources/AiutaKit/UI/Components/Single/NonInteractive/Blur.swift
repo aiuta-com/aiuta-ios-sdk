@@ -25,9 +25,14 @@ import UIKit
     public var color: UIColor = .clear {
         didSet { view.subviews.forEach { $0.backgroundColor = color }}
     }
-    
+
     public var tint: UIColor = .clear {
         didSet { color = tint.withAlphaComponent(0.65) }
+    }
+
+    public var backgroundColor: UIColor {
+        get { view.backgroundColor ?? .clear }
+        set { view.backgroundColor = newValue }
     }
 
     public var intensity: CGFloat = 1 {
@@ -45,6 +50,7 @@ import UIKit
     fileprivate var customIntensity: CGFloat = 1 {
         didSet { animator?.fractionComplete = customIntensity }
     }
+
     private var animator: UIViewPropertyAnimator?
 
     init() {

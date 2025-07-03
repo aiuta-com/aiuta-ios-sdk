@@ -49,8 +49,8 @@ import UniformTypeIdentifiers
         }
         if #available(iOS 13.0, *) {
             @Injected var ds: DesignSystem
-            activityViewController.overrideUserInterfaceStyle = ds.color.style
-            activityViewController.view.tintColor = ds.color.accent
+            activityViewController.overrideUserInterfaceStyle = ds.kit.style
+            activityViewController.view.tintColor = ds.kit.accent
         }
         popover(activityViewController, withMediumDetent: true)
     }
@@ -60,7 +60,7 @@ import UniformTypeIdentifiers
     }
 
     func share(images: [UIImage], title: String? = nil, additions: [Any] = [], completion: ((ShareResult) -> Void)? = nil) {
-        trace(i: "<", "Sharing")
+//        trace(i: "<", "Sharing")
         var window: UIWindow?
         var interfaceStyle: UIUserInterfaceStyle?
         let activityViewController = UIActivityViewController(
@@ -69,26 +69,27 @@ import UniformTypeIdentifiers
             } + additions.compactMap { ShareableAddition(some: $0) }, applicationActivities: nil)
         if #available(iOS 13.0, *) {
             @Injected var ds: DesignSystem
-            activityViewController.overrideUserInterfaceStyle = ds.color.style
-            activityViewController.view.tintColor = ds.color.accent
+            activityViewController.overrideUserInterfaceStyle = ds.kit.style
+            activityViewController.view.tintColor = ds.kit.accent
             window = UIApplication.shared.windows.first
             interfaceStyle = window?.overrideUserInterfaceStyle
-            window?.overrideUserInterfaceStyle = ds.color.style
+            window?.overrideUserInterfaceStyle = ds.kit.style
         }
         var shareWall: ShareWall?
         if UIViewController.isStackingAllowed {
             popover(activityViewController, withMediumDetent: true)
         } else {
-            shareWall = ShareWall()
-            shareWall?.modalPresentationStyle = .overFullScreen
-            present(shareWall!, animated: false)
-            shareWall!.popover(activityViewController, withMediumDetent: true)
+            let wall = ShareWall()
+            shareWall = wall
+            wall.modalPresentationStyle = .overFullScreen
+            present(wall, animated: false)
+            wall.popover(activityViewController, withMediumDetent: true)
         }
         activityViewController.completionWithItemsHandler = { [weak shareWall] activityType, completed, _, activityError in
             let result = ShareResult(activity: activityType?.rawValue, completed: completed, error: activityError)
             if #available(iOS 13.0, *), let interfaceStyle { window?.overrideUserInterfaceStyle = interfaceStyle }
             shareWall?.dismiss(animated: false)
-            trace(i: "<", result)
+//            trace(i: "<", result)
             completion?(result)
         }
     }
@@ -230,7 +231,7 @@ final class ShareableAddition: NSObject, UIActivityItemSource {
 
     func activityViewController(_ activityViewController: UIActivityViewController, itemForActivityType activityType: UIActivity.ActivityType?) -> Any? {
         guard let activityType else { return nil }
-        trace(activityType.rawValue)
+//        trace(activityType.rawValue)
         switch activityType.rawValue {
             case "com.burbn.instagram.shareextension",
                  "com.tinyspeck.chatlyio.share": return nil
