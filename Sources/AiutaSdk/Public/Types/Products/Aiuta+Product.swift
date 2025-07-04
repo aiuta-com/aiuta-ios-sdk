@@ -18,7 +18,7 @@ extension Aiuta {
     /// Represents a product within the Aiuta platform. This structure contains
     /// essential details about a product, such as its identifier, title, brand,
     /// associated images, and pricing information.
-    public struct Product: Sendable {
+    public struct Product: Codable, Sendable {
         /// A unique identifier for the product. This value is used to
         /// distinguish the product across the platform. This identifier
         /// must match the identifiers provided to Aiuta for training the

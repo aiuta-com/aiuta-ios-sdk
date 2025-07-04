@@ -18,7 +18,7 @@ extension Aiuta.Product {
     /// Represents pricing details for a product within the Aiuta platform.
     /// To display prices, ensure that the `ProductBarTheme` is configured
     /// with a `Prices` feature.
-    public struct Price: Sendable {
+    public struct Price: Codable, Sendable {
         /// The current price of the product, formatted as a localized string.
         /// This value should include the currency symbol and the amount.
         public let current: String

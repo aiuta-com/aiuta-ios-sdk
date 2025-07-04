@@ -14,21 +14,12 @@
 
 import Foundation
 
-enum Sdk {
-    static let version = "4.2.1"
-
-    @available(iOS 13.0.0, *)
-    @MainActor static var isForeground: Bool {
-        return Presenter.isForeground
-    }
-}
-
-extension Sdk {
-    enum Core {
-        enum Analytics {}
-        enum Api {}
-    }
-
-    enum Features {}
-    enum UI {}
+extension Aiuta.Configuration {
+    /// This typealias aggregates all the handlers from different
+    /// features of the SDK. Implementing this typealias allows
+    /// a single handler to manage multiple features, simplifying
+    /// the configuration and management of features in the SDK.
+    typealias Handlers =
+        Aiuta.Configuration.Features.TryOn.Cart.Handler &
+        Aiuta.Analytics.Handler
 }
