@@ -20,7 +20,8 @@ extension Sdk {
     @MainActor enum Presenter {
         public static var isForeground: Bool = false
 
-        public static func tryOn(product: Aiuta.Product, in viewController: UIViewController) async {
+        public static func tryOn(product: Aiuta.Product) async {
+            guard let currentViewController else { return }
             guard Register.ensureConfigured() else { return }
             @injected var session: Sdk.Core.Session
             session.start(with: product)
@@ -28,10 +29,11 @@ extension Sdk {
             tryOn.sessionResults.removeAll()
             @injected var tracker: AnalyticTracker
             tracker.track(.session(flow: .tryOn, productIds: session.products.ids))
-            viewController.present(Navigator(rootViewController: await entryViewController()), animated: true)
+            currentViewController.present(Navigator(rootViewController: await entryViewController()), animated: true)
         }
 
-        public static func showHistory(in viewController: UIViewController) async -> Bool {
+        public static func showHistory() async -> Bool {
+            guard let currentViewController else { return false }
             guard Register.ensureConfigured() else { return false }
             @injected var configuration: Sdk.Configuration
             guard configuration.features.tryOn.hasGenerationsHistory else { return false }
@@ -39,7 +41,7 @@ extension Sdk {
             session.start()
             @injected var tracker: AnalyticTracker
             tracker.track(.session(flow: .history, productIds: []))
-            viewController.present(Navigator(rootViewController: HistoryViewController()), animated: true)
+            currentViewController.present(Navigator(rootViewController: HistoryViewController()), animated: true)
             return true
         }
     }
@@ -63,5 +65,44 @@ extension Sdk.Presenter {
         }
 
         return Sdk.Features.TryOn()
+    }
+}
+
+@available(iOS 13.0, *)
+extension Sdk.Presenter {
+    static func takeScreenshot() {
+        guard let view = currentViewController?.view else { return }
+        let bounds = view.bounds
+        let size = CGSize(width: bounds.size.width,
+                          height: bounds.size.height - view.safeAreaInsets.bottom + 8)
+        UIGraphicsBeginImageContextWithOptions(size, false, UIScreen.main.scale)
+        view.drawHierarchy(in: bounds, afterScreenUpdates: true)
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        guard let image else { return }
+        currentViewController?.share(image: image)
+    }
+
+    static var currentViewController: UIViewController? {
+        if #available(iOS 15.0, *) {
+            return topViewController(UIApplication.shared.connectedScenes
+                .compactMap { ($0 as? UIWindowScene)?.keyWindow }
+                .first?.rootViewController)
+        } else {
+            return topViewController(UIApplication.shared.keyWindow?.rootViewController)
+        }
+    }
+
+    private static func topViewController(_ base: UIViewController?) -> UIViewController? {
+        if let nav = base as? UINavigationController {
+            return topViewController(nav.visibleViewController)
+        }
+        if let tab = base as? UITabBarController {
+            return topViewController(tab.selectedViewController)
+        }
+        if let presented = base?.presentedViewController {
+            return topViewController(presented)
+        }
+        return base
     }
 }

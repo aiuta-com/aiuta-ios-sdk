@@ -20,6 +20,9 @@ import UIKit
 extension Sdk {
     final class Navigator: UINavigationController {
         @Injected private var ds: DesignSystem
+        @injected private var tracker: AnalyticTracker
+        @injected private var session: Sdk.Core.Session
+        @injected private var tryOn: Sdk.Core.TryOn
 
         @notification(UIApplication.userDidTakeScreenshotNotification)
         private var userDidTakeScreenshot: Signal<Void>
@@ -34,7 +37,9 @@ extension Sdk {
             applyPreferedAppearancePresentationStyle()
             presentationController?.delegate = self
             userDidTakeScreenshot.subscribe(with: self) { [unowned self] in
-                takeScreenshot()
+                guard let viewController = Presenter.currentViewController,
+                      let page = (viewController as? PageRepresentable)?.page else { return }
+                tracker.track(.share(event: .screenshot, pageId: page, productIds: session.products.ids))
             }
         }
 
@@ -67,12 +72,9 @@ extension Sdk {
             bulletinWall?.dismiss()
             Presenter.isForeground = false
             if !ds.features.tryOn.allowsBackgroundExecution {
-                @injected var tryOn: Sdk.Core.TryOn
                 tryOn.abortAll()
             }
             if let page = (visibleViewController as? PageRepresentable)?.page {
-                @injected var session: Sdk.Core.Session
-                @injected var tracker: AnalyticTracker
                 tracker.track(.exit(pageId: page, productIds: session.products.ids))
             }
         }
@@ -126,44 +128,5 @@ extension Sdk.Navigator: UIAdaptivePresentationControllerDelegate {
 
     func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
         sdkDidDismiss()
-    }
-}
-
-@available(iOS 13.0, *)
-extension Sdk.Navigator {
-    func takeScreenshot() {
-        guard let view = currentViewController?.view else { return }
-        let bounds = view.bounds
-        let size = CGSize(width: bounds.size.width,
-                          height: bounds.size.height - view.safeAreaInsets.bottom + 8)
-        UIGraphicsBeginImageContextWithOptions(size, false, UIScreen.main.scale)
-        view.drawHierarchy(in: bounds, afterScreenUpdates: true)
-        let image = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        guard let image else { return }
-        currentViewController?.share(image: image)
-    }
-
-    var currentViewController: UIViewController? {
-        if #available(iOS 15.0, *) {
-            return topViewController(UIApplication.shared.connectedScenes
-                .compactMap { ($0 as? UIWindowScene)?.keyWindow }
-                .first?.rootViewController)
-        } else {
-            return topViewController(UIApplication.shared.keyWindow?.rootViewController)
-        }
-    }
-
-    private func topViewController(_ base: UIViewController?) -> UIViewController? {
-        if let nav = base as? UINavigationController {
-            return topViewController(nav.visibleViewController)
-        }
-        if let tab = base as? UITabBarController {
-            return topViewController(tab.selectedViewController)
-        }
-        if let presented = base?.presentedViewController {
-            return topViewController(presented)
-        }
-        return base
     }
 }
