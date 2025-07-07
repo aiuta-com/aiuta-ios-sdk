@@ -23,7 +23,7 @@ extension Sdk.Core.Api {
         private let auth: Aiuta.Auth
 
         public init(auth: Aiuta.Auth,
-                    baseUrl: String = "https://api.aiuta.com/digital-try-on/v1",
+                    baseUrl: String = Sdk.Core.Api.baseUrl,
                     keyCodingStrategy: ApiCodingStrategy = .convertSnakeCase) {
             self.auth = auth
             self.baseUrl = baseUrl

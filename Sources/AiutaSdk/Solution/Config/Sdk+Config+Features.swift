@@ -73,7 +73,7 @@ extension Sdk.Configuration.Features {
 
     struct Share {
         var isEnabled: Bool = true
-        var additionalTextProvider: Aiuta.Configuration.Features.Share.AdditionalTextProvider.DataProvider?
+        var additionalTextProvider: Aiuta.Configuration.Features.Share.DataProvider?
     }
 
     struct Wishlist {

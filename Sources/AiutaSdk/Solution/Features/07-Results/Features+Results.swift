@@ -39,10 +39,6 @@ final class ResulstsViewController: ViewController<ResultsView> {
             popoverOrCover(HistoryViewController())
         }
 
-        ui.skuSheet.content.addToCart.onTouchUpInside.subscribe(with: self) { [unowned self] in
-            dismissAll()
-        }
-
         ui.pager.pages.forEach { page in
             addComponent(FeedbackViewController(page))
 

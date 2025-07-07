@@ -21,7 +21,7 @@ extension Aiuta.Configuration {
     /// that occur during the configuration process. This allows developers to
     /// choose the appropriate behavior for their application when invalid
     /// configuration data is encountered.
-    public enum ValidationPolicy {
+    public enum ValidationPolicy: Sendable {
         /// Ignores all validation errors.
         ///
         /// Use this option if you want the SDK to proceed without taking any
@@ -63,7 +63,7 @@ extension Aiuta.Configuration.ValidationPolicy {
     /// Implement this protocol to define a custom logger that processes
     /// validation error messages. This is required when using the `.custom`
     /// validation policy.
-    public protocol Logger {
+    public protocol Logger: Sendable {
         /// Called when a validation error occurs.
         ///
         /// Use this method to handle validation error messages, such as logging

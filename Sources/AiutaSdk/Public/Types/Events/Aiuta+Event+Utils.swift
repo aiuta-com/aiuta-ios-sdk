@@ -266,6 +266,7 @@ extension Aiuta.Event: Encodable {
         case authType,
              welcomeScreenFeatureEnabled,
              onboardingFeatureEnabled,
+             onboardingBestResultsPageFeatureEnabled,
              consentFeatureType,
              imagePickerCameraFeatureEnabled,
              imagePickerPredefinedModelFeatureEnabled,
@@ -298,9 +299,10 @@ extension Aiuta.Event: Encodable {
                 @injected var config: Sdk.Configuration
                 return [
                     .authType: config.auth.type.rawValue,
+                    .consentFeatureType: config.features.consent.type?.rawValue,
                     .welcomeScreenFeatureEnabled: config.features.welcomeScreen.isEnabled,
                     .onboardingFeatureEnabled: config.features.onboarding.isEnabled,
-                    .consentFeatureType: config.features.consent.type?.rawValue,
+                    .onboardingBestResultsPageFeatureEnabled: config.features.onboarding.hasBestResults,
                     .imagePickerCameraFeatureEnabled: config.features.imagePicker.hasCamera,
                     .imagePickerPredefinedModelFeatureEnabled: config.features.imagePicker.hasPredefinedModels,
                     .imagePickerUploadsHistoryFeatureEnabled: config.features.imagePicker.hasUploadsHistory,
