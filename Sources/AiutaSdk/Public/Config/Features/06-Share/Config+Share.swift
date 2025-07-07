@@ -119,7 +119,7 @@ extension Aiuta.Configuration.Features.Share {
     }
 }
 
-extension Aiuta.Configuration.Features.Share.AdditionalTextProvider {
+extension Aiuta.Configuration.Features.Share {
     /// A protocol for providing custom share text dynamically. Implement this
     /// protocol to generate text based on specific product IDs or other criteria.
     public protocol DataProvider {

@@ -23,7 +23,7 @@ extension Aiuta {
     /// on how to configure authentication.
     ///
     /// See [Getting Started](https://developer.aiuta.com/docs/start) for more information about authentication.
-    public enum Auth {
+    public enum Auth: Sendable {
         /// Authenticate all API requests using an API key.
         ///
         /// This method is suitable for scenarios where a static API key is sufficient
@@ -69,7 +69,7 @@ extension Aiuta.Auth {
     ///
     /// See [JWT server-side auth example](https://developer.aiuta.com/docs/server-side-auth-component)
     /// to learn how to generate the JWT on your server side.
-    public protocol JwtProvider {
+    public protocol JwtProvider: Sendable {
         /// Generates a JWT for the specified request parameters.
         ///
         /// This method is called by the SDK whenever a tryOn request requires authentication

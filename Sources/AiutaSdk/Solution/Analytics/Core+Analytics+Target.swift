@@ -22,7 +22,7 @@ extension Sdk.Core.Analytics {
         private let api: ApiService
 
         init(_ auth: Aiuta.Auth,
-             baseUrl: String = "https://api.aiuta.com/analytics/v1",
+             baseUrl: String = Sdk.Core.Analytics.baseUrl,
              keyCodingStrategy: ApiCodingStrategy = .useDefaultKeys) {
             api = RestService(Sdk.Core.Api.Provider(
                 auth: auth,

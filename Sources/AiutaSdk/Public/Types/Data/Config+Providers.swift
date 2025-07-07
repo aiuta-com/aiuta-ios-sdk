@@ -18,11 +18,11 @@ extension Aiuta.Configuration {
     /// This typealias aggregates all the data providers from different
     /// features of the SDK. Implementing this typealias allows
     /// a single type to serve as a data provider for all features.
-    typealias DataProviders =
+    public typealias DataProviders =
         Aiuta.Configuration.Features.Onboarding.DataProvider &
         Aiuta.Configuration.Features.Consent.Standalone.DataProvider &
         Aiuta.Configuration.Features.ImagePicker.UploadsHistory.DataProvider &
         Aiuta.Configuration.Features.TryOn.GenerationsHistory.DataProvider &
         Aiuta.Configuration.Features.Wishlist.DataProvider &
-        Aiuta.Configuration.Features.Share.AdditionalTextProvider.DataProvider
+        Aiuta.Configuration.Features.Share.DataProvider
 }

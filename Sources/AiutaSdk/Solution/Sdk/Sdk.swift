@@ -15,7 +15,7 @@
 import Foundation
 
 enum Sdk {
-    static let version = "4.2.1"
+    static let version = "4.2.2"
 
     @available(iOS 13.0.0, *)
     @MainActor static var isForeground: Bool {
@@ -25,8 +25,15 @@ enum Sdk {
 
 extension Sdk {
     enum Core {
-        enum Analytics {}
-        enum Api {}
+        static let baseUrl = "https://api.aiuta.com"
+
+        enum Analytics {
+            static let baseUrl = "\(Sdk.Core.baseUrl)/analytics/v1"
+        }
+
+        enum Api {
+            static let baseUrl = "\(Sdk.Core.baseUrl)/digital-try-on/v1"
+        }
     }
 
     enum Features {}

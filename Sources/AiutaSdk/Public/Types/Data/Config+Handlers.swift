@@ -19,7 +19,7 @@ extension Aiuta.Configuration {
     /// features of the SDK. Implementing this typealias allows
     /// a single handler to manage multiple features, simplifying
     /// the configuration and management of features in the SDK.
-    typealias Handlers =
+    public typealias Handlers =
         Aiuta.Configuration.Features.TryOn.Cart.Handler &
         Aiuta.Analytics.Handler
 }

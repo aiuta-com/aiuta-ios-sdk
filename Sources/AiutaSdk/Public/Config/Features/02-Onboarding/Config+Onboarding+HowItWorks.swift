@@ -67,6 +67,12 @@ extension Aiuta.Configuration.Features.Onboarding.HowItWorks.Images {
 
         /// The flatlay image of the item with a transparent background.
         let itemPreview: UIImage
+        
+        /// Initializes a new `Item` with the specified images.
+        public init(itemPhoto: UIImage, itemPreview: UIImage) {
+            self.itemPhoto = itemPhoto
+            self.itemPreview = itemPreview
+        }
     }
 
     /// Supplies custom images for the "How It Works" page.
