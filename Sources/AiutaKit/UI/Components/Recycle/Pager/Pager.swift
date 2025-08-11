@@ -72,8 +72,9 @@ import UIKit
         galleryView.findChildren()
     }
 
-    public func scroll(to index: Int) {
-        galleryView.view.setContentOffset(.init(x: offsetFromIndex(index) - galleryInset / 2, y: 0), animated: true)
+    public func scroll(to index: Int, crossDissolve: Bool = false) {
+        galleryView.view.setContentOffset(.init(x: offsetFromIndex(index) - galleryInset / 2, y: 0), animated: !crossDissolve)
+        if crossDissolve { galleryView.animations.transition(.transitionCrossDissolve, duration: .quarterOfSecond) }
     }
 
     override func setupInternal() {

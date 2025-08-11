@@ -30,9 +30,11 @@ extension Aiuta.Configuration.UserInterface {
         ///
         /// - Parameters:
         ///   - scheme: Specifies whether the theme should use a light or dark color scheme.
+        ///             https://docs.aiuta.com/sdk/developer/configuration/ui/theme/color/
         case aiuta(scheme: ColorScheme)
 
         /// Applies the default Aiuta theme with a custom brand color.
+        /// https://docs.aiuta.com/sdk/developer/configuration/ui/theme/color/
         ///
         /// This theme builds on the default Aiuta theme but allows developers to specify
         /// a custom brand color. The brand color is used for primary action buttons and
@@ -47,6 +49,7 @@ extension Aiuta.Configuration.UserInterface {
                    brand: UIColor)
 
         /// Applies a fully customizable theme.
+        /// https://docs.aiuta.com/sdk/developer/configuration/ui/theme/
         ///
         /// This option allows developers to define every aspect of the SDK's visual appearance,
         /// including colors, labels, images, buttons, and various UI components. It provides

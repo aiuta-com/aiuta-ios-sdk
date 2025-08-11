@@ -19,6 +19,7 @@ final class GalleryViewController: ViewController<GalleryView> {
     let willShare = Signal<(ImageSource, Int, GalleryViewController)>()
     var data: DataProvider<ImageSource>?
     var index: Int = 0
+    var crossfade: Bool = false
 
     @injected private var watermarker: Watermarker
     private let breadcrumbs = Breadcrumbs()
@@ -27,10 +28,11 @@ final class GalleryViewController: ViewController<GalleryView> {
         statusBarStyle = .lightContent
     }
 
-    convenience init(_ data: DataProvider<ImageSource>?, start index: Int) {
+    convenience init(_ data: DataProvider<ImageSource>?, start index: Int, crossfade: Bool = false) {
         self.init()
         self.data = data
         self.index = index
+        self.crossfade = crossfade
     }
 
     override func setup() {
@@ -49,12 +51,23 @@ final class GalleryViewController: ViewController<GalleryView> {
             }
         }
 
+        ui.onDismiss.subscribe(with: self) { [unowned self] in
+            dismiss()
+        }
+
         ui.share.onTouchUpInside.subscribe(with: self) { [unowned self] in
             shareCurrent()
         }
 
         ui.data = data
+        if crossfade {
+            ui.navigator.thumbnails.data = TransformDataProvider(input: data) { source in
+                source as? Aiuta.Image ?? .init(id: "", url: "", ownerType: .aiuta)
+            }
+            ui.navigator.selectedIndex = index
+        }
         ui.pageIndex = index
+        ui.crossDissolve = crossfade
         ui.share.view.isVisible = !willShare.observers.isEmpty && ds.features.share.isEnabled
     }
 

@@ -16,6 +16,7 @@ import Foundation
 
 extension Aiuta.Configuration.UserInterface {
     /// Defines the behavior for dismissing the SDK using a top-down swipe gesture.
+    /// https://docs.aiuta.com/sdk/developer/configuration/ui/#swipetodismisspolicy
     ///
     /// The `SwipeToDismissPolicy` enum provides options for controlling how users can
     /// dismiss the SDK by swiping down. This allows to balance user convenience with

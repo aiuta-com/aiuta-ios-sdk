@@ -16,6 +16,8 @@ import UIKit
 
 /// Aiuta Virtual Try-On SDK public namespace & entry point.
 /// Full documentation is available at https://docs.aiuta.com
+/// More specific documentation for the iOS SDK is available
+/// at https://docs.aiuta.com/sdk/ios/
 public enum Aiuta { }
 
 // MARK: - Configuration
@@ -25,6 +27,8 @@ public enum Aiuta { }
 @MainActor public extension Aiuta {
     /// Configures the SDK and sets up the required services.
     /// You can call this method multiple times to update the configuration.
+    ///
+    /// Read more at https://docs.aiuta.com/sdk/ios/configuration/
     ///
     /// - Parameters:
     ///   - configuration: Aiuta SDK Configuration.
@@ -39,9 +43,13 @@ public enum Aiuta { }
 @available(iOS 13.0.0, *)
 @MainActor public extension Aiuta {
     /// Presents a UI component that allows users to virtually try on a single product.
+    /// Find more about general SDK usage at https://docs.aiuta.com/sdk/ios/basic-usage/
     ///
     /// - Parameters:
     ///   - product: The `Product` that users will try on.
+    ///
+    /// Please refer to the [Product sheme](https://docs.aiuta.com/sdk/developer/product/)
+    /// for more details on how to pass the product to the SDK.
     static func tryOn(product: Product) async {
         await Sdk.Presenter.tryOn(product: product)
     }
@@ -52,6 +60,7 @@ public enum Aiuta { }
 @available(iOS 13.0.0, *)
 @MainActor public extension Aiuta {
     /// Presents a UI component that allows users to view the history of their virtual try-ons.
+    /// Find more about general SDK usage at https://docs.aiuta.com/sdk/ios/basic-usage/
     @discardableResult
     static func showHistory() async -> Bool {
         await Sdk.Presenter.showHistory()

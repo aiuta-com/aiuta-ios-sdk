@@ -16,6 +16,7 @@ import Foundation
 
 extension Aiuta.Configuration.UserInterface {
     /// Specifies the modal presentation style for the Aiuta SDK.
+    /// https://docs.aiuta.com/sdk/developer/configuration/ui/#presentationstyle
     ///
     /// The `PresentationStyle` enum defines how the SDK is displayed when presented as a modal view controller.
     /// It provides options for different presentation styles, allowing developers to choose the one that best

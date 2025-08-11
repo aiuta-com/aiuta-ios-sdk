@@ -2,7 +2,7 @@
 
 # Aiuta Virtual Try-On SDK for iOS
 
-This repo distributes the [Aiuta Virtual Try-On SDK](https://docs.aiuta.com/) library via Swift Package Manager.
+This repo distributes the [Aiuta Virtual Try-On](https://aiuta.com/virtual-try-on) library via Swift Package Manager.
 
 ## Installation
 

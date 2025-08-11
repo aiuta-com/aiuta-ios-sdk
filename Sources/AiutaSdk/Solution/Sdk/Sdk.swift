@@ -15,7 +15,7 @@
 import Foundation
 
 enum Sdk {
-    static let version = "4.2.2"
+    static let version = "4.2.3"
 
     @available(iOS 13.0.0, *)
     @MainActor static var isForeground: Bool {

@@ -51,6 +51,7 @@ extension Aiuta.Configuration {
                     allValidationPolicies: ValidationPolicy)
 
         /// Fully customizable debug settings for the SDK.
+        /// https://docs.aiuta.com/sdk/developer/configuration/debug-settings/
         ///
         /// - Parameters:
         ///   - isLoggingEnabled: A Boolean value indicating whether the SDK should log

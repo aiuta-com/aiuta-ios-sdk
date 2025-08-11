@@ -36,10 +36,11 @@ extension Sdk {
 
         @available(iOS 13.0.0, *)
         private func setup(_ configuration: Aiuta.Configuration) {
+            setDefaults(apiKey: configuration.keyToDefaults)
+            
             let config = Configuration(configuration)
             let isDebug = config.settings.isLoggingEnabled
 
-            setDefaults(apiKey: config.auth.keyToDefaults)
             trace(isEnabled: isDebug)
             scope.reset()
 
