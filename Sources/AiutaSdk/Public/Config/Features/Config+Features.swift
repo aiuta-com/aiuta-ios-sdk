@@ -25,6 +25,7 @@ extension Aiuta.Configuration {
         case `default`
 
         /// Allows you to define a custom set of features.
+        /// https://docs.aiuta.com/sdk/developer/configuration/features/
         ///
         /// - Parameters:
         ///   - welcomeScreen: Configures an optional welcome or splash screen.

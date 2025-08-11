@@ -16,6 +16,12 @@
 import UIKit
 
 final class GalleryView: Pager<ImageSource, GalleryPage> {
+    let onDismiss = Signal<Void>()
+
+    let touchSwallow = Plane()
+    
+    let navigator = Navigator()
+
     let close = ImageButton { it, ds in
         it.image = ds.icons.close24
         it.tint = ds.colors.onDark
@@ -32,6 +38,28 @@ final class GalleryView: Pager<ImageSource, GalleryPage> {
         it.customLayout = true
     }
 
+    var crossDissolve = true {
+        didSet {
+            touchSwallow.view.isVisible = crossDissolve
+            navigator.view.isVisible = crossDissolve
+
+            pages.forEach { page in
+                if crossDissolve {
+                    page.zoomView.zoomToFill()
+                } else {
+                    page.zoomView.zoomToFit()
+                }
+            }
+        }
+    }
+    
+    private var showsNavigator = true {
+        didSet {
+            guard showsNavigator != oldValue else { return }
+            animations.updateLayout()
+        }
+    }
+
     override func setup() {
         gallerySpace = 20
         view.backgroundColor = .black
@@ -39,9 +67,69 @@ final class GalleryView: Pager<ImageSource, GalleryPage> {
         activity.onActivity.subscribe(with: self) { [unowned self] loading in
             share.animations.visibleTo(!loading)
         }
+
+        touchSwallow.gestures.onSwipe(.left, with: self) { [unowned self] swipe in
+            guard swipe.state == .ended else { return }
+            guard pageIndex < pageCount - 1 else { return }
+            scroll(to: pageIndex + 1, crossDissolve: true)
+        }
+
+        touchSwallow.gestures.onSwipe(.right, with: self) { [unowned self] swipe in
+            guard swipe.state == .ended else { return }
+            guard pageIndex > 0 else { return }
+            scroll(to: pageIndex - 1, crossDissolve: true)
+        }
+
+        touchSwallow.gestures.onSwipe(.up, with: self) { [unowned self] swipe in
+            guard swipe.state == .ended else { return }
+            guard pageIndex < pageCount - 1 else { return }
+            scroll(to: pageIndex + 1, crossDissolve: true)
+        }
+
+        touchSwallow.gestures.onSwipe(.down, with: self) { [unowned self] swipe in
+            guard swipe.state == .ended else { return }
+            guard pageIndex > 0 else {
+                onDismiss.fire()
+                return
+            }
+            scroll(to: pageIndex - 1, crossDissolve: true)
+        }
+
+        touchSwallow.gestures.onPinch(with: self) { [unowned self] pinch in
+            pages.forEach { page in
+                if pinch.velocity > 0 {
+                    page.zoomView.zoomToFill()
+                } else {
+                    page.zoomView.zoomToFit()
+                }
+            }
+        }
+        
+        touchSwallow.gestures.onTap(with: self) { [unowned self] tap in
+            guard tap.state == .ended else { return }
+            showsNavigator.toggle()
+        }
+        
+        onSwipePage.subscribe(with: self) { [unowned self] index in
+            guard navigator.thumbnails.data.isSome else { return }
+            navigator.selectedIndex = index
+        }
+        
+        navigator.thumbnails.onTapItem.subscribe(with: self) { [unowned self] thumb in
+            guard thumb.index.item != pageIndex else { return }
+            scroll(to: thumb.index.item, crossDissolve: true)
+        }
+
+        pages.forEach { page in
+            page.zoomView.zoomToFill()
+        }
     }
 
     override func updateLayout() {
+        touchSwallow.layout.make { make in
+            make.inset = 0
+        }
+
         close.layout.make { make in
             make.square = 44
             make.top = max(layout.safe.insets.top, 10) - 10
@@ -60,6 +148,17 @@ final class GalleryView: Pager<ImageSource, GalleryPage> {
 
         activity.layout.make { make in
             make.frame = share.layout.frame
+        }
+
+        navigator.layout.make { make in
+            make.width = 68
+            make.top = close.layout.bottomPin + 8
+            make.bottom = layout.safe.insets.bottom + 8
+            make.left = showsNavigator ? 0 : -59.9
+        }
+        
+        if navigator.thumbnails.data.isSome {
+            navigator.selectedIndex = pageIndex
         }
     }
 }

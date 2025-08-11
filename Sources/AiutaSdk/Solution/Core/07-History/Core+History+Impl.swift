@@ -67,9 +67,7 @@ extension Sdk.Core {
             guard config.features.imagePicker.hasUploadsHistory else { return }
             deletingUploaded.items.append(image)
             defer { deletingUploaded.removeAll(where: { $0.id == image.id }) }
-            await asleep(.severalSeconds)
-            throw Sdk.Core.TryOnError.abort
-//            try await config.features.imagePicker.historyProvider.delete(uploaded: [image])
+            try await config.features.imagePicker.historyProvider.delete(uploaded: [image])
         }
 
         @MainActor func addGenerated(_ images: [Aiuta.Image], for product: Aiuta.Product) async throws {
@@ -82,9 +80,7 @@ extension Sdk.Core {
             guard config.features.tryOn.hasGenerationsHistory else { return }
             deletingGenerated.items.append(contentsOf: selection)
             defer { deletingGenerated.removeAll { selection.contains($0) } }
-            await asleep(.severalSeconds)
-            throw Sdk.Core.TryOnError.abort
-//            try await config.features.tryOn.historyProvider.delete(generated: selection)
+            try await config.features.tryOn.historyProvider.delete(generated: selection)
         }
     }
 }

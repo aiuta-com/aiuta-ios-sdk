@@ -17,12 +17,20 @@ import Foundation
 extension Sdk.Configuration {
     struct Auth {
         var type: Aiuta.Auth = .apiKey("<invalid>")
+    }
+}
 
-        var keyToDefaults: String {
-            switch type {
-                case let .apiKey(apiKey): return apiKey
-                case let .jwt(subscriptionId, _): return subscriptionId
-            }
+extension Aiuta.Configuration {
+    var keyToDefaults: String {
+        switch self {
+            case .demo: return "demo"
+            case let .debug(auth),
+                 let .release(auth),
+                 let .custom(auth, _, _, _, _):
+                switch auth {
+                    case let .apiKey(apiKey): return apiKey
+                    case let .jwt(subscriptionId, _): return subscriptionId
+                }
         }
     }
 }

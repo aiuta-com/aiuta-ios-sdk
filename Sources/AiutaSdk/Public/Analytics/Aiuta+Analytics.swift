@@ -16,6 +16,7 @@ import Foundation
 
 extension Aiuta {
     /// Represents the analytics configuration for the Aiuta SDK.
+    /// https://docs.aiuta.com/sdk/developer/configuration/analytics/
     ///
     /// The `Analytics` enum defines how analytics events are handled within the SDK.
     /// Developers can choose to not handle analytics events at all or provide a custom

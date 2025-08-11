@@ -204,13 +204,15 @@ public extension UIViewController {
     }
 
     func applyNonStackDetendsIfNeeded(withMediumDetent: Bool = false) {
-        if #available(iOS 16.0, *), !UIViewController.isStackingAllowed {
+        guard #available(iOS 16.0, *) else { return }
+        var largeDetent: UISheetPresentationController.Detent = .large()
+        if !UIViewController.isStackingAllowed {
             let nonStack = UISheetPresentationController.Detent.Identifier("nonStackDetent")
-            let nonStackDetent = UISheetPresentationController.Detent.custom(identifier: nonStack) { context in
+            largeDetent = UISheetPresentationController.Detent.custom(identifier: nonStack) { context in
                 context.maximumDetentValue - 1 // this will make the view controllers not stack up
             }
-            sheetPresentationController?.detents = withMediumDetent ? [.medium(), nonStackDetent] : [nonStackDetent]
         }
+        sheetPresentationController?.detents = withMediumDetent ? [.medium(), largeDetent] : [largeDetent]
     }
 }
 

@@ -17,7 +17,7 @@ import Alamofire
 
 @available(iOS 13.0.0, *)
 extension Sdk.Core.Api {
-    @_spi(Aiuta) public struct Provider: ApiProvider {
+    struct Provider: ApiProvider {
         public let baseUrl: String
         public let keyCodingStrategy: ApiCodingStrategy
         private let auth: Aiuta.Auth
@@ -30,7 +30,7 @@ extension Sdk.Core.Api {
             self.keyCodingStrategy = keyCodingStrategy
         }
 
-        public func authorize(headers: inout HTTPHeaders, for request: ApiRequest) async throws {
+        func authorize(headers: inout HTTPHeaders, for request: ApiRequest) async throws {
             switch auth {
                 case let .apiKey(apiKey):
                     headers.add(.authorization(xApiKey: apiKey))

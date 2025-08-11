@@ -16,6 +16,7 @@ import Foundation
 
 extension Aiuta {
     /// Represents the configuration options for the Aiuta SDK.
+    /// https://docs.aiuta.com/sdk/ios/configuration/
     ///
     /// The `Configuration` enum defines how the SDK behaves, including its appearance,
     /// interaction with the host application, and the set of features provided to the user.
@@ -60,6 +61,7 @@ extension Aiuta {
         case release(auth: Aiuta.Auth)
 
         /// A fully customizable configuration for the SDK.
+        /// https://docs.aiuta.com/sdk/developer/configuration/
         ///
         /// This configuration allows developers to customize every aspect of the SDK,
         /// including authentication, user interface, features, analytics, and debug settings.

@@ -35,9 +35,20 @@ final class ZoomImage: Content<UIScrollView> {
             updateInsets()
         }
     }
+    
+    func zoomToFill() {
+        keepZoom = true
+        view.setZoomScale(1, animated: true)
+    }
+    
+    func zoomToFit() {
+        keepZoom = false
+        view.setZoomScale(view.minimumZoomScale, animated: true)
+    }
 
     private let delegate = ZoomDelegate()
     private var isLayedOut = false
+    private var keepZoom = false
 
     override func setup() {
         view.addSubview(imageView.container)
@@ -90,7 +101,7 @@ final class ZoomImage: Content<UIScrollView> {
         view.contentSize = imageSize
         view.minimumZoomScale = min(layout.width / imageSize.width, (layout.height - 2 * verticalFitInset) / imageSize.height) - 0.005
         view.maximumZoomScale = max(layout.width / imageSize.width, layout.height / imageSize.height) * 1.5
-        view.zoomScale = view.minimumZoomScale
+        view.zoomScale = keepZoom ? 1 : view.minimumZoomScale
         let indentHorizontal = (layout.width - imageView.layout.frame.width) / 2
         let indentVertical = (layout.height - imageView.layout.frame.height) / 2
         view.setContentOffset(.init(x: -indentHorizontal, y: -indentVertical), animated: false)

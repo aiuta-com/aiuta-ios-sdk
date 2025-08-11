@@ -187,7 +187,7 @@ final class HistoryViewController: ViewController<HistoryView> {
     }
 
     func enterFullscreen(_ cell: HistoryView.HistoryCell) {
-        let gallery = GalleryViewController(TransformDataProvider(input: ui.history.data, transform: { $0 }), start: cell.index.item)
+        let gallery = GalleryViewController(TransformDataProvider(input: ui.history.data, transform: { $0 }), start: cell.index.item, crossfade: true)
         gallery.willShare.subscribe(with: self) { [unowned self] generatedImage, _, gallery in
             Task {
                 gallery.ui.activity.start()

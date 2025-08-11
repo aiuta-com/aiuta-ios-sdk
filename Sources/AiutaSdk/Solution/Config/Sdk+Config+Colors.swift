@@ -22,7 +22,7 @@ extension Sdk.Configuration {
 
         // MARK: - General
 
-        var brand: UIColor = 0x4000FFFF.uiColor
+        var brand: UIColor = 0x000000FF.uiColor
         var primary: UIColor = 0x000000FF.uiColor
         var secondary: UIColor = 0x9F9F9FFF.uiColor
         var onDark: UIColor = 0xFFFFFFFF.uiColor
@@ -48,7 +48,7 @@ extension Sdk.Configuration {
 
         // MARK: - PowerBar
 
-        var aiuta: UIColor = 0x4000FFFF.uiColor
+        var aiuta: UIColor = 0x000000FF.uiColor
 
         // MARK: - Activity
 

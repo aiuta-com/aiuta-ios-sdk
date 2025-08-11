@@ -29,6 +29,7 @@ extension Aiuta.Configuration {
         case `default`
 
         /// A customizable UI configuration for the Aiuta SDK.
+        /// https://docs.aiuta.com/sdk/developer/configuration/ui/
         ///
         /// This option allows developers to specify the visual theme, presentation style,
         /// and swipe-to-dismiss policy for the SDK. It provides flexibility to adapt the
