@@ -12,20 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+@_spi(Aiuta) import AiutaKit
 import UIKit
 
 extension Sdk {
     static func apply(_ preset: Aiuta.Configuration, to config: inout Sdk.Configuration) {
         switch preset {
-            case let .demo(validation):
-                config.apply(debugSettings: .preset(isLoggingEnabled: true,
-                                                    allValidationPolicies: validation))
-            case let .debug(auth):
+            case let .default(auth, consent, theme, analytics, debugSettings):
                 config.apply(auth: auth)
-                config.apply(debugSettings: .debug)
-            case let .release(auth):
-                config.apply(auth: auth)
-                config.apply(debugSettings: .release)
+                config.apply(consent: consent)
+                config.apply(colorTheme: theme)
+                config.apply(analytics: analytics)
+                config.apply(debugSettings: debugSettings)
             case let .custom(auth, userInterface, features, analytics, debugSettings):
                 config.apply(auth: auth)
                 config.apply(userInterface: userInterface)
@@ -56,6 +54,8 @@ private extension Sdk.Configuration {
 
     mutating func apply(theme: Aiuta.Configuration.UserInterface.Theme) {
         switch theme {
+            case .default:
+                break
             case let .aiuta(scheme):
                 colors.scheme = scheme
             case let .brand(scheme, brand):
@@ -79,6 +79,8 @@ private extension Sdk.Configuration {
 
     mutating func apply(colorTheme: Aiuta.Configuration.UserInterface.ColorTheme) {
         switch colorTheme {
+            case .default:
+                break
             case let .aiuta(scheme):
                 colors.scheme = scheme
             case let .brand(scheme, brand):
@@ -454,7 +456,7 @@ private extension Sdk.Configuration {
                         self.strings.poweredByAiuta = provider.poweredByAiuta
                 }
                 switch colors {
-                    case .aiutaLight, .custom(.default):
+                    case .default, .custom(.default):
                         break
                     case .custom(.primary):
                         self.colors.aiuta = self.colors.primary
@@ -644,6 +646,8 @@ private extension Sdk.Configuration {
                 features.consent.isEmbedded = false
             case let .embeddedIntoOnboarding(strings):
                 switch strings {
+                    case let .default(termsOfServiceUrl):
+                        self.strings.setConsentLink(termsOfServiceUrl)
                     case let .custom(consentHtml):
                         self.strings.consentHtml = consentHtml
                     case let .provider(provider):

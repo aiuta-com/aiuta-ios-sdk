@@ -43,6 +43,9 @@ extension Sdk.Configuration {
         // MARK: - Conset.Embedded
 
         var consentHtml: String = "Your photos will be processed by \(Html("Terms of Use", .bold, .link("https://aiuta.com/legal/terms-of-service.html")))"
+        mutating func setConsentLink(_ link: String) {
+            consentHtml = "Your photos will be processed by \(Html("Terms of Use", .bold, .link(link)))"
+        }
 
         // MARK: - Conset.Standalone
 

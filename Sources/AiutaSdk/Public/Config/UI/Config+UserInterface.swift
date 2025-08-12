@@ -36,14 +36,13 @@ extension Aiuta.Configuration {
         /// SDK's UI to match the application's design and user experience requirements.
         ///
         /// - Parameters:
-        ///   - theme: The visual theme of the SDK. The default value is `.aiuta(scheme: .light)`,
-        ///     which applies a light color scheme designed for the Aiuta SDK.
+        ///   - theme: The visual theme of the SDK. The default value applies a light color scheme.
         ///   - presentationStyle: Defines how the SDK is presented as a modal view controller.
         ///     The default value is `.pageSheet`, which displays the SDK in a sheet-style modal.
         ///   - swipeToDismissPolicy: Specifies the behavior for dismissing the SDK using a
         ///     top-down swipe gesture. The default value is `.protectTheNecessaryPages`, which
         ///     restricts swipe-to-dismiss functionality on critical pages to prevent accidental exits.
-        case custom(theme: Theme = .aiuta(scheme: .light),
+        case custom(theme: Theme = .default,
                     presentationStyle: PresentationStyle = .pageSheet,
                     swipeToDismissPolicy: SwipeToDismissPolicy = .protectTheNecessaryPages)
     }

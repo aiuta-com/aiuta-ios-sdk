@@ -22,6 +22,10 @@ extension Aiuta.Configuration.UserInterface {
     /// for advanced requirements. Themes control the color scheme, branding, and styling
     /// of various UI components within the SDK.
     public enum Theme {
+        /// The default theme configuration for the Aiuta SDK.
+        /// This theme applies a light color scheme and uses the standard Aiuta branding.
+        case `default`
+        
         /// Applies the default Aiuta theme.
         ///
         /// This theme uses a predefined light or dark color scheme designed to align with

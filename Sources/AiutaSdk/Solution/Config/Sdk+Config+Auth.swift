@@ -23,9 +23,7 @@ extension Sdk.Configuration {
 extension Aiuta.Configuration {
     var keyToDefaults: String {
         switch self {
-            case .demo: return "demo"
-            case let .debug(auth),
-                 let .release(auth),
+            case let .default(auth, _, _, _, _),
                  let .custom(auth, _, _, _, _):
                 switch auth {
                     case let .apiKey(apiKey): return apiKey
