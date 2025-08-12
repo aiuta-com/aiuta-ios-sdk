@@ -32,6 +32,9 @@ public enum Aiuta { }
     ///
     /// - Parameters:
     ///   - configuration: Aiuta SDK Configuration.
+    ///
+    /// - Note: See https://docs.aiuta.com/sdk/ios/quick-test/ for a quick testing SDK
+    /// integration with test `apiKey` auth and sample product data.
     static func setup(configuration: Configuration) {
         Sdk.Register.setup(configuration: configuration)
     }

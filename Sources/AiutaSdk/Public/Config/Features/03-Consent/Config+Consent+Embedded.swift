@@ -27,6 +27,13 @@ extension Aiuta.Configuration.Features.Consent.Embedded {
     /// You can provide custom HTML content or use a custom provider to supply
     /// the required strings.
     public enum Strings {
+        /// Use the default strings provided by the SDK.
+        ///
+        /// - Parameters:
+        ///  - termsOfServiceUrl: The URL to the terms of service page. This URL is
+        ///  displayed as a link at the bottom of the onboarding screen.
+        case `default`(termsOfServiceUrl: String)
+        
         /// Use custom HTML content for the consent embedded into the onboarding screen.
         ///
         /// - Parameters:

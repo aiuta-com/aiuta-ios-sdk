@@ -39,6 +39,9 @@ extension Aiuta.Configuration.UserInterface {
     /// You can choose from predefined themes or create a fully customized theme to align
     /// the SDK's design with your application's branding and style.
     public enum ColorTheme {
+        /// Uses the default light color theme provided by the Aiuta SDK.
+        case `default`
+        
         /// Uses the default color theme provided by the Aiuta SDK.
         ///
         /// - Parameters:
@@ -53,10 +56,10 @@ extension Aiuta.Configuration.UserInterface {
         ///
         /// - Parameters:
         ///   - scheme: Specifies whether the theme should use a light or dark color scheme.
-        ///   - brand: The main accent color of your application, used for primary actions
+        ///   - color: The main accent color of your application, used for primary actions
         ///            and highlights throughout the SDK.
         case brand(scheme: ColorScheme,
-                   brand: UIColor)
+                   color: UIColor)
 
         /// Uses a fully customized color theme.
         ///

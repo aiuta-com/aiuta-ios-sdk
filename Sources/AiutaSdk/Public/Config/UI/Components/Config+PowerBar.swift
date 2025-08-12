@@ -30,7 +30,7 @@ extension Aiuta.Configuration.UserInterface {
         ///   - strings: Configures the text strings used in the Power Bar.
         ///   - colors: Configures the color scheme for the Power Bar.
         case custom(strings: Strings = .default,
-                    colors: Colors = .aiutaLight)
+                    colors: Colors = .default)
     }
 }
 
@@ -90,7 +90,7 @@ extension Aiuta.Configuration.UserInterface.PowerBarTheme {
         }
 
         /// Use the default color scheme provided by the SDK.
-        case aiutaLight
+        case `default`
 
         /// Define custom colors for the Power Bar.
         ///
