@@ -74,7 +74,7 @@ extension Aiuta {
     public typealias Products = [Product]
 }
 
-extension Aiuta.Products: Sendable {
+extension Aiuta.Products {
     /// A computed property that returns an array of product identifiers.
     public var ids: [String] {
         map { $0.id }

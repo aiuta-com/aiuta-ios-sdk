@@ -84,11 +84,16 @@ extension Sdk.Presenter {
     }
 
     static var currentViewController: UIViewController? {
-        if #available(iOS 15.0, *) {
-            return topViewController(UIApplication.shared.connectedScenes
-                .compactMap { ($0 as? UIWindowScene)?.keyWindow }
-                .first?.rootViewController)
+        if #available(iOS 13.0, *) {
+            // For iOS 13+, find the first active window scene
+            let windowScene = UIApplication.shared.connectedScenes
+                .compactMap { $0 as? UIWindowScene }
+                .first { $0.activationState == .foregroundActive }
+            
+            let keyWindow = windowScene?.windows.first { $0.isKeyWindow }
+            return topViewController(keyWindow?.rootViewController)
         } else {
+            // For iOS 12 and below, use the legacy approach
             return topViewController(UIApplication.shared.keyWindow?.rootViewController)
         }
     }

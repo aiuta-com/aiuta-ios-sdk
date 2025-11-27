@@ -118,9 +118,8 @@ import UIKit
         scanner.charactersToBeSkipped = nil
 
         while !scanner.isAtEnd {
-            if scanner.scanString("<", into: nil) {
-                var tagInfo: NSString?
-                if scanner.scanUpTo(">", into: &tagInfo), let tag = tagInfo as String? {
+            if scanner.scanString("<") != nil {
+                if let tag = scanner.scanUpToString(">") {
                     let trimmedTag = tag.trimmingCharacters(in: .whitespacesAndNewlines)
 
                     // Handle opening tags
@@ -168,9 +167,9 @@ import UIKit
                         }
                     }
                 }
-                scanner.scanString(">", into: nil)
+                _ = scanner.scanString(">")
             } else {
-                scanner.scanUpTo("<", into: nil)
+                _ = scanner.scanUpToString("<")
             }
         }
 
