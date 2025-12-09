@@ -30,7 +30,7 @@ extension Sdk.Core {
         func touchUploaded(with id: String) async throws -> Bool
         func removeUploaded(_ image: Aiuta.Image.Input) async throws
         
-        func addGenerated(_ images: [Aiuta.Image], for product: Aiuta.Product) async throws
+        func addGenerated(_ images: [Aiuta.Image], for products: Aiuta.Products) async throws
         func removeGenerated(_ images: [Aiuta.Image.Generated]) async throws
     }
 }

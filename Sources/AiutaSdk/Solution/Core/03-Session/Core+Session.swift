@@ -20,8 +20,8 @@ extension Sdk.Core {
         var products: Aiuta.Products { get }
 
         func start()
-        func start(with product: Aiuta.Product)
+        func start(with products: Aiuta.Products)
 
-        func finish(addingToCart: Aiuta.Product?)
+        func finish(addingToCart: Aiuta.Products?)
     }
 }

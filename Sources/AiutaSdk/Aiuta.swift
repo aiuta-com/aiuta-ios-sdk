@@ -54,7 +54,19 @@ public enum Aiuta { }
     /// Please refer to the [Product sheme](https://docs.aiuta.com/sdk/developer/product/)
     /// for more details on how to pass the product to the SDK.
     static func tryOn(product: Product) async {
-        await Sdk.Presenter.tryOn(product: product)
+        await Sdk.Presenter.tryOn(products: [product])
+    }
+    
+    /// Presents a UI component that allows users to use multi item virtual try-on.
+    /// Find more about general SDK usage at https://docs.aiuta.com/sdk/ios/basic-usage/
+    ///
+    /// - Parameters:
+    ///   - products: The list of `Product` that users will try on.
+    ///
+    /// Please refer to the [Product sheme](https://docs.aiuta.com/sdk/developer/product/)
+    /// for more details on how to pass the product to the SDK.
+    static func tryOn(products: [Product]) async {
+        await Sdk.Presenter.tryOn(products: products)
     }
 }
 

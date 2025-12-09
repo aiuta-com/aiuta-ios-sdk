@@ -14,17 +14,17 @@
 
 @_spi(Aiuta) import AiutaKit
 
-extension Sdk.UI.TryOn {
+extension Sdk.UI {
     final class ProductBulletin: PlainBulletin {
         let onTapImage = Signal<Int>()
 
-        var sku: Aiuta.Product? {
+        var product: Aiuta.Product? {
             didSet {
-                guard oldValue != sku else { return }
+                guard oldValue != product else { return }
                 gallery.removeAllContents()
                 gallery.scroll(to: -gallery.contentInset.left)
 
-                sku?.imageUrls.indexed.forEach { i, imageUrl in
+                product?.imageUrls.indexed.forEach { i, imageUrl in
                     gallery.addContent(ImageCell()) { it, ds in
                         it.useExtraInset = ds.styles.applyProductFirstImageExtraPadding && i == 0
                         it.image.source = imageUrl
@@ -34,8 +34,8 @@ extension Sdk.UI.TryOn {
                     }
                 }
 
-                brand.text = sku?.brand.uppercased()
-                title.text = sku?.title
+                brand.text = product?.brand.uppercased()
+                title.text = product?.title
             }
         }
 
@@ -117,9 +117,9 @@ extension Sdk.UI.TryOn {
             }
         }
 
-        convenience init(sku: Aiuta.Product) {
+        convenience init(product: Aiuta.Product) {
             self.init()
-            self.sku = sku
+            self.product = product
         }
 
         convenience init(_ builder: (_ it: ProductBulletin, _ ds: DesignSystem) -> Void) {

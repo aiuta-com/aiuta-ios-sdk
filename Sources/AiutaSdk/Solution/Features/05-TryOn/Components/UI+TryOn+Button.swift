@@ -45,40 +45,4 @@ extension Sdk.UI.TryOn {
             }
         }
     }
-
-    final class LabelWithIcon: Plane {
-        public let icon = Image { it, ds in
-            it.image = ds.icons.magic20
-            it.tint = ds.colors.onDark
-        }
-
-        public let label = Label { it, ds in
-            it.font = ds.fonts.buttonM
-            it.color = ds.colors.onDark
-            it.text = ds.strings.tryOn
-            it.isLineHeightMultipleEnabled = false
-        }
-
-        override func updateLayout() {
-            layout.make { make in
-                make.height = max(20, label.layout.height)
-                if icon.image.isSome {
-                    make.width = icon.layout.width + label.layout.width + 4
-                } else {
-                    make.width = label.layout.width
-                }
-            }
-
-            icon.layout.make { make in
-                make.square = 20
-                make.left = 0
-                make.centerY = 0
-            }
-
-            label.layout.make { make in
-                make.right = 0
-                make.centerY = 0
-            }
-        }
-    }
 }

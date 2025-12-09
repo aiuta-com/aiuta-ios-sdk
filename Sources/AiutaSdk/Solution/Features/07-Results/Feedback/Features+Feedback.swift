@@ -49,22 +49,20 @@ private extension FeedbackViewController {
 
     func like(_ sessionResult: Sdk.Core.TryOnResult, _ cell: ResultPage?) {
         let generatedImage = sessionResult.image
-        let sku = sessionResult.sku
         FeedbackViewController.feedbackedImages.append(generatedImage.url)
         haptic(notification: .success)
         gratiture(cell)
-        tracker.track(.feedback(event: .positive, pageId: .results, productIds: [sku.id]))
+        tracker.track(.feedback(event: .positive, pageId: .results, productIds: sessionResult.products.ids))
     }
 
     func dislike(_ sessionResult: Sdk.Core.TryOnResult, _ cell: ResultPage?) {
         let generatedImage = sessionResult.image
-        let sku = sessionResult.sku
         FeedbackViewController.feedbackedImages.append(generatedImage.url)
-        Task { await dislike(sku, cell) }
+        Task { await dislike(sessionResult.products, cell) }
     }
 
     @available(iOS 13.0.0, *)
-    func dislike(_ sku: Aiuta.Product, _ cell: ResultPage?) async {
+    func dislike(_ products: Aiuta.Products, _ cell: ResultPage?) async {
         var result: FeedbackResult?
 
         if hasDislikeOptions {
@@ -90,9 +88,9 @@ private extension FeedbackViewController {
 
         if let result, !result.text.isEmpty {
             let text = String(result.text.prefix(1200))
-            tracker.track(.feedback(event: .negative(option: result.index ?? ds.strings.feedbackOptions.count, text: text), pageId: .results, productIds: [sku.id]))
+            tracker.track(.feedback(event: .negative(option: result.index ?? ds.strings.feedbackOptions.count, text: text), pageId: .results, productIds: products.ids))
         } else {
-            tracker.track(.feedback(event: .negative(option: -1, text: nil), pageId: .results, productIds: [sku.id]))
+            tracker.track(.feedback(event: .negative(option: -1, text: nil), pageId: .results, productIds: products.ids))
         }
 
         gratiture(cell)

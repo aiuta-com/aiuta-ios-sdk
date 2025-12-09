@@ -22,11 +22,11 @@ extension Aiuta.TryOnStart {
         var method: HTTPMethod { .post }
 
         let uploadedImageId: String
-        let skuId: String
+        let skuIds: [String]
         
         var secureAuthFields: [String: String]? {
             [
-                "sku_id": skuId,
+                "sku_ids": skuIds.joined(separator: ","),
                 "uploaded_image_id": uploadedImageId,
             ]
         }

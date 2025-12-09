@@ -27,13 +27,16 @@ extension Sdk.Core {
             products = []
         }
 
-        func start(with product: Aiuta.Product) {
-            products = [product]
+        func start(with products: Aiuta.Products) {
+            self.products = products
         }
 
-        func finish(addingToCart product: Aiuta.Product?) {
-            guard let product else { return }
-            Task { await config.features.tryOn.cartHandler?.addToCart(productId: product.id) }
+        func finish(addingToCart products: Aiuta.Products?) {
+            guard let products else { return }
+            if let product = products.first,
+               let cartHandler = config.features.tryOn.cartHandler {
+                Task { await cartHandler.addToCart(productId: product.id) }
+            }
         }
     }
 }

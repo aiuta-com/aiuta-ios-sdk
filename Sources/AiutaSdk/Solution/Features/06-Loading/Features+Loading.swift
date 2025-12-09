@@ -72,18 +72,16 @@ final class ProcessingViewController: ViewController<ProcessingView> {
         do {
             ui.start()
             let start = TimeInterval.now
+            let products = session.products
             tracker.track(.tryOn(event: .initiated(origin: origin),
-                                 pageId: page, productIds: session.products.ids))
+                                 pageId: page, productIds: products.ids))
 
-            guard let sku = session.products.first else {
-                throw Sdk.Core.TryOnError.error(.internalSdkError)
-            }
 
             guard let source else {
                 throw Sdk.Core.TryOnError.error(.preparePhotoFailed)
             }
 
-            let stats = try await tryOn.tryOn(source, with: sku) { [weak self, origin] status in
+            let stats = try await tryOn.tryOn(source, with: products) { [weak self, origin] status in
                 guard let self else { return }
                 
                 switch status {
@@ -91,11 +89,11 @@ final class ProcessingViewController: ViewController<ProcessingView> {
                         self.ui.status.text = self.config.strings.tryOnLoadingStatusUploadingImage
                     case .imageUploaded:
                         self.tracker.track(.tryOn(event: .photoUploaded,
-                                                  pageId: .loading, productIds: [sku.id]))
+                                                  pageId: .loading, productIds: products.ids))
                     case .scanningBody:
                         self.ui.status.text = self.config.strings.tryOnLoadingStatusScanningBody
                         self.tracker.track(.tryOn(event: .tryOnStarted(origin: origin),
-                                                  pageId: .loading, productIds: [sku.id]))
+                                                  pageId: .loading, productIds: products.ids))
                     case .generatingOutfit:
                         self.ui.status.text = self.config.strings.tryOnLoadingStatusGeneratingOutfit
                 }
