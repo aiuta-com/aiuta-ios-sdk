@@ -29,7 +29,7 @@ extension Sdk.UI.TryOn {
 
         let changeButton = ChangePhotoButton()
 
-        let tryOnBar = TryOnBar()
+        let tryOnBar = Sdk.UI.Products.TryOnBar()
 
         override func setup() {
             area.link(with: lastImage)

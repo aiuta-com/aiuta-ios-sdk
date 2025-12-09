@@ -90,6 +90,7 @@ extension Sdk.Configuration {
 
         var tryOnPageTitle: String = "Virtual Try-on"
         var tryOn: String = "Try on"
+        var outfitItemsTitle: String = "Items from the outfit"
 
         // MARK: - TryOn.Loading
 
@@ -105,6 +106,7 @@ extension Sdk.Configuration {
         // MARK: - TryOn.Cart
 
         var addToCart: String = "Add to cart"
+        var shopTheLook: String = "Shop the look"
 
         // MARK: - TryOn.FitDisclaimer
 

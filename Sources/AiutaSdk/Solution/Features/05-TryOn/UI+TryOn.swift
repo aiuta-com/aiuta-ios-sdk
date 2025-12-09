@@ -31,7 +31,7 @@ extension Sdk.UI {
         let photoState = PhotoState()
         
         @bulletin
-        var productBulletin = Sdk.UI.ProductBulletin { it, ds in
+        var productBulletin = Products.ProductBulletin { it, ds in
             it.wishButton.view.isVisible = ds.features.wishlist.isEnabled
         }
         
