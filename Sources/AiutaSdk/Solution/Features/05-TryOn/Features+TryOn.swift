@@ -67,7 +67,11 @@ extension Sdk.Features {
             }
 
             ui.photoState.tryOnBar.productButton.onTouchUpInside.subscribe(with: self) { [unowned self] in
-                bulletin?.show(product: ui.photoState.tryOnBar.product)
+                bulletin?.show(product: ui.photoState.tryOnBar.products?.first)
+            }
+            
+            ui.photoState.tryOnBar.thumbnailsBar.onSelectProduct.subscribe(with: self) { [unowned self] product in
+                bulletin?.show(product: product)
             }
 
             history.uploaded.onUpdate.subscribe(with: self) { [unowned self] in
@@ -79,7 +83,7 @@ extension Sdk.Features {
             }
 
             updateUploads()
-            ui.photoState.tryOnBar.product = session.products.first
+            ui.photoState.tryOnBar.products = session.products
             ui.navBar.isActionAvailable = history.hasGenerations
 
             tracker.track(.page(pageId: page, productIds: session.products.ids))

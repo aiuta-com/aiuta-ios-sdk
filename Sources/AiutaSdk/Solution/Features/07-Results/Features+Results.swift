@@ -27,6 +27,7 @@ final class ResulstsViewController: ViewController<ResultsView> {
 
     private var selector: PhotoSelectorController?
     private var originalPresenterAlpha: CGFloat = 1
+    private var bulletin: Sdk.Features.ProductBulletinController?
 
     override func setup() {
         selector = addComponent(PhotoSelectorController(ui))
@@ -41,6 +42,7 @@ final class ResulstsViewController: ViewController<ResultsView> {
 
         ui.pager.pages.forEach { page in
             addComponent(FeedbackViewController(page))
+            bulletin = addComponent(Sdk.Features.ProductBulletinController(ui.productBulletin))
 
             page.shadowControls.newPhoto.onTouchUpInside.subscribe(with: self) { [unowned self] in
                 tracker.track(.results(event: .pickOtherPhoto, pageId: self.page,
@@ -77,7 +79,7 @@ final class ResulstsViewController: ViewController<ResultsView> {
         }
 
         ui.pager.onSwipePage.subscribe(with: self) { [unowned self] _ in
-            ui.skuSheet.sku = ui.pager.currentItem?.products.first
+            ui.skuSheet.products = ui.pager.currentItem?.products
         }
 
         ui.skuSheet.onTapImage.subscribe(with: self) { [unowned self] index in
@@ -85,11 +87,32 @@ final class ResulstsViewController: ViewController<ResultsView> {
             cover(GalleryViewController(DataProvider(sku.imageUrls), start: index))
         }
 
-        ui.skuSheet.content.addToCart.onTouchUpInside.subscribe(with: self) { [unowned self] in
+        ui.skuSheet.content.singleItemContent.addToCart.onTouchUpInside.subscribe(with: self) { [unowned self] in
             guard let products = ui.pager.currentItem?.products else { return }
             tracker.track(.results(event: .productAddToCart, pageId: page, productIds: products.ids))
             dismissAll { [session] in
                 session.finish(addingToCart: products)
+            }
+        }
+
+        ui.skuSheet.content.multiItemContent.addToCart.onTouchUpInside.subscribe(with: self) { [unowned self] in
+            guard let products = ui.pager.currentItem?.products else { return }
+            tracker.track(.results(event: .productAddToCart, pageId: page, productIds: products.ids))
+            dismissAll { [session] in
+                session.finish(addingToCart: products)
+            }
+        }
+
+        ui.skuSheet.content.multiItemContent.onTapProduct.subscribe(with: self) { [unowned self] product in
+            ui.skuSheet.scrollToTop()
+            delay(.moment) { [self] in
+                bulletin?.show(product: product)
+            }
+        }
+
+        ui.productBulletin.willDismiss.subscribe(with: self) { [unowned self] in
+            delay(.moment) { [self] in
+                ui.skuSheet.scrollToBottom()
             }
         }
 
@@ -109,7 +132,7 @@ final class ResulstsViewController: ViewController<ResultsView> {
 
         ui.pager.data = tryOn.sessionResults
         ui.navBar.isActionAvailable = history.hasGenerations
-        ui.skuSheet.sku = ui.pager.currentItem?.products.first
+        ui.skuSheet.products = ui.pager.currentItem?.products
 
         tracker.track(.page(pageId: page, productIds: ui.pager.currentItem?.products.ids ?? []))
     }

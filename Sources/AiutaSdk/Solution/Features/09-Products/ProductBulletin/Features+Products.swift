@@ -18,7 +18,7 @@ import UIKit
 
 extension Sdk.Features {
     @available(iOS 13.0, *)
-    final class ProductBulletinController: ComponentController<Sdk.UI.ProductBulletin> {
+    final class ProductBulletinController: ComponentController<Sdk.UI.Products.ProductBulletin> {
         @injected private var wishlist: Sdk.Core.Wishlist
         @injected private var tracker: AnalyticTracker
         @injected private var session: Sdk.Core.Session

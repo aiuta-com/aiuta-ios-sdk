@@ -32,7 +32,7 @@ final class PredefinedModelsView: Plane {
 
     let magnifier = PredefinedModelsMagnifier()
 
-    let tryOnButton = Sdk.UI.TryOn.TryOnButton { it, _ in
+    let tryOnButton = TryOnButton { it, _ in
         it.view.isVisible = false
     }
 

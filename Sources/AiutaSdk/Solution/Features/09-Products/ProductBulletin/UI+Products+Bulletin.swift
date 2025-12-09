@@ -14,7 +14,7 @@
 
 @_spi(Aiuta) import AiutaKit
 
-extension Sdk.UI {
+extension Sdk.UI.Products {
     final class ProductBulletin: PlainBulletin {
         let onTapImage = Signal<Int>()
 

@@ -28,6 +28,7 @@ extension Sdk.Core {
         private let jpegCompressionQuality: CGFloat = 65
         private let generationStatusTime: TimeInterval = 3
         private var terminated: Bool = false
+        private let fakeGeneration = false
 
         init() {
             history.generated.onUpdate.subscribe(with: self) { [unowned self] in
@@ -76,10 +77,15 @@ extension Sdk.Core {
             callback(.scanningBody)
 
             let start: Aiuta.TryOnStart
-            do {
-                start = try await api.request(Aiuta.TryOnStart.Post(uploadedImageId: imageId, skuIds: products.ids))
-            } catch {
-                throw TryOnError.error(.startOperationFailed, underlying: error)
+
+            if fakeGeneration {
+                start = .init(operationId: "fake", details: nil, errors: [])
+            } else {
+                do {
+                    start = try await api.request(Aiuta.TryOnStart.Post(uploadedImageId: imageId, skuIds: products.ids))
+                } catch {
+                    throw TryOnError.error(.startOperationFailed, underlying: error)
+                }
             }
 
             var delays = subscription.operationDelays
@@ -104,7 +110,13 @@ extension Sdk.Core {
 
                 let operation: Aiuta.TryOnOperation
                 do {
-                    operation = try await api.request(Aiuta.TryOnOperation.Get(operationId: start.operationId))
+                    if fakeGeneration {
+                        await asleep(.twoSeconds)
+                        operation = .init(id: start.operationId, status: .success, error: nil,
+                                          generatedImages: [.init(id: imageId, url: uploadedImage?.url ?? "", ownerType: .aiuta)])
+                    } else {
+                        operation = try await api.request(Aiuta.TryOnOperation.Get(operationId: start.operationId))
+                    }
                 } catch {
                     throw TryOnError.error(.requestOperationFailed, underlying: error)
                 }
@@ -157,11 +169,11 @@ extension Sdk.Core {
             guard let image = try? await source.fetch(breadcrumbs: Breadcrumbs()) else {
                 throw TryOnError.error(.preparePhotoFailed)
             }
-            
+
             guard let imageData = await compress(image) else {
                 throw TryOnError.error(.preparePhotoFailed)
             }
-            
+
             do {
                 let uploadedImage: Aiuta.Image = try await api.request(Aiuta.Image.Post(imageData: imageData))
                 callback(.imageUploaded)
