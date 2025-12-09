@@ -20,11 +20,11 @@ extension Sdk {
     @MainActor enum Presenter {
         public static var isForeground: Bool = false
 
-        public static func tryOn(product: Aiuta.Product) async {
+        public static func tryOn(products: Aiuta.Products) async {
             guard let currentViewController else { return }
             guard Register.ensureConfigured() else { return }
             @injected var session: Sdk.Core.Session
-            session.start(with: product)
+            session.start(with: products)
             @injected var tryOn: Sdk.Core.TryOn
             tryOn.sessionResults.removeAll()
             @injected var tracker: AnalyticTracker

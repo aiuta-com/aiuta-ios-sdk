@@ -114,13 +114,13 @@ extension Aiuta.Configuration.Features.Wishlist {
         @available(iOS 13.0.0, *)
         var wishlistProductIds: Aiuta.Observable<[String]> { get async }
 
-        /// Adds or removes a product from the Wishlist.
+        /// Adds or removes a products from the Wishlist.
         ///
         /// - Parameters:
-        ///   - productId: The ID of the product to add or remove.
+        ///   - productId: The list of product ids to add or remove.
         ///   - inWishlist: A flag indicating whether the product should be added
         ///     to or removed from the Wishlist.
         @available(iOS 13.0.0, *)
-        func setProductInWishlist(productId: String, inWishlist: Bool) async
+        func setProductInWishlist(productIds: [String], inWishlist: Bool) async
     }
 }

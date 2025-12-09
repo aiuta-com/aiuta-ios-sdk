@@ -44,7 +44,7 @@ final class ResulstsViewController: ViewController<ResultsView> {
 
             page.shadowControls.newPhoto.onTouchUpInside.subscribe(with: self) { [unowned self] in
                 tracker.track(.results(event: .pickOtherPhoto, pageId: self.page,
-                                       productIds: [ui.pager.currentItem?.sku].compactMap { $0?.id }))
+                                       productIds: ui.pager.currentItem?.products.ids ?? []))
                 selector?.choosePhoto(withHistoryPrefered: false)
             }
 
@@ -77,19 +77,19 @@ final class ResulstsViewController: ViewController<ResultsView> {
         }
 
         ui.pager.onSwipePage.subscribe(with: self) { [unowned self] _ in
-            ui.skuSheet.sku = ui.pager.currentItem?.sku
+            ui.skuSheet.sku = ui.pager.currentItem?.products.first
         }
 
         ui.skuSheet.onTapImage.subscribe(with: self) { [unowned self] index in
-            guard let sku = ui.pager.currentItem?.sku, !sku.imageUrls.isEmpty else { return }
+            guard let sku = ui.pager.currentItem?.products.first, !sku.imageUrls.isEmpty else { return }
             cover(GalleryViewController(DataProvider(sku.imageUrls), start: index))
         }
 
         ui.skuSheet.content.addToCart.onTouchUpInside.subscribe(with: self) { [unowned self] in
-            let sku = ui.pager.currentItem?.sku
-            tracker.track(.results(event: .productAddToCart, pageId: page, productIds: [sku].compactMap { $0?.id }))
+            guard let products = ui.pager.currentItem?.products else { return }
+            tracker.track(.results(event: .productAddToCart, pageId: page, productIds: products.ids))
             dismissAll { [session] in
-                session.finish(addingToCart: sku)
+                session.finish(addingToCart: products)
             }
         }
 
@@ -109,17 +109,16 @@ final class ResulstsViewController: ViewController<ResultsView> {
 
         ui.pager.data = tryOn.sessionResults
         ui.navBar.isActionAvailable = history.hasGenerations
-        ui.skuSheet.sku = ui.pager.currentItem?.sku
+        ui.skuSheet.sku = ui.pager.currentItem?.products.first
 
-        tracker.track(.page(pageId: page, productIds: [ui.skuSheet.sku].compactMap { $0?.id }))
+        tracker.track(.page(pageId: page, productIds: ui.pager.currentItem?.products.ids ?? []))
     }
 
     private func toggleCurrentWish() {
-        let isWish = wishlist.toggleWishlist(ui.pager.currentItem?.sku)
-        if let skuId = ui.pager.currentItem?.sku.id {
-            if isWish {
-                tracker.track(.results(event: .productAddToWishlist, pageId: page, productIds: [skuId]))
-            }
+        guard let products = ui.pager.currentItem?.products else { return }
+        let isWish = wishlist.toggleWishlist(products)
+        if isWish {
+            tracker.track(.results(event: .productAddToWishlist, pageId: page, productIds: products.ids))
         }
         ui.pager.pages.forEach { page in
             page.updateWish()
@@ -129,7 +128,7 @@ final class ResulstsViewController: ViewController<ResultsView> {
     private func shareCurrent() {
         guard let result = ui.pager.currentItem else { return }
         let generatedImage = result.image
-        let sku = result.sku
+        let produtcs = result.products
         Task {
             ui.pager.currentPage?.shadowControls.share.activity.start()
             guard let image = try? await generatedImage.fetch(breadcrumbs: Breadcrumbs()) else {
@@ -137,9 +136,9 @@ final class ResulstsViewController: ViewController<ResultsView> {
                 return
             }
 
-            tracker.track(.share(event: .initiated, pageId: page, productIds: [sku.id]))
+            tracker.track(.share(event: .initiated, pageId: page, productIds: produtcs.ids))
             ui.canBlackout = false
-            let attachment = try? await config.features.share.additionalTextProvider?.getShareText(productIds: [sku.id])
+            let attachment = try? await config.features.share.additionalTextProvider?.getShareText(productIds: produtcs.ids)
             ui.pager.currentPage?.shadowControls.share.activity.stop()
 
             let result = await share(image: watermarker.watermark(image),
@@ -147,11 +146,11 @@ final class ResulstsViewController: ViewController<ResultsView> {
             ui.canBlackout = true
             switch result {
                 case let .succeeded(activity):
-                    tracker.track(.share(event: .succeeded(targetId: activity), pageId: page, productIds: [sku.id]))
+                    tracker.track(.share(event: .succeeded(targetId: activity), pageId: page, productIds: produtcs.ids))
                 case let .canceled(activity):
-                    tracker.track(.share(event: .canceled(targetId: activity), pageId: page, productIds: [sku.id]))
+                    tracker.track(.share(event: .canceled(targetId: activity), pageId: page, productIds: produtcs.ids))
                 case let .failed(activity, _):
-                    tracker.track(.share(event: .failed(targetId: activity), pageId: page, productIds: [sku.id]))
+                    tracker.track(.share(event: .failed(targetId: activity), pageId: page, productIds: produtcs.ids))
             }
         }
     }
@@ -166,7 +165,7 @@ final class ResulstsViewController: ViewController<ResultsView> {
                     return
                 }
 
-                let productIds = [tryOn.sessionResults.items[safe: index]?.sku].compactMap { $0?.id }
+                let productIds = tryOn.sessionResults.items[safe: index]?.products.ids ?? []
                 tracker.track(.share(event: .initiated, pageId: page, productIds: productIds))
                 let attachment = try? await config.features.share.additionalTextProvider?.getShareText(productIds: productIds)
                 gallery.ui.activity.stop()

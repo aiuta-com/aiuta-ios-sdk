@@ -39,7 +39,7 @@ final class ResultPage: Page<Sdk.Core.TryOnResult> {
     }
 
     func updateWish() {
-        let isInWhishlist = wishlist.isInWishlist(data?.sku)
+        let isInWhishlist = wishlist.isInWishlist(data?.products)
         shadowControls.wish.icon.image = isInWhishlist ? ds.icons.wishlistFill24 : ds.icons.wishlist24
     }
 

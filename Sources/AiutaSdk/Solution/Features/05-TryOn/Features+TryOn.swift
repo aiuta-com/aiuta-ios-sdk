@@ -26,10 +26,13 @@ extension Sdk.Features {
         @injected private var wishlist: Sdk.Core.Wishlist
         @injected private var consent: Sdk.Core.Consent
         @injected private var tracker: AnalyticTracker
+        
         var selector: PhotoSelectorController?
+        var bulletin: ProductBulletinController?
 
         override func setup() {
             selector = addComponent(PhotoSelectorController(ui))
+            bulletin = addComponent(ProductBulletinController(ui.productBulletin))
 
             ui.navBar.onClose.subscribe(with: self) { [unowned self] in
                 dismissAll()
@@ -64,7 +67,7 @@ extension Sdk.Features {
             }
 
             ui.photoState.tryOnBar.productButton.onTouchUpInside.subscribe(with: self) { [unowned self] in
-                showBulletin(ui.skuBulletin)
+                bulletin?.show(product: ui.photoState.tryOnBar.product)
             }
 
             history.uploaded.onUpdate.subscribe(with: self) { [unowned self] in
@@ -75,34 +78,9 @@ extension Sdk.Features {
                 ui.navBar.isActionAvailable = history.hasGenerations
             }
 
-            ui.skuBulletin.onTapImage.subscribe(with: self) { [unowned self] index in
-                guard let sku = session.products.first, !sku.imageUrls.isEmpty else { return }
-                cover(GalleryViewController(DataProvider(sku.imageUrls), start: index))
-            }
-
-            ui.skuBulletin.cartButton.onTouchUpInside.subscribe(with: self) { [unowned self] in
-                tracker.track(.results(event: .productAddToCart, pageId: page, productIds: session.products.ids))
-                dismissAll { [session] in
-                    session.finish(addingToCart: session.products.first)
-                }
-            }
-
-            ui.skuBulletin.wishButton.onTouchUpInside.subscribe(with: self) { [unowned self] in
-                ui.skuBulletin.wishButton.isSelected = wishlist.toggleWishlist(session.products.first)
-                if ui.skuBulletin.wishButton.isSelected {
-                    tracker.track(.results(event: .productAddToWishlist, pageId: page, productIds: session.products.ids))
-                }
-            }
-
-            wishlist.onWishlistChange.subscribe(with: self) { [unowned self] in
-                ui.skuBulletin.wishButton.isSelected = wishlist.isInWishlist(session.products.first)
-            }
-
             updateUploads()
             ui.photoState.tryOnBar.product = session.products.first
             ui.navBar.isActionAvailable = history.hasGenerations
-            ui.skuBulletin.sku = session.products.first
-            ui.skuBulletin.wishButton.isSelected = wishlist.isInWishlist(session.products.first)
 
             tracker.track(.page(pageId: page, productIds: session.products.ids))
         }

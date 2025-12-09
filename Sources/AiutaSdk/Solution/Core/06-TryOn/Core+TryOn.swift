@@ -20,7 +20,7 @@ extension Sdk.Core {
         var sessionResults: DataProvider<TryOnResult> { get }
 
         @available(iOS 13.0.0, *)
-        func tryOn(_ source: ImageSource, with sku: Aiuta.Product?, status callback: @escaping (TryOnStatus) -> Void) async throws -> TryOnStats
+        func tryOn(_ source: ImageSource, with products: Aiuta.Products?, status callback: @escaping (TryOnStatus) -> Void) async throws -> TryOnStats
 
         func abortAll()
     }
@@ -79,12 +79,12 @@ extension Sdk.Core {
     struct TryOnResult {
         private let id: String
         let image: Aiuta.Image
-        let sku: Aiuta.Product
+        let products: Aiuta.Products
 
-        init(id: String, image: Aiuta.Image, sku: Aiuta.Product) {
+        init(id: String, image: Aiuta.Image, products: Aiuta.Products) {
             self.id = id
             self.image = image
-            self.sku = sku
+            self.products = products
         }
     }
 }

@@ -42,9 +42,9 @@ extension Sdk.Core {
         }
 
         @MainActor func tryOn(_ source: ImageSource,
-                              with sku: Aiuta.Product?,
+                              with products: Aiuta.Products?,
                               status callback: @escaping (TryOnStatus) -> Void) async throws -> TryOnStats {
-            guard let sku else {
+            guard let products, !products.isEmpty else {
                 throw TryOnError.error(.internalSdkError)
             }
 
@@ -77,7 +77,7 @@ extension Sdk.Core {
 
             let start: Aiuta.TryOnStart
             do {
-                start = try await api.request(Aiuta.TryOnStart.Post(uploadedImageId: imageId, skuId: sku.id))
+                start = try await api.request(Aiuta.TryOnStart.Post(uploadedImageId: imageId, skuIds: products.ids))
             } catch {
                 throw TryOnError.error(.startOperationFailed, underlying: error)
             }
@@ -115,7 +115,7 @@ extension Sdk.Core {
                     case .success:
                         stats.tryOnFinished()
                         stats.downloadStarted()
-                        try await success(operation, with: sku, uploadedImage: uploadedImage)
+                        try await success(operation, with: products, uploadedImage: uploadedImage)
                         stats.downloadFinished()
                         return stats
                     case .aborted:
@@ -127,7 +127,7 @@ extension Sdk.Core {
         }
 
         @MainActor func success(_ operation: Aiuta.TryOnOperation,
-                                with sku: Aiuta.Product,
+                                with products: Aiuta.Products,
                                 uploadedImage: Aiuta.Image?) async throws {
             guard !operation.generatedImages.isEmpty else {
                 throw TryOnError.error(.operationEmptyResults)
@@ -138,7 +138,7 @@ extension Sdk.Core {
             }
 
             if let uploadedImage { Task { try? await history.addUploaded(uploadedImage) } }
-            Task { try? await history.addGenerated(operation.generatedImages, for: sku) }
+            Task { try? await history.addGenerated(operation.generatedImages, for: products) }
 
             do {
                 _ = try await operation.generatedImages.concurrentMap { generatedImage in
@@ -149,7 +149,7 @@ extension Sdk.Core {
             }
 
             sessionResults.items.insert(contentsOf: operation.generatedImages.map { gen in
-                .init(id: gen.url, image: gen, sku: sku)
+                .init(id: gen.url, image: gen, products: products)
             }, at: 0)
         }
 

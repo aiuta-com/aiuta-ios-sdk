@@ -19,9 +19,22 @@ extension Sdk.Core {
     protocol Wishlist {
         var onWishlistChange: Signal<Void> { get }
 
-        func isInWishlist(_ sku: Aiuta.Product?) -> Bool
+        func isInWishlist(_ products: Aiuta.Products?) -> Bool
 
         @discardableResult
-        func toggleWishlist(_ sku: Aiuta.Product?) -> Bool
+        func toggleWishlist(_ products: Aiuta.Products?) -> Bool
+    }
+}
+
+extension Sdk.Core.Wishlist {
+    func isInWishlist(_ product: Aiuta.Product?) -> Bool {
+        guard let product else { return false }
+        return isInWishlist([product])
+    }
+    
+    @discardableResult
+    func toggleWishlist(_ product: Aiuta.Product?) -> Bool {
+        guard let product else { return false }
+        return toggleWishlist([product])
     }
 }

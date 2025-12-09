@@ -70,9 +70,9 @@ extension Sdk.Core {
             try await config.features.imagePicker.historyProvider.delete(uploaded: [image])
         }
 
-        @MainActor func addGenerated(_ images: [Aiuta.Image], for product: Aiuta.Product) async throws {
+        @MainActor func addGenerated(_ images: [Aiuta.Image], for products: Aiuta.Products) async throws {
             guard config.features.tryOn.hasGenerationsHistory else { return }
-            let generatedImages = images.map { Aiuta.Image.Generated(image: $0, productIds: [product.id]) }
+            let generatedImages = images.map { Aiuta.Image.Generated(image: $0, productIds: products.ids) }
             try await config.features.tryOn.historyProvider.add(generated: generatedImages)
         }
 

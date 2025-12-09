@@ -22,17 +22,20 @@ extension Sdk.Core {
         let onWishlistChange = Signal<Void>()
         private var wishlistProductIds: Set<String> = []
 
-        func isInWishlist(_ sku: Aiuta.Product?) -> Bool {
-            guard let sku else { return false }
-            return wishlistProductIds.contains(sku.id)
+        func isInWishlist(_ products: Aiuta.Products?) -> Bool {
+            guard let products else { return false }
+            return products.allSatisfy { wishlistProductIds.contains($0.id) }
         }
 
-        func toggleWishlist(_ sku: Aiuta.Product?) -> Bool {
-            guard let sku else { return false }
-            let isInWishlist = isInWishlist(sku)
-            if isInWishlist { wishlistProductIds.remove(sku.id) }
-            else { wishlistProductIds.insert(sku.id) }
-            Task { await setProductInWishlist(productId: sku.id, inWishlist: !isInWishlist) }
+        func toggleWishlist(_ products: Aiuta.Products?) -> Bool {
+            guard let products else { return false }
+            let isInWishlist = isInWishlist(products)
+            if isInWishlist {
+                products.ids.forEach { wishlistProductIds.remove($0) }
+            } else {
+                products.ids.forEach { wishlistProductIds.insert($0) }
+            }
+            Task { await setProductInWishlist(productIds: products.ids, inWishlist: !isInWishlist) }
             onWishlistChange.fire()
             return !isInWishlist
         }
@@ -56,9 +59,9 @@ extension Sdk.Core {
             onWishlistChange.fire()
         }
 
-        @MainActor func setProductInWishlist(productId: String, inWishlist: Bool) async {
+        @MainActor func setProductInWishlist(productIds: [String], inWishlist: Bool) async {
             guard let dataProvider = config.features.wishlist.dataProvider else { return }
-            await dataProvider.setProductInWishlist(productId: productId, inWishlist: inWishlist)
+            await dataProvider.setProductInWishlist(productIds: productIds, inWishlist: inWishlist)
         }
     }
 }

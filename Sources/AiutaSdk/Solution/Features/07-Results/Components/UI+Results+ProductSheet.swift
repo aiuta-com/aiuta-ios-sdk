@@ -27,7 +27,7 @@ extension ResultsView {
                 content.gallery.scroll(to: -content.gallery.contentInset.left)
 
                 sku?.imageUrls.indexed.forEach { i, imageUrl in
-                    content.gallery.addContent(Sdk.UI.TryOn.ImageCell()) { it, ds in
+                    content.gallery.addContent(Sdk.UI.ImageCell()) { it, ds in
                         it.useExtraInset = ds.styles.applyProductFirstImageExtraPadding && i == 0
                         it.image.source = imageUrl
                         it.onTouchUpInside.subscribe(with: self) { [unowned self] in
