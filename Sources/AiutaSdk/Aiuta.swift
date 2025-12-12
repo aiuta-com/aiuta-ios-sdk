@@ -12,13 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+@_exported import AiutaCore
 import UIKit
-
-/// Aiuta Virtual Try-On SDK public namespace & entry point.
-/// Full documentation is available at https://docs.aiuta.com
-/// More specific documentation for the iOS SDK is available
-/// at https://docs.aiuta.com/sdk/ios/
-public enum Aiuta { }
 
 // MARK: - Configuration
 

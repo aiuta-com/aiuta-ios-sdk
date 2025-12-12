@@ -10,6 +10,10 @@ let package = Package(
     ],
     products: [
         .library(
+            name: "AiutaCore",
+            targets: ["AiutaCore"]
+        ),
+        .library(
             name: "AiutaKit",
             targets: ["AiutaKit"]
         ),
@@ -25,6 +29,9 @@ let package = Package(
     ],
     targets: [
         .target(
+            name: "AiutaCore"
+        ),
+        .target(
             name: "AiutaKit",
             dependencies: [
                 "Alamofire",
@@ -38,6 +45,7 @@ let package = Package(
         .target(
             name: "AiutaSdk",
             dependencies: [
+                "AiutaCore",
                 "AiutaKit",
                 "Alamofire",
                 "Kingfisher",
