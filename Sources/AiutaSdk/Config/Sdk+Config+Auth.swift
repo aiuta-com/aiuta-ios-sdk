@@ -1,0 +1,35 @@
+// Copyright 2024 Aiuta USA, Inc
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+import AiutaCore
+import Foundation
+
+extension Sdk.Configuration {
+    struct Auth {
+        var type: Aiuta.Auth = .apiKey("<invalid>")
+    }
+}
+
+extension Aiuta.Configuration {
+    var keyToDefaults: String {
+        switch self {
+            case let .default(auth, _, _, _, _),
+                 let .custom(auth, _, _, _, _):
+                switch auth {
+                    case let .apiKey(apiKey): return apiKey
+                    case let .jwt(subscriptionId, _): return subscriptionId
+                }
+        }
+    }
+}
