@@ -18,7 +18,7 @@ import Alamofire
 import Foundation
 import Resolver
 
-extension Aiuta.Image {
+extension Aiuta.UserImage {
     struct Post: Encodable, ApiRequest {
         var urlPath: String { "uploaded_images" }
         var type: ApiRequestType { .upload }

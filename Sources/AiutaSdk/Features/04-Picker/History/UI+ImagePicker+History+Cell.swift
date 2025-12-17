@@ -36,7 +36,7 @@ extension PhotoHistoryBulletin {
             it.hasOverlay = true
         }
 
-        var image: Aiuta.Image?
+        var image: Aiuta.UserImage?
 
         var isDeleting = false {
             didSet {

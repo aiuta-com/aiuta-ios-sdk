@@ -21,7 +21,7 @@ final class PredefinedModelsViewController: ViewController<PredefinedModelsView>
     @injected private var subscription: Sdk.Core.Subscription
     @injected private var models: Sdk.Core.Models
 
-    let onSelect = Signal<Aiuta.Image>()
+    let onSelect = Signal<Aiuta.UserImage>()
     private var cache: [ImageLoader]?
 
     override func setup() {

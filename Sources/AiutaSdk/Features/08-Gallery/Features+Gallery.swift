@@ -63,7 +63,7 @@ final class GalleryViewController: ViewController<GalleryView> {
         ui.data = data
         if crossfade {
             ui.navigator.thumbnails.data = TransformDataProvider(input: data) { source in
-                source as? Aiuta.Image ?? .init(id: "", url: "", ownerType: .aiuta)
+                source as? Aiuta.UserImage ?? .init(id: "", url: "", ownerType: .aiuta)
             }
             ui.navigator.selectedIndex = index
         }

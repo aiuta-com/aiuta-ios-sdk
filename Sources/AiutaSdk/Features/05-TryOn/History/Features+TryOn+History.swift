@@ -108,7 +108,7 @@ final class HistoryViewController: ViewController<HistoryView> {
         }
     }
 
-    private var selection = Set<Aiuta.Image.Generated>() {
+    private var selection = Set<Aiuta.GeneratedImage>() {
         didSet {
             guard oldValue != selection else { return }
             ui.history.updateItems()
@@ -197,7 +197,7 @@ final class HistoryViewController: ViewController<HistoryView> {
                     return
                 }
 
-                let productIds = (generatedImage as? Aiuta.Image.Generated)?.productIds ?? []
+                let productIds = (generatedImage as? Aiuta.GeneratedImage)?.productIds ?? []
                 tracker.track(.share(event: .initiated, pageId: page, productIds: productIds))
                 let attachment = try? await config.features.share.additionalTextProvider?.getShareText(productIds: productIds)
                 gallery.ui.activity.stop()

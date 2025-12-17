@@ -17,8 +17,8 @@ import AiutaCore
 import Resolver
 
 extension GalleryView {
-    final class Thumb: Recycle<Aiuta.Image> {
-        final class ScrollRecycler: VRecycler<Thumb, Aiuta.Image> {
+    final class Thumb: Recycle<Aiuta.UserImage> {
+        final class ScrollRecycler: VRecycler<Thumb, Aiuta.UserImage> {
             override func setup() {
                 contentInsets = .init(horizontal: 8)
                 contentSpace = .init(square: 4)
@@ -70,7 +70,7 @@ extension GalleryView {
             }
         }
 
-        override func update(_ data: Aiuta.Image?, at index: ItemIndex) {
+        override func update(_ data: Aiuta.UserImage?, at index: ItemIndex) {
             generagedImage.source = data
         }
     }

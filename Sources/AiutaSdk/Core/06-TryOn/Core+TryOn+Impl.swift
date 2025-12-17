@@ -54,13 +54,13 @@ extension Sdk.Core {
             let stats = TryOnStatsImpl()
 
             let imageId: String
-            var uploadedImage: Aiuta.Image?
+            var uploadedImage: Aiuta.UserImage?
             if let id = source.knownRemoteId {
                 uploadedImage = nil
                 imageId = id
                 Task {
                     let isTouched = (try? await history.touchUploaded(with: id)) ?? false
-                    if !isTouched { uploadedImage = source as? Aiuta.Image }
+                    if !isTouched { uploadedImage = source as? Aiuta.UserImage }
                 }
             } else {
                 callback(.uploadingImage)
@@ -141,7 +141,7 @@ extension Sdk.Core {
 
         @MainActor func success(_ operation: Aiuta.TryOnOperation,
                                 with products: Aiuta.Products,
-                                uploadedImage: Aiuta.Image?) async throws {
+                                uploadedImage: Aiuta.UserImage?) async throws {
             guard !operation.generatedImages.isEmpty else {
                 throw TryOnError.error(.operationEmptyResults)
             }
@@ -166,7 +166,7 @@ extension Sdk.Core {
             }, at: 0)
         }
 
-        @MainActor func upload(_ source: ImageSource, status callback: @escaping (TryOnStatus) -> Void) async throws -> Aiuta.Image {
+        @MainActor func upload(_ source: ImageSource, status callback: @escaping (TryOnStatus) -> Void) async throws -> Aiuta.UserImage {
             guard let image = try? await source.fetch(breadcrumbs: Breadcrumbs()) else {
                 throw TryOnError.error(.preparePhotoFailed)
             }
@@ -176,7 +176,7 @@ extension Sdk.Core {
             }
 
             do {
-                let uploadedImage: Aiuta.Image = try await api.request(Aiuta.Image.Post(imageData: imageData))
+                let uploadedImage: Aiuta.UserImage = try await api.request(Aiuta.UserImage.Post(imageData: imageData))
                 callback(.imageUploaded)
                 return uploadedImage
             } catch {
