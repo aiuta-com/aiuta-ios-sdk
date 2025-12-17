@@ -79,10 +79,10 @@ extension Sdk.Core.TryOnError: LocalizedError {
 extension Sdk.Core {
     struct TryOnResult {
         private let id: String
-        let image: Aiuta.Image
+        let image: Aiuta.UserImage
         let products: Aiuta.Products
 
-        init(id: String, image: Aiuta.Image, products: Aiuta.Products) {
+        init(id: String, image: Aiuta.UserImage, products: Aiuta.Products) {
             self.id = id
             self.image = image
             self.products = products

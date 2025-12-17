@@ -18,20 +18,11 @@ import UIKit
 
 extension Sdk {
     static func apply(_ preset: Aiuta.Configuration, to config: inout Sdk.Configuration) {
-        switch preset {
-            case let .default(auth, consent, theme, analytics, debugSettings):
-                config.apply(auth: auth)
-                config.apply(consent: consent)
-                config.apply(colorTheme: theme)
-                config.apply(analytics: analytics)
-                config.apply(debugSettings: debugSettings)
-            case let .custom(auth, userInterface, features, analytics, debugSettings):
-                config.apply(auth: auth)
-                config.apply(userInterface: userInterface)
-                config.apply(features: features)
-                config.apply(analytics: analytics)
-                config.apply(debugSettings: debugSettings)
-        }
+        config.apply(auth: preset.auth)
+        config.apply(userInterface: preset.userInterface)
+        config.apply(features: preset.features)
+        config.apply(analytics: preset.analytics)
+        config.apply(debugSettings: preset.debugSettings)
     }
 }
 

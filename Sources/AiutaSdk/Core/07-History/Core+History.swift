@@ -21,17 +21,17 @@ extension Sdk.Core {
         var hasUploads: Bool { get }
         var hasGenerations: Bool { get }
         
-        var uploaded: DataProvider<Aiuta.Image.Input> { get }
-        var generated: DataProvider<Aiuta.Image.Generated> { get }
+        var uploaded: DataProvider<Aiuta.InputImage> { get }
+        var generated: DataProvider<Aiuta.GeneratedImage> { get }
         
-        var deletingUploaded: DataProvider<Aiuta.Image.Input> { get }
-        var deletingGenerated: DataProvider<Aiuta.Image.Generated> { get }
+        var deletingUploaded: DataProvider<Aiuta.InputImage> { get }
+        var deletingGenerated: DataProvider<Aiuta.GeneratedImage> { get }
         
-        func addUploaded(_ image: Aiuta.Image.Input) async throws
+        func addUploaded(_ image: Aiuta.InputImage) async throws
         func touchUploaded(with id: String) async throws -> Bool
-        func removeUploaded(_ image: Aiuta.Image.Input) async throws
+        func removeUploaded(_ image: Aiuta.InputImage) async throws
         
-        func addGenerated(_ images: [Aiuta.Image], for products: Aiuta.Products) async throws
-        func removeGenerated(_ images: [Aiuta.Image.Generated]) async throws
+        func addGenerated(_ images: [Aiuta.UserImage], for products: Aiuta.Products) async throws
+        func removeGenerated(_ images: [Aiuta.GeneratedImage]) async throws
     }
 }

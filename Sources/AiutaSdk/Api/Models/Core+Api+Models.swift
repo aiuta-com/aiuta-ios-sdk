@@ -19,7 +19,7 @@ import Foundation
 extension Sdk.Core.Api {
     struct ModelCategory: Codable {
         let category: String
-        let models: [Aiuta.Image]
+        let models: [Aiuta.UserImage]
     }
 
     typealias Models = [ModelCategory]

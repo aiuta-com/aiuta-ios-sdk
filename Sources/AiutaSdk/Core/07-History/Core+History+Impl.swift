@@ -20,11 +20,11 @@ extension Sdk.Core {
     final class HistoryImpl: History {
         @injected private var config: Sdk.Configuration
 
-        var deletingUploaded = DataProvider<Aiuta.Image.Input>()
-        var deletingGenerated = DataProvider<Aiuta.Image.Generated>()
+        var deletingUploaded = DataProvider<Aiuta.InputImage>()
+        var deletingGenerated = DataProvider<Aiuta.GeneratedImage>()
 
-        var uploaded = DataProvider<Aiuta.Image.Input>()
-        var generated = DataProvider<Aiuta.Image.Generated>()
+        var uploaded = DataProvider<Aiuta.InputImage>()
+        var generated = DataProvider<Aiuta.GeneratedImage>()
         var hasUploads: Bool { !uploaded.isEmpty }
         var hasGenerations: Bool { !generated.isEmpty }
 
@@ -48,7 +48,7 @@ extension Sdk.Core {
             }
         }
 
-        @MainActor func addUploaded(_ image: Aiuta.Image) async throws {
+        @MainActor func addUploaded(_ image: Aiuta.UserImage) async throws {
             guard config.features.imagePicker.hasUploadsHistory else { return }
             try await config.features.imagePicker.historyProvider.add(uploaded: [image])
         }
@@ -62,20 +62,20 @@ extension Sdk.Core {
             return true
         }
 
-        @MainActor func removeUploaded(_ image: Aiuta.Image) async throws {
+        @MainActor func removeUploaded(_ image: Aiuta.UserImage) async throws {
             guard config.features.imagePicker.hasUploadsHistory else { return }
             deletingUploaded.items.append(image)
             defer { deletingUploaded.removeAll(where: { $0.id == image.id }) }
             try await config.features.imagePicker.historyProvider.delete(uploaded: [image])
         }
 
-        @MainActor func addGenerated(_ images: [Aiuta.Image], for products: Aiuta.Products) async throws {
+        @MainActor func addGenerated(_ images: [Aiuta.UserImage], for products: Aiuta.Products) async throws {
             guard config.features.tryOn.hasGenerationsHistory else { return }
-            let generatedImages = images.map { Aiuta.Image.Generated(image: $0, productIds: products.ids) }
+            let generatedImages = images.map { Aiuta.GeneratedImage(image: $0, productIds: products.ids) }
             try await config.features.tryOn.historyProvider.add(generated: generatedImages)
         }
 
-        @MainActor func removeGenerated(_ selection: [Aiuta.Image.Generated]) async throws {
+        @MainActor func removeGenerated(_ selection: [Aiuta.GeneratedImage]) async throws {
             guard config.features.tryOn.hasGenerationsHistory else { return }
             deletingGenerated.items.append(contentsOf: selection)
             defer { deletingGenerated.removeAll { selection.contains($0) } }
@@ -88,30 +88,30 @@ extension Sdk.Configuration.Features.ImagePicker {
     final class DefaultsDataProvider: Aiuta.Configuration.Features.ImagePicker.UploadsHistory.DataProvider {
         @MainActor
         @defaults(key: "uploadedHistory", defaultValue: .init([]))
-        var uploaded: Aiuta.Observable<[Aiuta.Image.Input]>
+        var uploaded: Aiuta.Observable<[Aiuta.InputImage]>
 
         @available(iOS 13.0.0, *)
         @MainActor
-        func add(uploaded images: [Aiuta.Image.Input]) async throws {
+        func add(uploaded images: [Aiuta.InputImage]) async throws {
             uploaded.value.insert(contentsOf: images, at: 0)
         }
 
         @available(iOS 13.0.0, *)
         @MainActor
-        func delete(uploaded images: [Aiuta.Image.Input]) async throws {
+        func delete(uploaded images: [Aiuta.InputImage]) async throws {
             uploaded.value.removeAll { image in images.contains(image) }
         }
 
         @available(iOS 13.0.0, *)
         @MainActor
-        func select(uploaded image: Aiuta.Image.Input) async throws {
+        func select(uploaded image: Aiuta.InputImage) async throws {
             guard let index = uploaded.value.firstIndex(where: { $0.id == image.id }) else { return }
             let selectedImage = uploaded.value.remove(at: index)
             uploaded.value.insert(selectedImage, at: 0)
         }
 
         @defaults(key: "uploadsHistory", defaultValue: nil)
-        var oldUploadsHistory: [[Aiuta.Image]]?
+        var oldUploadsHistory: [[Aiuta.UserImage]]?
 
         init() {
             if let oldUploadsHistory {
@@ -125,7 +125,7 @@ extension Sdk.Configuration.Features.ImagePicker {
 
         @available(iOS 13.0.0, *)
         @MainActor
-        private func migrate(oldUploadsHistory: [Aiuta.Image.Input]) async {
+        private func migrate(oldUploadsHistory: [Aiuta.InputImage]) async {
             guard uploaded.value.isEmpty else { return }
             uploaded.value = oldUploadsHistory
         }
@@ -136,17 +136,17 @@ extension Sdk.Configuration.Features.TryOn {
     final class DefaultsDataProvider: Aiuta.Configuration.Features.TryOn.GenerationsHistory.DataProvider {
         @MainActor
         @defaults(key: "generationHistory", defaultValue: .init([]))
-        var generated: Aiuta.Observable<[Aiuta.Image.Generated]>
+        var generated: Aiuta.Observable<[Aiuta.GeneratedImage]>
 
         @available(iOS 13.0.0, *)
         @MainActor
-        func add(generated images: [Aiuta.Image.Generated]) async throws {
+        func add(generated images: [Aiuta.GeneratedImage]) async throws {
             generated.value.insert(contentsOf: images, at: 0)
         }
 
         @available(iOS 13.0.0, *)
         @MainActor
-        func delete(generated images: [Aiuta.Image.Generated]) async throws {
+        func delete(generated images: [Aiuta.GeneratedImage]) async throws {
             generated.value.removeAll { image in images.contains(image) }
         }
     }

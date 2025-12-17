@@ -17,9 +17,9 @@ import AiutaCore
 import UIKit
 
 final class PredefinedModelsMagnifier: HScroll {
-    let onSelect = Signal<Aiuta.Image>()
+    let onSelect = Signal<Aiuta.UserImage>()
 
-    var images: [Aiuta.Image]? {
+    var images: [Aiuta.UserImage]? {
         didSet {
             view.isUserInteractionEnabled = true
             Zip(images, imageViews).longest.forEach { image, imageView in
@@ -43,7 +43,7 @@ final class PredefinedModelsMagnifier: HScroll {
         }
     }
 
-    private(set) var selected: Aiuta.Image? {
+    private(set) var selected: Aiuta.UserImage? {
         didSet {
             guard oldValue != selected, let selected else { return }
             onSelect.fire(selected)
@@ -67,7 +67,7 @@ final class PredefinedModelsMagnifier: HScroll {
         }
     }
 
-    fileprivate func select(_ image: Aiuta.Image) {
+    fileprivate func select(_ image: Aiuta.UserImage) {
         guard let index = images?.firstIndex(of: image) else { return }
         scroll(to: offsetFromIndex(index))
     }
@@ -160,7 +160,7 @@ final class PredefinedModelsMagnifier: HScroll {
 
 private extension PredefinedModelsMagnifier {
     final class ImageView: PlainButton {
-        var image: Aiuta.Image? {
+        var image: Aiuta.UserImage? {
             didSet {
                 imageView.source = image
             }

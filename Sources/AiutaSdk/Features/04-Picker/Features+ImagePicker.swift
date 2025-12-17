@@ -155,7 +155,7 @@ final class PhotoSelectorController: ComponentController<ContentBase> {
         }
     }
 
-    private func deleteHistory(_ image: Aiuta.Image) async {
+    private func deleteHistory(_ image: Aiuta.UserImage) async {
         photoHistoryBulletin.errorSnackbar.hide()
         do {
             try await history.removeUploaded(image)

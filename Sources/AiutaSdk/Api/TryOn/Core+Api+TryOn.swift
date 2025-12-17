@@ -42,7 +42,7 @@ extension Aiuta {
         let id: String
         let status: Status
         let error: String?
-        let generatedImages: [Image]
+        let generatedImages: [UserImage]
     }
 }
 

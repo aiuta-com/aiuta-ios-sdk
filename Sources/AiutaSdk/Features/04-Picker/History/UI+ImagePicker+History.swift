@@ -16,10 +16,10 @@ import AiutaCore
 @_spi(Aiuta) import AiutaKit
 
 final class PhotoHistoryBulletin: PlainBulletin {
-    let onSelect = Signal<Aiuta.Image>()
-    let onDelete = Signal<Aiuta.Image>()
+    let onSelect = Signal<Aiuta.UserImage>()
+    let onDelete = Signal<Aiuta.UserImage>()
 
-    var history: DataProvider<Aiuta.Image>? {
+    var history: DataProvider<Aiuta.UserImage>? {
         didSet {
             oldValue?.onUpdate.cancelSubscription(for: self)
             guard let history else {
@@ -33,7 +33,7 @@ final class PhotoHistoryBulletin: PlainBulletin {
         }
     }
 
-    var deleting: DataProvider<Aiuta.Image>? {
+    var deleting: DataProvider<Aiuta.UserImage>? {
         didSet {
             oldValue?.onUpdate.cancelSubscription(for: self)
             updateDeleting()

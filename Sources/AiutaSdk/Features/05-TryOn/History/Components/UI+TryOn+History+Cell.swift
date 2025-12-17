@@ -17,8 +17,8 @@ import AiutaCore
 import Resolver
 
 extension HistoryView {
-    final class HistoryCell: Recycle<Aiuta.Image.Generated> {
-        final class ScrollRecycler: VRecycler<HistoryCell, Aiuta.Image.Generated> {
+    final class HistoryCell: Recycle<Aiuta.GeneratedImage> {
+        final class ScrollRecycler: VRecycler<HistoryCell, Aiuta.GeneratedImage> {
             override func setup() {
                 contentInsets = .init(inset: 8)
                 contentSpace = .init(square: 8)
@@ -88,7 +88,7 @@ extension HistoryView {
             }
         }
 
-        override func update(_ data: Aiuta.Image.Generated?, at index: ItemIndex) {
+        override func update(_ data: Aiuta.GeneratedImage?, at index: ItemIndex) {
             generagedImage.source = data
         }
     }
