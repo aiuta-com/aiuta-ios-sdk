@@ -14,29 +14,15 @@
 
 import Foundation
 
-enum Sdk {
-    static let version = "5.0.0"
+extension Aiuta.Configuration.Features {
+    public struct SizeFit: Sendable {
+        public let apiKey: String
+        public let sizeChartMap: [String: String]
 
-    @available(iOS 13.0.0, *)
-    @MainActor static var isForeground: Bool {
-        return Presenter.isForeground
-    }
-}
-
-extension Sdk {
-    enum Core {
-        static let baseUrl = "https://api.aiuta.com"
-
-        enum Analytics {
-            static let baseUrl = "\(Sdk.Core.baseUrl)/analytics/v1"
-        }
-
-        enum Api {
-            static let baseUrl = "\(Sdk.Core.baseUrl)/digital-try-on/v1"
-            static let sizeFit = "https://api.naiz.fit"
+        public init(apiKey: String,
+                    sizeChartMap: [String: String]) {
+            self.apiKey = apiKey
+            self.sizeChartMap = sizeChartMap
         }
     }
-
-    enum Features {}
-    enum UI {}
 }

@@ -71,6 +71,10 @@ extension Sdk.Configuration {
         // MARK: - TryOn
 
         var magic20: UIImage? = .bundleImage("aiutaIcon20Magic")
+        
+        // MARK: - Size&Fit
+
+        var sizeFit24: UIImage? = .bundleImage("aiutaIcon24SizeFit")
 
         // MARK: - TryOn.FitDisclaimer
 

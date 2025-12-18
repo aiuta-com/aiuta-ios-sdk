@@ -40,7 +40,7 @@ extension Sdk.Features {
             }
 
             ui.navBar.onAction.subscribe(with: self) { [unowned self] in
-                popoverOrCover(HistoryViewController())
+                popoverOrCover(HistoryVC())
             }
 
             ui.emptyState.uploadButton.onTouchUpInside.task(with: self) { [unowned self] in

@@ -32,6 +32,16 @@ extension Sdk {
             tracker.track(.session(flow: .tryOn, productIds: session.products.ids))
             currentViewController.present(Navigator(rootViewController: await entryViewController()), animated: true)
         }
+        
+        public static func sizeFit(product: Aiuta.Product) async {
+            guard let currentViewController else { return }
+            guard Register.ensureConfigured() else { return }
+            @injected var session: Sdk.Core.Session
+            session.start(with: [product])
+            @injected var tracker: AnalyticTracker
+            tracker.track(.session(flow: .sizeFit, productIds: session.products.ids))
+            currentViewController.present(Navigator(rootViewController: FitSurveyVC()), animated: true)
+        }
 
         public static func showHistory() async -> Bool {
             guard let currentViewController else { return false }
@@ -42,7 +52,7 @@ extension Sdk {
             session.start()
             @injected var tracker: AnalyticTracker
             tracker.track(.session(flow: .history, productIds: []))
-            currentViewController.present(Navigator(rootViewController: HistoryViewController()), animated: true)
+            currentViewController.present(Navigator(rootViewController: HistoryVC()), animated: true)
             return true
         }
     }

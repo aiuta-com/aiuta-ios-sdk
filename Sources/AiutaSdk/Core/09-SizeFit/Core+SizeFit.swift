@@ -12,31 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import AiutaCore
+@_spi(Aiuta) import AiutaKit
 import Foundation
 
-enum Sdk {
-    static let version = "5.0.0"
+extension Sdk.Core {
+    protocol SizeFit {
+        var onChange: Signal<Void> { get }
+        
+        var isAvailable: Bool { get }
+        var lastSurvey: Aiuta.FitSurvey? { get }
 
-    @available(iOS 13.0.0, *)
-    @MainActor static var isForeground: Bool {
-        return Presenter.isForeground
+        func recommendation(survey: Aiuta.FitSurvey, product: Aiuta.Product) async throws -> Aiuta.SizeRecommendation
     }
 }
 
-extension Sdk {
-    enum Core {
-        static let baseUrl = "https://api.aiuta.com"
-
-        enum Analytics {
-            static let baseUrl = "\(Sdk.Core.baseUrl)/analytics/v1"
-        }
-
-        enum Api {
-            static let baseUrl = "\(Sdk.Core.baseUrl)/digital-try-on/v1"
-            static let sizeFit = "https://api.naiz.fit"
-        }
+extension Sdk.Core {
+    enum SizeFitError: Error {
+        case abort
+        case unknown(Error)
     }
-
-    enum Features {}
-    enum UI {}
 }

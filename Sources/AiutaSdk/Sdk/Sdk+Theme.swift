@@ -38,13 +38,13 @@ extension DesignSystem {
 
 extension DesignSystemKit {
     var config: Sdk.Configuration {
-        (self as? Sdk.Theme.Kit)?.__config ?? .init()
+        (self as? Sdk.Theme.Kit)?._config ?? .init()
     }
 }
 
 extension Sdk.Theme {
     struct Kit: DesignSystemKit {
-        fileprivate let __config: Sdk.Configuration
+        fileprivate let _config: Sdk.Configuration
 
         let style: UIUserInterfaceStyle
         let ground: UIColor
@@ -57,7 +57,7 @@ extension Sdk.Theme {
         let font: FontRef
 
         init(_ config: Sdk.Configuration) {
-            __config = config
+            _config = config
 
             style = config.colors.scheme.userInterfaceStyle
             ground = config.colors.background

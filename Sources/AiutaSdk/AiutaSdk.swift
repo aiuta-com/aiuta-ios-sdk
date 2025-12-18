@@ -51,7 +51,7 @@ import UIKit
     static func tryOn(product: Product) async {
         await Sdk.Presenter.tryOn(products: [product])
     }
-    
+
     /// Presents a UI component that allows users to use multi item virtual try-on.
     /// Find more about general SDK usage at https://docs.aiuta.com/sdk/ios/basic-usage/
     ///
@@ -74,6 +74,13 @@ import UIKit
     @discardableResult
     static func showHistory() async -> Bool {
         await Sdk.Presenter.showHistory()
+    }
+}
+
+@available(iOS 13.0.0, *)
+@MainActor public extension Aiuta {
+    static func sizeFit(product: Product) async {
+        await Sdk.Presenter.sizeFit(product: product)
     }
 }
 

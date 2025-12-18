@@ -38,6 +38,11 @@ import UIKit
 
     public var contentSize: CGSize { view.contentSize }
 
+    public var lengthLimit: Int? {
+        get { proxy.lengthLimit }
+        set { proxy.lengthLimit = newValue }
+    }
+
     private let proxy = TextInputDelegate()
 
     public convenience init(_ builder: (_ it: TextInput, _ ds: DesignSystem) -> Void) {
@@ -80,17 +85,26 @@ import UIKit
 private final class TextInputDelegate: NSObject, UITextViewDelegate {
     let didChange = Signal<Void>()
     let onReturn = Signal<Void>()
+    var lengthLimit: Int?
 
     func textViewDidChange(_ textView: UITextView) {
         didChange.fire()
     }
 
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-        guard !onReturn.observers.isEmpty else { return true }
-        if text == "\n" {
+        if !onReturn.observers.isEmpty, text == "\n" {
             onReturn.fire()
             return false
         }
+
+        if let lengthLimit {
+            let current = textView.text ?? ""
+            guard let r = Range(range, in: current) else { return false }
+            let updated = current.replacingCharacters(in: r, with: text)
+
+            return updated.count <= lengthLimit
+        }
+
         return true
     }
 }

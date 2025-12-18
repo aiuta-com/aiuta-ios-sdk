@@ -16,7 +16,7 @@ import AiutaCore
 @_spi(Aiuta) import AiutaKit
 import UIKit
 
-final class HistoryView: Scroll {
+final class HistoryUI: Scroll {
     let blur = Blur { it, ds in
         it.style = ds.colors.scheme.blurStyle
     }

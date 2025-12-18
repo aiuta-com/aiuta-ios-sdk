@@ -26,6 +26,7 @@ extension Sdk.Configuration {
         var tryOn = TryOn()
         var share = Share()
         var wishlist = Wishlist()
+        var sizeFit: Aiuta.Configuration.Features.SizeFit?
     }
 }
 

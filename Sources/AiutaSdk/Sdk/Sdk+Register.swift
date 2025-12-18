@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-@_spi(Aiuta) import AiutaKit
 import AiutaCore
+@_spi(Aiuta) import AiutaKit
 import Alamofire
 import Resolver
 import UIKit
@@ -38,7 +38,7 @@ extension Sdk {
         @available(iOS 13.0.0, *)
         private func setup(_ configuration: Aiuta.Configuration) {
             setDefaults(apiKey: configuration.keyToDefaults)
-            
+
             let config = Configuration(configuration)
             let isDebug = config.settings.isLoggingEnabled
 
@@ -79,6 +79,7 @@ extension Sdk {
             resolver.register { Core.HistoryImpl() }.implements(Core.History.self).scope(scope)
             resolver.register { Core.TryOnImpl() }.implements(Core.TryOn.self).scope(scope)
             resolver.register { Core.WishlistImpl() }.implements(Core.Wishlist.self).scope(scope)
+            resolver.register { Core.SizeFitImpl() }.implements(Core.SizeFit.self).scope(scope)
 
             @injected var tracker: AnalyticTracker
             tracker.track(.configure)

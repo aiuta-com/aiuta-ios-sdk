@@ -464,18 +464,14 @@ private extension Sdk.Configuration {
     }
 
     mutating func apply(features: Aiuta.Configuration.Features) {
-        switch features {
-            case .default:
-                break
-            case let .custom(welcomeScreen, onboarding, consent, imagePicker, tryOn, share, wishlist):
-                apply(welcomeScreen: welcomeScreen)
-                apply(onboarding: onboarding)
-                apply(consent: consent)
-                apply(imagePicker: imagePicker)
-                apply(tryOn: tryOn)
-                apply(share: share)
-                apply(wishlist: wishlist)
-        }
+        apply(welcomeScreen: features.welcomeScreen)
+        apply(onboarding: features.onboarding)
+        apply(consent: features.consent)
+        apply(imagePicker: features.imagePicker)
+        apply(tryOn: features.tryOn)
+        apply(share: features.share)
+        apply(wishlist: features.wishlist)
+        self.features.sizeFit = features.sizeFit
     }
 
     mutating func apply(welcomeScreen: Aiuta.Configuration.Features.WelcomeScreen) {

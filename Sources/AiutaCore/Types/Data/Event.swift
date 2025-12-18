@@ -153,6 +153,12 @@ extension Aiuta.Event {
 
         /// The generations history page.
         case history
+        
+        /// The size&fit questionare.
+        case sizeFitSurvey
+        
+        /// The recommended size page.
+        case sizeFitResults
     }
 }
 
@@ -161,6 +167,9 @@ extension Aiuta.Event {
     public enum Flow: String, Sendable {
         /// Starting the SDK with tryOn flow to upload photo and generate results
         case tryOn
+
+        /// Starting the SDK with size&fit flow to ask user measurments and suggest product size
+        case sizeFit
 
         /// Starting the SDK to show previously generated gallery
         case history

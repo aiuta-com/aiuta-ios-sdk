@@ -24,7 +24,6 @@ extension Aiuta {
     /// - Note: See https://docs.aiuta.com/sdk/ios/quick-test/ for a quick testing SDK
     /// integration with test `apiKey` auth and sample product data.
     public struct Configuration: Sendable {
-        ///
         public let auth: Aiuta.Auth
         public let userInterface: UserInterface
         public let features: Features

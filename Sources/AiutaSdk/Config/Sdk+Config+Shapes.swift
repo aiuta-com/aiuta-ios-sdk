@@ -26,6 +26,7 @@ extension Sdk.Configuration {
 
         // MARK: - Button
 
+        var buttonL: Aiuta.Configuration.Shape = .continuous(radius: 16)
         var buttonM: Aiuta.Configuration.Shape = .continuous(radius: 8)
         var buttonS: Aiuta.Configuration.Shape = .continuous(radius: 8)
 

@@ -56,6 +56,11 @@ import Foundation
         }
     }
 
+    public func write() {
+        let data = try? JSONEncoder().encode(wrappedValue)
+        userDefaults.set(data, forKey: key)
+    }
+
     public var etag: String? {
         get { userDefaults.string(forKey: etagKey) }
         set {

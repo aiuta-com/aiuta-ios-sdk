@@ -126,6 +126,7 @@ extension ResultsView {
 
                 brand.text = product?.brand.uppercased()
                 title.text = product?.title
+                sizeFit.product = product
 
                 view.isVisible = product.isSome
             }
@@ -133,7 +134,7 @@ extension ResultsView {
 
         let brand = Label { it, ds in
             it.font = ds.fonts.brand
-            it.color = ds.colors.primary
+            it.color = ds.colors.secondary
         }
 
         let title = Label { it, ds in
@@ -150,6 +151,8 @@ extension ResultsView {
             it.label.color = ds.colors.onDark
             it.text = ds.strings.addToCart
         }
+
+        let sizeFit = SizeFitBar()
 
         let gallery = HScroll { it, _ in
             it.contentInset = .init(horizontal: 16)
@@ -188,10 +191,15 @@ extension ResultsView {
                 make.right = brand.layout.right
             }
 
+            sizeFit.layout.make { make in
+                make.top = max(title.layout.bottomPin, addToCart.layout.bottomPin) + 11
+                make.leftRight = 0
+            }
+
             gallery.layout.make { make in
                 make.width = layout.width
                 make.height = 225
-                make.top = max(title.layout.bottomPin, addToCart.layout.bottomPin) + 32
+                make.top = sizeFit.layout.bottomPin + 22
             }
         }
     }
@@ -206,7 +214,7 @@ extension ResultsView {
                 gallery.scroll(to: -gallery.contentInset.left)
 
                 products?.forEach { product in
-                    gallery.addContent(ProductCell()) { it, ds in
+                    gallery.addContent(ProductCell()) { it, _ in
                         it.product = product
                         it.onTouchUpInside.subscribe(with: self) { [unowned self] in
                             onTapProduct.fire(product)
@@ -217,7 +225,7 @@ extension ResultsView {
                 view.isVisible = products.isSome
             }
         }
-        
+
         let title = Label { it, ds in
             it.font = ds.fonts.titleM
             it.color = ds.colors.primary
@@ -229,7 +237,7 @@ extension ResultsView {
             it.itemSpace = 9
             it.view.opacity = 0.1
         }
-        
+
         let addToCart = LabelButton { it, ds in
             it.labelInsets = .init(horizontal: 40, vertical: 14)
             it.font = ds.fonts.buttonM
@@ -247,25 +255,25 @@ extension ResultsView {
                 make.top = 22
                 make.left = 27
             }
-            
+
             gallery.layout.make { make in
                 make.width = layout.width
                 make.height = 262
                 make.top = title.layout.bottomPin + 20
             }
-            
+
             addToCart.layout.make { make in
                 make.leftRight = 20
                 make.top = gallery.layout.bottomPin + 34
                 make.shape = ds.shapes.buttonM
             }
-            
+
             layout.make { make in
                 make.height = addToCart.layout.bottomPin + 20
             }
         }
     }
-    
+
     final class ProductCell: PlainButton {
         var product: Aiuta.Product? {
             didSet {
@@ -276,13 +284,13 @@ extension ResultsView {
                 title.text = product?.title
             }
         }
-        
+
         var useExtraInset: Bool = false {
             didSet {
                 image.contentMode = useExtraInset ? .scaleAspectFit : .scaleAspectFill
             }
         }
-        
+
         let storke = Stroke { it, ds in
             it.color = ds.colors.neutral
         }
@@ -292,7 +300,7 @@ extension ResultsView {
             it.desiredQuality = .thumbnails
             it.isAutoSize = false
         }
-        
+
         let brand = Label { it, ds in
             it.font = ds.fonts.brand
             it.color = ds.colors.primary
@@ -310,7 +318,7 @@ extension ResultsView {
                 make.width = 176
                 make.height = 262
             }
-            
+
             storke.layout.make { make in
                 make.width = layout.width
                 make.height = 208
@@ -326,13 +334,13 @@ extension ResultsView {
                     make.shape = ds.shapes.imageM
                 }
             }
-            
+
             brand.layout.make { make in
                 make.top = storke.layout.bottomPin + 8
                 make.left = 0
                 make.right = 16
             }
-            
+
             title.layout.make { make in
                 make.left = 0
                 make.right = 16
