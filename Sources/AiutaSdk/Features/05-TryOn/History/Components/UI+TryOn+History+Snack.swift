@@ -14,7 +14,7 @@
 
 @_spi(Aiuta) import AiutaKit
 
-extension HistoryView {
+extension HistoryUI {
     final class HistorySnack: Plane {
         let deleteButton = OptionButton { it, ds in
             it.icon.image = ds.icons.trash24

@@ -94,12 +94,14 @@ extension Sdk.Configuration.Features.ImagePicker {
         @MainActor
         func add(uploaded images: [Aiuta.InputImage]) async throws {
             uploaded.value.insert(contentsOf: images, at: 0)
+            _uploaded.write()
         }
 
         @available(iOS 13.0.0, *)
         @MainActor
         func delete(uploaded images: [Aiuta.InputImage]) async throws {
             uploaded.value.removeAll { image in images.contains(image) }
+            _uploaded.write()
         }
 
         @available(iOS 13.0.0, *)
@@ -108,6 +110,7 @@ extension Sdk.Configuration.Features.ImagePicker {
             guard let index = uploaded.value.firstIndex(where: { $0.id == image.id }) else { return }
             let selectedImage = uploaded.value.remove(at: index)
             uploaded.value.insert(selectedImage, at: 0)
+            _uploaded.write()
         }
 
         @defaults(key: "uploadsHistory", defaultValue: nil)
@@ -128,6 +131,7 @@ extension Sdk.Configuration.Features.ImagePicker {
         private func migrate(oldUploadsHistory: [Aiuta.InputImage]) async {
             guard uploaded.value.isEmpty else { return }
             uploaded.value = oldUploadsHistory
+            _uploaded.write()
         }
     }
 }
@@ -142,12 +146,14 @@ extension Sdk.Configuration.Features.TryOn {
         @MainActor
         func add(generated images: [Aiuta.GeneratedImage]) async throws {
             generated.value.insert(contentsOf: images, at: 0)
+            _generated.write()
         }
 
         @available(iOS 13.0.0, *)
         @MainActor
         func delete(generated images: [Aiuta.GeneratedImage]) async throws {
             generated.value.removeAll { image in images.contains(image) }
+            _generated.write()
         }
     }
 }

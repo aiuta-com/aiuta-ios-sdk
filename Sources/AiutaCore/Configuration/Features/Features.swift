@@ -20,33 +20,47 @@ extension Aiuta.Configuration {
     /// This configuration allows you to control which features are active in your app.
     /// You can use the default set of features or customize the configuration to suit
     /// your specific needs.
-    public enum Features: Sendable {
-        /// Enables the features recommended for the default configuration.
-        case `default`
+    public struct Features: Sendable {
+        public let welcomeScreen: WelcomeScreen
+        public let onboarding: Onboarding
+        public let consent: Consent
+        public let imagePicker: ImagePicker
+        public let tryOn: TryOn
+        public let share: Share
+        public let wishlist: Wishlist
+        public let sizeFit: SizeFit?
 
-        /// Allows you to define a custom set of features.
-        /// https://docs.aiuta.com/sdk/developer/configuration/features/
-        ///
-        /// - Parameters:
-        ///   - welcomeScreen: Configures an optional welcome or splash screen.
-        ///   - onboarding: Configures the onboarding process to guide users through
-        ///                 the SDK's functionality.
-        ///   - consent: Configures user consent options for data processing. This can
-        ///              be integrated with onboarding or used as a standalone feature.
-        ///   - imagePicker: Configures the image picker, which allows users to pick
-        ///                  images from the photo library, take new photos, use predefined models,
-        ///                  or reuse previous images.
-        ///   - tryOn: Configures the virtual try-on feature.
-        ///   - share: Configures the sharing feature, enabling users to share
-        ///            generated images.
-        ///   - wishlist: Configures the wishlist feature, allowing interaction with
-        ///               the host app's wishlist.
-        case custom(welcomeScreen: WelcomeScreen = .none,
-                    onboarding: Onboarding = .default,
+        public init(welcomeScreen: WelcomeScreen,
+                    onboarding: Onboarding,
                     consent: Consent,
-                    imagePicker: ImagePicker = .default,
-                    tryOn: TryOn = .default,
-                    share: Share = .default,
-                    wishlist: Wishlist = .none)
+                    imagePicker: ImagePicker,
+                    tryOn: TryOn,
+                    share: Share,
+                    wishlist: Wishlist,
+                    sizeFit: SizeFit?) {
+            self.welcomeScreen = welcomeScreen
+            self.onboarding = onboarding
+            self.consent = consent
+            self.imagePicker = imagePicker
+            self.tryOn = tryOn
+            self.share = share
+            self.wishlist = wishlist
+            self.sizeFit = sizeFit
+        }
+    }
+}
+
+extension Aiuta.Configuration.Features {
+    public static func defailt() -> Self {
+        .init(
+            welcomeScreen: .none,
+            onboarding: .default,
+            consent: .none,
+            imagePicker: .default,
+            tryOn: .default,
+            share: .default,
+            wishlist: .none,
+            sizeFit: .none
+        )
     }
 }

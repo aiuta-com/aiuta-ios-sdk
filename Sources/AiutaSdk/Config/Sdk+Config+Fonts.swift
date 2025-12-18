@@ -21,7 +21,7 @@ extension Sdk.Configuration {
         // MARK: - Label
 
         var titleL: Sdk.Configuration.Font = .system(size: 24, weight: .bold)
-        var titleM: Sdk.Configuration.Font = .system(size: 20, weight: .bold, kern: -0.4)
+        var titleM: Sdk.Configuration.Font = .system(size: 20, weight: .semibold, kern: -0.4)
         var regular: Sdk.Configuration.Font = .system(size: 17, weight: .medium, kern: -0.51, lhm: 1.08)
         var subtle: Sdk.Configuration.Font = .system(size: 15, weight: .regular, kern: -0.15, lhm: 1.01)
 
@@ -56,6 +56,10 @@ extension Sdk.Configuration {
         // MARK: - TryOn.Feedback
 
         var gratitudeEmoji: Sdk.Configuration.Font = .system(size: 40, weight: .medium)
+
+        // MARK: - SizeFit
+
+        var sizeRecommendation: Sdk.Configuration.Font = .system(size: 132, weight: .medium, kern: -3.94)
     }
 }
 

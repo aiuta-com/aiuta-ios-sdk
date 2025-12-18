@@ -16,7 +16,7 @@ import AiutaCore
 @_spi(Aiuta) import AiutaKit
 import Resolver
 
-extension HistoryView {
+extension HistoryUI {
     final class HistoryCell: Recycle<Aiuta.GeneratedImage> {
         final class ScrollRecycler: VRecycler<HistoryCell, Aiuta.GeneratedImage> {
             override func setup() {

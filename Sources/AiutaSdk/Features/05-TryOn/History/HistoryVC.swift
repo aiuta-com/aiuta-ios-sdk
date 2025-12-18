@@ -17,7 +17,7 @@ import AiutaCore
 import UIKit
 
 @available(iOS 13.0.0, *)
-final class HistoryViewController: ViewController<HistoryView> {
+final class HistoryVC: ViewController<HistoryUI> {
     @injected private var history: Sdk.Core.History
     @injected private var session: Sdk.Core.Session
     @injected private var tracker: AnalyticTracker
@@ -119,7 +119,7 @@ final class HistoryViewController: ViewController<HistoryView> {
         !selection.isEmpty && (selection.count == history.generated.items.count)
     }
 
-    func toggleSelection(_ cell: HistoryView.HistoryCell) {
+    func toggleSelection(_ cell: HistoryUI.HistoryCell) {
         guard let image = cell.data else { return }
         if selection.contains(image) {
             selection.remove(image)
@@ -187,7 +187,7 @@ final class HistoryViewController: ViewController<HistoryView> {
         }
     }
 
-    func enterFullscreen(_ cell: HistoryView.HistoryCell) {
+    func enterFullscreen(_ cell: HistoryUI.HistoryCell) {
         let gallery = GalleryViewController(TransformDataProvider(input: ui.history.data, transform: { $0 }), start: cell.index.item, crossfade: true)
         gallery.willShare.subscribe(with: self) { [unowned self] generatedImage, _, gallery in
             Task {
@@ -219,7 +219,7 @@ final class HistoryViewController: ViewController<HistoryView> {
 }
 
 @available(iOS 13.0.0, *)
-extension HistoryViewController: PageRepresentable {
+extension HistoryVC: PageRepresentable {
     var page: Aiuta.Event.Page { .history }
     var isSafeToDismiss: Bool { true }
 }

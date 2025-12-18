@@ -31,6 +31,8 @@ import UIKit
     @notification(UIResponder.keyboardWillChangeFrameNotification)
     private var keyboardWillChangeFrame: Signal<Void>
 
+    public var animateKeyboardChanges: Bool = false
+
     convenience init() {
         self.init(nibName: nil, bundle: nil)
         customizeLoading()
@@ -100,7 +102,13 @@ import UIKit
 
         let keyboardHandler = { [unowned self] in
             guard isAppearing, isViewLoaded else { return }
-            ui.updateLayoutRecursive()
+            if animateKeyboardChanges {
+                animate { [ui] in
+                    ui.updateLayoutRecursive()
+                }
+            } else {
+                ui.updateLayoutRecursive()
+            }
         }
 
         keyboardWillShow.subscribe(with: self, callback: keyboardHandler)

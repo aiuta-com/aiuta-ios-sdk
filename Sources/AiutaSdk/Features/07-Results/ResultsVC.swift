@@ -38,7 +38,7 @@ final class ResulstsViewController: ViewController<ResultsView> {
         }
 
         ui.navBar.onAction.subscribe(with: self) { [unowned self] in
-            popoverOrCover(HistoryViewController())
+            popoverOrCover(HistoryVC())
         }
 
         ui.pager.pages.forEach { page in
@@ -129,6 +129,10 @@ final class ResulstsViewController: ViewController<ResultsView> {
             if tryOn.sessionResults.isEmpty {
                 replace(with: Sdk.Features.TryOn())
             }
+        }
+        
+        ui.skuSheet.content.singleItemContent.sizeFit.onTouchUpInside.subscribe(with: self) { [unowned self] in
+            present(Sdk.Navigator(rootViewController: FitSurveyVC()), animated: true)
         }
 
         ui.pager.data = tryOn.sessionResults

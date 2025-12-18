@@ -93,7 +93,11 @@ final class NavBar: Plane {
                 make.top = 0
             }
             make.leftRight = 0
-            make.height = 52
+            if #available(iOS 26.0, *) {
+                make.height = 64
+            } else {
+                make.height = 52
+            }
         }
 
         leftButton.layout.make { make in
@@ -186,7 +190,11 @@ private final class NavButton: PlainButton {
             case .icon, .default:
                 icon.layout.make { make in
                     make.square = 24
-                    make.left = 12
+                    if #available(iOS 26.0, *) {
+                        make.left = 16
+                    } else {
+                        make.left = 12
+                    }
                     make.centerY = 0
                 }
                 layout.make { make in
@@ -194,7 +202,11 @@ private final class NavButton: PlainButton {
                 }
             case .label:
                 title.layout.make { make in
-                    make.left = 20
+                    if #available(iOS 26.0, *) {
+                        make.left = 26
+                    } else {
+                        make.left = 20
+                    }
                     make.centerY = 0
                 }
                 layout.make { make in

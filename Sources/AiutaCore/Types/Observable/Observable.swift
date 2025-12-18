@@ -25,6 +25,7 @@ extension Aiuta {
         public var value: Value {
             didSet {
                 let newValue = value
+                print(newValue)
                 Task { [observableActor] in
                     await observableActor.notify(newValue)
                 }

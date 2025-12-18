@@ -42,7 +42,7 @@ final class ProcessingViewController: ViewController<ProcessingView> {
         }
 
         ui.navBar.onAction.subscribe(with: self) { [unowned self] in
-            popoverOrCover(HistoryViewController())
+            popoverOrCover(HistoryVC())
         }
 
         ui.navBar.isActionAvailable = history.hasGenerations

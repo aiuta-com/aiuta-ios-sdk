@@ -33,6 +33,7 @@ extension Sdk.Configuration {
         var neutral: UIColor = 0xF2F2F7FF.uiColor
         var border: UIColor = 0xE5E5EAFF.uiColor
         var outline: UIColor = 0xC7C7CCFF.uiColor
+        var link: UIColor = 0x4000FFFF.uiColor
 
         // MARK: - Selection
 
