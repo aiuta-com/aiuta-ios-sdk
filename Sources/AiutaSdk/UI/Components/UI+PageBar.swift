@@ -27,6 +27,11 @@ final class NavBar: Plane {
     var title: String? { didSet { titleLabel.text = title } }
     var isActionAvailable = false { didSet { updateStyle() } }
 
+    let blur = Blur { it, ds in
+        it.style = ds.colors.scheme.safeBlurStyle
+        it.view.isVisible = false
+    }
+
     private let leftButton = NavButton()
     private let rightButton = NavButton()
     private let titleLabel = Label { it, ds in
@@ -111,6 +116,10 @@ final class NavBar: Plane {
         titleLabel.layout.make { make in
             make.leftRight = max(leftButton.layout.rightPin, rightButton.layout.leftPin)
             make.centerY = 0
+        }
+
+        blur.layout.make { make in
+            make.inset = 0
         }
     }
 
