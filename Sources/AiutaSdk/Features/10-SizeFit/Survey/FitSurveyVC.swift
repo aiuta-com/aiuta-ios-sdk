@@ -48,6 +48,7 @@ final class FitSurveyVC: ViewController<FitSurveyUI> {
         }
 
         animateKeyboardChanges = true
+        survey = nil
         applyLastSurvey()
     }
 

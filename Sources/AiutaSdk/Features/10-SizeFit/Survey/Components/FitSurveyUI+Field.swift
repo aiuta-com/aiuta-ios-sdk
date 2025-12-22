@@ -19,7 +19,11 @@ import UIKit
 extension FitSurveyUI {
     final class Field: PlainButton {
         var intValue: Int? {
-            get { Int(input.text.trimmingCharacters(in: .whitespacesAndNewlines)) }
+            get {
+                let text = input.text.trimmingCharacters(in: .whitespacesAndNewlines)
+                guard !text.isEmpty else { return nil }
+                return Int(text)
+            }
             set {
                 if let newValue {
                     input.text = "\(newValue)"

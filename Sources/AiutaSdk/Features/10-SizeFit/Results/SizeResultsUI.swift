@@ -16,7 +16,7 @@ import AiutaCore
 @_spi(Aiuta) import AiutaKit
 import UIKit
 
-final class SizeResultsUI: Plane {
+final class SizeResultsUI: Scroll {
     let navBar = NavBar { it, ds in
         if ds.styles.preferCloseButtonOnTheRight {
             it.style = .actionTitleClose
@@ -48,7 +48,7 @@ final class SizeResultsUI: Plane {
         it.color = ds.colors.primary
         it.isMultiline = true
         it.alignment = .center
-        it.text = "Sorry!\nNo sizes match your selected\nparameters"
+        it.text = "Sorry!\nThis item is designed for a different body type or gender. We can’t recommend a size"
         it.view.isVisible = false
     }
 
@@ -119,7 +119,8 @@ final class SizeResultsUI: Plane {
         }
 
         noResultDescription.layout.make { make in
-            make.leftRight = 54
+            make.width = min(280, layout.width - 108)
+            make.centerX = 0
             make.top = noResultIcon.layout.bottomPin + 18
         }
     }
