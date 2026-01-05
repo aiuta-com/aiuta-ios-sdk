@@ -18,6 +18,7 @@ import UIKit
 
 final class SizeFitBar: PlainButton {
     @injected private var sizeFit: Sdk.Core.SizeFit
+    private let isEnabled = false
 
     let strate = Stroke { it, ds in
         it.view.borderColor = ds.colors.border
@@ -61,7 +62,7 @@ final class SizeFitBar: PlainButton {
             Task { await getRecommendedSize() }
         }
     }
-    
+
     override func setup() {
         sizeFit.onChange.subscribe(with: self) { [unowned self] in
             invalidateLayout()
@@ -70,6 +71,14 @@ final class SizeFitBar: PlainButton {
     }
 
     override func updateLayout() {
+        guard isEnabled else {
+            view.isVisible = false
+            layout.make { make in
+                make.height = 0
+            }
+            return
+        }
+
         view.isVisible = sizeFit.isAvailable
 
         layout.make { make in
@@ -131,7 +140,7 @@ final class SizeFitBar: PlainButton {
                 make.square = 17
                 make.center = gradient.layout.center
             }
-            
+
             findSize.layout.make { make in
                 make.left = gradient.layout.rightPin + 12
                 make.centerY = 0

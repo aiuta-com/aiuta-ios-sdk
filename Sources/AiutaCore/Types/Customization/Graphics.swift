@@ -63,7 +63,7 @@ extension Aiuta.Configuration.Icon: ExpressibleByStringLiteral {
         if let url = URL(string: value) {
             self = .url(url, renderingMode: .alwaysTemplate)
         } else {
-            // Fallback to an empty data URL to avoid crashing; adjust as needed for your app
+            // Fallback to an empty data URL to avoid crashing
             self = .url(URL(string: "about:blank")!, renderingMode: .alwaysTemplate)
         }
     }
