@@ -15,142 +15,188 @@
 import UIKit
 
 extension Aiuta.Configuration {
-    /// Represents a color value used in the Aiuta SDK configuration.
+    /// A color value used by the Aiuta SDK configuration.
     ///
-    /// Supported underlying representations:
-    /// - `.argb` — 32-bit ARGB in the form `0xAARRGGBB`
-    /// - `.rgb`  — 24-bit RGB in the form `0xRRGGBB` (alpha assumed to be `0xFF`)
-    /// - `.ui`   — a concrete `UIColor`
-    public enum Color {
-        case argb(UInt32)
-        case rgb(UInt32)
-        case ui(UIColor)
+    /// `Color` is a lightweight wrapper around `UIColor` designed for use in
+    /// configuration and theming APIs. It supports both compile-time literals
+    /// and runtime values while providing safe fallback behavior.
+    ///
+    /// You can construct a `Color` from:
+    /// - A `UIColor` instance
+    /// - Hex color strings in ARGB/RGB form (see `init(hex:)`)
+    /// - Hex color literals via `ExpressibleByStringLiteral` and
+    ///   `ExpressibleByIntegerLiteral`
+    ///
+    /// Supported hex formats include:
+    /// - `#RGB`, `#ARGB`
+    /// - `#RRGGBB`, `#AARRGGBB`
+    /// - Optional `#` or `0x` prefixes (case-insensitive)
+    ///
+    /// If a value cannot be parsed, the color safely falls back to `.clear` and
+    /// `isValid` is set to `false`, allowing integrators to handle invalid input
+    public struct Color: Sendable {
+        public let uiColor: UIColor
+        public let isValid: Bool
+
+        /// Creates a configuration color from an existing `UIColor`.
+        public init(uiColor: UIColor) {
+            self.uiColor = uiColor
+            isValid = true
+        }
+
+        /// Creates a color from a hex string.
+        ///
+        /// Supported formats (case-insensitive, optional `#` or `0x` prefix):
+        /// - `"#RGB"`, `"RGB"`, `"0xRGB"`                     → expands to `RRGGBB` (alpha = `FF`)
+        /// - `"#ARGB"`, `"ARGB"`, `"0xARGB"`                 → expands to `AARRGGBB`
+        /// - `"#RRGGBB"`, `"RRGGBB"`, `"0xRRGGBB"`           → RGB (alpha assumed to be `FF`)
+        /// - `"#AARRGGBB"`, `"AARRGGBB"`, `"0xAARRGGBB"`     → ARGB
+        ///
+        /// If parsing fails, the color falls back to `.clear` and `isValid = false`.
+        public init(hex: String) {
+            var s = hex
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+                .lowercased()
+
+            // Remove common prefixes
+            if s.hasPrefix("#") {
+                s.removeFirst()
+            } else if s.hasPrefix("0x") {
+                s.removeFirst(2)
+            }
+
+            // Validate hex characters
+            let hexSet = CharacterSet(charactersIn: "0123456789abcdef")
+            guard s.unicodeScalars.allSatisfy({ hexSet.contains($0) }) else {
+                uiColor = .clear
+                isValid = false
+                return
+            }
+
+            // Expand shorthand forms
+            switch s.count {
+                case 3: // RGB → RRGGBB
+                    let c = Array(s)
+                    s = "\(c[0])\(c[0])\(c[1])\(c[1])\(c[2])\(c[2])"
+                case 4: // ARGB → AARRGGBB
+                    let c = Array(s)
+                    s = "\(c[0])\(c[0])\(c[1])\(c[1])\(c[2])\(c[2])\(c[3])\(c[3])"
+                case 6, 8:
+                    break
+                default:
+                    uiColor = .clear
+                    isValid = false
+                    return
+            }
+
+            guard let value = UInt32(s, radix: 16) else {
+                uiColor = .clear
+                isValid = false
+                return
+            }
+
+            let a, r, g, b: CGFloat
+
+            if s.count == 8 {
+                // AARRGGBB
+                a = CGFloat((value >> 24) & 0xFF) / 255.0
+                r = CGFloat((value >> 16) & 0xFF) / 255.0
+                g = CGFloat((value >> 8) & 0xFF) / 255.0
+                b = CGFloat(value & 0xFF) / 255.0
+            } else {
+                // RRGGBB (alpha assumed to be FF)
+                a = 1.0
+                r = CGFloat((value >> 16) & 0xFF) / 255.0
+                g = CGFloat((value >> 8) & 0xFF) / 255.0
+                b = CGFloat(value & 0xFF) / 255.0
+            }
+
+            uiColor = UIColor(red: r, green: g, blue: b, alpha: a)
+            isValid = true
+        }
+
+        /// Creates a color from a hex string only if the value is valid.
+        ///
+        /// This initializer performs strict validation. If the provided string
+        /// cannot be parsed as a supported hex color format, the initializer
+        /// returns `nil` instead of falling back to `.clear`.
+        ///
+        /// - Parameter validHex: A hex color string in one of the formats supported
+        ///   by `init(hex:)`.
+        public init?(validHex hex: String) {
+            self.init(hex: hex)
+            guard isValid else { return nil }
+        }
+
+        /// Creates a color from an optional hex string.
+        ///
+        /// This initializer is intended for configuration values coming from
+        /// optional sources such as dictionaries, JSON payloads, or user-defined
+        /// theme files.
+        ///
+        /// If the value is `nil` or cannot be parsed, the color falls back to
+        /// `.clear` and `isValid` is set to `false`.
+        ///
+        /// - Parameter optionalHex: An optional hex color string.
+        public init(optionalHex hex: String?) {
+            self.init(hex: hex ?? "")
+        }
+        
+        /// Creates a color from an ARGB hexadecimal value.
+        ///
+        /// The value is interpreted as `0xAARRGGBB`, where:
+        /// - `AA` is the alpha component
+        /// - `RR` is the red component
+        /// - `GG` is the green component
+        /// - `BB` is the blue component
+        ///
+        /// The value is converted to a hexadecimal string, left-padded to
+        /// 8 hex digits, and parsed using the same rules as `init(hex:)`.
+        ///
+        /// - Parameter argb: An ARGB color value in the `0xAARRGGBB` format.
+        public init<U: UnsignedInteger>(argb value: U) {
+            self.init(hex: String(UInt64(value), radix: 16).leftPadded(to: 8))
+        }
+
+        /// Creates a color from an RGB hexadecimal value.
+        ///
+        /// The value is interpreted as `0xRRGGBB`. The alpha component is
+        /// assumed to be `FF` (fully opaque).
+        ///
+        /// The value is converted to a hexadecimal string, left-padded to
+        /// 6 hex digits, and parsed using the same rules as `init(hex:)`.
+        ///
+        /// - Parameter rgb: An RGB color value in the `0xRRGGBB` format.
+        public init<U: UnsignedInteger>(rgb value: U) {
+            self.init(hex: String(UInt64(value), radix: 16).leftPadded(to: 6))
+        }
     }
 }
 
 // MARK: - Literal support
 
-extension Aiuta.Configuration.Color: ExpressibleByIntegerLiteral {
-    /// Initializes from an integer literal representing a hex color.
-    ///
-    /// Supported forms (without any separators or prefixes at the call site):
-    /// - `0xRGB`       → treated as `.rgb(0xRRGGBB)` by expanding each nibble
-    /// - `0xARGB`      → treated as `.argb(0xAARRGGBB)` by expanding each nibble
-    /// - `0xRRGGBB`    → `.rgb(0xRRGGBB)`
-    /// - `0xAARRGGBB`  → `.argb(0xAARRGGBB)`
-    ///
-    /// If the value cannot be parsed, defaults to `.ui(.clear)`.
-    public init(integerLiteral value: UInt64) {
-        let hex = String(value, radix: 16)
-
-        guard let color = try? Self.parseHexString(hex) else {
-            self = .ui(.clear)
-            return
-        }
-        self = color
-    }
-}
-
 extension Aiuta.Configuration.Color: ExpressibleByStringLiteral {
-    /// Initializes from a hex color string literal.
-    ///
-    /// Supported formats (case-insensitive, optional `#` or `0x` prefix):
-    /// - `"#AARRGGBB"`, `"AARRGGBB"`, `"0xAARRGGBB"`
-    /// - `"#RRGGBB"`,  `"RRGGBB"`,  `"0xRRGGBB"` (alpha assumed to be `FF`)
-    /// - Short forms `"#ARGB"` and `"#RGB"` are also accepted via expansion
-    ///
-    /// If the value cannot be parsed, defaults to `.ui(.clear)`.
+    /// Enables: `let c: Color = "#FF0000"`
     public init(stringLiteral value: String) {
-        guard let color = try? Self.parseHexString(value) else {
-            self = .ui(.clear)
-            return
-        }
-        self = color
+        self.init(hex: value)
     }
 }
 
-// MARK: - Hex string parsing
-
-extension Aiuta.Configuration.Color {
-    /// Errors that can occur while parsing a color from a hex string.
-    public enum ParseError: Error {
-        case invalidFormat(String)
-    }
-
-    /// Initializes a color from a hex string.
+extension Aiuta.Configuration.Color: ExpressibleByIntegerLiteral {
+    /// Enables: `let c: Color = 0x80FF0000`
     ///
-    /// Supported formats (case-insensitive):
-    /// - `"#AARRGGBB"`, `"AARRGGBB"`, `"0xAARRGGBB"`
-    /// - `"#RRGGBB"`,  `"RRGGBB"`,  `"0xRRGGBB"` (alpha assumed to be `FF`)
-    /// - Short forms `"#ARGB"` and `"#RGB"` are expanded to `AARRGGBB`/`RRGGBB`
+    /// - Note: Integer literals are always interpreted as ARGB (`0xAARRGGBB`).
     ///
-    /// Components: `A` — alpha, `R` — red, `G` — green, `B` — blue.
-    init(hexString: String) throws {
-        let color = try Self.parseHexString(hexString)
-        self = color
+    /// The provided value is converted to a hexadecimal string, left-padded
+    /// to 8 digits, and parsed using the same rules as `init(hex:)`.
+    public init(integerLiteral value: UInt64) {
+        self.init(hex: String(value, radix: 16).leftPadded(to: 8))
     }
+}
 
-    /// Internal parser that converts a hex string into a `Color` representation.
-    static func parseHexString(_ string: String) throws -> Aiuta.Configuration.Color {
-        var s = string.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-
-        if s.hasPrefix("#") {
-            s.removeFirst()
-        } else if s.hasPrefix("0x") {
-            s.removeFirst(2)
-        }
-
-        let hexSet = CharacterSet(charactersIn: "0123456789abcdef")
-        let allHex = s.unicodeScalars.allSatisfy { scalar in
-            hexSet.contains(scalar)
-        }
-
-        guard allHex else {
-            throw ParseError.invalidFormat(string)
-        }
-
-        switch s.count {
-            case 3:
-                // RGB → expand to RRGGBB
-                let chars = Array(s)
-                let r = chars[0]
-                let g = chars[1]
-                let b = chars[2]
-                s = "\(r)\(r)\(g)\(g)\(b)\(b)"
-                guard let value = UInt32(s, radix: 16) else {
-                    throw ParseError.invalidFormat(string)
-                }
-                return .rgb(value)
-
-            case 4:
-                // ARGB → expand to AARRGGBB
-                let chars = Array(s)
-                let a = chars[0]
-                let r = chars[1]
-                let g = chars[2]
-                let b = chars[3]
-                s = "\(a)\(a)\(r)\(r)\(g)\(g)\(b)\(b)"
-                guard let value = UInt32(s, radix: 16) else {
-                    throw ParseError.invalidFormat(string)
-                }
-                return .argb(value)
-
-            case 6:
-                // RRGGBB
-                guard let value = UInt32(s, radix: 16) else {
-                    throw ParseError.invalidFormat(string)
-                }
-                return .rgb(value)
-
-            case 8:
-                // AARRGGBB
-                guard let value = UInt32(s, radix: 16) else {
-                    throw ParseError.invalidFormat(string)
-                }
-                return .argb(value)
-
-            default:
-                throw ParseError.invalidFormat(string)
-        }
+private extension String {
+    func leftPadded(to width: Int, with pad: Character = "0") -> String {
+        if count >= width { return self }
+        return String(repeating: String(pad), count: width - count) + self
     }
 }
