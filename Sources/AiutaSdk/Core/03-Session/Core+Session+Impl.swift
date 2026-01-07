@@ -39,5 +39,13 @@ extension Sdk.Core {
                 Task { await cartHandler.addToCart(productId: product.id) }
             }
         }
+
+        func finish(recommendingSize recommendation: Aiuta.SizeRecommendation?) {
+            if let product = products.first,
+               let size = recommendation?.recommendedSizeName,
+               let sizeHandler = config.features.sizeFit?.handler {
+                Task { await sizeHandler.reccomendation(productId: product.id, size: size) }
+            }
+        }
     }
 }

@@ -79,7 +79,7 @@ final class FitSurveyVC: ViewController<FitSurveyUI> {
 
         do {
             let recommendation = try await sizeFit.recommendation(survey: survey, product: product)
-            present(SizeResultsVC(survey: survey, recommendataion: recommendation))
+            present(SizeResultsVC(survey: survey, recommendation: recommendation))
         } catch {
             trace(error)
             ui.errorSnackbar.isVisible = true
