@@ -24,5 +24,6 @@ extension Sdk.Core {
         func start(with products: Aiuta.Products)
 
         func finish(addingToCart: Aiuta.Products?)
+        func finish(recommendingSize: Aiuta.SizeRecommendation?)
     }
 }

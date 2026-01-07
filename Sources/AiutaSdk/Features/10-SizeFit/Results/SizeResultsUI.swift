@@ -36,6 +36,11 @@ final class SizeResultsUI: Scroll {
         it.color = ds.colors.primary
     }
 
+    let bestSize = SizeResult()
+    let nextSize = SizeResult { it, _ in
+        it.grayscale()
+    }
+
     let noResultIcon = Image { it, ds in
         it.isAutoSize = false
         it.source = ds.icons.error36
@@ -81,12 +86,20 @@ final class SizeResultsUI: Scroll {
     override func updateLayout() {
         title.layout.make { make in
             make.centerX = 0
-            make.top = navBar.layout.bottomPin + 24
+            make.top = navBar.layout.bottomPin + 16
         }
 
         recommendedSize.layout.make { make in
             make.centerX = 0
-            make.top = title.layout.bottomPin + 32
+            make.top = title.layout.bottomPin + 24
+        }
+
+        bestSize.layout.make { make in
+            make.top = recommendedSize.layout.bottomPin + 40
+        }
+
+        nextSize.layout.make { make in
+            make.top = bestSize.layout.bottomPin
         }
 
         acknowledge.layout.make { make in
@@ -111,6 +124,8 @@ final class SizeResultsUI: Scroll {
             make.centerX = 0
             make.bottom = surveyDescription.layout.topPin + 8
         }
+
+        nextSize.view.isMaxOpaque = surveyTitle.layout.top >= nextSize.layout.bottomPin
 
         noResultIcon.layout.make { make in
             make.square = 36

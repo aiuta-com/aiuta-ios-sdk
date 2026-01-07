@@ -18,13 +18,14 @@ import UIKit
 
 @available(iOS 13.0.0, *)
 final class SizeResultsVC: ViewController<SizeResultsUI> {
+    @injected private var session: Sdk.Core.Session
     private var survey: Aiuta.FitSurvey?
-    private var recommendataion: Aiuta.SizeRecommendation?
+    private var recommendation: Aiuta.SizeRecommendation?
 
-    convenience init(survey: Aiuta.FitSurvey, recommendataion: Aiuta.SizeRecommendation) {
+    convenience init(survey: Aiuta.FitSurvey, recommendation: Aiuta.SizeRecommendation) {
         self.init()
         self.survey = survey
-        self.recommendataion = recommendataion
+        self.recommendation = recommendation
     }
 
     override func setup() {
@@ -33,7 +34,9 @@ final class SizeResultsVC: ViewController<SizeResultsUI> {
         }
 
         ui.acknowledge.onTouchUpInside.subscribe(with: self) { [unowned self] in
-            dismissAll()
+            dismissAll { [session, recommendation] in
+                session.finish(recommendingSize: recommendation)
+            }
         }
 
         ui.changeButton.onTouchUpInside.subscribe(with: self) { [unowned self] in
@@ -42,14 +45,44 @@ final class SizeResultsVC: ViewController<SizeResultsUI> {
 
         ui.surveyDescription.text = survey?.description
 
-        guard let recommendataion, !recommendataion.recommendedSizeName.isEmpty else {
+        guard let recommendation, !recommendation.recommendedSizeName.isEmpty else {
             ui.title.view.isVisible = false
             ui.noResultDescription.view.isVisible = true
             ui.noResultIcon.view.isVisible = true
             return
         }
 
-        ui.recommendedSize.text = recommendataion.recommendedSizeName
+        ui.recommendedSize.text = recommendation.recommendedSizeName
+
+        let cfg = Aiuta.SizeRecommendation.ConfidenceConfig()
+
+        recommendation.sizes.forEach { size in
+            let isRecommended = size.name == recommendation.recommendedSizeName
+            let summary = size.measurements.fitSummary(isRecommended: isRecommended) ?? "-"
+            let pct = recommendation.absoluteConfidencePercent(for: size, config: cfg)
+            print(size.name, "\(pct)%", summary)
+        }
+
+        if let best = recommendation.recommendedSize {
+            let summary = best.measurements.fitSummary(isRecommended: true) ?? ""
+            let bestPct = max(30, recommendation.absoluteConfidencePercent(for: best, config: cfg))
+            ui.bestSize.confidence = bestPct
+            ui.bestSize.tittle.text = best.name
+            ui.bestSize.summary.text = summary
+
+            if let neighbor = recommendation.bestNeighborOfRecommended(config: cfg) {
+                let summary = neighbor.measurements.fitSummary(isRecommended: false) ?? ""
+                let nextPct = recommendation.absoluteConfidencePercent(for: neighbor, config: cfg)
+                ui.nextSize.confidence = clamp(nextPct, min: 20, max: bestPct - 10)
+                ui.nextSize.tittle.text = neighbor.name
+                ui.nextSize.summary.text = summary
+            } else {
+                ui.nextSize.view.isVisible = false
+            }
+        } else {
+            ui.bestSize.view.isVisible = false
+            ui.nextSize.view.isVisible = false
+        }
     }
 }
 

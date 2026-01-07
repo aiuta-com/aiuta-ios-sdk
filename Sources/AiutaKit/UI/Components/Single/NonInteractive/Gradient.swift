@@ -24,6 +24,7 @@ import UIKit
         case horizontal
         case tilt(Tilt)
         case diagonal(Tilt)
+        case custom(CGPoint, CGPoint)
     }
 
     public var cornerRadius: CGFloat {
@@ -72,6 +73,9 @@ import UIKit
                 case .diagonal(.descending):
                     view.startPoint = .init(x: 0, y: 0.3)
                     view.endPoint = .init(x: 1, y: 0.7)
+                case let .custom(start, stop):
+                    view.startPoint = start
+                    view.endPoint = stop
             }
         }
     }
