@@ -15,61 +15,41 @@
 import UIKit
 
 extension Aiuta.Configuration.UserInterface {
-    /// Defines the theme configuration options for the Aiuta SDK.
+    /// Visual theme configuration for the SDK.
     ///
-    /// The `Theme` enum allows developers to customize the visual appearance of the SDK.
-    /// It provides predefined themes for standard use cases and a fully customizable option
-    /// for advanced requirements. Themes control the color scheme, branding, and styling
-    /// of various UI components within the SDK.
-    public enum Theme: Sendable {
-        /// The default theme configuration for the Aiuta SDK.
-        /// This theme applies a light color scheme and uses the standard Aiuta branding.
-        case `default`
+    /// Controls the color scheme, branding, and styling of all UI components.
+    public struct Theme: Sendable {
+        /// Color palette for backgrounds, text, borders, and accent colors.
+        public let color: ColorTheme
         
-        /// Applies the default Aiuta theme.
-        ///
-        /// This theme uses a predefined light or dark color scheme designed to align with
-        /// the Aiuta SDK's standard visual identity. It is suitable for applications that
-        /// do not require custom branding or extensive UI customization.
-        ///
-        /// - Parameters:
-        ///   - scheme: Specifies whether the theme should use a light or dark color scheme.
-        ///             https://docs.aiuta.com/sdk/developer/configuration/ui/theme/color/
-        case aiuta(scheme: ColorScheme)
-
-        /// Applies the default Aiuta theme with a custom brand color.
-        /// https://docs.aiuta.com/sdk/developer/configuration/ui/theme/color/
-        ///
-        /// This theme builds on the default Aiuta theme but allows developers to specify
-        /// a custom brand color. The brand color is used for primary action buttons and
-        /// other key highlights, enabling the SDK to better align with the application's
-        /// visual identity.
-        ///
-        /// - Parameters:
-        ///   - scheme: Specifies whether the theme should use a light or dark color scheme.
-        ///   - brand: The main accent color of the application, used for primary actions
-        ///            and highlights throughout the SDK.
-        case brand(scheme: ColorScheme,
-                   brand: UIColor)
-
-        /// Applies a fully customizable theme.
-        /// https://docs.aiuta.com/sdk/developer/configuration/ui/theme/
-        ///
-        /// This option allows developers to define every aspect of the SDK's visual appearance,
-        /// including colors, labels, images, buttons, and various UI components. It provides
-        /// maximum flexibility for tailoring the SDK to match the application's design system.
-        ///
-        /// - Parameters:
-        ///   - color: Configures the color palette for the SDK, including background and accent colors.
-        ///   - label: Configures the appearance of text labels.
-        ///   - image: Configures the styling of images used within the SDK.
-        ///   - button: Configures the appearance of buttons, including their colors and styles.
-        ///   - pageBar: Configures the appearance of the page navigation bar.
-        ///   - bottomSheet: Configures the styling of the bottom sheet component.
-        ///   - selectionSnackbar: Configures the appearance of the snackbar shown for selection actions.
-        ///   - errorSnackbar: Configures the appearance of the snackbar shown for error messages.
-        ///   - productBar: Configures the appearance of the product bar, which displays product-related information.
-        ///   - powerBar: Configures the appearance of the "Powered By Aiuta" label.
+        /// Typography styles for text labels (titles, regular text, subtle text).
+        public let label: LabelTheme
+        
+        /// Shapes and error icons for image views.
+        public let image: ImageTheme
+        
+        /// Typography and shapes for buttons.
+        public let button: ButtonTheme
+        
+        /// Navigation bar with page title, back/close buttons.
+        public let pageBar: PageBarTheme
+        
+        /// Bottom sheet appearance with grabber and delimiters.
+        public let bottomSheet: BottomSheetTheme
+        
+        /// Loading indicator icons, colors, and animation timing.
+        public let activityIndicator: ActivityIndicatorTheme
+        
+        /// Snackbar shown when selecting multiple items (strings, icons, colors).
+        public let selectionSnackbar: SelectionSnackbarTheme
+        
+        /// Snackbar shown for error messages with retry button.
+        public let errorSnackbar: ErrorSnackbarTheme
+        
+        /// Product information bar with name, brand, and optional prices.
+        public let productBar: ProductBarTheme
+        
+        /// "Powered By Aiuta" label styling.
         ///
         /// - Note: In accordance with your agreement with Aiuta, the `powerBar` may be hidden
         ///   based on the subscription details retrieved from the Aiuta backend. However, to
@@ -80,16 +60,45 @@ extension Aiuta.Configuration.UserInterface {
         ///   the "Powered By Aiuta" `powerBar` will *NOT* be displayed by default until the
         ///   subscription details are successfully loaded and the agreement explicitly allows
         ///   its display.
-        case custom(color: ColorTheme = .aiuta(scheme: .light),
-                    label: LabelTheme = .default,
-                    image: ImageTheme = .default,
-                    button: ButtonTheme = .default,
-                    pageBar: PageBarTheme = .default,
-                    bottomSheet: BottomSheetTheme = .default,
-                    activityIndicator: ActivityIndicatorTheme = .default,
-                    selectionSnackbar: SelectionSnackbarTheme = .default,
-                    errorSnackbar: ErrorSnackbarTheme = .default,
-                    productBar: ProductBarTheme = .default,
-                    powerBar: PowerBarTheme = .default)
+        public let powerBar: PowerBarTheme
+        
+        /// Creates a fully customizable theme.
+        /// https://docs.aiuta.com/sdk/developer/configuration/ui/theme/
+        ///
+        /// - Parameters:
+        ///   - color: Color palette for backgrounds, text, borders, and accent colors.
+        ///   - label: Typography styles for text labels.
+        ///   - image: Shapes and error icons for image views.
+        ///   - button: Typography and shapes for buttons.
+        ///   - pageBar: Navigation bar with page title, back/close buttons.
+        ///   - bottomSheet: Bottom sheet appearance with grabber and delimiters.
+        ///   - activityIndicator: Loading indicator icons, colors, and animation timing.
+        ///   - selectionSnackbar: Snackbar shown when selecting multiple items.
+        ///   - errorSnackbar: Snackbar shown for error messages with retry button.
+        ///   - productBar: Product information bar with name, brand, and optional prices.
+        ///   - powerBar: "Powered By Aiuta" label styling.
+        public init(color: ColorTheme,
+                    label: LabelTheme,
+                    image: ImageTheme,
+                    button: ButtonTheme,
+                    pageBar: PageBarTheme,
+                    bottomSheet: BottomSheetTheme,
+                    activityIndicator: ActivityIndicatorTheme,
+                    selectionSnackbar: SelectionSnackbarTheme,
+                    errorSnackbar: ErrorSnackbarTheme,
+                    productBar: ProductBarTheme,
+                    powerBar: PowerBarTheme) {
+            self.color = color
+            self.label = label
+            self.image = image
+            self.button = button
+            self.pageBar = pageBar
+            self.bottomSheet = bottomSheet
+            self.activityIndicator = activityIndicator
+            self.selectionSnackbar = selectionSnackbar
+            self.errorSnackbar = errorSnackbar
+            self.productBar = productBar
+            self.powerBar = powerBar
+        }
     }
 }

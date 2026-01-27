@@ -15,54 +15,35 @@
 import UIKit
 
 extension Aiuta.Configuration.Features.TryOn {
-    /// Configures the "Continue with Other Photo" functionality for the TryOn
-    /// feature. You can use the default settings or customize the icons used
-    /// for this functionality.
-    public enum ContinueWithOtherPhoto {
-        /// Use the default configuration for the "Continue with Other Photo"
-        /// functionality.
-        case `default`
-
-        /// Use a custom configuration for the "Continue with Other Photo"
-        /// functionality.
+    /// "Continue with Other Photo" functionality configuration.
+    public struct ContinueWithOtherPhoto: Sendable {
+        /// Icons for the "Continue with Other Photo" action.
+        public let icon: Icons
+        
+        /// Creates a "Continue with Other Photo" configuration.
         ///
         /// - Parameters:
-        ///   - icon: Custom icons for the "Continue with Other Photo" action.
-        case custom(icon: Icons)
+        ///   - icon: Icons for the "Continue with Other Photo" action.
+        public init(icon: Icons) {
+            self.icon = icon
+        }
     }
 }
 
 // MARK: - Icons
 
 extension Aiuta.Configuration.Features.TryOn.ContinueWithOtherPhoto {
-    /// Defines the icons used for the "Continue with Other Photo" functionality.
-    /// You can use the default icons, provide custom ones, or implement a custom
-    /// provider to manage the icons.
-    public enum Icons {
-        /// Use the default icons for the "Continue with Other Photo" functionality.
-        case builtIn
-
-        /// Specify custom icons for the "Continue with Other Photo" functionality.
+    /// Icons for the "Continue with Other Photo" functionality.
+    public struct Icons: Sendable {
+        /// Icon for the "Change Photo" action.
+        public let changePhoto24: UIImage
+        
+        /// Creates custom icons.
         ///
         /// - Parameters:
-        ///   - changePhoto24: The icon for the "Change Photo" action.
-        case custom(changePhoto24: UIImage)
-
-        /// Use a custom implementation to manage the icons for the "Continue
-        /// with Other Photo" functionality.
-        ///
-        /// - Parameters:
-        ///   - provider: An object that conforms to the `Provider` protocol.
-        case provider(Provider)
-    }
-}
-
-extension Aiuta.Configuration.Features.TryOn.ContinueWithOtherPhoto.Icons {
-    /// A protocol for managing the icons used in the "Continue with Other Photo"
-    /// functionality. You can implement this protocol to define the icon for
-    /// the "Change Photo" action.
-    public protocol Provider {
-        /// The icon for the "Change Photo" action.
-        var changePhoto24: UIImage { get }
+        ///   - changePhoto24: Icon for the "Change Photo" action.
+        public init(changePhoto24: UIImage) {
+            self.changePhoto24 = changePhoto24
+        }
     }
 }

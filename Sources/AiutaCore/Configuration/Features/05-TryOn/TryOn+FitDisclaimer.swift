@@ -15,117 +15,95 @@
 import UIKit
 
 extension Aiuta.Configuration.Features.TryOn {
-    /// Configures the fit disclaimer for the TryOn feature. This allows you to
-    /// use default settings or customize the text and icons displayed in the
-    /// fit disclaimer.
-    public enum FitDisclaimer {
-        /// Use the default configuration for the fit disclaimer.
-        case `default`
-
-        /// Disable the fit disclaimer.
-        case none
-
-        /// Use a custom configuration for the fit disclaimer.
+    /// Fit disclaimer configuration for the TryOn feature.
+    public struct FitDisclaimer: Sendable {
+        /// Text content for the fit disclaimer.
+        public let strings: Strings
+        
+        /// Typography for the fit disclaimer.
+        public let typography: Typography
+        
+        /// Icons for the fit disclaimer.
+        public let icons: Icons
+        
+        /// Creates a fit disclaimer configuration.
         ///
         /// - Parameters:
-        ///   - strings: Custom text content for the fit disclaimer.
-        ///   - typography: Custom typography for the fit disclaimer.
-        ///   - icons: Custom icons for the fit disclaimer.
-        case custom(strings: Strings,
+        ///   - strings: Text content for the fit disclaimer.
+        ///   - typography: Typography for the fit disclaimer.
+        ///   - icons: Icons for the fit disclaimer.
+        public init(strings: Strings,
                     typography: Typography,
-                    icons: Icons)
+                    icons: Icons) {
+            self.strings = strings
+            self.typography = typography
+            self.icons = icons
+        }
     }
 }
 
 // MARK: - Strings
 
 extension Aiuta.Configuration.Features.TryOn.FitDisclaimer {
-    /// Defines the text content used in the fit disclaimer. You can use the
-    /// default text, provide custom strings, or implement a provider to manage
-    /// the text content.
-    public enum Strings {
-        /// Use the default text content for the fit disclaimer.
-        case `default`
-
-        /// Specify custom text content for the fit disclaimer.
+    /// Text content for the fit disclaimer.
+    public struct Strings: Sendable {
+        /// Title displayed in the fit disclaimer.
+        public let fitDisclaimerTitle: String
+        
+        /// Description text in the fit disclaimer.
+        public let fitDisclaimerDescription: String
+        
+        /// Label for the close button.
+        public let fitDisclaimerCloseButton: String
+        
+        /// Creates custom text content.
         ///
         /// - Parameters:
-        ///   - fitDisclaimerTitle: The title displayed in the fit disclaimer.
-        ///   - fitDisclaimerDescription: The description text in the fit disclaimer.
-        ///   - fitDisclaimerCloseButton: The label for the close button.
-        case custom(fitDisclaimerTitle: String,
+        ///   - fitDisclaimerTitle: Title displayed in the fit disclaimer.
+        ///   - fitDisclaimerDescription: Description text in the fit disclaimer.
+        ///   - fitDisclaimerCloseButton: Label for the close button.
+        public init(fitDisclaimerTitle: String,
                     fitDisclaimerDescription: String,
-                    fitDisclaimerCloseButton: String)
-
-        /// Use a provider to manage the text content for the fit disclaimer.
-        ///
-        /// - Parameters:
-        ///   - provider: An object that implements the `Provider` protocol.
-        case provider(Provider)
-    }
-}
-
-extension Aiuta.Configuration.Features.TryOn.FitDisclaimer.Strings {
-    /// A protocol for managing the text content of the fit disclaimer. Implement
-    /// this protocol to define the title, description, and close button text.
-    public protocol Provider {
-        /// The title displayed in the fit disclaimer.
-        var fitDisclaimerTitle: String { get }
-
-        /// The description text in the fit disclaimer.
-        var fitDisclaimerDescription: String { get }
-
-        /// The label for the close button in the fit disclaimer.
-        var fitDisclaimerCloseButton: String { get }
+                    fitDisclaimerCloseButton: String) {
+            self.fitDisclaimerTitle = fitDisclaimerTitle
+            self.fitDisclaimerDescription = fitDisclaimerDescription
+            self.fitDisclaimerCloseButton = fitDisclaimerCloseButton
+        }
     }
 }
 
 // MARK: - Typography
 
 extension Aiuta.Configuration.Features.TryOn.FitDisclaimer {
-    public enum Typography {
-        case `default`
-
-        case custom(disclaimer: Aiuta.Configuration.TextStyle)
-
-        case provider(Provider)
-    }
-}
-
-extension Aiuta.Configuration.Features.TryOn.FitDisclaimer.Typography {
-    public protocol Provider {
-        var disclaimer: Aiuta.Configuration.TextStyle { get }
+    /// Typography for the fit disclaimer.
+    public struct Typography: Sendable {
+        /// Text style for the disclaimer text.
+        public let disclaimer: Aiuta.Configuration.TextStyle
+        
+        /// Creates custom typography.
+        ///
+        /// - Parameters:
+        ///   - disclaimer: Text style for the disclaimer text.
+        public init(disclaimer: Aiuta.Configuration.TextStyle) {
+            self.disclaimer = disclaimer
+        }
     }
 }
 
 // MARK: - Icons
 
 extension Aiuta.Configuration.Features.TryOn.FitDisclaimer {
-    /// Defines the icons used in the fit disclaimer. You can use no icons, provide
-    /// custom ones, or implement a provider to manage the icons.
-    public enum Icons {
-        /// Do not display any icons in the fit disclaimer.
-        case none
-
-        /// Specify custom icons for the fit disclaimer.
+    /// Icons for the fit disclaimer.
+    public struct Icons: Sendable {
+        /// Icon displayed in the fit disclaimer.
+        public let info20: UIImage?
+        
+        /// Creates custom icons.
         ///
         /// - Parameters:
-        ///   - info20: The icon displayed in the fit disclaimer.
-        case custom(info20: UIImage)
-
-        /// Use a provider to manage the icons for the fit disclaimer.
-        ///
-        /// - Parameters:
-        ///   - provider: An object that implements the `Provider` protocol.
-        case provider(Provider)
-    }
-}
-
-extension Aiuta.Configuration.Features.TryOn.FitDisclaimer.Icons {
-    /// A protocol for managing the icons used in the fit disclaimer. Implement
-    /// this protocol to define the icons displayed in the fit disclaimer.
-    public protocol Provider {
-        /// The icon displayed in the fit disclaimer.
-        var info20: UIImage? { get }
+        ///   - info20: Icon displayed in the fit disclaimer.
+        public init(info20: UIImage?) {
+            self.info20 = info20
+        }
     }
 }

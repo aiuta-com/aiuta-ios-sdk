@@ -15,102 +15,65 @@
 import UIKit
 
 extension Aiuta.Configuration.UserInterface {
-    /// Configures the image theme for the SDK.
-    ///
-    /// This setting allows you to use the default image theme or define a custom one
-    /// to better align with your application's design and visual identity.
-    public enum ImageTheme {
-        /// Use the default image theme provided by the SDK.
-        case `default`
-
-        /// Define a custom image theme.
+    /// Image theme configuration.
+    public struct ImageTheme: Sendable {
+        /// Corner radius and shape styles for image containers.
+        public let shapes: Shapes
+        
+        /// Error icon displayed when an image fails to load.
+        public let icons: Icons
+        
+        /// Creates a custom image theme.
         ///
         /// - Parameters:
-        ///   - shapes: Specifies the shapes to use for image views.
-        ///   - icons: Specifies the icons to use for image placeholders.
-        case custom(shapes: Shapes = .default,
-                    icons: Icons = .builtIn)
+        ///   - shapes: Corner radius and shape styles for image containers.
+        ///   - icons: Error icon displayed when an image fails to load.
+        public init(shapes: Shapes,
+                    icons: Icons) {
+            self.shapes = shapes
+            self.icons = icons
+        }
     }
 }
 
 // MARK: - Shapes
 
 extension Aiuta.Configuration.UserInterface.ImageTheme {
-    /// Configures the shapes for image views.
-    ///
-    /// This setting allows you to use predefined shapes or define custom ones
-    /// to match your application's design style.
-    public enum Shapes {
-        /// Use the default continuous shapes provided by the SDK.
-        case `default`
-
-        /// Use smaller continuous shapes for image views.
-        case small
-
-        /// Define custom shapes for image views.
+    /// Shape styles for image containers.
+    public struct Shapes: Sendable {
+        /// Shape style for large image views.
+        public let imageL: Aiuta.Configuration.Shape
+        
+        /// Shape style for medium and small image views.
+        public let imageM: Aiuta.Configuration.Shape
+        
+        /// Creates custom image shapes.
         ///
         /// - Parameters:
-        ///   - imageL: The shape to use for large image views.
-        ///   - imageM: The shape to use for medium and small image views.
-        case custom(imageL: Aiuta.Configuration.Shape,
-                    imageM: Aiuta.Configuration.Shape)
-
-        /// Use a custom shapes provider.
-        ///
-        /// - Parameters:
-        ///   - Provider: A provider that supplies the custom shapes.
-        case provider(Provider)
-    }
-}
-
-extension Aiuta.Configuration.UserInterface.ImageTheme.Shapes {
-    /// A protocol for providing custom shapes for image themes.
-    ///
-    /// This protocol defines the required shapes for large and medium/small image views.
-    /// - Note: This protocol is intended for internal use. Instead, use one of the
-    ///         predefined shape options or provide a custom implementation.
-    public protocol Provider {
-        /// The shape to use for large image views.
-        var imageL: Aiuta.Configuration.Shape { get }
-
-        /// The shape to use for medium and small image views.
-        var imageM: Aiuta.Configuration.Shape { get }
+        ///   - imageL: Shape style for large image views.
+        ///   - imageM: Shape style for medium and small image views.
+        public init(imageL: Aiuta.Configuration.Shape,
+                    imageM: Aiuta.Configuration.Shape) {
+            self.imageL = imageL
+            self.imageM = imageM
+        }
     }
 }
 
 // MARK: - Icons
 
 extension Aiuta.Configuration.UserInterface.ImageTheme {
-    /// Configures the icons for image placeholders.
-    ///
-    /// This setting allows you to use the default icons or define custom ones
-    /// to better align with your application's visual identity.
-    public enum Icons {
-        /// Use the default icons built into the SDK.
-        case builtIn
-
-        /// Define custom icons for image placeholders.
+    /// Error icon for failed image loads.
+    public struct Icons: Sendable {
+        /// Icon (36x36) displayed when an image cannot be loaded.
+        public let imageError36: UIImage
+        
+        /// Creates custom icons for image placeholders.
         ///
         /// - Parameters:
         ///   - imageError36: The icon to display when an image cannot be loaded.
-        case custom(imageError36: UIImage)
-
-        /// Use a custom icons provider.
-        ///
-        /// - Parameters:
-        ///   - Provider: A provider that supplies the custom icons.
-        case provider(Provider)
-    }
-}
-
-extension Aiuta.Configuration.UserInterface.ImageTheme.Icons {
-    /// A protocol for providing custom icons for image themes.
-    ///
-    /// This protocol defines the required icons for image placeholders.
-    /// - Note: This protocol is intended for internal use.
-    ///         Use one of `Aiuta.Configuration.Icons` typealias instead.
-    public protocol Provider {
-        /// The icon to display when an image cannot be loaded.
-        var imageError36: UIImage { get }
+        public init(imageError36: UIImage) {
+            self.imageError36 = imageError36
+        }
     }
 }

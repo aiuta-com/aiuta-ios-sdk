@@ -20,7 +20,7 @@ extension Aiuta.Configuration {
     /// Use these values to describe how views such as buttons, containers, or badges should be
     /// rounded or left square. Shapes do not perform rendering by themselves; they simply express
     /// intent that can be applied by view builders or theming layers.
-    public enum Shape {
+    public enum Shape: Sendable {
         /// A continuous rounded shape.
         ///
         /// - Parameter radius: Corner radius in points. Larger values produce more rounded corners.

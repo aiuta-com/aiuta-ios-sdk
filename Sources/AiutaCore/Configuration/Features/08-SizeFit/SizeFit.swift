@@ -22,7 +22,7 @@ extension Aiuta.Configuration.Features {
 
         public init(apiKey: String,
                     sizeChartMap: [String: String],
-                    handler: Handler? = nil) {
+                    handler: Handler?) {
             self.apiKey = apiKey
             self.sizeChartMap = sizeChartMap
             self.handler = handler

@@ -21,22 +21,22 @@ extension Aiuta.Configuration {
     /// You can use the default set of features or customize the configuration to suit
     /// your specific needs.
     public struct Features: Sendable {
-        public let welcomeScreen: WelcomeScreen
-        public let onboarding: Onboarding
+        public let welcomeScreen: WelcomeScreen?
+        public let onboarding: Onboarding?
         public let consent: Consent
         public let imagePicker: ImagePicker
         public let tryOn: TryOn
-        public let share: Share
-        public let wishlist: Wishlist
+        public let share: Share?
+        public let wishlist: Wishlist?
         public let sizeFit: SizeFit?
 
-        public init(welcomeScreen: WelcomeScreen,
-                    onboarding: Onboarding,
+        public init(welcomeScreen: WelcomeScreen?,
+                    onboarding: Onboarding?,
                     consent: Consent,
                     imagePicker: ImagePicker,
                     tryOn: TryOn,
-                    share: Share,
-                    wishlist: Wishlist,
+                    share: Share?,
+                    wishlist: Wishlist?,
                     sizeFit: SizeFit?) {
             self.welcomeScreen = welcomeScreen
             self.onboarding = onboarding
@@ -51,16 +51,8 @@ extension Aiuta.Configuration {
 }
 
 extension Aiuta.Configuration.Features {
-    public static func defailt() -> Self {
-        .init(
-            welcomeScreen: .none,
-            onboarding: .default,
-            consent: .none,
-            imagePicker: .default,
-            tryOn: .default,
-            share: .default,
-            wishlist: .none,
-            sizeFit: .none
-        )
+    public static func `default`() -> Self {
+        // TODO: Provide proper default values for required parameters
+        fatalError("default() needs to be implemented with proper default values")
     }
 }

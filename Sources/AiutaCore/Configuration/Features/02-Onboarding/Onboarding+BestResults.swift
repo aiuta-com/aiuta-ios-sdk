@@ -1,7 +1,7 @@
 // Copyright 2024 Aiuta USA, Inc
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
-// You may not use this file except in compliance with the License.
+// you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
 //      http://www.apache.org/licenses/LICENSE-2.0
@@ -15,148 +15,137 @@
 import UIKit
 
 extension Aiuta.Configuration.Features.Onboarding {
-    /// Configures the BestResults page for onboarding.
+    /// "Best Results" page configuration for onboarding.
     ///
     /// The BestResults page provides guidance to help users achieve optimal
-    /// results when using the Try-On feature. You can disable this page or
-    /// customize it to better fit your app's requirements.
-    public enum BestResults {
-        /// Disables the BestResults page.
-        ///
-        /// This is recommended since best result samples are already included
-        /// in the Image Picker.
-        case none
-
-        /// Enables the BestResults page with a custom configuration.
+    /// results when using the Try-On feature.
+    ///
+    /// **Note:** It's recommended to skip this page (set to `nil`) since best result
+    /// samples are already included in the Image Picker.
+    public struct BestResults: Sendable {
+        /// Images displayed on the BestResults page.
+        public let images: Images
+        
+        /// Icons used on the BestResults page.
+        public let icons: Icons
+        
+        /// Text content for the BestResults page.
+        public let strings: Strings
+        
+        /// Additional settings for the BestResults page.
+        public let toggles: Toggles
+        
+        /// Creates a custom BestResults page configuration.
         ///
         /// - Parameters:
-        ///   - images: Defines the images displayed on the BestResults page.
-        ///   - icons: Defines the icons used on the BestResults page.
-        ///   - strings: Defines the text content for the BestResults page.
-        ///   - toggles: Configures additional settings for the BestResults page.
-        case custom(images: Images,
+        ///   - images: Images displayed on the BestResults page.
+        ///   - icons: Icons used on the BestResults page.
+        ///   - strings: Text content for the BestResults page.
+        ///   - toggles: Additional settings for the BestResults page.
+        public init(images: Images,
                     icons: Icons,
                     strings: Strings,
-                    toggles: Toggles = .default)
+                    toggles: Toggles) {
+            self.images = images
+            self.icons = icons
+            self.strings = strings
+            self.toggles = toggles
+        }
     }
 }
 
 // MARK: - Images
 
 extension Aiuta.Configuration.Features.Onboarding.BestResults {
-    /// Configures the images used on the BestResults page.
-    public enum Images {
-        /// Uses custom images for the BestResults page.
+    /// Images used on the BestResults page.
+    public struct Images: Sendable {
+        /// List of exactly 2 images representing good examples for achieving the best results.
+        public let onboardingBestResultsGood: [UIImage]
+        
+        /// List of exactly 2 images representing bad examples to avoid.
+        public let onboardingBestResultsBad: [UIImage]
+        
+        /// Creates custom images.
         ///
         /// - Parameters:
-        ///   - onboardingBestResultsGood: A list of exactly 2 images representing
-        ///                                good examples for achieving the best results.
-        ///   - onboardingBestResultsBad: A list of exactly 2 images representing
-        ///                               bad examples to avoid.
-        case custom(onboardingBestResultsGood: [UIImage],
-                    onboardingBestResultsBad: [UIImage])
-
-        /// Uses a custom image provider for the BestResults page.
-        ///
-        /// - Parameters:
-        ///   - provider: Supplies the custom images for the page.
-        case provider(Provider)
-    }
-}
-
-extension Aiuta.Configuration.Features.Onboarding.BestResults.Images {
-    public protocol Provider {
-        /// A list of exactly 2 images representing good examples.
-        var onboardingBestResultsGood: [UIImage] { get }
-        /// A list of exactly 2 images representing bad examples.
-        var onboardingBestResultsBad: [UIImage] { get }
+        ///   - onboardingBestResultsGood: List of exactly 2 images representing good examples for achieving the best results.
+        ///   - onboardingBestResultsBad: List of exactly 2 images representing bad examples to avoid.
+        public init(onboardingBestResultsGood: [UIImage],
+                    onboardingBestResultsBad: [UIImage]) {
+            self.onboardingBestResultsGood = onboardingBestResultsGood
+            self.onboardingBestResultsBad = onboardingBestResultsBad
+        }
     }
 }
 
 // MARK: - Icons
 
 extension Aiuta.Configuration.Features.Onboarding.BestResults {
-    /// Configures the icons used on the BestResults page.
-    public enum Icons {
-        /// Uses custom icons for the BestResults page.
+    /// Icons used on the BestResults page.
+    public struct Icons: Sendable {
+        /// Icon for good examples (24x24).
+        public let onboardingBestResultsGood24: UIImage
+        
+        /// Icon for bad examples (24x24).
+        public let onboardingBestResultsBad24: UIImage
+        
+        /// Creates custom icons.
         ///
         /// - Parameters:
-        ///   - onboardingBestResultsGood24: An icon for good examples.
-        ///   - onboardingBestResultsBad24: An icon for bad examples.
-        case custom(onboardingBestResultsGood24: UIImage,
-                    onboardingBestResultsBad24: UIImage)
-
-        /// Uses a custom icon provider for the BestResults page.
-        ///
-        /// - Parameters:
-        ///   - provider: Supplies the custom icons for the page.
-        case provider(Provider)
-    }
-}
-
-extension Aiuta.Configuration.Features.Onboarding.BestResults.Icons {
-    public protocol Provider {
-        /// An icon for good examples.
-        var onboardingBestResultsGood24: UIImage { get }
-        /// An icon for bad examples.
-        var onboardingBestResultsBad24: UIImage { get }
+        ///   - onboardingBestResultsGood24: Icon for good examples (24x24).
+        ///   - onboardingBestResultsBad24: Icon for bad examples (24x24).
+        public init(onboardingBestResultsGood24: UIImage,
+                    onboardingBestResultsBad24: UIImage) {
+            self.onboardingBestResultsGood24 = onboardingBestResultsGood24
+            self.onboardingBestResultsBad24 = onboardingBestResultsBad24
+        }
     }
 }
 
 // MARK: - Strings
 
 extension Aiuta.Configuration.Features.Onboarding.BestResults {
-    /// Configures the text content for the BestResults page.
-    public enum Strings {
-        /// Uses custom text content for the BestResults page.
+    /// Text content for the BestResults page.
+    public struct Strings: Sendable {
+        /// Optional title for the page (displayed at the top).
+        public let onboardingBestResultsPageTitle: String?
+        
+        /// Title displayed below the best results samples.
+        public let onboardingBestResultsTitle: String
+        
+        /// Description explaining how to achieve the best results.
+        public let onboardingBestResultsDescription: String
+        
+        /// Creates custom text content.
         ///
         /// - Parameters:
-        ///   - onboardingBestResultsPageTitle: An optional title for the page.
-        ///   - onboardingBestResultsTitle: The title displayed below the best
-        ///     results samples.
-        ///   - onboardingBestResultsDescription: A description explaining how
-        ///     to achieve the best results.
-        case custom(onboardingBestResultsPageTitle: String?,
+        ///   - onboardingBestResultsPageTitle: Optional title for the page (displayed at the top).
+        ///   - onboardingBestResultsTitle: Title displayed below the best results samples.
+        ///   - onboardingBestResultsDescription: Description explaining how to achieve the best results.
+        public init(onboardingBestResultsPageTitle: String?,
                     onboardingBestResultsTitle: String,
-                    onboardingBestResultsDescription: String)
-
-        /// Uses a custom strings provider for the BestResults page.
-        ///
-        /// - Parameters:
-        ///   - provider: Supplies the custom text content for the page.
-        case provider(Provider)
-    }
-}
-
-extension Aiuta.Configuration.Features.Onboarding.BestResults.Strings {
-    /// Supplies custom text content for the BestResults page.
-    ///
-    /// This protocol allows you to define the text displayed on the page,
-    /// including titles and descriptions.
-    public protocol Provider {
-        /// An optional title for the BestResults page.
-        var onboardingBestResultsPageTitle: String? { get }
-
-        /// The title displayed below the best results samples.
-        var onboardingBestResultsTitle: String { get }
-
-        /// A description explaining how to achieve the best results.
-        var onboardingBestResultsDescription: String { get }
+                    onboardingBestResultsDescription: String) {
+            self.onboardingBestResultsPageTitle = onboardingBestResultsPageTitle
+            self.onboardingBestResultsTitle = onboardingBestResultsTitle
+            self.onboardingBestResultsDescription = onboardingBestResultsDescription
+        }
     }
 }
 
 // MARK: - Toggles
 
 extension Aiuta.Configuration.Features.Onboarding.BestResults {
-    /// Configures additional settings for the BestResults page.
-    public enum Toggles {
-        /// Uses the default settings for the BestResults page.
-        case `default`
-
-        /// Uses custom settings for the BestResults page.
+    /// Additional settings for the BestResults page.
+    public struct Toggles: Sendable {
+        /// Whether to reduce shadows on the page.
+        public let reduceShadows: Bool
+        
+        /// Creates custom settings.
         ///
         /// - Parameters:
-        ///   - reduceShadows: An optional setting to reduce shadows on the page.
-        case custom(reduceShadows: Bool)
+        ///   - reduceShadows: Whether to reduce shadows on the page.
+        public init(reduceShadows: Bool) {
+            self.reduceShadows = reduceShadows
+        }
     }
 }

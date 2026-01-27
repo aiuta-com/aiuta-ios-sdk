@@ -15,58 +15,41 @@
 import UIKit
 
 extension Aiuta.Configuration.Features.TryOn {
-    /// Configures the input validation for the TryOn feature. You can use the
-    /// default validation settings or provide custom strings to customize the
-    /// validation messages displayed to users.
-    public enum InputValidation {
-        /// Use the default input validation settings.
-        case `default`
-
-        /// Use a custom configuration for input validation.
+    /// Input validation configuration for the TryOn feature.
+    public struct InputValidation: Sendable {
+        /// Text content for input validation messages.
+        public let strings: Strings
+        
+        /// Creates an input validation configuration.
         ///
         /// - Parameters:
-        ///   - strings: Custom text content for input validation messages.
-        case custom(strings: Strings)
+        ///   - strings: Text content for input validation messages.
+        public init(strings: Strings) {
+            self.strings = strings
+        }
     }
 }
 
 // MARK: - Strings
 
 extension Aiuta.Configuration.Features.TryOn.InputValidation {
-    /// Defines the text content used for input validation in the TryOn feature.
-    /// You can use the default text, provide custom strings, or supply them
-    /// through a provider.
-    public enum Strings {
-        /// Use the default text content for input validation.
-        case `default`
-
-        /// Specify custom text content for input validation.
+    /// Text content for input validation messages.
+    public struct Strings: Sendable {
+        /// Message displayed when the input image is invalid.
+        public let invalidInputImageDescription: String
+        
+        /// Label for the button allowing users to change the photo.
+        public let invalidInputImageChangePhotoButton: String
+        
+        /// Creates custom text content.
         ///
         /// - Parameters:
-        ///   - invalidInputImageDescription: The message displayed when the
-        ///     input image is invalid.
-        ///   - invalidInputImageChangePhotoButton: The label for the button
-        ///     allowing users to change the photo.
-        case custom(invalidInputImageDescription: String,
-                    invalidInputImageChangePhotoButton: String)
-
-        /// Use a custom provider to supply text content.
-        ///
-        /// - Parameters:
-        ///   - provider: A provider that supplies the custom text content.
-        case provider(Provider)
-    }
-}
-
-extension Aiuta.Configuration.Features.TryOn.InputValidation.Strings {
-    /// A protocol for supplying custom text content for input validation.
-    /// Implement this protocol to provide messages and button
-    /// labels for invalid input scenarios.
-    public protocol Provider {
-        /// The message displayed when the input image is invalid.
-        var invalidInputImageDescription: String { get }
-
-        /// The label for the button allowing users to change the photo.
-        var invalidInputImageChangePhotoButton: String { get }
+        ///   - invalidInputImageDescription: Message displayed when the input image is invalid.
+        ///   - invalidInputImageChangePhotoButton: Label for the button allowing users to change the photo.
+        public init(invalidInputImageDescription: String,
+                    invalidInputImageChangePhotoButton: String) {
+            self.invalidInputImageDescription = invalidInputImageDescription
+            self.invalidInputImageChangePhotoButton = invalidInputImageChangePhotoButton
+        }
     }
 }

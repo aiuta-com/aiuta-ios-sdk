@@ -21,7 +21,7 @@ extension Aiuta.Configuration.UserInterface {
     /// backgrounds or themes. The styles are designed to ensure that the
     /// components remain visually appealing and accessible across various
     /// backgrounds, such as light and dark modes.
-    public enum ComponentStyle {
+    public enum ComponentStyle: Sendable {
         /// `brand` background color
         /// `onDark` foreground color for labels and icons
         case brand
@@ -39,7 +39,7 @@ extension Aiuta.Configuration.UserInterface {
     }
     
     /// Contrast styles for components that adapt to different backgrounds.
-    public enum ContrastStyle {
+    public enum ContrastStyle: Sendable {
         
         /// `onLight` background color
         /// `onDark` foreground color for labels and icons

@@ -15,101 +15,98 @@
 import UIKit
 
 extension Aiuta.Configuration.Features {
-    /// Represents the configuration for the image picker feature. This feature
-    /// allows users to select images from the photo library, take new photos,
+    /// Image picker feature configuration.
+    ///
+    /// Allows users to select images from the photo library, take new photos,
     /// use predefined models, reuse previously uploaded images, and more.
-    public enum ImagePicker {
-        /// Uses the default configuration for the image picker.
-        case `default`
-
-        /// Allows customization of the image picker configuration.
+    public struct ImagePicker: Sendable {
+        /// Camera functionality configuration. Set to `nil` to disable.
+        public let camera: Camera?
+        
+        /// Photo gallery configuration.
+        public let photoGallery: Gallery
+        
+        /// Predefined models configuration. Set to `nil` to disable.
+        public let predefinedModels: PredefinedModels?
+        
+        /// Uploads history configuration. Set to `nil` to disable.
+        public let uploadsHistory: UploadsHistory?
+        
+        /// Example images displayed in the picker.
+        public let images: Images
+        
+        /// Text content for the image picker.
+        public let strings: Strings
+        
+        /// Creates a custom image picker configuration.
         ///
         /// - Parameters:
-        ///   - camera: Configuration for the camera functionality.
-        ///   - gallery: Configuration for the photo gallery.
-        ///   - predefinedModel: Configuration for predefined models.
-        ///   - uploadsHistory: Configuration for managing upload history.
-        ///   - images: Custom images to be used in the image picker.
-        ///   - strings: Custom text content for the image picker.
-        case custom(camera: Camera = .default,
-                    photoGallery: Gallery = .default,
-                    predefinedModels: PredefinedModels = .default,
-                    uploadsHistory: UploadsHistory = .default,
-                    images: Images = .builtIn,
-                    strings: Strings = .default)
+        ///   - camera: Camera functionality configuration. Set to `nil` to disable.
+        ///   - photoGallery: Photo gallery configuration.
+        ///   - predefinedModels: Predefined models configuration. Set to `nil` to disable.
+        ///   - uploadsHistory: Uploads history configuration. Set to `nil` to disable.
+        ///   - images: Example images displayed in the picker.
+        ///   - strings: Text content for the image picker.
+        public init(camera: Camera?,
+                    photoGallery: Gallery,
+                    predefinedModels: PredefinedModels?,
+                    uploadsHistory: UploadsHistory?,
+                    images: Images,
+                    strings: Strings) {
+            self.camera = camera
+            self.photoGallery = photoGallery
+            self.predefinedModels = predefinedModels
+            self.uploadsHistory = uploadsHistory
+            self.images = images
+            self.strings = strings
+        }
     }
 }
 
 // MARK: - Images
 
 extension Aiuta.Configuration.Features.ImagePicker {
-    /// Defines the images used in the image picker. You can use built-in images,
-    /// provide custom images, or supply images dynamically through a provider.
-    public enum Images {
-        /// Uses the default set of images provided by the SDK.
-        case builtIn
-
-        /// Allows you to specify custom images for the image picker.
+    /// Example images displayed in the picker.
+    public struct Images: Sendable {
+        /// Collection of exactly 2 example images to display in the picker.
+        public let imagePickerExamples: [UIImage]
+        
+        /// Creates custom images.
         ///
         /// - Parameters:
-        ///   - imagePickerExamples: A collection of the exactly 2 example images to display in the picker.
-        case custom(imagePickerExamples: [UIImage])
-
-        /// Allows you to use a custom provider to supply images.
-        ///
-        /// - Parameters:
-        ///   - Provider: A provider that supplies the custom images.
-        case provider(Provider)
-    }
-}
-
-extension Aiuta.Configuration.Features.ImagePicker.Images {
-    /// A protocol for supplying images to the image picker. Implement this
-    /// protocol to provide a custom set of images.
-    public protocol Provider {
-        /// A collection of the exactly 2 example images to display in the image picker.
-        var imagePickerExamples: [UIImage] { get }
+        ///   - imagePickerExamples: Collection of exactly 2 example images to display in the picker.
+        public init(imagePickerExamples: [UIImage]) {
+            self.imagePickerExamples = imagePickerExamples
+        }
     }
 }
 
 // MARK: - Strings
 
 extension Aiuta.Configuration.Features.ImagePicker {
-    /// Defines the text content used in the image picker. You can use default
-    /// text, provide custom strings, or supply text dynamically through a provider.
-    public enum Strings {
-        /// Uses the default text content provided by the SDK.
-        case `default`
-
-        /// Allows you to specify custom text content for the image picker.
+    /// Text content for the image picker.
+    public struct Strings: Sendable {
+        /// Title displayed at the top of the image picker.
+        public let imagePickerTitle: String
+        
+        /// Description displayed when the image picker is empty.
+        public let imagePickerDescription: String
+        
+        /// Label for the button used to upload a photo.
+        public let imagePickerButtonUploadPhoto: String
+        
+        /// Creates custom text content.
         ///
         /// - Parameters:
-        ///   - imagePickerTitle: The title displayed at the top of the image picker.
-        ///   - imagePickerDescription: A description displayed when the image picker is empty.
-        ///   - imagePickerButtonUploadPhoto: The label for the button used to upload a photo.
-        case custom(imagePickerTitle: String,
+        ///   - imagePickerTitle: Title displayed at the top of the image picker.
+        ///   - imagePickerDescription: Description displayed when the image picker is empty.
+        ///   - imagePickerButtonUploadPhoto: Label for the button used to upload a photo.
+        public init(imagePickerTitle: String,
                     imagePickerDescription: String,
-                    imagePickerButtonUploadPhoto: String)
-
-        /// Allows you to use a custom provider to supply text content dynamically.
-        ///
-        /// - Parameters:
-        ///   - provider: A provider that supplies the custom text content.
-        case provider(Provider)
-    }
-}
-
-extension Aiuta.Configuration.Features.ImagePicker.Strings {
-    /// A protocol for supplying custom text content to the image picker.
-    /// Implement this protocol to provide titles, descriptions, and button labels.
-    public protocol Provider {
-        /// The title displayed at the top of the image picker.
-        var imagePickerTitle: String { get }
-
-        /// A description displayed when the image picker is empty.
-        var imagePickerDescription: String { get }
-
-        /// The label for the button used to upload a photo.
-        var imagePickerButtonUploadPhoto: String { get }
+                    imagePickerButtonUploadPhoto: String) {
+            self.imagePickerTitle = imagePickerTitle
+            self.imagePickerDescription = imagePickerDescription
+            self.imagePickerButtonUploadPhoto = imagePickerButtonUploadPhoto
+        }
     }
 }

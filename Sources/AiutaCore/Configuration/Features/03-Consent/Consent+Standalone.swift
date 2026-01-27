@@ -15,160 +15,160 @@
 import UIKit
 
 extension Aiuta.Configuration.Features.Consent {
-    /// A namespace for standalone consent page options.
-    public enum Standalone {}
+    /// Configuration for standalone consent page.
+    public struct Standalone: Sendable {
+        /// Text content for the standalone consent screen.
+        public let strings: Strings
+        
+        /// Icons used in the standalone consent page.
+        public let icons: Icons
+        
+        /// Visual styles for the standalone consent screen.
+        public let styles: Styles
+        
+        /// Data provider for managing consent options.
+        public let data: ConsentProvider
+        
+        /// Creates a standalone consent configuration.
+        ///
+        /// - Parameters:
+        ///   - strings: Text content for the standalone consent screen.
+        ///   - icons: Icons used in the standalone consent page.
+        ///   - styles: Visual styles for the standalone consent screen.
+        ///   - data: Data provider for managing consent options.
+        public init(strings: Strings,
+                    icons: Icons,
+                    styles: Styles,
+                    data: ConsentProvider) {
+            self.strings = strings
+            self.icons = icons
+            self.styles = styles
+            self.data = data
+        }
+    }
 }
 
 // MARK: - Strings
 
 extension Aiuta.Configuration.Features.Consent.Standalone {
-    /// Defines the text content for the standalone consent screen.
-    ///
-    /// You can provide custom strings or use a provider to dynamically supply
-    /// the required text content.
-    public enum Strings {
-        /// Use custom strings for the consent page.
-        ///
-        /// - Parameters:
-        ///   - consentPageTitle: An optional title for the standalone consent page.
-        ///   - consentTitle: The main title displayed on the consent page.
-        ///   - consentDescriptionHtml: The HTML content describing the consent.
-        ///   - consentFooterHtml: An optional HTML footer for the consent page.
-        ///   - consentButtonAccept: The text for the "Accept" button.
-        ///   - consentButtonReject: Optional text for the "Reject" button. If `nil`,
-        ///     the button will not be shown or used in `standaloneOnboardingPage` mode.
-        case custom(consentPageTitle: String? = nil,
-                    consentTitle: String,
-                    consentDescriptionHtml: String,
-                    consentFooterHtml: String? = nil,
-                    consentButtonAccept: String,
-                    consentButtonReject: String? = nil)
-
-        /// Use a custom provider to supply the strings for the consent page.
-        ///
-        /// - Parameters:
-        ///   - provider: A provider that supplies the custom strings dynamically.
-        case provider(Provider)
-    }
-}
-
-extension Aiuta.Configuration.Features.Consent.Standalone.Strings {
-    /// Supplies custom strings for the standalone consent page.
-    ///
-    /// Implement this protocol to provide the required text content for the
-    /// consent page, including titles, descriptions, and button labels.
-    public protocol Provider {
-        /// An optional title for the standalone consent page.
-        var consentPageTitle: String? { get }
-
-        /// The main title displayed on the consent page.
-        var consentTitle: String { get }
-
-        /// The HTML content describing the consent.
-        var consentDescriptionHtml: String { get }
-
-        /// An optional HTML footer for the consent page.
-        var consentFooterHtml: String? { get }
-
-        /// The text for the "Accept" button.
-        var consentButtonAccept: String { get }
-
+    /// Text content for the standalone consent screen.
+    public struct Strings: Sendable {
+        /// Optional title for the standalone consent page.
+        public let consentPageTitle: String?
+        
+        /// Main title displayed on the consent page.
+        public let consentTitle: String
+        
+        /// HTML content describing the consent.
+        public let consentDescriptionHtml: String
+        
+        /// Optional HTML footer for the consent page.
+        public let consentFooterHtml: String?
+        
+        /// Text for the "Accept" button.
+        public let consentButtonAccept: String
+        
         /// Optional text for the "Reject" button. If `nil`, the button will not
         /// be shown or used in `standaloneOnboardingPage` mode.
-        var consentButtonReject: String? { get }
+        /// If `nil`, the button will not be shown or used in `standaloneOnboardingPage` mode.
+        public let consentButtonReject: String?
+        
+        /// Creates custom text content for the standalone consent page.
+        ///
+        /// - Parameters:
+        ///   - consentPageTitle: Optional title for the standalone consent page.
+        ///   - consentTitle: Main title displayed on the consent page.
+        ///   - consentDescriptionHtml: HTML content describing the consent.
+        ///   - consentFooterHtml: Optional HTML footer for the consent page.
+        ///   - consentButtonAccept: Text for the "Accept" button.
+        ///   - consentButtonReject: Optional text for the "Reject" button. 
+        ///         If `nil`, the button will not be shown 
+        ///         and used in `standaloneOnboardingPage` mode.
+        public init(consentPageTitle: String?,
+                    consentTitle: String,
+                    consentDescriptionHtml: String,
+                    consentFooterHtml: String?,
+                    consentButtonAccept: String,
+                    consentButtonReject: String?) {
+            self.consentPageTitle = consentPageTitle
+            self.consentTitle = consentTitle
+            self.consentDescriptionHtml = consentDescriptionHtml
+            self.consentFooterHtml = consentFooterHtml
+            self.consentButtonAccept = consentButtonAccept
+            self.consentButtonReject = consentButtonReject
+        }
     }
 }
 
 // MARK: - Icons
 
 extension Aiuta.Configuration.Features.Consent.Standalone {
-    /// Defines the icons used in the standalone consent page.
-    ///
-    /// You can provide custom icons or use a provider to dynamically supply
-    /// the required icons.
-    public enum Icons {
-        /// No icons are used in the consent page.
-        case `default`
-
-        /// Use custom icons for the consent page.
+    /// Icons used in the standalone consent page.
+    public struct Icons: Sendable {
+        /// Optional icon displayed next to the consent title (24x24).
+        public let consentTitle24: UIImage?
+        
+        /// Creates custom icons for the standalone consent page.
         ///
         /// - Parameters:
-        ///   - consentTitle24: An optional icon displayed next to the consent title.
-        case custom(consentTitle24: UIImage?)
-
-        /// Use a custom provider to supply the icons for the consent page.
-        ///
-        /// - Parameters:
-        ///   - provider: A provider that supplies the custom icons dynamically.
-        case provider(Provider)
-    }
-}
-
-extension Aiuta.Configuration.Features.Consent.Standalone.Icons {
-    /// Supplies custom icons for the standalone consent page.
-    ///
-    /// Implement this protocol to provide the required icons for the consent
-    /// page, such as an icon displayed next to the consent title.
-    public protocol Provider {
-        /// An optional icon displayed next to the consent title.
-        var consentTitle24: UIImage? { get }
+        ///   - consentTitle24: Optional icon displayed next to the consent title (24x24).
+        public init(consentTitle24: UIImage?) {
+            self.consentTitle24 = consentTitle24
+        }
     }
 }
 
 // MARK: - Styles
 
 extension Aiuta.Configuration.Features.Consent.Standalone {
-    /// Defines the styles used in the standalone consent screen.
-    ///
-    /// You can use the default styles or provide custom styles to adjust the
-    /// appearance of the consent page.
-    public enum Styles {
-        /// Use the default styles for the consent page.
-        case `default`
-
-        /// Use custom styles for the consent page.
+    /// Visual styles for the standalone consent screen.
+    public struct Styles: Sendable {
+        /// Whether to draw borders around the consent sections.
+        public let drawBordersAroundConsents: Bool
+        
+        /// Creates custom styles for the standalone consent page.
         ///
         /// - Parameters:
-        ///   - drawBordersAroundConsents: An optional flag to draw borders
-        ///     around the consent sections.
-        case custom(drawBordersAroundConsents: Bool)
+        ///   - drawBordersAroundConsents: Whether to draw borders around the consent sections.
+        public init(drawBordersAroundConsents: Bool) {
+            self.drawBordersAroundConsents = drawBordersAroundConsents
+        }
     }
 }
 
 // MARK: - Data
 
 extension Aiuta.Configuration.Features.Consent.Standalone {
-    /// Defines the data provider for the standalone consent screen.
+    /// Data provider for the standalone consent screen.
     ///
-    /// You can use built-in storage options or provide a custom data provider
-    /// to manage the consent data.
+    /// Manages how consent data is stored and retrieved.
     public enum ConsentProvider {
         /// Use built-in `userDefaults` to store information about the consents
         /// obtained from the user.
         ///
         /// - Parameters:
-        ///   - consents: A list of consents. Any consent with `isRequired` set
+        ///   - consents: List of consents. Any consent with `isRequired` set
         ///     to `true` must be explicitly accepted by the user to continue.
         case userDefaults(consents: [Aiuta.Consent])
-
+        
         /// Use built-in `userDefaults` to store information about the consents
         /// obtained from the user, and provide a callback when the user has
         /// given consents and pressed the "Continue" button.
         ///
         /// - Parameters:
-        ///   - consents: A list of consents. Any consent with `isRequired` set
+        ///   - consents: List of consents. Any consent with `isRequired` set
         ///     to `true` must be explicitly accepted by the user to continue.
-        ///   - onObtain: A callback triggered when the user has given consents
+        ///   - onObtain: Callback triggered when the user has given consents
         ///     and pressed the "Continue" button.
         case userDefaultsWithCallback(consents: [Aiuta.Consent],
                                       onObtain: ([String]) -> Void)
-
+        
         /// Use a custom data provider for the standalone consent screen.
         ///
         /// - Parameters:
-        ///   - consents: A list of consents. Any consent with `isRequired` set
+        ///   - consents: List of consents. Any consent with `isRequired` set
         ///     to `true` must be explicitly accepted by the user to continue.
-        ///   - provider: A custom data provider that manages the consents,
+        ///   - provider: Custom data provider that manages the consents,
         ///     provides obtained consent identifiers, and handles the consent
         ///     obtaining process.
         case dataProvider(consents: [Aiuta.Consent], DataProvider)
@@ -181,18 +181,18 @@ extension Aiuta.Configuration.Features.Consent.Standalone {
     /// Implement this protocol to manage the consent data, including storing
     /// obtained consents and handling user interactions.
     public protocol DataProvider {
-        /// A list of consent identifiers already obtained from the user.
+        /// List of consent identifiers already obtained from the user.
         @available(iOS 13.0.0, *)
         var obtainedConsentsIds: Aiuta.Observable<[String]> { get async }
-
-        /// A callback triggered when the user has given consents and pressed
+        
+        /// Callback triggered when the user has given consents and pressed
         /// the "Continue" button. You should store the consent identifiers and
         /// provide them in the `obtainedConsentsIds` property for future use.
         /// If not stored, the SDK will show the consent screen again during
         /// the next Try-On session.
         ///
         /// - Parameters:
-        ///   - consentsIds: A list of consent identifiers that the user has given.
+        ///   - consentsIds: List of consent identifiers that the user has given.
         @available(iOS 13.0.0, *)
         func obtain(consentsIds: [String]) async
     }

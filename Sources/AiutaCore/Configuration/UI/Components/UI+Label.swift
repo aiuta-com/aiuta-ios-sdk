@@ -15,69 +15,51 @@
 import UIKit
 
 extension Aiuta.Configuration.UserInterface {
-    /// Configures the label theme for the SDK.
-    ///
-    /// This setting allows you to use the default label theme or define a custom one
-    /// to better align with your application's design and typography.
-    public enum LabelTheme {
-        /// Use the default label theme provided by the SDK.
-        case `default`
-
-        /// Define a custom label theme.
+    /// Label theme configuration.
+    public struct LabelTheme: Sendable {
+        /// Typography styles for different text elements.
+        public let typography: Typography
+        
+        /// Creates a custom label theme.
         ///
         /// - Parameters:
-        ///   - typography: Specifies the typography to use for label text.
-        case custom(typography: Typography = .default)
+        ///   - typography: Typography styles for different text elements.
+        public init(typography: Typography) {
+            self.typography = typography
+        }
     }
 }
 
 extension Aiuta.Configuration.UserInterface.LabelTheme {
-    /// Configures the typography for label text.
-    ///
-    /// This setting allows you to use the default typography or define custom styles
-    /// for different text elements, such as titles and regular text.
-    public enum Typography {
-        /// Use the default typography provided by the SDK.
-        case `default`
-
-        /// Define custom typography for label text.
+    /// Typography styles for label text elements.
+    public struct Typography: Sendable {
+        /// Text style for large titles.
+        public let titleL: Aiuta.Configuration.TextStyle
+        
+        /// Text style for medium titles.
+        public let titleM: Aiuta.Configuration.TextStyle
+        
+        /// Text style for regular body text.
+        public let regular: Aiuta.Configuration.TextStyle
+        
+        /// Text style for subtle/secondary text.
+        public let subtle: Aiuta.Configuration.TextStyle
+        
+        /// Creates custom typography styles.
         ///
         /// - Parameters:
-        ///   - titleL: The text style for large titles.
-        ///   - titleM: The text style for medium titles.
-        ///   - regular: The text style for regular text.
-        ///   - subtle: The text style for subtle text.
-        case custom(titleL: Aiuta.Configuration.TextStyle,
+        ///   - titleL: Text style for large titles.
+        ///   - titleM: Text style for medium titles.
+        ///   - regular: Text style for regular body text.
+        ///   - subtle: Text style for subtle/secondary text.
+        public init(titleL: Aiuta.Configuration.TextStyle,
                     titleM: Aiuta.Configuration.TextStyle,
                     regular: Aiuta.Configuration.TextStyle,
-                    subtle: Aiuta.Configuration.TextStyle)
-
-        /// Use a custom typography provider.
-        ///
-        /// - Parameters:
-        ///   - provider: A provider that supplies the custom typography.
-        case provider(Provider)
-    }
-}
-
-extension Aiuta.Configuration.UserInterface.LabelTheme.Typography {
-    /// A protocol for providing custom typography for label themes.
-    ///
-    /// This protocol defines the required text styles for large titles, medium titles,
-    /// regular text, and subtle text.
-    /// - Note: Avoid using this protocol directly. It is intended for internal use only.
-    ///         Use one of `Aiuta.Configuration.Typography` protocol instead.
-    public protocol Provider {
-        /// The text style for large titles.
-        var titleL: Aiuta.Configuration.TextStyle { get }
-
-        /// The text style for medium titles.
-        var titleM: Aiuta.Configuration.TextStyle { get }
-
-        /// The text style for regular text.
-        var regular: Aiuta.Configuration.TextStyle { get }
-
-        /// The text style for subtle text.
-        var subtle: Aiuta.Configuration.TextStyle { get }
+                    subtle: Aiuta.Configuration.TextStyle) {
+            self.titleL = titleL
+            self.titleM = titleM
+            self.regular = regular
+            self.subtle = subtle
+        }
     }
 }

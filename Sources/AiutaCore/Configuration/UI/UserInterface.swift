@@ -17,33 +17,31 @@ import Foundation
 extension Aiuta.Configuration {
     /// Represents the user interface (UI) configuration options for the Aiuta SDK.
     ///
-    /// The `UserInterface` enum allows developers to customize the appearance and behavior
-    /// of the SDK's user interface. It provides a default configuration for standard use cases
-    /// and a customizable option for more specific requirements.
-    public enum UserInterface: Sendable {
-        /// The default UI configuration for the Aiuta SDK.
-        ///
-        /// This configuration applies a light theme, uses the `pageSheet` presentation style,
-        /// and enforces the `protectTheNecessaryPages` swipe-to-dismiss policy. It is suitable
-        /// for most applications that do not require extensive customization of the SDK's UI.
-        case `default`
-
-        /// A customizable UI configuration for the Aiuta SDK.
+    /// The `UserInterface` struct allows developers to customize the appearance and behavior
+    /// of the SDK's user interface.
+    public struct UserInterface: Sendable {
+        /// Visual theme controlling colors, typography, and component styling.
+        public let theme: Theme
+        
+        /// How the SDK is presented as a modal view controller.
+        public let presentationStyle: PresentationStyle
+        
+        /// Behavior for dismissing the SDK using a top-down swipe gesture.
+        public let swipeToDismissPolicy: SwipeToDismissPolicy
+        
+        /// Creates a custom UI configuration.
         /// https://docs.aiuta.com/sdk/developer/configuration/ui/
         ///
-        /// This option allows developers to specify the visual theme, presentation style,
-        /// and swipe-to-dismiss policy for the SDK. It provides flexibility to adapt the
-        /// SDK's UI to match the application's design and user experience requirements.
-        ///
         /// - Parameters:
-        ///   - theme: The visual theme of the SDK. The default value applies a light color scheme.
-        ///   - presentationStyle: Defines how the SDK is presented as a modal view controller.
-        ///     The default value is `.pageSheet`, which displays the SDK in a sheet-style modal.
-        ///   - swipeToDismissPolicy: Specifies the behavior for dismissing the SDK using a
-        ///     top-down swipe gesture. The default value is `.protectTheNecessaryPages`, which
-        ///     restricts swipe-to-dismiss functionality on critical pages to prevent accidental exits.
-        case custom(theme: Theme = .default,
-                    presentationStyle: PresentationStyle = .pageSheet,
-                    swipeToDismissPolicy: SwipeToDismissPolicy = .protectTheNecessaryPages)
+        ///   - theme: Visual theme controlling colors, typography, and component styling.
+        ///   - presentationStyle: How the SDK is presented as a modal view controller.
+        ///   - swipeToDismissPolicy: Behavior for dismissing the SDK using a top-down swipe gesture.
+        public init(theme: Theme,
+                    presentationStyle: PresentationStyle,
+                    swipeToDismissPolicy: SwipeToDismissPolicy) {
+            self.theme = theme
+            self.presentationStyle = presentationStyle
+            self.swipeToDismissPolicy = swipeToDismissPolicy
+        }
     }
 }

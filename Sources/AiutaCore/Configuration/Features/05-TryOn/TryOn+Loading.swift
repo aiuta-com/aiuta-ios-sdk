@@ -15,83 +15,77 @@
 import UIKit
 
 extension Aiuta.Configuration.Features.TryOn {
-    /// Configures the loading page for the TryOn feature. You can use the default
-    /// settings or customize the appearance and behavior by providing specific
-    /// strings and styles.
-    public enum LoadingPage {
-        /// Use the default configuration for the loading page.
-        case `default`
-
-        /// Use a custom configuration for the loading page.
+    /// Loading page configuration for the TryOn feature.
+    public struct LoadingPage: Sendable {
+        /// Text content for the loading page.
+        public let strings: Strings
+        
+        /// Visual styles for the loading page.
+        public let styles: Styles
+        
+        /// Creates a custom loading page configuration.
         ///
         /// - Parameters:
-        ///   - strings: Custom text content for the loading page.
-        ///   - styles: Custom styles for the loading page.
-        case custom(strings: Strings,
-                    styles: Styles)
+        ///   - strings: Text content for the loading page.
+        ///   - styles: Visual styles for the loading page.
+        public init(strings: Strings,
+                    styles: Styles) {
+            self.strings = strings
+            self.styles = styles
+        }
     }
 }
 
 // MARK: - Strings
 
 extension Aiuta.Configuration.Features.TryOn.LoadingPage {
-    /// Defines the text content used on the loading page. You can use the default
-    /// text, provide custom strings, or supply them through a provider.
-    public enum Strings {
-        /// Use the default text content for the loading page.
-        case `default`
-
-        /// Specify custom text content for the loading page.
-        ///
-        /// - Parameters:
-        ///   - tryOnLoadingStatusUploadingImage: Text displayed while uploading
-        ///     the image.
-        ///   - tryOnLoadingStatusScanningBody: Text displayed while scanning
-        ///     the body.
-        ///   - tryOnLoadingStatusGeneratingOutfit: Text displayed while generating
-        ///     the outfit.
-        case custom(tryOnLoadingStatusUploadingImage: String,
-                    tryOnLoadingStatusScanningBody: String,
-                    tryOnLoadingStatusGeneratingOutfit: String)
-
-        /// Use a custom provider to supply text content.
-        ///
-        /// - Parameters:
-        ///   - provider: A provider that supplies the custom text content.
-        case provider(Provider)
-    }
-}
-
-extension Aiuta.Configuration.Features.TryOn.LoadingPage.Strings {
-    /// A protocol for supplying custom text content for the loading page.
-    /// Implement this protocol to provide text for various loading states.
-    public protocol Provider {
+    /// Text content for the loading page.
+    public struct Strings: Sendable {
         /// Text displayed while uploading the image.
-        var tryOnLoadingStatusUploadingImage: String { get }
-
+        public let tryOnLoadingStatusUploadingImage: String
+        
         /// Text displayed while scanning the body.
-        var tryOnLoadingStatusScanningBody: String { get }
-
+        public let tryOnLoadingStatusScanningBody: String
+        
         /// Text displayed while generating the outfit.
-        var tryOnLoadingStatusGeneratingOutfit: String { get }
+        public let tryOnLoadingStatusGeneratingOutfit: String
+        
+        /// Creates custom text content.
+        ///
+        /// - Parameters:
+        ///   - tryOnLoadingStatusUploadingImage: Text displayed while uploading the image.
+        ///   - tryOnLoadingStatusScanningBody: Text displayed while scanning the body.
+        ///   - tryOnLoadingStatusGeneratingOutfit: Text displayed while generating the outfit.
+        public init(tryOnLoadingStatusUploadingImage: String,
+                    tryOnLoadingStatusScanningBody: String,
+                    tryOnLoadingStatusGeneratingOutfit: String) {
+            self.tryOnLoadingStatusUploadingImage = tryOnLoadingStatusUploadingImage
+            self.tryOnLoadingStatusScanningBody = tryOnLoadingStatusScanningBody
+            self.tryOnLoadingStatusGeneratingOutfit = tryOnLoadingStatusGeneratingOutfit
+        }
     }
 }
 
 // MARK: - Styles
 
 extension Aiuta.Configuration.Features.TryOn.LoadingPage {
-    /// Defines the styles used on the loading page. You can use the default
-    /// styles or provide custom ones to adjust the appearance of the interface.
-    public enum Styles {
-        /// Use the default styles for the loading page.
-        case `default`
-
-        /// Specify custom styles for the loading page.
+    /// Visual styles for the loading page.
+    public struct Styles: Sendable {
+        /// Gradient background for the loading page.
+        public let backgroundGradient: [UIColor]
+        
+        /// Style for the status indicator.
+        public let statusStyle: Aiuta.Configuration.UserInterface.ComponentStyle
+        
+        /// Creates custom styles.
         ///
         /// - Parameters:
-        ///   - backgroundGradient: The gradient background for the loading page.
-        ///   - statusStyle: The style for the status indicator.
-        case custom(backgroundGradient: [UIColor],
-                    statusStyle: Aiuta.Configuration.UserInterface.ComponentStyle)
+        ///   - backgroundGradient: Gradient background for the loading page.
+        ///   - statusStyle: Style for the status indicator.
+        public init(backgroundGradient: [UIColor],
+                    statusStyle: Aiuta.Configuration.UserInterface.ComponentStyle) {
+            self.backgroundGradient = backgroundGradient
+            self.statusStyle = statusStyle
+        }
     }
 }

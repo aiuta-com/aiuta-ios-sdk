@@ -15,56 +15,48 @@
 import UIKit
 
 extension Aiuta.Configuration.Features.TryOn {
-    /// Configures the cart functionality for the TryOn feature. You can use the
-    /// default configuration or customize the behavior and text content for
-    /// cart-related actions.
-    public enum Cart {
-        /// Use the default cart configuration with a specified handler.
+    /// Cart functionality configuration for the TryOn feature.
+    public struct Cart: Sendable {
+        /// Text content for cart-related actions.
+        public let strings: Strings
+        
+        /// Handler responsible for managing cart actions.
+        public let handler: Handler
+        
+        /// Optional outfit/multi-item cart functionality ("Shop the Look").
+        public let outfit: Outfit?
+        
+        /// Creates a cart configuration.
         ///
         /// - Parameters:
-        ///   - handler: The handler responsible for managing cart actions.
-        case `default`(handler: Handler)
-
-        /// Use a custom cart configuration with specific strings and a handler.
-        ///
-        /// - Parameters:
-        ///   - strings: Custom text content for cart-related actions.
-        ///   - handler: The handler responsible for managing cart actions.
-        case custom(strings: Strings,
-                    handler: Handler)
+        ///   - strings: Text content for cart-related actions.
+        ///   - handler: Handler responsible for managing cart actions.
+        ///   - outfit: Optional outfit/multi-item cart functionality.
+        public init(strings: Strings,
+                    handler: Handler,
+                    outfit: Outfit?) {
+            self.strings = strings
+            self.handler = handler
+            self.outfit = outfit
+        }
     }
 }
 
 // MARK: - Strings
 
 extension Aiuta.Configuration.Features.TryOn.Cart {
-    /// Defines the text content used for cart-related actions in the TryOn
-    /// feature. You can use the default text, provide custom strings, or supply
-    /// them through a provider.
-    public enum Strings {
-        /// Use the default text content for cart-related actions.
-        case `default`
-
-        /// Specify custom text content for cart-related actions.
+    /// Text content for cart-related actions.
+    public struct Strings: Sendable {
+        /// Label for the "Add to Cart" button.
+        public let addToCart: String
+        
+        /// Creates custom text content.
         ///
         /// - Parameters:
-        ///   - addToCart: The label for the "Add to Cart" button.
-        case custom(addToCart: String)
-
-        /// Use a custom provider to supply text content.
-        ///
-        /// - Parameters:
-        ///   - provider: A provider that supplies the custom text content.
-        case provider(Provider)
-    }
-}
-
-extension Aiuta.Configuration.Features.TryOn.Cart.Strings {
-    /// A protocol for supplying custom text content dynamically for cart-related
-    /// actions. Implement this protocol to provide labels and other text.
-    public protocol Provider {
-        /// The label for the "Add to Cart" button.
-        var addToCart: String { get }
+        ///   - addToCart: Label for the "Add to Cart" button.
+        public init(addToCart: String) {
+            self.addToCart = addToCart
+        }
     }
 }
 
@@ -72,12 +64,13 @@ extension Aiuta.Configuration.Features.TryOn.Cart.Strings {
 
 extension Aiuta.Configuration.Features.TryOn.Cart {
     /// A protocol for managing cart-related actions in the TryOn feature.
-    /// Implement this protocol to handle products are added to the cart.
+    ///
+    /// Implement this protocol to handle when products are added to the cart.
     public protocol Handler {
         /// Adds a product to the cart.
         ///
         /// - Parameters:
-        ///   - productId: The unique identifier of the product to add.
+        ///   - productId: Unique identifier of the product to add.
         @available(iOS 13.0.0, *)
         func addToCart(productId: String) async
     }

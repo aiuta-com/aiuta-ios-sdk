@@ -15,138 +15,106 @@
 import UIKit
 
 extension Aiuta.Configuration.Features.ImagePicker {
-    /// Represents the predefined models feature within the image picker. This
-    /// allows you to configure how predefined models are handled, whether they
-    /// use default settings, are disabled, or are customized with specific
-    /// icons and strings.
-    public enum PredefinedModels {
-        /// Use the default configuration for predefined models.
-        case `default`
-
-        /// Disable the predefined models feature entirely.
-        case none
-
-        /// Define a custom configuration for predefined models.
+    /// Predefined models feature configuration for the image picker.
+    ///
+    /// To disable predefined models functionality, set this to `nil` in the `ImagePicker` configuration.
+    public struct PredefinedModels: Sendable {
+        /// Data source for predefined models.
+        public let data: Data
+        
+        /// Icons for the predefined models interface.
+        public let icons: Icons
+        
+        /// Text content for the predefined models interface.
+        public let strings: Strings
+        
+        /// Creates a custom predefined models configuration.
         ///
         /// - Parameters:
-        ///   - data: The data source for predefined models, which can be either
-        ///   - icons: Custom icons to be used for the predefined models interface.
-        ///   - strings: Custom text content for the predefined models interface.
-        case custom(data: Data = .default,
-                    icons: Icons = .builtIn,
-                    strings: Strings = .default)
+        ///   - data: Data source for predefined models.
+        ///   - icons: Icons for the predefined models interface.
+        ///   - strings: Text content for the predefined models interface.
+        public init(data: Data,
+                    icons: Icons,
+                    strings: Strings) {
+            self.data = data
+            self.icons = icons
+            self.strings = strings
+        }
     }
 }
 
 // MARK: - Data
 
 extension Aiuta.Configuration.Features.ImagePicker.PredefinedModels {
-    /// Represents the data source for predefined models in the image picker.
-    public enum Data {
-        /// Use the default predefined models data provided by the SDK.
-        case `default`
-
-        /// Use a custom provider to supply predefined models data.
+    /// Data source for predefined models in the image picker.
+    public struct Data: Sendable {
+        /// Identifier of the preferred category to show by default when user opens models page.
+        public let preferredCategoryId: String?
+        
+        /// Creates custom data configuration.
+        ///
         /// - Parameters:
-        ///  - preferredCategoryId: Identifier of the preferred category to show by default when user opens models page.
-        case custom(preferredCategoryId: String)
+        ///   - preferredCategoryId: Identifier of the preferred category to show by default when user opens models page.
+        public init(preferredCategoryId: String?) {
+            self.preferredCategoryId = preferredCategoryId
+        }
     }
 }
 
 // MARK: - Icons
 
 extension Aiuta.Configuration.Features.ImagePicker.PredefinedModels {
-    /// Represents the icons used in the predefined models feature of the image
-    /// picker. You can use default icons, provide custom ones, or supply them
-    /// dynamically through a provider.
-    public enum Icons {
-        /// Use the default set of icons provided by the SDK.
-        case builtIn
-
-        /// Define custom icons for the predefined models interface.
+    /// Icons for the predefined models interface.
+    public struct Icons: Sendable {
+        /// Icon displayed for the predefined models button in the bottom sheet list (24x24).
+        public let selectModels24: UIImage
+        
+        /// Creates custom icons.
         ///
         /// - Parameters:
-        ///   - selectModels24: The icon displayed for the predefined models
-        ///     button in the bottom sheet list.
-        case custom(selectModels24: UIImage)
-
-        /// Use a custom provider to supply icons dynamically.
-        ///
-        /// - Parameters:
-        ///   - Provider: A provider that supplies the custom icons.
-        case provider(Provider)
-    }
-}
-
-extension Aiuta.Configuration.Features.ImagePicker.PredefinedModels.Icons {
-    /// A protocol for supplying custom icons to the predefined models feature.
-    /// Implement this protocol to provide a custom set of icons dynamically.
-    public protocol Provider {
-        /// The icon displayed for the predefined models button in the bottom
-        /// sheet list.
-        var selectModels24: UIImage { get }
+        ///   - selectModels24: Icon displayed for the predefined models button in the bottom sheet list (24x24).
+        public init(selectModels24: UIImage) {
+            self.selectModels24 = selectModels24
+        }
     }
 }
 
 // MARK: - Strings
 
 extension Aiuta.Configuration.Features.ImagePicker.PredefinedModels {
-    /// Represents the text content used in the predefined models feature of the
-    /// image picker. You can use default text, provide custom strings, or supply
-    /// them dynamically through a provider.
-    public enum Strings {
-        /// Use the default text content provided by the SDK.
-        case `default`
-
-        /// Define custom text content for the predefined models interface.
+    /// Text content for the predefined models interface.
+    public struct Strings: Sendable {
+        /// Title of the predefined models page and button in the bottom sheet list.
+        public let predefinedModelsTitle: String
+        
+        /// Label displayed before the predefined models button in the image picker.
+        public let predefinedModelsOr: String
+        
+        /// Error message shown when the list of predefined models is empty.
+        public let predefinedModelsEmptyListError: String
+        
+        /// Mapping of `categoryId` to `categoryTitle` for predefined models categories.
+        ///
+        /// The categories usually cover 2 IDs: `man` and `woman`, but can be extended
+        /// in the future or by your agreement with Aiuta.
+        public let predefinedModelsCategories: [String: String]
+        
+        /// Creates custom text content.
         ///
         /// - Parameters:
-        ///   - predefinedModelsTitle: The title of the predefined models page
-        ///     and button in the bottom sheet list.
-        ///   - predefinedModelsOr: The label displayed before the predefined
-        ///     models button in the image picker.
-        ///   - predefinedModelsEmptyListError: The error message shown when the
-        ///     list of predefined models is empty.
-        ///   - predefinedModelsCategories: A mapping of `categoryId` to
-        ///     `categoryTitle` for predefined models categories.
-        ///      The `predefinedModelCategories` are usually should cover 2 categories
-        ///      with ids `man` and `woman`, but can be extended in the future or by
-        ///      your agreement with Aiuta.
-        case custom(predefinedModelsTitle: String,
+        ///   - predefinedModelsTitle: Title of the predefined models page and button in the bottom sheet list.
+        ///   - predefinedModelsOr: Label displayed before the predefined models button in the image picker.
+        ///   - predefinedModelsEmptyListError: Error message shown when the list of predefined models is empty.
+        ///   - predefinedModelsCategories: Mapping of `categoryId` to `categoryTitle` for predefined models categories.
+        public init(predefinedModelsTitle: String,
                     predefinedModelsOr: String,
                     predefinedModelsEmptyListError: String,
-                    predefinedModelsCategories: [String: String])
-
-        /// Use a custom provider to supply text content.
-        ///
-        /// - Parameters:
-        ///   - provider: A provider that supplies the custom text content.
-        case provider(Provider)
-    }
-}
-
-extension Aiuta.Configuration.Features.ImagePicker.PredefinedModels.Strings {
-    /// A protocol for supplying custom text content to the predefined models
-    /// feature. Implement this protocol to provide titles, labels, error
-    /// messages, and category mappings.
-    public protocol Provider {
-        /// The title of the predefined models page and button in the bottom
-        /// sheet list.
-        var predefinedModelsTitle: String { get }
-
-        /// The label displayed before the predefined models button in the
-        /// image picker.
-        var predefinedModelsOr: String { get }
-
-        /// The error message shown when the list of predefined models is empty.
-        var predefinedModelsEmptyListError: String { get }
-
-        /// A mapping of `categoryId` to `categoryTitle` for predefined models
-        /// categories.
-        ///
-        /// The `predefinedModelCategories` are usually should cover 2 categories with
-        /// ids `man` and `woman`, but can be extended in the future or by your
-        /// agreement with Aiuta.
-        var predefinedModelsCategories: [String: String] { get }
+                    predefinedModelsCategories: [String: String]) {
+            self.predefinedModelsTitle = predefinedModelsTitle
+            self.predefinedModelsOr = predefinedModelsOr
+            self.predefinedModelsEmptyListError = predefinedModelsEmptyListError
+            self.predefinedModelsCategories = predefinedModelsCategories
+        }
     }
 }
