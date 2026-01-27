@@ -15,96 +15,89 @@
 import UIKit
 
 extension Aiuta.Configuration.UserInterface {
-    /// Configures the activity indicator theme.
-    ///
-    /// This setting determines the appearance and behavior of activity indicators.
-    /// You can use the system activity indicator or define a custom one to align
-    /// with your application's design and functionality.
-    public enum ActivityIndicatorTheme {
-        /// Use the system activity indicator with default settings.
-        case `default`
-
-        /// Define a custom activity indicator theme.
+    /// Activity indicator theme configuration.
+    public struct ActivityIndicatorTheme: Sendable {
+        /// Icon configuration for the activity indicator.
+        public let icons: Icons
+        
+        /// Color scheme for the activity indicator.
+        public let colors: Colors
+        
+        /// Behavior and animation settings.
+        public let settings: Settings
+        
+        /// Creates a custom activity indicator theme.
         ///
         /// - Parameters:
-        ///   - icons: Configures the icons for the activity indicator.
-        ///   - colors: Configures the colors for the activity indicator.
-        ///   - settings: Adjusts the behavior and animation of the activity indicator.
-        case custom(icons: Icons = .system,
-                    colors: Colors = .default,
-                    settings: Settings = .default)
+        ///   - icons: Icon configuration for the activity indicator.
+        ///   - colors: Color scheme for the activity indicator.
+        ///   - settings: Behavior and animation settings.
+        public init(icons: Icons,
+                    colors: Colors,
+                    settings: Settings) {
+            self.icons = icons
+            self.colors = colors
+            self.settings = settings
+        }
     }
 }
 
 // MARK: - Icons
 
 extension Aiuta.Configuration.UserInterface.ActivityIndicatorTheme {
-    /// Configures the icons for the activity indicator.
-    public enum Icons {
-        /// Use the default icons provided by the SDK.
-        case system
-
-        /// Define custom icons for the activity indicator.
+    /// Icon configuration for the activity indicator.
+    public struct Icons: Sendable {
+        /// The icon for the 14px loading indicator.
+        public let loading14: UIImage
+        
+        /// Creates custom icon configuration.
+        ///
         /// - Parameters:
         ///   - loading14: The icon for the 14px loading indicator.
-        case custom(loading14: UIImage)
-
-        /// Use a custom icons provider.
-        /// - Parameters:
-        ///   - provider: Supplies the custom icons.
-        case provider(Provider)
-    }
-}
-
-extension Aiuta.Configuration.UserInterface.ActivityIndicatorTheme.Icons {
-    /// A protocol for supplying custom icons for activity indicator themes.
-    public protocol Provider {
-        /// The icon for the 14px loading indicator.
-        var loading14: UIImage { get }
+        public init(loading14: UIImage) {
+            self.loading14 = loading14
+        }
     }
 }
 
 // MARK: - Colors
 
 extension Aiuta.Configuration.UserInterface.ActivityIndicatorTheme {
-    /// Configures the colors for the activity indicator.
-    public enum Colors {
-        /// Use the default colors provided by the SDK.
-        case `default`
-
-        /// Define custom colors for the activity indicator.
+    /// Color scheme for the activity indicator.
+    public struct Colors: Sendable {
+        /// The overlay color.
+        public let overlay: UIColor
+        
+        /// Creates custom color configuration.
+        ///
         /// - Parameters:
         ///   - overlay: The overlay color.
-        case custom(overlay: UIColor)
-
-        /// Use a custom colors provider.
-        /// - Parameters:
-        ///   - provider: Supplies the custom colors.
-        case provider(Provider)
-    }
-}
-
-extension Aiuta.Configuration.UserInterface.ActivityIndicatorTheme.Colors {
-    /// A protocol for supplying custom colors for activity indicator themes.
-    public protocol Provider {
-        /// The overlay color.
-        var overlay: UIColor { get }
+        public init(overlay: UIColor) {
+            self.overlay = overlay
+        }
     }
 }
 
 // MARK: - Settings
 
 extension Aiuta.Configuration.UserInterface.ActivityIndicatorTheme {
-    /// Configures the behavior and animation of the activity indicator.
-    public enum Settings {
-        /// Use the default settings provided by the SDK.
-        case `default`
-
-        /// Define custom settings for the activity indicator.
+    /// Behavior and animation settings for the activity indicator.
+    public struct Settings: Sendable {
+        /// The delay before showing the indicator (in milliseconds).
+        public let indicationDelay: Int
+        
+        /// The duration of the spin animation (in milliseconds).
+        public let spinDuration: Int
+        
+        /// Creates custom settings configuration.
+        ///
         /// - Parameters:
-        ///   - indicationDelay: The delay before showing the indicator (in miliseconds).
-        ///   - spinDuration: The duration of the spin animation (in miliseconds).
-        case custom(indicationDelay: Int = 1000,
-                    spinDuration: Int = 2000)
+        ///   - indicationDelay: The delay before showing the indicator (in milliseconds).
+        ///   - spinDuration: The duration of the spin animation (in milliseconds).
+        public init(indicationDelay: Int,
+                    spinDuration: Int) {
+            self.indicationDelay = indicationDelay
+            self.spinDuration = spinDuration
+        }
     }
 }

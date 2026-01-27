@@ -15,108 +15,79 @@
 import UIKit
 
 extension Aiuta.Configuration.Features.ImagePicker {
-    /// Represents the camera feature within the image picker configuration.
-    /// This allows you to define how the camera functionality behaves, whether
-    /// it uses default settings, is disabled, or is customized.
-    public enum Camera {
-        /// Uses the default camera configuration.
-        case `default`
-
-        /// Indicates that the camera functionality is not available.
-        case none
-
-        /// Allows you to define a custom camera configuration.
+    /// Camera feature configuration for the image picker.
+    ///
+    /// To disable camera functionality, set this to `nil` in the `ImagePicker` configuration.
+    public struct Camera: Sendable {
+        /// Icons for the camera interface.
+        public let icons: Icons
+        
+        /// Text content for the camera interface.
+        public let strings: Strings
+        
+        /// Creates a custom camera configuration.
         ///
         /// - Parameters:
-        ///   - icons: Custom icons to be used for the camera interface.
-        ///   - strings: Custom text content for the camera interface.
-        case custom(icons: Icons = .builtIn,
-                    strings: Strings = .default)
+        ///   - icons: Icons for the camera interface.
+        ///   - strings: Text content for the camera interface.
+        public init(icons: Icons,
+                    strings: Strings) {
+            self.icons = icons
+            self.strings = strings
+        }
     }
 }
 
 // MARK: - Icons
 
 extension Aiuta.Configuration.Features.ImagePicker.Camera {
-    /// Represents the icons used in the camera feature of the image picker.
-    /// You can use default icons, provide custom ones, or supply them
-    /// dynamically through a provider.
-    public enum Icons {
-        /// Uses the default set of icons provided by the SDK.
-        case builtIn
-
-        /// Allows you to specify custom icons for the camera interface.
+    /// Icons for the camera interface.
+    public struct Icons: Sendable {
+        /// Icon displayed for the camera button in the bottom sheet list (24x24).
+        public let camera24: UIImage
+        
+        /// Creates custom icons.
         ///
         /// - Parameters:
-        ///   - camera24: The icon displayed for the camera button in the
-        ///     bottom sheet list.
-        case custom(camera24: UIImage)
-
-        /// Allows you to use a custom provider to supply icons dynamically.
-        ///
-        /// - Parameters:
-        ///   - Provider: A provider that supplies the custom icons.
-        case provider(Provider)
-    }
-}
-
-extension Aiuta.Configuration.Features.ImagePicker.Camera.Icons {
-    /// A protocol for supplying custom icons to the camera feature. Implement
-    /// this protocol to provide a custom set of icons dynamically.
-    public protocol Provider {
-        /// The icon displayed for the camera button in the bottom sheet list.
-        var camera24: UIImage { get }
+        ///   - camera24: Icon displayed for the camera button in the bottom sheet list (24x24).
+        public init(camera24: UIImage) {
+            self.camera24 = camera24
+        }
     }
 }
 
 // MARK: - Strings
 
 extension Aiuta.Configuration.Features.ImagePicker.Camera {
-    /// Represents the text content used in the camera feature of the image
-    /// picker. You can use default text, provide custom strings, or supply
-    /// them dynamically through a provider.
-    public enum Strings {
-        /// Uses the default text content provided by the SDK.
-        case `default`
-
-        /// Allows you to specify custom text content for the camera interface.
+    /// Text content for the camera interface.
+    public struct Strings: Sendable {
+        /// Label for the button used to take a photo.
+        public let cameraButtonTakePhoto: String
+        
+        /// Title displayed in the alert when camera permissions are denied.
+        public let cameraPermissionTitle: String
+        
+        /// Description displayed in the alert when camera permissions are denied.
+        public let cameraPermissionDescription: String
+        
+        /// Label for the button that opens the app settings to change camera permissions.
+        public let cameraPermissionButtonOpenSettings: String
+        
+        /// Creates custom text content.
         ///
         /// - Parameters:
-        ///   - cameraButtonTakePhoto: The label for the button used to take a photo.
-        ///   - cameraPermissionTitle: The title displayed in the alert when
-        ///     camera permissions are denied.
-        ///   - cameraPermissionDescription: The description displayed in the
-        ///     alert when camera permissions are denied.
-        ///   - cameraPermissionButtonOpenSettings: The label for the button
-        ///     that opens the app settings to change camera permissions.
-        case custom(cameraButtonTakePhoto: String,
+        ///   - cameraButtonTakePhoto: Label for the button used to take a photo.
+        ///   - cameraPermissionTitle: Title displayed in the alert when camera permissions are denied.
+        ///   - cameraPermissionDescription: Description displayed in the alert when camera permissions are denied.
+        ///   - cameraPermissionButtonOpenSettings: Label for the button that opens the app settings to change camera permissions.
+        public init(cameraButtonTakePhoto: String,
                     cameraPermissionTitle: String,
                     cameraPermissionDescription: String,
-                    cameraPermissionButtonOpenSettings: String)
-
-        /// Allows you to use a custom provider to supply text content dynamically.
-        ///
-        /// - Parameters:
-        ///   - provider: A provider that supplies the custom text content.
-        case provider(Provider)
-    }
-}
-
-extension Aiuta.Configuration.Features.ImagePicker.Camera.Strings {
-    /// A protocol for supplying custom text content to the camera feature.
-    /// Implement this protocol to provide titles, descriptions, and button labels.
-    public protocol Provider {
-        /// The label for the button used to take a photo.
-        var cameraButtonTakePhoto: String { get }
-
-        /// The title displayed in the alert when camera permissions are denied.
-        var cameraPermissionTitle: String { get }
-
-        /// The description displayed in the alert when camera permissions are denied.
-        var cameraPermissionDescription: String { get }
-
-        /// The label for the button that opens the app settings to change
-        /// camera permissions.
-        var cameraPermissionButtonOpenSettings: String { get }
+                    cameraPermissionButtonOpenSettings: String) {
+            self.cameraButtonTakePhoto = cameraButtonTakePhoto
+            self.cameraPermissionTitle = cameraPermissionTitle
+            self.cameraPermissionDescription = cameraPermissionDescription
+            self.cameraPermissionButtonOpenSettings = cameraPermissionButtonOpenSettings
+        }
     }
 }

@@ -15,70 +15,53 @@
 import UIKit
 
 extension Aiuta.Configuration.Features.TryOn.Feedback {
-    /// Configures additional feedback options for the TryOn feature. You can
-    /// use the default settings, disable additional options, or customize the
-    /// behavior and text content for these options.
-    public enum Other {
-        /// Use the default configuration for additional feedback options.
-        case `default`
-
-        /// Disable additional feedback options.
-        case none
-
-        /// Use a custom configuration for additional feedback options.
+    /// Additional feedback options configuration for the TryOn feature.
+    public struct Other: Sendable {
+        /// Text content for additional feedback options.
+        public let strings: Strings
+        
+        /// Creates an additional feedback configuration.
         ///
         /// - Parameters:
-        ///   - strings: Custom text content for additional feedback options.
-        case custom(strings: Strings)
+        ///   - strings: Text content for additional feedback options.
+        public init(strings: Strings) {
+            self.strings = strings
+        }
     }
 }
 
 // MARK: - Strings
 
 extension Aiuta.Configuration.Features.TryOn.Feedback.Other {
-    /// Defines the text content used for additional feedback options. You can
-    /// use the default text, provide custom strings, or implement a custom
-    /// provider to manage the text content.
-    public enum Strings {
-        /// Use the default text content for additional feedback options.
-        case `default`
-
-        /// Specify custom text content for additional feedback options.
+    /// Text content for additional feedback options.
+    public struct Strings: Sendable {
+        /// Label for the "Other" feedback option.
+        public let feedbackOptionOther: String
+        
+        /// Title displayed for the "Other" feedback.
+        public let otherFeedbackTitle: String
+        
+        /// Label for the "Send" button.
+        public let otherFeedbackButtonSend: String
+        
+        /// Label for the "Cancel" button.
+        public let otherFeedbackButtonCancel: String
+        
+        /// Creates custom text content.
         ///
         /// - Parameters:
-        ///   - feedbackOptionOther: The label for the "Other" feedback option.
-        ///   - otherFeedbackTitle: The title displayed for the "Other" feedback.
-        ///   - otherFeedbackButtonSend: The label for the "Send" button.
-        ///   - otherFeedbackButtonCancel: The label for the "Cancel" button.
-        case custom(feedbackOptionOther: String,
+        ///   - feedbackOptionOther: Label for the "Other" feedback option.
+        ///   - otherFeedbackTitle: Title displayed for the "Other" feedback.
+        ///   - otherFeedbackButtonSend: Label for the "Send" button.
+        ///   - otherFeedbackButtonCancel: Label for the "Cancel" button.
+        public init(feedbackOptionOther: String,
                     otherFeedbackTitle: String,
                     otherFeedbackButtonSend: String,
-                    otherFeedbackButtonCancel: String)
-
-        /// Use a custom implementation to manage the text content for additional
-        /// feedback options.
-        ///
-        /// - Parameters:
-        ///   - provider: An object that conforms to the `Provider` protocol.
-        case provider(Provider)
-    }
-}
-
-extension Aiuta.Configuration.Features.TryOn.Feedback.Other.Strings {
-    /// A protocol for managing the text content of additional feedback options.
-    /// Implement this protocol to define the labels and titles for the "Other"
-    /// feedback option.
-    public protocol Provider {
-        /// The label for the "Other" feedback option.
-        var feedbackOptionOther: String { get }
-
-        /// The title displayed for the "Other" feedback.
-        var otherFeedbackTitle: String { get }
-
-        /// The label for the "Send" button.
-        var otherFeedbackButtonSend: String { get }
-
-        /// The label for the "Cancel" button.
-        var otherFeedbackButtonCancel: String { get }
+                    otherFeedbackButtonCancel: String) {
+            self.feedbackOptionOther = feedbackOptionOther
+            self.otherFeedbackTitle = otherFeedbackTitle
+            self.otherFeedbackButtonSend = otherFeedbackButtonSend
+            self.otherFeedbackButtonCancel = otherFeedbackButtonCancel
+        }
     }
 }

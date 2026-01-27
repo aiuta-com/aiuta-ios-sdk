@@ -15,107 +15,71 @@
 import UIKit
 
 extension Aiuta.Configuration.UserInterface {
-    /// Configures the button theme for the SDK.
-    ///
-    /// This setting determines the appearance of buttons within the SDK.
-    /// You can use the default button theme or define a custom one to align with your application's design and branding.
-    public enum ButtonTheme {
-        /// Use the default button theme provided by the SDK.
-        case `default`
-
-        /// Define a custom button theme.
+    /// Button theme configuration.
+    public struct ButtonTheme: Sendable {
+        /// Text styles for button labels.
+        public let typography: Typography
+        
+        /// Corner radius and shape styles for button containers.
+        public let shapes: Shapes
+        
+        /// Creates a custom button theme.
         ///
         /// - Parameters:
-        ///   - typography: Specifies the typography to use for button text.
-        ///   - shapes: Specifies the shapes to apply to button views.
-        case custom(typography: Typography = .default,
-                    shapes: Shapes = .default)
+        ///   - typography: Text styles for button labels.
+        ///   - shapes: Corner radius and shape styles for button containers.
+        public init(typography: Typography,
+                    shapes: Shapes) {
+            self.typography = typography
+            self.shapes = shapes
+        }
     }
 }
 
 // MARK: - Shapes
 
 extension Aiuta.Configuration.UserInterface.ButtonTheme {
-    /// Configures the shapes used for button views.
-    ///
-    /// Shapes define the visual appearance of button containers, such as rounded corners or specific geometric styles.
-    /// You can use predefined shapes or define custom ones to match your application's design language.
-    public enum Shapes {
-        /// Use the default button shapes provided by the SDK.
-        case `default`
-
-        /// Use button shapes with smaller corner radius.
-        case small
-
-        /// Define custom shapes for button views.
+    /// Shape styles for button containers.
+    public struct Shapes: Sendable {
+        /// Shape style for medium-sized buttons.
+        public let buttonM: Aiuta.Configuration.Shape
+        
+        /// Shape style for small buttons.
+        public let buttonS: Aiuta.Configuration.Shape
+        
+        /// Creates custom button shapes.
         ///
         /// - Parameters:
-        ///   - buttonM: The shape to apply to medium buttons.
-        ///   - buttonS: The shape to apply to small buttons.
-        case custom(buttonM: Aiuta.Configuration.Shape,
-                    buttonS: Aiuta.Configuration.Shape)
-
-        /// Use a custom shapes provider.
-        ///
-        /// - Parameters:
-        ///   - provider: A provider that supplies the custom shapes.
-        case provider(Provider)
-    }
-}
-
-extension Aiuta.Configuration.UserInterface.ButtonTheme.Shapes {
-    /// A protocol for supplying custom shapes for button themes.
-    ///
-    /// This protocol defines the required shapes for medium and small buttons.
-    /// - Note: It is intended for internal use. Instead of implementing this protocol directly,
-    ///         use one of `Aiuta.Configuration.Shapes` typealias.
-    public protocol Provider {
-        /// The shape to apply to medium buttons.
-        var buttonM: Aiuta.Configuration.Shape { get }
-
-        /// The shape to apply to small buttons.
-        var buttonS: Aiuta.Configuration.Shape { get }
+        ///   - buttonM: Shape style for medium-sized buttons.
+        ///   - buttonS: Shape style for small buttons.
+        public init(buttonM: Aiuta.Configuration.Shape,
+                    buttonS: Aiuta.Configuration.Shape) {
+            self.buttonM = buttonM
+            self.buttonS = buttonS
+        }
     }
 }
 
 // MARK: - Typography
 
 extension Aiuta.Configuration.UserInterface.ButtonTheme {
-    /// Configures the typography used for button text.
-    ///
-    /// Typography defines the text styles applied to buttons, such as font size and weight.
-    /// You can use the default typography or define custom styles to match your application's design language.
-    public enum Typography {
-        /// Use the default button typography provided by the SDK.
-        case `default`
-
-        /// Define custom typography for button text.
+    /// Text styles for button labels.
+    public struct Typography: Sendable {
+        /// Text style for medium-sized button labels.
+        public let buttonM: Aiuta.Configuration.TextStyle
+        
+        /// Text style for small button labels.
+        public let buttonS: Aiuta.Configuration.TextStyle
+        
+        /// Creates custom typography for button text.
         ///
         /// - Parameters:
         ///   - buttonM: The text style to apply to medium buttons.
         ///   - buttonS: The text style to apply to small buttons.
-        case custom(buttonM: Aiuta.Configuration.TextStyle,
-                    buttonS: Aiuta.Configuration.TextStyle)
-
-        /// Use a custom typography provider.
-        ///
-        /// - Parameters:
-        ///   - provider: A provider that supplies the custom typography.
-        case provider(Provider)
-    }
-}
-
-extension Aiuta.Configuration.UserInterface.ButtonTheme.Typography {
-    /// A protocol for supplying custom typography for button themes.
-    ///
-    /// This protocol defines the required text styles for medium and small buttons.
-    /// - Note: It is intended for internal use. Instead of implementing this protocol directly,
-    ///         use one of `Aiuta.Configuration.Typography` typealias.
-    public protocol Provider {
-        /// The text style to apply to medium buttons.
-        var buttonM: Aiuta.Configuration.TextStyle { get }
-
-        /// The text style to apply to small buttons.
-        var buttonS: Aiuta.Configuration.TextStyle { get }
+        public init(buttonM: Aiuta.Configuration.TextStyle,
+                    buttonS: Aiuta.Configuration.TextStyle) {
+            self.buttonM = buttonM
+            self.buttonS = buttonS
+        }
     }
 }

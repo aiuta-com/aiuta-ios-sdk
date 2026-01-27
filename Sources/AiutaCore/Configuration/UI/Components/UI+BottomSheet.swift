@@ -15,135 +15,115 @@
 import UIKit
 
 extension Aiuta.Configuration.UserInterface {
-    /// Configures the bottom sheet theme.
-    ///
-    /// This setting determines the appearance and behavior of bottom sheets.
-    /// You can use the default theme or define a custom one to align with your application's design and functionality.
-    public enum BottomSheetTheme {
-        /// Use the default bottom sheet theme provided by the SDK.
-        case `default`
-
-        /// Define a custom bottom sheet theme.
+    /// Bottom sheet theme configuration.
+    public struct BottomSheetTheme: Sendable {
+        /// Text style for icon buttons within the bottom sheet.
+        public let typography: Typography
+        
+        /// Corner radius for the bottom sheet container.
+        public let shapes: Shapes
+        
+        /// Drag indicator at the top of the bottom sheet.
+        public let grabber: Grabber
+        
+        /// Delimiter positioning (visual boundaries within the sheet).
+        public let settings: Settings
+        
+        /// Creates a custom bottom sheet theme.
         ///
         /// - Parameters:
-        ///   - typography: Configures the typography for text elements in the bottom sheet.
-        ///   - shapes: Configures the shapes for visual elements in the bottom sheet.
-        ///   - grabber: Customizes the grabber's appearance or disables it.
-        ///   - settings: Adjusts the behavior and layout of the bottom sheet.
-        case custom(typography: Typography = .default,
-                    shapes: Shapes = .default,
-                    grabber: Grabber = .default,
-                    settings: Settings = .default)
+        ///   - typography: Text style for icon buttons within the bottom sheet.
+        ///   - shapes: Corner radius for the bottom sheet container.
+        ///   - grabber: Drag indicator at the top of the bottom sheet.
+        ///   - settings: Delimiter positioning (visual boundaries within the sheet).
+        public init(typography: Typography,
+                    shapes: Shapes,
+                    grabber: Grabber,
+                    settings: Settings) {
+            self.typography = typography
+            self.shapes = shapes
+            self.grabber = grabber
+            self.settings = settings
+        }
     }
 }
 
 // MARK: - Typography
 
 extension Aiuta.Configuration.UserInterface.BottomSheetTheme {
-    /// Configures the typography for text elements in the bottom sheet.
-    ///
-    /// Typography defines the text styles applied to various elements, such as buttons.
-    /// You can use the default typography or define custom styles to match your application's design language.
-    public enum Typography {
-        /// Use the default typography provided by the SDK.
-        case `default`
-
-        /// Define custom typography for bottom sheet text.
+    /// Typography for bottom sheet text elements.
+    public struct Typography: Sendable {
+        /// Text style for icon buttons (buttons with both icon and text).
+        public let iconButton: Aiuta.Configuration.TextStyle
+        
+        /// Creates custom typography.
         ///
         /// - Parameters:
-        ///   - iconButton: The text style for icon buttons.
-        case custom(iconButton: Aiuta.Configuration.TextStyle)
-
-        /// Use a custom typography provider.
-        ///
-        /// - Parameters:
-        ///   - provider: Supplies the custom typography.
-        case provider(Provider)
-    }
-}
-
-extension Aiuta.Configuration.UserInterface.BottomSheetTheme.Typography {
-    /// A protocol for supplying custom typography for bottom sheet themes.
-    ///
-    /// This protocol defines the required text styles for icon and chips buttons.
-    /// - Note: Instead of implementing this protocol directly, use one of
-    ///         `Aiuta.Configuration.Typography` typealias.
-    public protocol Provider {
-        /// The text style for icon buttons.
-        var iconButton: Aiuta.Configuration.TextStyle { get }
+        ///   - iconButton: Text style for icon buttons (buttons with both icon and text).
+        public init(iconButton: Aiuta.Configuration.TextStyle) {
+            self.iconButton = iconButton
+        }
     }
 }
 
 // MARK: - Shapes
 
 extension Aiuta.Configuration.UserInterface.BottomSheetTheme {
-    /// Configures the shapes for visual elements in the bottom sheet.
-    ///
-    /// Shapes define the appearance of elements like the bottom sheet container or buttons.
-    /// You can use predefined shapes or define custom ones to align with your application's design language.
-    public enum Shapes {
-        /// Use the default shapes provided by the SDK.
-        case `default`
-
-        /// Define custom shapes for bottom sheet elements.
+    /// Shape style for the bottom sheet container.
+    public struct Shapes: Sendable {
+        /// Corner radius and shape applied to the bottom sheet container.
+        public let bottomSheet: Aiuta.Configuration.Shape
+        
+        /// Creates custom shape.
         ///
         /// - Parameters:
-        ///   - bottomSheet: The shape for the bottom sheet container.
-        case custom(bottomSheet: Aiuta.Configuration.Shape)
-
-        /// Use a custom shapes provider.
-        ///
-        /// - Parameters:
-        ///   - provider: Supplies the custom shapes.
-        case provider(Provider)
-    }
-}
-
-extension Aiuta.Configuration.UserInterface.BottomSheetTheme.Shapes {
-    /// A protocol for supplying custom shapes for bottom sheet themes.
-    ///
-    /// This protocol defines the required shapes for the bottom sheet container and chips buttons.
-    /// - Note: Instead of implementing this protocol directly, use one of
-    ///         `Aiuta.Configuration.Shapes` typealias.
-    public protocol Provider {
-        /// The shape for the bottom sheet container.
-        var bottomSheet: Aiuta.Configuration.Shape { get }
+        ///   - bottomSheet: Corner radius and shape applied to the bottom sheet container.
+        public init(bottomSheet: Aiuta.Configuration.Shape) {
+            self.bottomSheet = bottomSheet
+        }
     }
 }
 
 // MARK: - Grabber
 
 extension Aiuta.Configuration.UserInterface.BottomSheetTheme {
-    /// Configures the grabber for the bottom sheet.
+    /// Drag indicator (grabber) at the top of the bottom sheet.
     ///
-    /// The grabber is a visual indicator that allows users to drag the bottom sheet.
-    ///  You can use the default grabber, disable it, or define a custom one.
-    public enum Grabber {
-        /// Use the default grabber provided by the SDK.
-        case `default`
-
-        /// Disable the grabber.
-        case none
-
-        /// Define a custom grabber.
+    /// Visual indicator that allows users to drag the sheet up/down.
+    /// Set height to 0 to disable.
+    public struct Grabber: Sendable {
+        /// Width of the grabber indicator.
+        public let width: CGFloat
+        
+        /// Height of the grabber indicator. Set to 0 to disable.
+        public let height: CGFloat
+        
+        /// Vertical offset from the top of the bottom sheet.
+        public let offset: CGFloat
+        
+        /// Creates a custom grabber configuration.
         ///
         /// - Parameters:
         ///   - width: The width of the grabber.
-        ///   - height: The height of the grabber.
+        ///   - height: The height of the grabber. Set to 0 to disable the grabber.
         ///   - offset: The vertical offset of the grabber from the top of the bottom sheet.
-        case custom(width: CGFloat,
+        public init(width: CGFloat,
                     height: CGFloat,
-                    offset: CGFloat)
+                    offset: CGFloat) {
+            self.width = width
+            self.height = height
+            self.offset = offset
+        }
     }
 }
 
 // MARK: - Settings
 
 extension Aiuta.Configuration.UserInterface.BottomSheetTheme {
-    /// Configures delimiters for the bottom sheet.
+    /// Delimiter options for the bottom sheet.
     ///
-    /// Delimiters define the visual boundaries of the bottom sheet, such as insets or extensions to the edges.
-    public enum Delimieters {
+    /// Visual boundaries such as insets or edge extensions.
+    public enum Delimieters: Sendable {
         /// Use the default inset for delimiters.
         case defaultInset
 
@@ -154,25 +134,23 @@ extension Aiuta.Configuration.UserInterface.BottomSheetTheme {
         case extendToTheLeftAndRight
     }
 
-    /// Configures the behavior and layout of the bottom sheet.
-    ///
-    /// These settings allow you to adjust specific aspects of the bottom sheet, such as delimiter positioning.
-    public enum Settings {
-        /// Use the default settings provided by the SDK.
-        case `default`
-
-        /// Use preset settings for delimiters.
-        ///
-        /// - Parameters:
-        ///   - delimiters: The delimiter preset to use.
-        case presets(delimiters: Delimieters)
-
-        /// Define custom settings for the bottom sheet.
+    /// Behavior and layout settings for the bottom sheet.
+    public struct Settings: Sendable {
+        /// Whether to extend delimiters to the right edge.
+        public let extendDelimitersToTheRight: Bool
+        
+        /// Whether to extend delimiters to the left edge.
+        public let extendDelimitersToTheLeft: Bool
+        
+        /// Creates custom settings for the bottom sheet.
         ///
         /// - Parameters:
         ///   - extendDelimitersToTheRight: Whether to extend delimiters to the right edge.
         ///   - extendDelimitersToTheLeft: Whether to extend delimiters to the left edge.
-        case custom(extendDelimitersToTheRight: Bool,
-                    extendDelimitersToTheLeft: Bool)
+        public init(extendDelimitersToTheRight: Bool,
+                    extendDelimitersToTheLeft: Bool) {
+            self.extendDelimitersToTheRight = extendDelimitersToTheRight
+            self.extendDelimitersToTheLeft = extendDelimitersToTheLeft
+        }
     }
 }

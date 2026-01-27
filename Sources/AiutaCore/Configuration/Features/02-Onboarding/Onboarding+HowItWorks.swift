@@ -15,117 +15,97 @@
 import UIKit
 
 extension Aiuta.Configuration.Features.Onboarding {
-    /// Configures the "How It Works" page for onboarding.
+    /// "How It Works" page configuration for onboarding.
     ///
-    /// This page explains how the Try-On feature works. You can use the default
-    /// configuration or customize it to fit your app's needs.
-    public enum HowItWorks {
-        /// Use the default configuration for the "How It Works" page.
-        case `default`
-
-        /// Use a custom configuration for the "How It Works" page.
+    /// This page explains how the Try-On feature works through interactive examples.
+    public struct HowItWorks: Sendable {
+        /// Images displayed on the "How It Works" page.
+        public let images: Images
+        
+        /// Text content for the "How It Works" page.
+        public let strings: Strings
+        
+        /// Creates a custom "How It Works" page configuration.
         ///
         /// - Parameters:
-        ///   - images: Defines the images displayed on the "How It Works" page.
-        ///   - strings: Defines the text content for the "How It Works" page.
-        case custom(images: Images = .builtIn,
-                    strings: Strings = .default)
+        ///   - images: Images displayed on the "How It Works" page.
+        ///   - strings: Text content for the "How It Works" page.
+        public init(images: Images,
+                    strings: Strings) {
+            self.images = images
+            self.strings = strings
+        }
     }
 }
 
 // MARK: - Images
 
 extension Aiuta.Configuration.Features.Onboarding.HowItWorks {
-    /// Configures the images used on the "How It Works" page.
-    public enum Images {
-        /// Use the default images provided by the SDK.
-        case builtIn
-
-        /// Use custom images for the "How It Works" page.
+    /// Images used on the "How It Works" page.
+    public struct Images: Sendable {
+        /// Array of exactly 3 items, each containing images for the interactive onboarding.
+        public let onboardingHowItWorksItems: [Item]
+        
+        /// Creates custom images.
         ///
         /// - Parameters:
-        ///   - onboardingHowItWorksItems: An array of exactly 3 `Images.Item`
-        ///     objects, each containing images for the interactive onboarding.
-        case custom(onboardingHowItWorksItems: [Item])
-
-        /// Use a custom image provider for the "How It Works" page.
-        ///
-        /// - Parameters:
-        ///   - provider: Supplies the custom images for the page.
-        case provider(Provider)
+        ///   - onboardingHowItWorksItems: Array of exactly 3 items, each containing images for the interactive onboarding.
+        public init(onboardingHowItWorksItems: [Item]) {
+            self.onboardingHowItWorksItems = onboardingHowItWorksItems
+        }
     }
 }
 
 extension Aiuta.Configuration.Features.Onboarding.HowItWorks.Images {
-    /// Represents an item used to provide images for the "How It Works" page.
-    public struct Item {
-        /// The example image for the Try-On feature.
+    /// Represents an item with images for the "How It Works" interactive onboarding.
+    public struct Item: Sendable {
+        /// Try-On result image.
         ///
         /// All images should depict the same person in the same pose wearing
         /// `itemPreview`. It is recommended to generate these images using Aiuta.
         public let itemPhoto: UIImage
-
-        /// The flatlay image of the item with a transparent background.
+        
+        /// Flatlay image of the item with a transparent background.
         public let itemPreview: UIImage
         
-        /// Initializes a new `Item` with the specified images.
+        /// Creates a new item with the specified images.
+        ///
+        /// - Parameters:
+        ///   - itemPhoto: Try-On result image.
+        ///   - itemPreview: Flatlay image of the item with a transparent background.
         public init(itemPhoto: UIImage, itemPreview: UIImage) {
             self.itemPhoto = itemPhoto
             self.itemPreview = itemPreview
         }
-    }
-
-    /// Supplies custom images for the "How It Works" page.
-    ///
-    /// This protocol allows you to define how images are provided for the
-    /// interactive onboarding experience.
-    public protocol Provider {
-        /// An array of `HowItWorksItem` objects, each containing sample photo
-        /// and item preview. The array must contain exactly 3 items.
-        var onboardingHowItWorksItems: [Item] { get }
     }
 }
 
 // MARK: - Strings
 
 extension Aiuta.Configuration.Features.Onboarding.HowItWorks {
-    /// Configures the text content for the "How It Works" page.
-    public enum Strings {
-        /// Use the default text content for the "How It Works" page.
-        case `default`
-
-        /// Use custom text content for the "How It Works" page.
+    /// Text content for the "How It Works" page.
+    public struct Strings: Sendable {
+        /// Optional title for the page (displayed at the top).
+        public let onboardingHowItWorksPageTitle: String?
+        
+        /// Title displayed below the interactive onboarding section.
+        public let onboardingHowItWorksTitle: String
+        
+        /// Description explaining how the Try-On feature works.
+        public let onboardingHowItWorksDescription: String
+        
+        /// Creates custom text content.
         ///
         /// - Parameters:
-        ///   - onboardingHowItWorksPageTitle: An optional title for the page.
-        ///   - onboardingHowItWorksTitle: The title displayed below the interactive
-        ///     onboarding section.
-        ///   - onboardingHowItWorksDescription: A description explaining how the
-        ///     Try-On feature works.
-        case custom(onboardingHowItWorksPageTitle: String?,
+        ///   - onboardingHowItWorksPageTitle: Optional title for the page (displayed at the top).
+        ///   - onboardingHowItWorksTitle: Title displayed below the interactive onboarding section.
+        ///   - onboardingHowItWorksDescription: Description explaining how the Try-On feature works.
+        public init(onboardingHowItWorksPageTitle: String?,
                     onboardingHowItWorksTitle: String,
-                    onboardingHowItWorksDescription: String)
-
-        /// Use a custom strings provider for the "How It Works" page.
-        ///
-        /// - Parameters:
-        ///   - provider: Supplies the custom text content for the page.
-        case provider(Provider)
-    }
-}
-
-extension Aiuta.Configuration.Features.Onboarding.HowItWorks.Strings {
-    /// Supplies custom text content for the "How It Works" page.
-    ///
-    /// This protocol allows you to define the text displayed on the page.
-    public protocol Provider {
-        /// An optional title for the "How It Works" page.
-        var onboardingHowItWorksPageTitle: String? { get }
-
-        /// The title displayed below the interactive onboarding section.
-        var onboardingHowItWorksTitle: String { get }
-
-        /// A description explaining how the Try-On feature works.
-        var onboardingHowItWorksDescription: String { get }
+                    onboardingHowItWorksDescription: String) {
+            self.onboardingHowItWorksPageTitle = onboardingHowItWorksPageTitle
+            self.onboardingHowItWorksTitle = onboardingHowItWorksTitle
+            self.onboardingHowItWorksDescription = onboardingHowItWorksDescription
+        }
     }
 }

@@ -15,53 +15,49 @@
 import Foundation
 
 extension Aiuta.Configuration.Features.Consent {
-    /// A namespace for embedded into onboaring consent options.
-    public enum Embedded {}
+    /// Configuration for embedded consent into onboarding pages.
+    public struct Embedded: Sendable {
+        /// Text content for the consent embedded into the onboarding screen.
+        public let strings: Strings
+        
+        /// Creates an embedded consent configuration.
+        ///
+        /// - Parameters:
+        ///   - strings: Text content for the consent embedded into the onboarding screen.
+        public init(strings: Strings) {
+            self.strings = strings
+        }
+    }
 }
 
 // MARK: - Strings
 
 extension Aiuta.Configuration.Features.Consent.Embedded {
-    /// Configures the text content for the consent embedded into the onboarding screen.
-    ///
-    /// You can provide custom HTML content or use a custom provider to supply
-    /// the required strings.
-    public enum Strings {
-        /// Use the default strings provided by the SDK.
-        ///
-        /// - Parameters:
-        ///  - termsOfServiceUrl: The URL to the terms of service page. This URL is
-        ///  displayed as a link at the bottom of the onboarding screen.
-        case `default`(termsOfServiceUrl: String)
-        
-        /// Use custom HTML content for the consent embedded into the onboarding screen.
-        ///
-        /// - Parameters:
-        ///   - consentHtml: The HTML content that represents the consent
-        ///     information. This content is displayed at the bottom of the onboarding
-        ///     screen and should include concise text and links to the privacy policy
-        ///     and/or terms of service within the HTML attribute.
-        case custom(consentHtml: String)
-
-        /// Use a custom provider to supply the strings for the consent screen.
-        ///
-        /// - Parameters:
-        ///   - provider: Supplies the custom strings for the consent screen.
-        case provider(Provider)
-    }
-}
-
-extension Aiuta.Configuration.Features.Consent.Embedded.Strings {
-    /// Supplies custom strings for the embedded consent screen.
-    ///
-    /// Implement this protocol to provide the HTML content required for the
-    /// consent embedded into the onboarding screen.
-    public protocol Provider {
-        /// The HTML content that represents the consent information.
+    /// Text content for the consent embedded into the onboarding screen.
+    public struct Strings: Sendable {
+        /// HTML content representing the consent information.
         ///
         /// This content is displayed at the bottom of the onboarding screen
         /// and should include concise text and links to the privacy policy
         /// and/or terms of service within the HTML attribute.
-        var consentHtml: String { get }
+        public let consentHtml: String
+        
+        /// Creates custom HTML content for embedded consent.
+        ///
+        /// - Parameters:
+        ///   - consentHtml: HTML content representing the consent information.
+        public init(consentHtml: String) {
+            self.consentHtml = consentHtml
+        }
+        
+        /// Creates consent with a terms of service URL.
+        ///
+        /// Uses the default strings provided by the SDK with a link to your terms of service.
+        ///
+        /// - Parameters:
+        ///   - termsOfServiceUrl: URL to the terms of service page.
+        public static func `default`(termsOfServiceUrl: String) -> Strings {
+            return Strings(consentHtml: termsOfServiceUrl)
+        }
     }
 }

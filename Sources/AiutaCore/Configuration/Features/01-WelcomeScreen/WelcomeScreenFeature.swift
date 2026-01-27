@@ -20,161 +20,130 @@ extension Aiuta.Configuration.Features {
     /// This feature allows you to display a welcome screen when the SDK is opened
     /// for the first time. The welcome screen is shown only if the user has not
     /// completed the onboarding process. If onboarding is not provided, the welcome
-    /// screen will appear every time the SDK is opened. You can control its visibility
-    /// by including or excluding this feature in your configuration.
+    /// screen will appear every time the SDK is opened.
     ///
-    /// There are no any built-in resources for the welcome screen. You need to
+    /// To disable this feature, set it to `nil` in the `Features` configuration.
+    ///
+    /// There are no built-in resources for the welcome screen. You need to
     /// provide your own images, icons, strings, and typography styles.
-    public enum WelcomeScreen {
-        /// Disables the welcome screen feature.
-        case none
-
-        /// Enables the welcome screen feature with custom settings.
+    public struct WelcomeScreen: Sendable {
+        /// Images displayed on the welcome screen.
+        public let images: Images
+        
+        /// Icons used on the welcome screen.
+        public let icons: Icons
+        
+        /// Text content for the welcome screen.
+        public let strings: Strings
+        
+        /// Text styles for the welcome screen.
+        public let typography: Typography
+        
+        /// Creates a custom welcome screen configuration.
         ///
         /// - Parameters:
-        ///   - images: Configures the images displayed on the welcome screen.
-        ///   - icons: Configures the icons used on the welcome screen.
-        ///   - strings: Configures the text content for the welcome screen.
-        ///   - typography: Configures the text styles for the welcome screen.
-        case custom(images: Images,
+        ///   - images: Images displayed on the welcome screen.
+        ///   - icons: Icons used on the welcome screen.
+        ///   - strings: Text content for the welcome screen.
+        ///   - typography: Text styles for the welcome screen.
+        public init(images: Images,
                     icons: Icons,
                     strings: Strings,
-                    typography: Typography)
+                    typography: Typography) {
+            self.images = images
+            self.icons = icons
+            self.strings = strings
+            self.typography = typography
+        }
     }
 }
 
 // MARK: - Images
 
 extension Aiuta.Configuration.Features.WelcomeScreen {
-    /// Configures the images used on the welcome screen.
-    public enum Images {
-        /// Uses custom images for the welcome screen.
+    /// Images used on the welcome screen.
+    public struct Images: Sendable {
+        /// Background image that fills the entire screen.
+        public let welcomeBackground: UIImage
+        
+        /// Creates custom images.
         ///
         /// - Parameters:
-        ///   - welcomeBackground: The background image that fills the entire screen.
-        case custom(welcomeBackground: UIImage)
-
-        /// Uses a custom image provider.
-        ///
-        /// - Parameters:
-        ///   - provider: Supplies the custom images for the welcome screen.
-        case provider(Provider)
-    }
-}
-
-extension Aiuta.Configuration.Features.WelcomeScreen.Images {
-    /// Supplies custom images for the welcome screen.
-    ///
-    /// - Note: Use the `Aiuta.Configuration.Images` typealias for convenience.
-    public protocol Provider {
-        /// The background image that fills the entire screen.
-        var welcomeBackground: UIImage { get }
+        ///   - welcomeBackground: Background image that fills the entire screen.
+        public init(welcomeBackground: UIImage) {
+            self.welcomeBackground = welcomeBackground
+        }
     }
 }
 
 // MARK: - Icons
 
 extension Aiuta.Configuration.Features.WelcomeScreen {
-    /// Configures the icons used on the welcome screen.
-    public enum Icons {
-        /// Uses custom icons for the welcome screen.
+    /// Icons used on the welcome screen.
+    public struct Icons: Sendable {
+        /// Icon displayed near the center of the screen, above the title (82x82).
+        public let welcome82: UIImage
+        
+        /// Creates custom icons.
         ///
         /// - Parameters:
-        ///   - welcome82: The icon displayed near the center of the screen, above
-        ///     the title.
-        case custom(welcome82: UIImage)
-
-        /// Uses a custom icon provider.
-        ///
-        /// - Parameters:
-        ///   - provider: Supplies the custom icons for the welcome screen.
-        case provider(Provider)
-    }
-}
-
-extension Aiuta.Configuration.Features.WelcomeScreen.Icons {
-    /// Supplies custom icons for the welcome screen.
-    ///
-    /// - Note: Use the `Aiuta.Configuration.Icons` typealias for convenience.
-    public protocol Provider {
-        /// The icon displayed near the center of the welcome screen, above the title.
-        var welcome82: UIImage { get }
+        ///   - welcome82: Icon displayed near the center of the screen, above the title (82x82).
+        public init(welcome82: UIImage) {
+            self.welcome82 = welcome82
+        }
     }
 }
 
 // MARK: - Strings
 
 extension Aiuta.Configuration.Features.WelcomeScreen {
-    /// Configures the text content for the welcome screen.
-    public enum Strings {
-        /// Uses custom text for the welcome screen.
+    /// Text content for the welcome screen.
+    public struct Strings: Sendable {
+        /// Title displayed on the welcome screen.
+        public let welcomeTitle: String
+        
+        /// Description text displayed on the welcome screen.
+        public let welcomeDescription: String
+        
+        /// Text for the button that starts the onboarding process or shows the main interface.
+        public let welcomeButtonStart: String
+        
+        /// Creates custom text content.
         ///
         /// - Parameters:
-        ///   - welcomeTitle: The title displayed on the welcome screen.
-        ///   - welcomeDescription: The description text displayed on the welcome screen.
-        ///   - welcomeButtonStart: The text for the button that starts the onboarding
-        ///     process or shows the main interface.
-        case custom(welcomeTitle: String,
+        ///   - welcomeTitle: Title displayed on the welcome screen.
+        ///   - welcomeDescription: Description text displayed on the welcome screen.
+        ///   - welcomeButtonStart: Text for the button that starts the onboarding process or shows the main interface.
+        public init(welcomeTitle: String,
                     welcomeDescription: String,
-                    welcomeButtonStart: String)
-
-        /// Uses a custom string provider.
-        ///
-        /// - Parameters:
-        ///   - provider: Supplies the custom text for the welcome screen.
-        case provider(Provider)
-    }
-}
-
-extension Aiuta.Configuration.Features.WelcomeScreen.Strings {
-    /// Supplies custom text for the welcome screen.
-    ///
-    /// - Note: Use the `Aiuta.Configuration.Strings` typealias for convenience.
-    public protocol Provider {
-        /// The title displayed on the welcome screen.
-        var welcomeTitle: String { get }
-
-        /// The description text displayed on the welcome screen.
-        var welcomeDescription: String { get }
-
-        /// The text for the button that starts the onboarding process or shows
-        /// the main interface.
-        var welcomeButtonStart: String { get }
+                    welcomeButtonStart: String) {
+            self.welcomeTitle = welcomeTitle
+            self.welcomeDescription = welcomeDescription
+            self.welcomeButtonStart = welcomeButtonStart
+        }
     }
 }
 
 // MARK: - Typography
 
 extension Aiuta.Configuration.Features.WelcomeScreen {
-    /// Configures the text styles for the welcome screen.
-    public enum Typography {
-        case `default`
+    /// Text styles for the welcome screen.
+    public struct Typography: Sendable {
+        /// Text style for the welcome screen title.
+        public let welcomeTitle: Aiuta.Configuration.TextStyle
         
-        /// Uses custom text styles for the welcome screen.
+        /// Text style for the welcome screen description.
+        public let welcomeDescription: Aiuta.Configuration.TextStyle
+        
+        /// Creates custom text styles.
         ///
         /// - Parameters:
-        ///   - welcomeTitle: The text style for the welcome screen title.
-        ///   - welcomeDescription: The text style for the welcome screen description.
-        case custom(welcomeTitle: Aiuta.Configuration.TextStyle,
-                    welcomeDescription: Aiuta.Configuration.TextStyle)
-
-        /// Uses a custom typography provider.
-        ///
-        /// - Parameters:
-        ///   - provider: Supplies the custom text styles for the welcome screen.
-        case provider(Provider)
-    }
-}
-
-extension Aiuta.Configuration.Features.WelcomeScreen.Typography {
-    /// Supplies custom text styles for the welcome screen.
-    ///
-    /// - Note: Use the `Aiuta.Configuration.Typography` typealias for convenience.
-    public protocol Provider {
-        /// The text style for the welcome screen title.
-        var welcomeTitle: Aiuta.Configuration.TextStyle { get }
-
-        /// The text style for the welcome screen description.
-        var welcomeDescription: Aiuta.Configuration.TextStyle { get }
+        ///   - welcomeTitle: Text style for the welcome screen title.
+        ///   - welcomeDescription: Text style for the welcome screen description.
+        public init(welcomeTitle: Aiuta.Configuration.TextStyle,
+                    welcomeDescription: Aiuta.Configuration.TextStyle) {
+            self.welcomeTitle = welcomeTitle
+            self.welcomeDescription = welcomeDescription
+        }
     }
 }
