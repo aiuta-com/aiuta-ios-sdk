@@ -38,7 +38,7 @@ extension Sdk.Configuration {
         // MARK: - ProductBar
 
         var arrow16: UIImage? = .bundleImage("aiutaIcon16Arrow")
-        
+
         // MARK: - ActivityIndicator
 
         var loading14: UIImage?
@@ -71,10 +71,12 @@ extension Sdk.Configuration {
         // MARK: - TryOn
 
         var magic20: UIImage? = .bundleImage("aiutaIcon20Magic")
-        
+
         // MARK: - Size&Fit
 
         var sizeFit24: UIImage? = .bundleImage("aiutaIcon24SizeFit")
+        var female20: UIImage? = .bundleImage("aiutaIcon20Female")
+        var male20: UIImage? = .bundleImage("aiutaIcon20Male")
 
         // MARK: - TryOn.FitDisclaimer
 

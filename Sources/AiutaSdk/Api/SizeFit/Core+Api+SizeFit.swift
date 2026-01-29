@@ -18,10 +18,32 @@ import Foundation
 
 extension Aiuta {
     struct FitSurvey: Codable, Equatable {
+        enum Gender: String, Codable {
+            case male = "Male"
+            case female = "Female"
+        }
+
+        enum HipShape: String, Codable, CaseIterable {
+            case Slim, Normal, Curvy
+        }
+
+        enum BellyShape: String, Codable, CaseIterable {
+            case Flat, Normal, Curvy
+        }
+
+        enum BraCup: String, Codable, CaseIterable {
+            case AA, A, B, C, D, DD, E, F, G
+        }
+
         let age: Int
         let height: Int
         let weight: Int
-        let gender: SizeRecommendation.Gender
+        let gender: Gender
+
+        let hipShape: HipShape?
+        let bellyShape: BellyShape?
+        let braSize: Int?
+        let braCup: BraCup?
     }
 
     struct SizeRecommendation: Codable {
@@ -52,11 +74,6 @@ extension Aiuta.SizeRecommendation {
     struct BodyMeasurement: Codable {
         let type: MeasurementType
         let value: Double
-    }
-
-    enum Gender: String, Codable {
-        case male = "Male"
-        case female = "Female"
     }
 
     enum FitIssueSeverity: Int, Comparable {

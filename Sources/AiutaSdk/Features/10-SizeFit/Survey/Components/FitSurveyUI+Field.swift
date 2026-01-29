@@ -106,7 +106,8 @@ extension FitSurveyUI {
         private var parentScroll: VScroll? { firstParentOfType() }
 
         override func setup() {
-            view.backgroundColor = ds.colors.neutral
+            view.borderColor = ds.colors.border
+            view.borderWidth = 1
 
             onTouchUpInside.subscribe(with: self) { [unowned self] in
                 input.view.isUserInteractionEnabled = true
@@ -118,6 +119,8 @@ extension FitSurveyUI {
         }
 
         override func updateLayout() {
+            view.borderColor = input.isFirstResponder ? ds.colors.outline : ds.colors.border
+            
             layout.make { make in
                 make.leftRight = 20
                 make.height = 68

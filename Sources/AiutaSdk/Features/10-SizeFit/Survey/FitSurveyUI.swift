@@ -16,13 +16,38 @@ import AiutaCore
 @_spi(Aiuta) import AiutaKit
 import UIKit
 
-final class FitSurveyUI: Scroll {
-    let navBar = NavBar { it, ds in
-        if ds.styles.preferCloseButtonOnTheRight {
-            it.style = .actionTitleClose
-        } else {
-            it.style = .closeTitleAction
+final class FitSurveyUI: Plane {
+    enum Step: Equatable {
+        case main, shape, bra
+    }
+
+    var step: Step = .main {
+        didSet {
+            guard oldValue != step else { return }
+            switch step {
+                case .main:
+                    navBar.style = .actionTitleClose
+                    findSize.text = "Next"
+                    progress.value = 0
+                case .shape:
+                    navBar.style = .backTitleClose
+                    findSize.text = main.gender.value == .female ? "Next" : "Find my size"
+                    progress.value = main.gender.value == .female ? 0.5 : 1
+                case .bra:
+                    navBar.style = .backTitleClose
+                    findSize.text = "Find my size"
+                    progress.value = 1
+            }
+            findSize.animations.transition(.transitionCrossDissolve, duration: .thirdOfSecond)
         }
+    }
+
+    let main = Main()
+    let shape = Shape()
+    let bra = Bra()
+
+    let navBar = NavBar { it, _ in
+        it.style = .actionTitleClose
         it.blur.view.isVisible = true
 
         if #available(iOS 26, *) {
@@ -33,29 +58,6 @@ final class FitSurveyUI: Scroll {
 
         it.blur.softEdge = .bottom
         it.blur.softness = 0.4
-    }
-
-    @scrollable
-    var header = Header()
-
-    @scrollable
-    var gender = GenderSelector()
-
-    @scrollable
-    var age = Field { it, _ in
-        it.hint.text = "Age"
-    }
-
-    @scrollable
-    var height = Field { it, _ in
-        it.hint.text = "Height"
-        it.measurment.text = "CM"
-    }
-
-    @scrollable
-    var weight = Field { it, _ in
-        it.hint.text = "Weight"
-        it.measurment.text = "KG"
     }
 
     let blur = Blur { it, ds in
@@ -69,12 +71,14 @@ final class FitSurveyUI: Scroll {
         it.softOffset = 0.05
     }
 
+    let progress = Progress()
+
     let findSize = LabelButton { it, ds in
         it.font = ds.fonts.buttonM
         it.color = ds.colors.brand
         it.label.color = ds.colors.onDark
         it.label.minScale = 0.5
-        it.text = "Find your size"
+        it.text = "Next"
     }
 
     let activity = Spinner { it, ds in
@@ -92,8 +96,6 @@ final class FitSurveyUI: Scroll {
         it.text = "Your data will be processed under our \(Html("Privacy Policy", .underline))"
     }
 
-    var fields: [Field] { scrollView.findChildren() }
-
     let errorSnackbar = Snackbar<ErrorSnackbar>()
 
     private var loadingToken = AutoCancellationToken()
@@ -101,8 +103,11 @@ final class FitSurveyUI: Scroll {
         didSet {
             guard oldValue != isLoading else { return }
 
-            scrollView.view.isUserInteractionEnabled = !isLoading
+            main.scrollView.view.isUserInteractionEnabled = !isLoading
+            shape.scrollView.view.isUserInteractionEnabled = !isLoading
+            bra.scrollView.view.isUserInteractionEnabled = !isLoading
             findSize.view.isUserInteractionEnabled = !isLoading
+
             if isLoading {
                 errorSnackbar.isVisible = false
             }
@@ -118,53 +123,66 @@ final class FitSurveyUI: Scroll {
     private var keyboardWillHide: Signal<Notification>
 
     func hideKeyboard() {
-        fields.forEach { $0.resign() }
+        main.fields.forEach { $0.resign() }
         animations.animate { [self] in
             updateLayoutRecursive()
         }
     }
 
-    override func setup() {
-        scrollView.itemSpace = 12
-        scrollView.flexibleWidth = false
-
-        scrollView.gestures.onTap(cancelsTouchesInView: false, with: self) { [unowned self] tap in
-            guard tap.state == .ended else { return }
-            let point = tap.location(in: scrollView.view)
-
-            for v in fields {
-                let p = scrollView.view.convert(point, to: v.view)
-                if v.view.bounds.contains(p) { return }
-            }
-
-            hideKeyboard()
-        }
-
-        keyboardWillHide.subscribe(with: self) { [unowned self] _ in
-            scrollView.scrollToTop()
-        }
-    }
-
     override func updateLayout() {
-        disclaimer.layout.make { make in
-            make.leftRight = 16
-            make.bottom = layout.safe.insets.bottom + 16
+        progress.layout.make { make in
+            make.center = navBar.layout.center
         }
 
         findSize.layout.make { make in
             make.height = 50
             make.leftRight = 16
-            make.bottom = disclaimer.layout.topPin + 24
+            make.bottom = layout.safe.insets.bottom + 16
             make.shape = ds.shapes.buttonM
+        }
+
+        disclaimer.layout.make { make in
+            make.width = layout.width - 32
+            make.bottom = findSize.layout.topPin + 20
         }
 
         activity.layout.make { make in
             make.center = findSize.layout.center
         }
 
-        scrollView.keepOffset {
-            scrollView.contentInset = .init(top: navBar.layout.bottomPin,
-                                            bottom: max(findSize.layout.topPin, layout.keyboard.height) + 16)
+        main.insets = .init(top: navBar.layout.bottomPin, bottom: findSize.layout.topPin)
+        shape.insets = main.insets
+        bra.insets = main.insets
+
+        main.layout.make { make in
+            if step == .main {
+                make.left = 0
+            } else {
+                make.right = layout.width
+            }
+        }
+
+        disclaimer.layout.make { make in
+            make.left = main.layout.left + 16
+        }
+
+        shape.layout.make { make in
+            switch step {
+                case .main:
+                    make.left = layout.width
+                case .shape:
+                    make.left = 0
+                case .bra:
+                    make.right = layout.width
+            }
+        }
+
+        bra.layout.make { make in
+            if step == .bra {
+                make.left = 0
+            } else {
+                make.left = layout.width
+            }
         }
 
         blur.layout.make { make in

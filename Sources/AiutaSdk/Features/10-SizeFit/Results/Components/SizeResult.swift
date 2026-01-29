@@ -23,7 +23,7 @@ final class SizeResult: Plane {
     }
 
     let summary = Label { it, ds in
-        it.font = ds.fonts.subtle
+        it.font = ds.fonts.product
         it.color = ds.colors.secondary
         it.alignment = .center
         it.isMultiline = true
@@ -31,11 +31,10 @@ final class SizeResult: Plane {
 
     let stroke = Gradient { it, _ in
         it.colorStops = [
-            .init(0x45E4EAFF, 0),
-            .init(0x6BE7AFFF, 1),
+            .init(0x4e71f6FF, 0),
+            .init(0x706ff6FF, 1),
         ]
-        it.direction = .custom(.init(x: -0.25, y: 0.5), .init(x: 1.25, y: 0.5))
-        it.view.maxOpacity = 0.7
+        it.direction = .tilt(.descending)
     }
 
     let pointer = Pointer()
@@ -54,11 +53,12 @@ final class SizeResult: Plane {
 
     func grayscale() {
         let stops: [GradientView.ColorStop] = [
-            .init(UIColor(red: 0.898, green: 0.898, blue: 0.918, alpha: 1), 0),
-            .init(UIColor(red: 0.898, green: 0.898, blue: 0.918, alpha: 1), 1),
+            .init(ds.colors.border, 0),
+            .init(ds.colors.border, 1),
         ]
         stroke.colorStops = stops
         pointer.stroke.colorStops = stops
+        pointer.title.color = ds.colors.onLight
     }
 
     override func updateLayout() {
@@ -80,7 +80,7 @@ final class SizeResult: Plane {
 
         summary.layout.make { make in
             make.leftRight = 8
-            make.top = stroke.layout.bottomPin + 8
+            make.top = stroke.layout.bottomPin + 16
         }
 
         layout.make { make in
@@ -109,16 +109,15 @@ extension SizeResult {
     final class Pointer: Plane {
         let stroke = Gradient { it, _ in
             it.colorStops = [
-                .init(0x45E4EAFF, 0),
-                .init(0x6BE7AFFF, 1),
+                .init(0x4e71f6FF, 0),
+                .init(0x706ff6FF, 1),
             ]
-            it.direction = .custom(.init(x: -0.25, y: 0.5), .init(x: 1.25, y: 0.5))
-            it.view.maxOpacity = 0.7
+            it.direction = .tilt(.descending)
         }
 
         let title = Label { it, ds in
             it.font = ds.fonts.buttonS
-            it.color = ds.colors.primary
+            it.color = ds.colors.onDark
         }
 
         override func updateLayout() {

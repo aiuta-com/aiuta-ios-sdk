@@ -17,12 +17,8 @@ import AiutaCore
 import UIKit
 
 final class SizeResultsUI: Scroll {
-    let navBar = NavBar { it, ds in
-        if ds.styles.preferCloseButtonOnTheRight {
-            it.style = .actionTitleClose
-        } else {
-            it.style = .closeTitleAction
-        }
+    let navBar = NavBar { it, _ in
+        it.style = .actionTitleClose
     }
 
     let title = Label { it, ds in

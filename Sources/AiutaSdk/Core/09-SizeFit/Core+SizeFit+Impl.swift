@@ -22,8 +22,8 @@ extension Sdk.Core {
     final class SizeFitImpl: SizeFit {
         let onChange = Signal<Void>()
 
-        private let api: ApiService?
-        private let config: Sdk.Configuration
+        @injected private var api: ApiService
+        @injected private var config: Sdk.Configuration
         @injected private var session: Sdk.Core.Session
 
         @defaults(key: "fitSurvey", defaultValue: nil)
@@ -31,26 +31,15 @@ extension Sdk.Core {
 
         var isAvailable: Bool {
             guard let product = session.products.first else { return false }
-            guard let feature = config.features.sizeFit else { return false }
-            return feature.sizeChartMap.keys.contains(product.id)
-        }
-
-        init() {
-            @injected var config: Sdk.Configuration
-            self.config = config
-            if let apiKey = config.features.sizeFit?.apiKey {
-                api = RestService(Api.Provider(auth: .apiKey(apiKey), baseUrl: Sdk.Core.Api.sizeFit),
-                                  debugger: Api.Debugger(isEnabled: true))
-            } else {
-                api = nil
-            }
+            guard config.features.sizeFit.isSome else { return false }
+            return product.sizeChart.isSome
         }
 
         func recommendation(survey: Aiuta.FitSurvey, product: Aiuta.Product) async throws -> Aiuta.SizeRecommendation {
             let hasChanges = lastSurvey != survey
             lastSurvey = survey
 
-            guard let api, let code = config.features.sizeFit?.sizeChartMap[product.id] else {
+            guard let code = product.sizeChart else {
                 throw SizeFitError.abort
             }
 
@@ -59,7 +48,11 @@ extension Sdk.Core {
                 age: survey.age,
                 height: survey.height,
                 weight: survey.weight,
-                gender: survey.gender
+                gender: survey.gender,
+                hipShape: survey.hipShape,
+                bellyShape: survey.bellyShape,
+                braSize: survey.gender == .female ? survey.braSize : nil,
+                braCup: survey.gender == .female ? survey.braCup : nil
             ))
 
             if hasChanges {
