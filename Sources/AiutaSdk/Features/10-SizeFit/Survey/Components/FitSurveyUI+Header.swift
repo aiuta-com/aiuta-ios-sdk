@@ -18,50 +18,47 @@ import UIKit
 
 extension FitSurveyUI {
     final class Header: Plane {
-        let gradient = Gradient { it, _ in
-            it.colorStops = [
-                .init(UIColor(red: 0.421, green: 0.907, blue: 0.687, alpha: 1), 0.34),
-                .init(UIColor(red: 0.272, green: 0.895, blue: 0.917, alpha: 1), 1),
-            ]
-            it.direction = .horizontal
-        }
-
-        let icon = Image { it, ds in
-            it.isAutoSize = false
-            it.source = ds.icons.sizeFit24
-            it.tint = ds.colors.primary
-        }
-
         let title = Label { it, ds in
-            it.font = ds.fonts.titleL
+            it.font = ds.fonts.titleM
             it.color = ds.colors.primary
-            it.text = "Find your size"
+        }
+
+        var isSmall = false {
+            didSet {
+                guard oldValue != isSmall else { return }
+                title.font = isSmall ? ds.fonts.pageTitle : ds.fonts.titleM
+                updateLayout()
+            }
+        }
+
+        var text: String? {
+            get { title.text }
+            set { title.text = newValue }
         }
 
         override func updateLayout() {
             layout.make { make in
                 make.leftRight = 0
             }
-            
-            gradient.layout.make { make in
-                make.circle = 52
-                make.centerX = 0
-                make.top = 20
-            }
-
-            icon.layout.make { make in
-                make.square = 26
-                make.center = gradient.layout.center
-            }
 
             title.layout.make { make in
-                make.centerX = 0
-                make.top = gradient.layout.bottomPin + 20
+                if isSmall {
+                    make.top = 12
+                    make.left = 20
+                } else {
+                    make.centerX = 0
+                    make.top = 60
+                }
             }
-            
+
             layout.make { make in
-                make.height = title.layout.bottomPin + 4
+                make.height = title.layout.bottomPin + 8
             }
+        }
+
+        convenience init(_ builder: (_ it: Header, _ ds: DesignSystem) -> Void) {
+            self.init()
+            builder(self, ds)
         }
     }
 }

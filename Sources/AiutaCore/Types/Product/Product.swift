@@ -43,6 +43,8 @@ extension Aiuta {
         /// The pricing details of the product. This includes the current
         /// price and, optionally, an old price to indicate discounts.
         public let price: Price?
+        
+        public let sizeChart: String?
 
         /// Initializes a new `Product` instance with the provided details.
         ///
@@ -60,12 +62,14 @@ extension Aiuta {
                     title: String,
                     brand: String,
                     imageUrls: [String],
+                    sizeChart: String? = nil,
                     price: Price? = nil) {
             self.id = id
             self.title = title
             self.brand = brand
             self.imageUrls = imageUrls
             self.price = price
+            self.sizeChart = sizeChart
         }
     }
 

@@ -33,18 +33,32 @@ final class FitSurveyVC: ViewController<FitSurveyUI> {
             dismissAll()
         }
 
-        ui.findSize.onTouchUpInside.task(with: self) { [unowned self] in
-            await findSize()
+        ui.navBar.onBack.subscribe(with: self) { [unowned self] in
+            prevStep()
         }
 
-        ui.fields.forEach {
-            $0.input.didChange.subscribe(with: self) { [unowned self] in
-                trySurvey()
+        ui.findSize.onTouchUpInside.task(with: self) { [unowned self] in
+            if !nextStep() {
+                await findSize()
             }
         }
 
-        ui.gender.didChange.subscribe(with: self) { [unowned self] in
-            trySurvey()
+        ui.main.fields.forEach {
+            $0.input.didChange.subscribe(with: self) { [unowned self] in
+                updateSurvey()
+            }
+        }
+
+        ui.main.gender.didChange.subscribe(with: self) { [unowned self] in
+            updateSurvey()
+        }
+
+        ui.shape.didChange.subscribe(with: self) { [unowned self] in
+            updateSurvey()
+        }
+        
+        ui.bra.didChange.subscribe(with: self) { [unowned self] in
+            updateSurvey()
         }
 
         animateKeyboardChanges = true
@@ -52,25 +66,64 @@ final class FitSurveyVC: ViewController<FitSurveyUI> {
         applyLastSurvey()
     }
 
-    func applyLastSurvey() {
-        guard let survey = sizeFit.lastSurvey else { return }
-        ui.gender.value = survey.gender
-        ui.age.intValue = survey.age
-        ui.height.intValue = survey.height
-        ui.weight.intValue = survey.weight
-        trySurvey()
+    override func whenWillAppear() {
+        guard ui.step != .main else { return }
+        ui.step = .main
+        ui.updateLayoutRecursive()
     }
 
-    func trySurvey() {
-        guard let age = ui.age.intValue,
-              let height = ui.height.intValue,
-              let weight = ui.weight.intValue,
-              let gender = ui.gender.value else {
+    func applyLastSurvey() {
+        guard let survey = sizeFit.lastSurvey else { return }
+        ui.main.gender.value = survey.gender
+        ui.main.age.intValue = survey.age
+        ui.main.height.intValue = survey.height
+        ui.main.weight.intValue = survey.weight
+        ui.shape.bellyShape = survey.bellyShape
+        ui.shape.hipShape = survey.hipShape
+        ui.bra.braSize = survey.braSize
+        ui.bra.braCup = survey.braCup
+        updateSurvey()
+    }
+
+    func updateSurvey() {
+        guard let age = ui.main.age.intValue,
+              let height = ui.main.height.intValue,
+              let weight = ui.main.weight.intValue,
+              let gender = ui.main.gender.value else {
             survey = nil
             return
         }
 
-        survey = .init(age: age, height: height, weight: weight, gender: gender)
+        survey = .init(age: age, height: height, weight: weight, gender: gender,
+                       hipShape: ui.shape.hipShape, bellyShape: ui.shape.bellyShape,
+                       braSize: ui.bra.braSize, braCup: ui.bra.braCup)
+    }
+
+    func prevStep() {
+        switch ui.step {
+            case .main: break
+            case .bra:
+                ui.step = .shape
+                ui.animations.updateLayout()
+            case .shape:
+                ui.step = .main
+                ui.animations.updateLayout()
+        }
+    }
+
+    func nextStep() -> Bool {
+        switch ui.step {
+            case .main:
+                ui.step = .shape
+                ui.animations.updateLayout()
+                return true
+            case .shape:
+                guard ui.main.gender.value == .female else { return false }
+                ui.step = .bra
+                ui.animations.updateLayout()
+                return true
+            case .bra: return false
+        }
     }
 
     func findSize() async {

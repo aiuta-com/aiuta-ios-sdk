@@ -19,6 +19,7 @@ import UIKit
     public let onUpdateItem = Signal<RecycleViewType>()
     public let onTapItem = Signal<RecycleViewType>()
 
+    public var renderAlways: Bool = false
     public var canInvalidateLayout: Bool = true
     public var extendedRenderingHeight: CGFloat = 300
     public var partialRenderingHeight: CGFloat = 100
@@ -168,7 +169,8 @@ import UIKit
         let itemWidth = itemSize.width
         let itemHeigh = itemSize.height
         var topInColumn = [CGFloat](repeating: contentInsets.top, count: countOfItemsInRow)
-        let renderRect = layout.extendedBounds(extension: .init(width: 0, height: extendedRenderingHeight))
+        let renderRect = layout.extendedBounds(extension: .init(width: renderAlways ? layout.width * 2 : 0,
+                                                                height: extendedRenderingHeight))
 
         rects.batches.suffix(2).forEach { batch in
             batch.forEachRect { index, rect in

@@ -19,29 +19,24 @@ import UIKit
 extension FitSurveyUI {
     final class GenderSelector: Plane {
         let didChange = Signal<Void>()
-        
-        var value: Aiuta.SizeRecommendation.Gender? {
+
+        var value: Aiuta.FitSurvey.Gender? {
             didSet {
                 guard value != oldValue else { return }
-                let isMale = value == .male
-                let isFemale = value == .female
-                male.color = isMale ? ds.colors.onLight : ds.colors.neutral
-                male.label.color = isMale ? ds.colors.onDark : ds.colors.primary
-                female.color = isFemale ? ds.colors.onLight : ds.colors.neutral
-                female.label.color = isFemale ? ds.colors.onDark : ds.colors.primary
-                animations.transition(.transitionCrossDissolve, duration: .quarterOfSecond)
+                male.isSelected = value == .male
+                female.isSelected = value == .female
                 didChange.fire()
             }
         }
 
-        let male = LabelButton { it, ds in
-            it.font = ds.fonts.regular
-            it.text = "Male"
+        let male = GenderButton { it, ds in
+            it.label.text = "Male"
+            it.icon.image = ds.icons.male20
         }
 
-        let female = LabelButton { it, ds in
-            it.font = ds.fonts.regular
-            it.text = "Female"
+        let female = GenderButton { it, ds in
+            it.label.text = "Female"
+            it.icon.image = ds.icons.female20
         }
 
         override func setup() {
@@ -59,13 +54,13 @@ extension FitSurveyUI {
         override func updateLayout() {
             layout.make { make in
                 make.leftRight = 0
-                make.height = 92
+                make.height = 108
             }
 
             male.layout.make { make in
                 make.left = 20
                 make.right = layout.width / 2 + 6
-                make.height = 52
+                make.height = 68
                 make.shape = ds.shapes.buttonL
                 make.centerY = 0
             }
@@ -73,10 +68,48 @@ extension FitSurveyUI {
             female.layout.make { make in
                 make.right = 20
                 make.left = layout.width / 2 + 6
-                make.height = 52
+                make.height = male.layout.height
                 make.shape = ds.shapes.buttonL
                 make.centerY = 0
             }
+        }
+    }
+
+    final class GenderButton: PlainButton {
+        var isSelected = false {
+            didSet {
+                guard isSelected != oldValue else { return }
+                updateSelected()
+            }
+        }
+
+        private let labelWithIcon = LabelWithIcon()
+
+        var label: Label { labelWithIcon.label }
+        var icon: Image { labelWithIcon.icon }
+
+        override func setup() {
+            updateSelected()
+            icon.tint = ds.colors.primary
+            label.color = ds.colors.primary
+            labelWithIcon.spacing = 10
+        }
+
+        override func updateLayout() {
+            labelWithIcon.layout.make { make in
+                make.center = .zero
+            }
+        }
+
+        func updateSelected() {
+            view.borderWidth = isSelected ? 2 : 1
+            view.borderColor = isSelected ? ds.colors.primary : ds.colors.border
+            animations.transition(.transitionCrossDissolve, duration: .quarterOfSecond)
+        }
+
+        convenience init(_ builder: (_ it: GenderButton, _ ds: DesignSystem) -> Void) {
+            self.init()
+            builder(self, ds)
         }
     }
 }

@@ -49,6 +49,8 @@ final class SizeResultsVC: ViewController<SizeResultsUI> {
             ui.title.view.isVisible = false
             ui.noResultDescription.view.isVisible = true
             ui.noResultIcon.view.isVisible = true
+            ui.bestSize.view.isVisible = false
+            ui.nextSize.view.isVisible = false
             return
         }
 

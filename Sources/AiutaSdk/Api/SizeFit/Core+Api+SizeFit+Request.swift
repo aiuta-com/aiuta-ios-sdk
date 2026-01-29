@@ -18,19 +18,19 @@ import Alamofire
 
 extension Aiuta.SizeRecommendation {
     struct ByChart: Encodable, ApiRequest {
-        var urlPath: String { "recommendation" }
+        var urlPath: String { "size_and_fit/recommendation" }
         var method: HTTPMethod { .post }
-        var headers: HTTPHeaders {
-            var headers = HTTPHeaders()
-            headers.add(name: "X-Partition", value: "default")
-            return headers
-        }
 
         let code: String
         let age: Int
         let height: Int
         let weight: Int
-        let gender: Gender
+        let gender: Aiuta.FitSurvey.Gender
+
+        let hipShape: Aiuta.FitSurvey.HipShape?
+        let bellyShape: Aiuta.FitSurvey.BellyShape?
+        let braSize: Int?
+        let braCup: Aiuta.FitSurvey.BraCup?
 
         var retryCount: Int {
             @injected var subscription: Sdk.Core.Subscription

@@ -16,15 +16,9 @@ import Foundation
 
 extension Aiuta.Configuration.Features {
     public struct SizeFit: Sendable {
-        public let apiKey: String
-        public let sizeChartMap: [String: String]
         public let handler: Handler?
 
-        public init(apiKey: String,
-                    sizeChartMap: [String: String],
-                    handler: Handler? = nil) {
-            self.apiKey = apiKey
-            self.sizeChartMap = sizeChartMap
+        public init(handler: Handler? = nil) {
             self.handler = handler
         }
     }

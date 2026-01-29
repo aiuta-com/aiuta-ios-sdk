@@ -28,11 +28,17 @@ final class LabelWithIcon: Plane {
         it.isLineHeightMultipleEnabled = false
     }
 
+    public var spacing: CGFloat = 4 {
+        didSet {
+            updateLayout()
+        }
+    }
+
     override func updateLayout() {
         layout.make { make in
             make.height = max(20, label.layout.height)
             if icon.image.isSome {
-                make.width = icon.layout.width + label.layout.width + 4
+                make.width = icon.layout.width + label.layout.width + spacing
             } else {
                 make.width = label.layout.width
             }
