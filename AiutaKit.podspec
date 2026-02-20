@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = 'AiutaKit'
-  s.version      = '4.2.0'
+  s.version      = '4.2.3'
   s.summary      = 'Aiuta Core Kit.'
   s.description  = 'Supporting components for Aiuta Virtual Try-On Solution.'
   s.homepage     = 'https://github.com/aiuta-com/aiuta-ios-sdk'
