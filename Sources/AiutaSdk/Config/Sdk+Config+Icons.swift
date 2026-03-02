@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+@_spi(Aiuta) import AiutaAssets
 import AiutaCore
 import UIKit
 
@@ -19,25 +20,25 @@ extension Sdk.Configuration {
     struct Icons {
         // MARK: - PageBar
 
-        var back24: UIImage? = .bundleImage("aiutaIcon24Back")
-        var close24: UIImage? = .bundleImage("aiutaIcon24Close")
+        var back24: UIImage? = AiutaAssets.bundleImage("aiutaIcon24Back")
+        var close24: UIImage? = AiutaAssets.bundleImage("aiutaIcon24Close")
 
         // MARK: - Selection
 
-        var trash24: UIImage? = .bundleImage("aiutaIcon24Trash")
-        var check20: UIImage? = .bundleImage("aiutaIcon20Check")
+        var trash24: UIImage? = AiutaAssets.bundleImage("aiutaIcon24Trash")
+        var check20: UIImage? = AiutaAssets.bundleImage("aiutaIcon20Check")
 
         // MARK: - Error
 
-        var error36: UIImage? = .bundleImage("aiutaIcon36Error")
+        var error36: UIImage? = AiutaAssets.bundleImage("aiutaIcon36Error")
 
         // MARK: - Image
 
-        var imageError36: UIImage? = .bundleImage("aiutaIcon36ImageError")
+        var imageError36: UIImage? = AiutaAssets.bundleImage("aiutaIcon36ImageError")
 
         // MARK: - ProductBar
 
-        var arrow16: UIImage? = .bundleImage("aiutaIcon16Arrow")
+        var arrow16: UIImage? = AiutaAssets.bundleImage("aiutaIcon16Arrow")
 
         // MARK: - ActivityIndicator
 
@@ -58,25 +59,25 @@ extension Sdk.Configuration {
 
         // MARK: - ImagePicker.Camera
 
-        var camera24: UIImage? = .bundleImage("aiutaIcon24Camera")
+        var camera24: UIImage? = AiutaAssets.bundleImage("aiutaIcon24Camera")
 
         // MARK: - ImagePicker.Gallery
 
-        var gallery24: UIImage? = .bundleImage("aiutaIcon24Gallery")
+        var gallery24: UIImage? = AiutaAssets.bundleImage("aiutaIcon24Gallery")
 
         // MARK: - ImagePicker.PredefinedModel
 
-        var selectModels24: UIImage? = .bundleImage("aiutaIcon24Model")
+        var selectModels24: UIImage? = AiutaAssets.bundleImage("aiutaIcon24Model")
 
         // MARK: - TryOn
 
-        var magic20: UIImage? = .bundleImage("aiutaIcon20Magic")
+        var magic20: UIImage? = AiutaAssets.bundleImage("aiutaIcon20Magic")
 
         // MARK: - Size&Fit
 
-        var sizeFit24: UIImage? = .bundleImage("aiutaIcon24SizeFit")
-        var female20: UIImage? = .bundleImage("aiutaIcon20Female")
-        var male20: UIImage? = .bundleImage("aiutaIcon20Male")
+        var sizeFit24: UIImage? = AiutaAssets.bundleImage("aiutaIcon24SizeFit")
+        var female20: UIImage? = AiutaAssets.bundleImage("aiutaIcon20Female")
+        var male20: UIImage? = AiutaAssets.bundleImage("aiutaIcon20Male")
 
         // MARK: - TryOn.FitDisclaimer
 
@@ -84,25 +85,25 @@ extension Sdk.Configuration {
 
         // MARK: - TryOn.Feedback
 
-        var like36: UIImage? = .bundleImage("aiutaIcon36Like")
-        var dislike36: UIImage? = .bundleImage("aiutaIcon36Dislike")
+        var like36: UIImage? = AiutaAssets.bundleImage("aiutaIcon36Like")
+        var dislike36: UIImage? = AiutaAssets.bundleImage("aiutaIcon36Dislike")
         var gratitude40: UIImage?
 
         // MARK: - TryOn.OtherPhoto
 
-        var changePhoto24: UIImage? = .bundleImage("aiutaIcon24CameraSwap")
+        var changePhoto24: UIImage? = AiutaAssets.bundleImage("aiutaIcon24CameraSwap")
 
         // MARK: - TryOn.History
 
-        var history24: UIImage? = .bundleImage("aiutaIcon24History")
+        var history24: UIImage? = AiutaAssets.bundleImage("aiutaIcon24History")
 
         // MARK: - Share
 
-        var share24: UIImage? = .bundleImage("aiutaIcon24Share")
+        var share24: UIImage? = AiutaAssets.bundleImage("aiutaIcon24Share")
 
         // MARK: - Wishlist
 
-        var wishlist24: UIImage? = .bundleImage("aiutaIcon24Wishlist")
-        var wishlistFill24: UIImage? = .bundleImage("aiutaIcon24WishlistFill")
+        var wishlist24: UIImage? = AiutaAssets.bundleImage("aiutaIcon24Wishlist")
+        var wishlistFill24: UIImage? = AiutaAssets.bundleImage("aiutaIcon24WishlistFill")
     }
 }

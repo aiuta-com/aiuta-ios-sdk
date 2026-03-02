@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+@_spi(Aiuta) import AiutaAssets
 import AiutaCore
 @_spi(Aiuta) import AiutaKit
 import Resolver
@@ -26,9 +27,9 @@ extension Sdk.Configuration {
         // MARK: - Onboarding
 
         var onboardingHowItWorksItems: [(photo: UIImage?, preview: UIImage?)] = [
-            (photo: .bundleImage("aiutaImageBoardHow1L"), preview: .bundleImage("aiutaImageBoardHow1S")),
-            (photo: .bundleImage("aiutaImageBoardHow2L"), preview: .bundleImage("aiutaImageBoardHow2S")),
-            (photo: .bundleImage("aiutaImageBoardHow3L"), preview: .bundleImage("aiutaImageBoardHow3S")),
+            (photo: AiutaAssets.bundleImage("aiutaImageBoardHow1L"), preview: AiutaAssets.bundleImage("aiutaImageBoardHow1S")),
+            (photo: AiutaAssets.bundleImage("aiutaImageBoardHow2L"), preview: AiutaAssets.bundleImage("aiutaImageBoardHow2S")),
+            (photo: AiutaAssets.bundleImage("aiutaImageBoardHow3L"), preview: AiutaAssets.bundleImage("aiutaImageBoardHow3S")),
         ]
 
         var onboardingBestResultsGood: [UIImage] = []
@@ -37,8 +38,8 @@ extension Sdk.Configuration {
         // MARK: - ImagePicker
 
         var imagePickerExamples: [UIImage] = [
-            .bundleImage("aiutaImagePickerSample1"),
-            .bundleImage("aiutaImagePickerSample2"),
+            AiutaAssets.bundleImage("aiutaImagePickerSample1"),
+            AiutaAssets.bundleImage("aiutaImagePickerSample2"),
         ].compactMap { $0 }
 
         // MARK: - Share

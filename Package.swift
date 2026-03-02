@@ -18,6 +18,10 @@ let package = Package(
             targets: ["AiutaKit"]
         ),
         .library(
+            name: "AiutaAssets",
+            targets: ["AiutaAssets"]
+        ),
+        .library(
             name: "AiutaSdk",
             targets: ["AiutaSdk"]
         ),
@@ -43,10 +47,20 @@ let package = Package(
             ]
         ),
         .target(
+            name: "AiutaAssets",
+            dependencies: [
+                "AiutaCore",
+            ],
+            resources: [
+                .process("Resources")
+            ]
+        ),
+        .target(
             name: "AiutaSdk",
             dependencies: [
                 "AiutaCore",
                 "AiutaKit",
+                "AiutaAssets",
                 "Alamofire",
                 "Kingfisher",
                 "Resolver",

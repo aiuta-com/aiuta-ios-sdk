@@ -20,7 +20,7 @@ extension Aiuta.Configuration {
     /// font, size, weight, and additional attributes like kerning and line
     /// height. By using this, you can ensure consistent typography between
     /// your UI components and the Aiuta SDK.
-    public struct TextStyle {
+    public struct TextStyle: Sendable {
         /// The font used for the text. This defines the typeface applied to
         /// the text content.
         public let font: UIFont
@@ -63,7 +63,7 @@ extension Aiuta.Configuration {
             self.lineHeightMultiple = lineHeightMultiple
         }
 
-        /// Initializes a new text style with the specified attributes.
+        /// Initializes a new text style with the specified font and absolute line height.
         ///
         /// - Parameters:
         ///   - font: The font to use for the text.
@@ -71,17 +71,17 @@ extension Aiuta.Configuration {
         ///           provided font's `pointSize` will be used.
         ///   - weight: The weight of the font.
         ///   - kern: The kerning value for character spacing (optional).
-        ///   - lineHeight: The line height (optional).
+        ///   - lineHeight: The absolute line height (converted to line height multiple internally).
         public init(font: UIFont,
                     size: CGFloat? = nil,
                     weight: UIFont.Weight,
                     kern: CGFloat? = nil,
-                    lineHeight: CGFloat? = nil) {
+                    lineHeight: CGFloat) {
             self.font = font
             self.size = size ?? font.pointSize
             self.weight = weight
             self.kern = kern
-            if let lineHeight, font.lineHeight > 0 {
+            if font.lineHeight > 0 {
                 lineHeightMultiple = lineHeight / font.lineHeight
             } else {
                 lineHeightMultiple = nil
@@ -91,7 +91,6 @@ extension Aiuta.Configuration {
         /// Initializes a new text style with the system font and specified attributes.
         ///
         /// - Parameters:
-        ///   - font: The font to use for the text.
         ///   - size: The size of the font in points.
         ///   - weight: The weight of the font.
         ///   - kern: The kerning value for character spacing (optional).
@@ -107,22 +106,22 @@ extension Aiuta.Configuration {
             self.lineHeightMultiple = lineHeightMultiple
         }
 
-        /// Initializes a new text style with the system font and specified attributes.
+        /// Initializes a new text style with the system font and absolute line height.
         ///
         /// - Parameters:
         ///   - size: The size of the font in points.
         ///   - weight: The weight of the font.
         ///   - kern: The kerning value for character spacing (optional).
-        ///   - lineHeight: The line height (optional).
+        ///   - lineHeight: The absolute line height (converted to line height multiple internally).
         public init(size: CGFloat,
                     weight: UIFont.Weight,
                     kern: CGFloat? = nil,
-                    lineHeight: CGFloat? = nil) {
+                    lineHeight: CGFloat) {
             font = .systemFont(ofSize: size, weight: weight)
             self.size = size
             self.weight = weight
             self.kern = kern
-            if let lineHeight, font.lineHeight > 0 {
+            if font.lineHeight > 0 {
                 lineHeightMultiple = lineHeight / font.lineHeight
             } else {
                 lineHeightMultiple = nil

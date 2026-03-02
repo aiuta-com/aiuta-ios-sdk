@@ -15,12 +15,16 @@
 import AiutaCore
 import UIKit
 
-extension UIImage {
-    static let sdkBundle: Bundle? = {
-        let bundleName = "AiutaSdk_AiutaSdk"
+@_spi(Aiuta) public enum AiutaAssets {
+    public static func bundleImage(_ name: String) -> UIImage? {
+        UIImage(named: name, in: assetsBundle, compatibleWith: nil)
+    }
+
+    static let assetsBundle: Bundle = {
+        let bundleName = "AiutaSdk_AiutaAssets"
         let candidates = [
             Bundle.main.resourceURL,
-            Bundle(for: Sdk.Register.self).resourceURL,
+            Bundle(for: BundleAnchor.self).resourceURL,
         ]
 
         for candidate in candidates {
@@ -28,12 +32,8 @@ extension UIImage {
             if let bundle = bundlePath.flatMap(Bundle.init(url:)) { return bundle }
         }
 
-        return Bundle(for: Sdk.Register.self)
+        return Bundle(for: BundleAnchor.self)
     }()
 }
 
-extension UIImage {
-    static func bundleImage(_ name: String) -> UIImage? {
-        UIImage(named: name, in: UIImage.sdkBundle, compatibleWith: nil)
-    }
-}
+private final class BundleAnchor {}
