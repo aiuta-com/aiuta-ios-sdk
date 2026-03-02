@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+@_exported import AiutaConfig
 @_exported import AiutaCore
 import UIKit
 

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 @_spi(Aiuta) import AiutaKit
+import AiutaConfig
 import AiutaCore
 import Resolver
 

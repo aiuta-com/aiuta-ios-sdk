@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import AiutaConfig
 import AiutaCore
 @_spi(Aiuta) import AiutaKit
 import UIKit
@@ -20,19 +21,19 @@ extension Sdk.Configuration {
     struct Shapes {
         // MARK: - Image
 
-        var imageL: Aiuta.Configuration.Shape = .continuous(radius: 24)
-        var imageM: Aiuta.Configuration.Shape = .continuous(radius: 16)
-        var imageS: Aiuta.Configuration.Shape = .continuous(radius: 8)
+        var imageL: Aiuta.Shape = .continuous(radius: 24)
+        var imageM: Aiuta.Shape = .continuous(radius: 16)
+        var imageS: Aiuta.Shape = .continuous(radius: 8)
 
         // MARK: - Button
 
-        var buttonL: Aiuta.Configuration.Shape = .continuous(radius: 16)
-        var buttonM: Aiuta.Configuration.Shape = .continuous(radius: 8)
-        var buttonS: Aiuta.Configuration.Shape = .continuous(radius: 8)
+        var buttonL: Aiuta.Shape = .continuous(radius: 16)
+        var buttonM: Aiuta.Shape = .continuous(radius: 8)
+        var buttonS: Aiuta.Shape = .continuous(radius: 8)
 
         // MARK: - BottomSheet
 
-        var bottomSheet: Aiuta.Configuration.Shape = .continuous(radius: 16)
+        var bottomSheet: Aiuta.Shape = .continuous(radius: 16)
 
         // MARK: - BottomSheet.Grabber
 
@@ -42,19 +43,19 @@ extension Sdk.Configuration {
 
         // MARK: - Onboarding
 
-        var onboardingImageL: Aiuta.Configuration.Shape = .continuous(radius: 16)
-        var onboardingImageS: Aiuta.Configuration.Shape = .continuous(radius: 16)
+        var onboardingImageL: Aiuta.Shape = .continuous(radius: 16)
+        var onboardingImageS: Aiuta.Shape = .continuous(radius: 16)
 
         // MARK: - TryOn.Feedback
 
-        var feedbackButton: Aiuta.Configuration.Shape = .continuous(radius: .infinity)
+        var feedbackButton: Aiuta.Shape = .continuous(radius: .infinity)
     }
 }
 
 // MARK: - Kit Layout shape support
 
 extension LayoutMaker {
-    var shape: Aiuta.Configuration.Shape {
+    var shape: Aiuta.Shape {
         get { .rectangular }
         set {
             switch newValue {
@@ -71,7 +72,7 @@ extension LayoutMaker {
     }
 }
 
-extension Aiuta.Configuration.Shape {
+extension Aiuta.Shape {
     var radius: CGFloat {
         switch self {
             case let .continuous(radius): return radius
