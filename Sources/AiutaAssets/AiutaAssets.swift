@@ -25,14 +25,14 @@ import UIKit
         let candidates = [
             Bundle.main.resourceURL,
             Bundle(for: BundleAnchor.self).resourceURL,
-        ]
+        ].compactMap { $0 }
 
         for candidate in candidates {
-            let bundlePath = candidate?.appendingPathComponent("\(bundleName).bundle")
-            if let bundle = bundlePath.flatMap(Bundle.init(url:)) { return bundle }
+            let bundlePath = candidate.appendingPathComponent("\(bundleName).bundle")
+            if let bundle = Bundle(url: bundlePath) { return bundle }
         }
 
-        return Bundle(for: BundleAnchor.self)
+        fatalError("Resource bundle '\(bundleName)' not found")
     }()
 }
 

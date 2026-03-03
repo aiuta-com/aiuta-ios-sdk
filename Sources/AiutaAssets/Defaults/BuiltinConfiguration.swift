@@ -14,17 +14,28 @@
 
 import AiutaConfig
 import AiutaCore
+import AiutaDefaults
 
 extension Aiuta.Configuration {
-    public static func `default`(auth: Aiuta.Auth,
-                                 analytics: Aiuta.Analytics = .none,
-                                 debugSettings: DebugSettings = .release) -> Self {
-        .init(
+    public static func `default`(
+        auth: Aiuta.Auth,
+        analytics: Aiuta.Analytics = .none,
+        debugSettings: DebugSettings = .release,
+        localization: LocalizationPack = .init(),
+        colors: ColorsPack = .init(),
+        typography: TypographyPack = .init(),
+        shapes: ShapesPack = .init()
+    ) -> Self {
+        .default(
             auth: auth,
-            userInterface: .default,
-            features: .default,
             analytics: analytics,
-            debugSettings: debugSettings
+            debugSettings: debugSettings,
+            localization: localization,
+            colors: colors,
+            icons: .builtin,
+            images: .builtin,
+            typography: typography,
+            shapes: shapes
         )
     }
 }

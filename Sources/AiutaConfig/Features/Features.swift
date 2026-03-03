@@ -51,9 +51,3 @@ extension Aiuta.Configuration {
     }
 }
 
-extension Aiuta.Configuration.Features {
-    public static func `default`() -> Self {
-        // TODO: Provide proper default values for required parameters
-        fatalError("default() needs to be implemented with proper default values")
-    }
-}
