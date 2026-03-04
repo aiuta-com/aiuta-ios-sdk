@@ -24,7 +24,6 @@ public struct ColorsPack: Sendable {
     public let background: UIColor
     public let neutral: UIColor
     public let border: UIColor
-    public let outline: UIColor
     // Component
     public let overlay: UIColor
     public let selectionBackground: UIColor
@@ -42,7 +41,6 @@ public struct ColorsPack: Sendable {
                 background: UIColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1),
                 neutral: UIColor = UIColor(red: 0xF2 / 255.0, green: 0xF2 / 255.0, blue: 0xF7 / 255.0, alpha: 1),
                 border: UIColor = UIColor(red: 0xE5 / 255.0, green: 0xE5 / 255.0, blue: 0xEA / 255.0, alpha: 1),
-                outline: UIColor = UIColor(red: 0xC7 / 255.0, green: 0xC7 / 255.0, blue: 0xCC / 255.0, alpha: 1),
                 overlay: UIColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0x99 / 255.0),
                 selectionBackground: UIColor = UIColor(red: 0, green: 0, blue: 0, alpha: 1),
                 errorBackground: UIColor = UIColor(red: 0xEF / 255.0, green: 0x57 / 255.0, blue: 0x54 / 255.0, alpha: 1),
@@ -61,7 +59,6 @@ public struct ColorsPack: Sendable {
         self.background = background
         self.neutral = neutral
         self.border = border
-        self.outline = outline
         self.overlay = overlay
         self.selectionBackground = selectionBackground
         self.errorBackground = errorBackground

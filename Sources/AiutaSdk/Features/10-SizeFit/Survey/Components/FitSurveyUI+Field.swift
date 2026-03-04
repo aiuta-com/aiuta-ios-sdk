@@ -120,7 +120,7 @@ extension FitSurveyUI {
         }
 
         override func updateLayout() {
-            view.borderColor = input.isFirstResponder ? ds.colors.outline : ds.colors.border
+            view.borderColor = ds.colors.border
             
             layout.make { make in
                 make.leftRight = 20

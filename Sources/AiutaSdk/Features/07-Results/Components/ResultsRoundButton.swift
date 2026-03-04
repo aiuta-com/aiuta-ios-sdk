@@ -33,7 +33,7 @@ extension ResultPage {
             it.intensity = 0.4
 
             if case .blurred(hasOutline: true) = ds.styles.loadingStatusStyle {
-                it.view.borderColor = ds.colors.outline
+                it.view.borderColor = ds.colors.border
                 it.view.borderWidth = 1
             }
         }

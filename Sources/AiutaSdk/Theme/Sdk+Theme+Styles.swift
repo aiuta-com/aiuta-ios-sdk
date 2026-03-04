@@ -105,7 +105,7 @@ extension Aiuta.Configuration.UserInterface.ComponentStyle {
                 @Injected var ds: DesignSystem
                 blur.style = ds.colors.scheme.blurStyle
                 if hasOutline {
-                    blur.view.borderColor = ds.colors.outline
+                    blur.view.borderColor = ds.colors.border
                     blur.view.borderWidth = 1
                 } else {
                     blur.view.borderWidth = 0

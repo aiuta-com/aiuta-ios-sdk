@@ -41,7 +41,7 @@ extension Sdk.UI.Consent {
         }
 
         override func setup() {
-            view.borderColor = ds.colors.outline
+            view.borderColor = ds.colors.border
             view.borderWidth = 2
         }
 
@@ -60,7 +60,7 @@ extension Sdk.UI.Consent {
             if isEnabled {
                 color = isSelected ? ds.colors.brand : .clear
             } else {
-                color = ds.colors.outline
+                color = ds.colors.border
             }
         }
     }

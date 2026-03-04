@@ -42,8 +42,7 @@ extension Aiuta.Configuration {
                         background: colors.background,
                         screen: nil,
                         neutral: colors.neutral,
-                        border: colors.border,
-                        outline: colors.outline
+                        border: colors.border
                     ),
                     label: .init(
                         typography: .init(

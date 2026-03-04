@@ -35,7 +35,6 @@ extension Sdk.Theme {
         var screen: UIColor { color.screen ?? 0x000000FF.uiColor }
         var neutral: UIColor { color.neutral }
         var border: UIColor { color.border }
-        var outline: UIColor { color.outline }
         var link: UIColor { 0x4000FFFF.uiColor }
 
         // MARK: - Selection

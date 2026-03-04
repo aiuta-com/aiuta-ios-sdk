@@ -69,9 +69,6 @@ extension Aiuta.Configuration.UserInterface {
         /// Border color for UI components.
         public let border: UIColor
         
-        /// Color for blur outlines and checkmark borders.
-        public let outline: UIColor
-        
         /// Creates a fully customized color theme.
         ///
         /// This option provides maximum flexibility, allowing you to define every aspect
@@ -92,7 +89,6 @@ extension Aiuta.Configuration.UserInterface {
         ///             If not provided, the `background` color will be used.
         ///   - neutral: A neutral background color used for components.
         ///   - border: The color used for component borders.
-        ///   - outline: The color used for blur outlines and checkmark borders.
         public init(scheme: ColorScheme,
                     brand: UIColor,
                     primary: UIColor,
@@ -102,8 +98,7 @@ extension Aiuta.Configuration.UserInterface {
                     background: UIColor,
                     screen: UIColor?,
                     neutral: UIColor,
-                    border: UIColor,
-                    outline: UIColor) {
+                    border: UIColor) {
             self.scheme = scheme
             self.brand = brand
             self.primary = primary
@@ -114,7 +109,6 @@ extension Aiuta.Configuration.UserInterface {
             self.screen = screen
             self.neutral = neutral
             self.border = border
-            self.outline = outline
         }
     }
 }
