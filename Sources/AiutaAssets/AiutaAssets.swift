@@ -16,11 +16,9 @@ import AiutaCore
 import UIKit
 
 @_spi(Aiuta) public enum AiutaAssets {
-    public static func bundleImage(_ name: String) -> UIImage? {
-        UIImage(named: name, in: assetsBundle, compatibleWith: nil)
-    }
+    private final class BundleAnchor {}
 
-    static let assetsBundle: Bundle = {
+    private static let assetsBundle: Bundle? = {
         let bundleName = "AiutaSdk_AiutaAssets"
         let candidates = [
             Bundle.main.resourceURL,
@@ -32,8 +30,10 @@ import UIKit
             if let bundle = Bundle(url: bundlePath) { return bundle }
         }
 
-        fatalError("Resource bundle '\(bundleName)' not found")
+        return nil
     }()
-}
 
-private final class BundleAnchor {}
+    public static func bundleImage(_ name: String) -> UIImage? {
+        UIImage(named: name, in: assetsBundle, compatibleWith: nil)
+    }
+}

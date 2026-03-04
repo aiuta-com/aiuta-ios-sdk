@@ -42,8 +42,7 @@ public final class Signal<T>: @unchecked Sendable {
     }
 }
 
-@_spi(Aiuta)
-public extension Signal {
+@_spi(Aiuta) public extension Signal {
     typealias SyncCallback = (T) -> Void
 
     func subscribe(with observer: AnyObject, callback: @escaping SyncCallback) {
@@ -83,8 +82,7 @@ public extension Signal {
     }
 }
 
-@_spi(Aiuta)
-public extension Signal {
+@_spi(Aiuta) public extension Signal {
     typealias AsyncCallback = @MainActor @Sendable (T) async -> Void
 
     func task(with observer: AnyObject, callback: @escaping AsyncCallback) {
@@ -123,8 +121,7 @@ public extension Signal {
     }
 }
 
-@_spi(Aiuta)
-public extension Signal {
+@_spi(Aiuta) public extension Signal {
     func fire(_ data: T) {
         lock.lock()
         fireCount += 1
@@ -143,13 +140,11 @@ public extension Signal {
     }
 }
 
-@_spi(Aiuta)
 public extension Signal where T == Void {
     func fire() { fire(()) }
 }
 
-@_spi(Aiuta)
-public extension Signal {
+@_spi(Aiuta) public extension Signal {
     func cancelSubscription(for observer: AnyObject) {
         lock.lock()
         signalListeners.removeAll { $0.observer === observer }
@@ -191,7 +186,7 @@ private final class SignalSubscription<T>: @unchecked Sendable {
     }
 
     func dispatchData(_ data: T) {
-        if #available(iOS 13.0, *), task.isSome {
+        if #available(iOS 13.0, *), task != nil {
             Task { @MainActor [observer] in await dispatchAsync(data, with: observer) }
         } else {
             dispatchSync(data)

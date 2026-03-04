@@ -18,17 +18,13 @@ extension Aiuta {
     /// A generic wrapper for a value that can be observed for changes. This is
     /// needed fot Aiuta SDK to monitor a value and react to its changes.
     public final class Observable<Value: Sendable>: @unchecked Sendable {
-        private let observableActor: _ObservableActor<Value>
+        @_spi(Aiuta) public let didChange = Signal<Value>(retainLastData: true)
 
         /// The value being observed. When this value is updated, all observers
         /// are automatically notified through the `didChange` signal.
         public var value: Value {
             didSet {
-                let newValue = value
-                print(newValue)
-                Task { [observableActor] in
-                    await observableActor.notify(newValue)
-                }
+                didChange.fire(value)
             }
         }
 
@@ -37,25 +33,8 @@ extension Aiuta {
         /// - Parameter value: The initial value to be observed.
         public init(_ value: Value) {
             self.value = value
-            observableActor = _ObservableActor(value)
+            didChange.fire(value)
         }
-    }
-}
-
-// MARK: - Internal SDK listeners
-
-extension Aiuta.Observable {
-    @_spi(Aiuta)
-    @discardableResult
-    public func addListener(
-        fireImmediately: Bool = true,
-        _ listener: @escaping @Sendable (Value) -> Void
-    ) async -> UUID {
-        await observableActor.addListener(fireImmediately: fireImmediately, listener)
-    }
-
-    public func removeListener(_ id: UUID) async {
-        await observableActor.removeListener(id)
     }
 }
 

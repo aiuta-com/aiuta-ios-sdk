@@ -2,6 +2,7 @@
 //  Created by nGrey on 06.12.2023.
 //
 
+@_spi(Aiuta) import AiutaCore
 import Foundation
 import PhotosUI
 import Resolver

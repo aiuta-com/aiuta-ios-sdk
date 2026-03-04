@@ -14,7 +14,7 @@
 
 import Foundation
 
-@_spi(Aiuta) public final class UnfairLock {
+public final class UnfairLock {
     private let unfairLock: os_unfair_lock_t
     private let unfairValue: os_unfair_lock_s
 

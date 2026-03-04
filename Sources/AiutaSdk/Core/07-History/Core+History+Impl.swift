@@ -36,14 +36,14 @@ extension Sdk.Core {
         @MainActor func subscribeForChanges() async {
             if config.features.imagePicker.hasUploadsHistory {
                 let uploads = await config.features.imagePicker.historyProvider.uploaded
-                await uploads.addListener { [weak self] newValue in
+                uploads.didChange.subscribePast(with: self) { [weak self] newValue in
                     self?.uploaded.items = newValue
                 }
             }
 
             if config.features.tryOn.hasGenerationsHistory {
                 let generations = await config.features.tryOn.historyProvider.generated
-                await generations.addListener { [weak self] newValue in
+                generations.didChange.subscribePast(with: self) { [weak self] newValue in
                     self?.generated.items = newValue
                 }
             }

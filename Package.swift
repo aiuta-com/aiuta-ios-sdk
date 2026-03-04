@@ -49,6 +49,7 @@ let package = Package(
         .target(
             name: "AiutaKit",
             dependencies: [
+                "AiutaCore",
                 "Alamofire",
                 "Kingfisher",
                 "Resolver",

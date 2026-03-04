@@ -14,7 +14,7 @@
 
 import Foundation
 
-@_spi(Aiuta) public enum ThreadQoS {
+public enum ThreadQoS {
     case main, mainAsync
     case user, medium, background
 
@@ -29,7 +29,7 @@ import Foundation
     }
 }
 
-@_spi(Aiuta) public func dispatch(_ ref: ThreadQoS, execute work: @escaping @convention(block) () -> Void) {
+public func dispatch(_ ref: ThreadQoS, execute work: @escaping @convention(block) () -> Void) {
     if (ref == .main) && Thread.isMainThread {
         work()
     } else {

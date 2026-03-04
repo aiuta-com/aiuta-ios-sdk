@@ -50,7 +50,7 @@ extension Sdk.Core {
             let wishlist = await config.features.wishlist.dataProvider?.wishlistProductIds
             guard let wishlist else { return }
 
-            await wishlist.addListener { [weak self] newValue in
+            wishlist.didChange.subscribePast(with: self) { [weak self] newValue in
                 guard let self else { return }
                 self.wishlistProductIds = Set(newValue)
                 self.onWishlistChange.fire()

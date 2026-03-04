@@ -2,6 +2,7 @@
 //  Copyright (c) 2014 - 2017 Tuomas Artman. All rights reserved.
 //
 
+@_spi(Aiuta) import AiutaCore
 import ObjectiveC
 import UIKit
 
