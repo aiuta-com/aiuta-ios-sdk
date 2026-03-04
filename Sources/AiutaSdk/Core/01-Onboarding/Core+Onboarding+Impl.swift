@@ -21,30 +21,33 @@ extension Sdk.Core {
     actor OnboardingImpl: Onboarding {
         @injected var config: Aiuta.Configuration
 
+        private lazy var dataProvider: Aiuta.Configuration.Features.Onboarding.DataProvider? = {
+            config.features.onboarding?.resolveDataProvider()
+        }()
+
         var needsWelcome: Bool {
             get async {
                 guard config.features.welcomeScreen != nil else { return false }
-                guard let onboarding = config.features.onboarding else { return true }
-                return await !onboarding.dataProvider.isOnboardingCompleted
+                guard let dataProvider else { return true }
+                return await !dataProvider.isOnboardingCompleted
             }
         }
 
         var needsOnboarding: Bool {
             get async {
-                guard let onboarding = config.features.onboarding else { return false }
-                return await !onboarding.dataProvider.isOnboardingCompleted
+                guard let dataProvider else { return false }
+                return await !dataProvider.isOnboardingCompleted
             }
         }
 
         func complete() async {
-            guard let onboarding = config.features.onboarding else { return }
-            await onboarding.dataProvider.completeOnboarding()
+            await dataProvider?.completeOnboarding()
         }
     }
 }
 
 extension Aiuta.Configuration.Features.Onboarding {
-    var dataProvider: DataProvider {
+    func resolveDataProvider() -> DataProvider {
         switch data {
             case .userDefaults:
                 return OnboardingDefaultsDataProvider()

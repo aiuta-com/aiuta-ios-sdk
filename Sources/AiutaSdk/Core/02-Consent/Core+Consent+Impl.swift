@@ -21,9 +21,13 @@ extension Sdk.Core {
     actor ConsentImpl: Consent {
         @injected var config: Aiuta.Configuration
 
+        private lazy var dataProvider: Aiuta.Configuration.Features.Consent.Standalone.DataProvider = {
+            config.features.consent.resolveConsentDataProvider()
+        }()
+
         var isGiven: Bool {
             get async {
-                let obtainedConsentsIds = await config.features.consent.consentDataProvider.obtainedConsentsIds.value
+                let obtainedConsentsIds = await dataProvider.obtainedConsentsIds.value
                 return config.features.consent.consents.filter { $0.isRequired }.map { $0.id }.allSatisfy {
                     obtainedConsentsIds.contains($0)
                 }
@@ -45,13 +49,13 @@ extension Sdk.Core {
         }
 
         func obtain(consentsIds: [String]) async {
-            await config.features.consent.consentDataProvider.obtain(consentsIds: consentsIds)
+            await dataProvider.obtain(consentsIds: consentsIds)
         }
     }
 }
 
 extension Aiuta.Configuration.Features.Consent {
-    var consentDataProvider: Standalone.DataProvider {
+    func resolveConsentDataProvider() -> Standalone.DataProvider {
         switch self {
             case .none, .embeddedIntoOnboarding:
                 return ConsentDefaultsDataProvider()
@@ -75,5 +79,6 @@ fileprivate final class ConsentDefaultsDataProvider: Aiuta.Configuration.Feature
     @MainActor
     func obtain(consentsIds: [String]) {
         obtainedConsentsIds.value = consentsIds
+        _obtainedConsentsIds.write()
     }
 }
