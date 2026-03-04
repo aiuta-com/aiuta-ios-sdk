@@ -80,7 +80,7 @@ import Foundation
 
 @available(iOS 13.0.0, *)
 private extension RestService {
-    @MainActor func sendRequest<Request: ApiRequest & Encodable, Response: Decodable>(_ request: Request, tryCount: Int) async throws -> ApiResponse<Response> {
+    func sendRequest<Request: ApiRequest & Encodable, Response: Decodable>(_ request: Request, tryCount: Int) async throws -> ApiResponse<Response> {
         /// request
 
         let url = try await buildUrl(request)
@@ -170,7 +170,7 @@ private extension RestService {
 }
 
 @available(iOS 13.0.0, *)
-@MainActor private extension RestService {
+private extension RestService {
     func buildUrl(_ request: ApiRequest) async throws -> String {
         let urlString = "\(try await provider.baseUrl)/\(request.urlPath)"
         guard var urlComponents = URLComponents(string: urlString) else {
@@ -202,7 +202,7 @@ private extension RestService {
 
 @available(iOS 13.0.0, *)
 @_spi(Aiuta) extension RestService: ApiService {
-    @MainActor public func request<Request: ApiRequest & Encodable, Response: Decodable>(_ request: Request) async throws -> ApiResponse<Response> {
+    public func request<Request: ApiRequest & Encodable, Response: Decodable>(_ request: Request) async throws -> ApiResponse<Response> {
         var tryCount = 0
         while true {
             do {
@@ -211,10 +211,6 @@ private extension RestService {
                 await asleep(.oneSecond)
                 tryCount += 1
                 continue
-            } catch ApiError.notModified {
-                throw ApiError.notModified
-            } catch {
-                throw error
             }
         }
     }
