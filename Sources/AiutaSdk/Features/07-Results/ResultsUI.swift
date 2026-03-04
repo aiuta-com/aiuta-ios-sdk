@@ -41,7 +41,15 @@ final class ResultsView: Plane {
     }
 
     let skuSheet = ProductSheet()
-    
+
+    let gradient = Gradient { it, ds in
+        it.direction = .vertical
+        it.colors = [
+            ds.colors.background.withAlphaComponent(0),
+            ds.colors.background,
+        ]
+    }
+
     @bulletin
     var productBulletin = Sdk.UI.Products.ProductBulletin { it, ds in
         it.wishButton.view.isVisible = ds.features.wishlist.isEnabled
@@ -70,7 +78,11 @@ final class ResultsView: Plane {
             let progress = clamp(1 - p / d, min: 0, max: 1)
 
             skuSheet.content.isEnabed = progress > 0.5
-            skuSheet.content.opacity = 0.1 + 0.9 * progress
+            if gradient.view.isVisible {
+                skuSheet.content.opacity = 1
+            } else {
+                skuSheet.content.opacity = 0.1 + 0.9 * progress
+            }
             skuSheet.content.shadowOpacity = Float(0.6 + 0.4 * progress)
             blackout.view.opacity = progress
             didBlackout.fire(progress)
@@ -116,6 +128,12 @@ final class ResultsView: Plane {
                     skuSheet.contentInset = sheetInsets
                 }
             }
+        }
+
+        gradient.layout.make { make in
+            make.height = 75
+            make.leftRight = 0
+            make.bottom = 0
         }
     }
 }

@@ -151,6 +151,7 @@ extension ResultsView {
             it.color = ds.colors.brand
             it.label.color = ds.colors.onDark
             it.text = ds.strings.addToCart
+            it.view.isVisible = ds.features.tryOn.hasCart
         }
 
         let sizeFit = SizeFitBar()
@@ -245,6 +246,7 @@ extension ResultsView {
             it.color = ds.colors.brand
             it.label.color = ds.colors.onDark
             it.text = ds.strings.shopTheLook
+            it.view.isVisible = ds.features.tryOn.hasCart
         }
 
         override func setup() {

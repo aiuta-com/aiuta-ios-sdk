@@ -38,6 +38,8 @@ public struct LocalizationPack: Sendable {
     public let uploadsHistoryButtonNewPhoto: String
     public let uploadsHistoryTitle: String
     public let uploadsHistoryButtonChangePhoto: String
+    // Cart
+    public let addToCart: String
     // TryOn
     public let tryOnPageTitle: String
     public let tryOn: String
@@ -98,6 +100,7 @@ public struct LocalizationPack: Sendable {
                 uploadsHistoryButtonNewPhoto: String = "+ New photo or model",
                 uploadsHistoryTitle: String = "Previously used",
                 uploadsHistoryButtonChangePhoto: String = "Change photo",
+                addToCart: String = "Add to cart",
                 tryOnPageTitle: String = "Virtual Try-on",
                 tryOn: String = "Try on",
                 tryOnLoadingStatusUploadingImage: String = "Uploading image",
@@ -146,6 +149,7 @@ public struct LocalizationPack: Sendable {
         self.uploadsHistoryButtonNewPhoto = uploadsHistoryButtonNewPhoto
         self.uploadsHistoryTitle = uploadsHistoryTitle
         self.uploadsHistoryButtonChangePhoto = uploadsHistoryButtonChangePhoto
+        self.addToCart = addToCart
         self.tryOnPageTitle = tryOnPageTitle
         self.tryOn = tryOn
         self.tryOnLoadingStatusUploadingImage = tryOnLoadingStatusUploadingImage

@@ -57,6 +57,7 @@ extension Sdk.Theme.Features {
     struct TryOn {
         let config: Aiuta.Configuration
 
+        var hasCart: Bool { config.features.tryOn.cart != nil }
         var allowsBackgroundExecution: Bool { config.features.tryOn.toggles.allowsBackgroundExecution }
         var canContinueWithOtherPhoto: Bool { config.features.tryOn.otherPhoto != nil }
         var showsFitDisclaimerOnResults: Bool { config.features.tryOn.fitDisclaimer != nil }

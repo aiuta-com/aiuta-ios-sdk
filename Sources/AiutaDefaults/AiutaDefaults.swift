@@ -19,6 +19,7 @@ import UIKit
 extension Aiuta.Configuration {
     public static func `default`(
         auth: Aiuta.Auth,
+        cartHandler: Aiuta.Configuration.Features.TryOn.Cart.Handler,
         analytics: Aiuta.Analytics? = nil,
         debugSettings: DebugSettings = .release,
         localization: LocalizationPack = .init(),
@@ -257,7 +258,13 @@ extension Aiuta.Configuration {
                             invalidInputImageChangePhotoButton: localization.invalidInputImageChangePhotoButton
                         )
                     ),
-                    cart: nil,
+                    cart: .init(
+                        strings: .init(
+                            addToCart: localization.addToCart
+                        ),
+                        handler: cartHandler,
+                        outfit: nil
+                    ),
                     fitDisclaimer: .init(
                         strings: .init(
                             fitDisclaimerTitle: localization.fitDisclaimerTitle,

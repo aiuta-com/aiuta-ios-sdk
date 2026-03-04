@@ -62,6 +62,7 @@ extension Sdk.UI.Products {
             it.color = ds.colors.brand
             it.label.color = ds.colors.onDark
             it.text = ds.strings.addToCart
+            it.view.isVisible = ds.features.tryOn.hasCart
         }
 
         let wishButton = WishlistButton()
