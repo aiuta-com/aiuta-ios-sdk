@@ -67,7 +67,7 @@ final class ResulstsViewController: ViewController<ResultsView> {
 
         selector?.didPick.subscribe(with: self) { [unowned self] source in
             Task {
-                _ = try? await source.prefetch(.hiResImage, breadcrumbs: .init())
+                _ = try? await source.prefetch(.hiResImage)
                 replace(with: ProcessingViewController(source, origin: .retakeButton))
             }
         }
@@ -160,7 +160,7 @@ final class ResulstsViewController: ViewController<ResultsView> {
         let produtcs = result.products
         Task {
             ui.pager.currentPage?.shadowControls.share.activity.start()
-            guard let image = try? await generatedImage.fetch(breadcrumbs: Breadcrumbs()) else {
+            guard let image = try? await generatedImage.fetch() else {
                 ui.pager.currentPage?.shadowControls.share.activity.stop()
                 return
             }
@@ -189,7 +189,7 @@ final class ResulstsViewController: ViewController<ResultsView> {
         gallery.willShare.subscribe(with: self) { [unowned self] generatedImage, index, vc in
             Task {
                 gallery.ui.activity.start()
-                guard let image = try? await generatedImage.fetch(breadcrumbs: Breadcrumbs()) else {
+                guard let image = try? await generatedImage.fetch() else {
                     gallery.ui.activity.stop()
                     return
                 }

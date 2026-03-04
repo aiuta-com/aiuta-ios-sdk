@@ -18,7 +18,7 @@ import PhotosUI
     public var knownRemoteId: String? { nil }
     public var transitionId: String { localIdentifier }
 
-    public func fetcher(for quality: ImageQuality, breadcrumbs: Breadcrumbs) -> ImageFetcher {
-        AssetFetcher(self, quality: quality, breadcrumbs: breadcrumbs)
+    public func fetcher(for quality: ImageQuality) -> ImageFetcher {
+        AssetFetcher(self, quality: quality)
     }
 }

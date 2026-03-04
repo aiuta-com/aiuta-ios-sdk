@@ -236,10 +236,7 @@ private extension RestService {
 @available(iOS 13.0.0, *)
 @_spi(Aiuta) extension RestService: ApiService {
     @MainActor public func request<Request: ApiRequest & Encodable, Response: Decodable>(_ request: Request,
-                                                                                         debugger debugOperation: ApiDebuggerOperation?,
-                                                                                         breadcrumbs: Breadcrumbs?) async throws -> ApiResponse<Response> {
-        let source = String(reflecting: type(of: request))
-        breadcrumbs?.add(on: source)
+                                                                                         debugger debugOperation: ApiDebuggerOperation?) async throws -> ApiResponse<Response> {
         var tryCount = 0
         while true {
             do {
@@ -251,8 +248,6 @@ private extension RestService {
             } catch ApiError.notModified {
                 throw ApiError.notModified
             } catch {
-                let breadcrumbs = breadcrumbs ?? Breadcrumbs(on: source)
-                breadcrumbs.fire(error, label: error.localizedDescription, on: source)
                 throw error
             }
         }

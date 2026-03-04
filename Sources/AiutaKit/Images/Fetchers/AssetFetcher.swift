@@ -22,17 +22,12 @@ import UIKit
     private var options: PHRequestOptions { PHRequestOptions.default }
     private var requestId: PHImageRequestID?
 
-    public init(_ asset: PHAsset, quality: ImageQuality, breadcrumbs: Breadcrumbs) {
+    public init(_ asset: PHAsset, quality: ImageQuality) {
         super.init()
         requestId = fetcher.requestImage(for: asset,
                                          targetSize: size(for: asset, with: quality),
                                          contentMode: .aspectFit,
-                                         options: options(for: quality)) { [weak self] image, info in
-            if image.isNil,
-               (info?[PHImageCancelledKey] as? Bool).isFalseOrNil,
-               let error = info?[PHImageErrorKey] as? NSError {
-                breadcrumbs.fire(error, label: "Failed to fetch image from asset")
-            }
+                                         options: options(for: quality)) { [weak self] image, _ in
             self?.onImage.fire(image)
         }
     }

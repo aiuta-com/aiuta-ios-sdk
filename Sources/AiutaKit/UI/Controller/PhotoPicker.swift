@@ -63,7 +63,7 @@ extension PhotoPicker: PHPickerViewControllerDelegate {
             }
         }.flattened()
         var loaders = await images.concurrentMap { image in
-            try? await image.prefetch(.hiResImage, breadcrumbs: Breadcrumbs())
+            try? await image.prefetch(.hiResImage)
         }
         if await isDismissed {
             didPick.fire(images)
@@ -103,7 +103,7 @@ extension PhotoPicker: PHPickerViewControllerDelegate {
 
     private func downsample(_ image: UIImage?) async -> UIImage? {
         guard let image else { return nil }
-        let downsample = try? await Downsampler(image, quality: .hiResImage, breadcrumbs: Breadcrumbs()).fetch()
+        let downsample = try? await Downsampler(image, quality: .hiResImage).fetch()
         downsample?.createdAt = image.createdAt
         return downsample ?? image
     }

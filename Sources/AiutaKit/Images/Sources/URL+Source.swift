@@ -18,8 +18,8 @@ import Foundation
     public var knownRemoteId: String? { nil }
     public var transitionId: String { absoluteString }
 
-    public func fetcher(for quality: ImageQuality, breadcrumbs: Breadcrumbs) -> ImageFetcher {
-        ThumbFetcher(self, quality: quality, breadcrumbs: breadcrumbs)
+    public func fetcher(for quality: ImageQuality) -> ImageFetcher {
+        ThumbFetcher(self, quality: quality)
     }
 }
 
@@ -27,7 +27,7 @@ import Foundation
     public var knownRemoteId: String? { nil }
     public var transitionId: String { self }
 
-    public func fetcher(for quality: ImageQuality, breadcrumbs: Breadcrumbs) -> ImageFetcher {
-        ThumbFetcher(self, quality: quality, breadcrumbs: breadcrumbs)
+    public func fetcher(for quality: ImageQuality) -> ImageFetcher {
+        ThumbFetcher(self, quality: quality)
     }
 }

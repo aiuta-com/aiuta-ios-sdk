@@ -228,8 +228,6 @@ private final class ImagePickerControllerDelegate: NSObject, UIImagePickerContro
     let willPick = Signal<Void>()
     let didPick = Signal<(UIImage, UIImagePickerController.SourceType)>()
     var source: UIImagePickerController.SourceType = .photoLibrary
-    let breadcrumbs = Breadcrumbs()
-
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         guard let image = info[.originalImage] as? UIImage else { return }
         willPick.fire()
@@ -238,7 +236,7 @@ private final class ImagePickerControllerDelegate: NSObject, UIImagePickerContro
     }
 
     @MainActor func pick(_ image: UIImage, from source: UIImagePickerController.SourceType) async {
-        var loaders = [try? await image.prefetch(.hiResImage, breadcrumbs: breadcrumbs)]
+        var loaders = [try? await image.prefetch(.hiResImage)]
         didPick.fire((image, source))
         await asleep(.halfOfSecond)
         loaders.removeAll()

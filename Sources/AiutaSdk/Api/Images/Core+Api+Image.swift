@@ -24,7 +24,7 @@ import Foundation
 @_spi(Aiuta) extension Aiuta.UserImage: ImageSource {
     public var knownRemoteId: String? { id }
 
-    public func fetcher(for quality: ImageQuality, breadcrumbs: Breadcrumbs) -> ImageFetcher {
-        UrlFetcher(url, quality: quality, breadcrumbs: breadcrumbs)
+    public func fetcher(for quality: ImageQuality) -> ImageFetcher {
+        UrlFetcher(url, quality: quality)
     }
 }

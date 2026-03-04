@@ -25,8 +25,6 @@ final class HistoryVC: ViewController<HistoryUI> {
     @injected private var watermarker: Watermarker
     @injected private var config: Sdk.Configuration
 
-    private let breadcrumbs = Breadcrumbs()
-
     override func setup() {
         ui.navBar.onBack.subscribe(with: self) { [unowned self] in
             dismissAll()
@@ -160,8 +158,8 @@ final class HistoryVC: ViewController<HistoryUI> {
 
     func shareSelection() async {
         ui.selectionSnackbar.bar.shareButton.activity.start()
-        let imagesToShare: [UIImage] = await selection.concurrentCompactMap { [watermarker, breadcrumbs] in
-            guard let image = try? await $0.fetch(breadcrumbs: breadcrumbs.fork()) else { return nil }
+        let imagesToShare: [UIImage] = await selection.concurrentCompactMap { [watermarker] in
+            guard let image = try? await $0.fetch() else { return nil }
             return watermarker.watermark(image)
         }
         guard !imagesToShare.isEmpty else {
@@ -193,7 +191,7 @@ final class HistoryVC: ViewController<HistoryUI> {
         gallery.willShare.subscribe(with: self) { [unowned self] generatedImage, _, gallery in
             Task {
                 gallery.ui.activity.start()
-                guard let image = try? await generatedImage.fetch(breadcrumbs: breadcrumbs.fork()) else {
+                guard let image = try? await generatedImage.fetch() else {
                     gallery.ui.activity.stop()
                     return
                 }

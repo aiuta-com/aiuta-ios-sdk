@@ -156,7 +156,7 @@ extension Sdk.Core {
 
             do {
                 _ = try await operation.generatedImages.concurrentMap { generatedImage in
-                    try await generatedImage.prefetch(.hiResImage, breadcrumbs: Breadcrumbs())
+                    try await generatedImage.prefetch(.hiResImage, )
                 }
             } catch {
                 throw TryOnError.error(.downloadResultFailed, underlying: error)
@@ -168,7 +168,7 @@ extension Sdk.Core {
         }
 
         @MainActor func upload(_ source: ImageSource, status callback: @escaping (TryOnStatus) -> Void) async throws -> Aiuta.UserImage {
-            guard let image = try? await source.fetch(breadcrumbs: Breadcrumbs()) else {
+            guard let image = try? await source.fetch() else {
                 throw TryOnError.error(.preparePhotoFailed)
             }
 

@@ -59,10 +59,9 @@ final class PredefinedModelsViewController: ViewController<PredefinedModelsView>
         }
 
         Task {
-            let breadcrumbs = Breadcrumbs()
             let imgs = models.predefinedModels.flatMap(\.models)
             cache = await imgs.concurrentCompactMap {
-                try? await $0.prefetch(.thumbnails, breadcrumbs: breadcrumbs)
+                try? await $0.prefetch(.thumbnails)
             }
         }
     }

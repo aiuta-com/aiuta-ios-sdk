@@ -20,12 +20,12 @@ import UIKit
 @_spi(Aiuta) public final class Downsampler: BaseFetcher {
     private let imageCache: ImageCache = KingfisherManager.shared.cache
 
-    public init(_ image: UIImage, quality: ImageQuality, breadcrumbs: Breadcrumbs) {
+    public init(_ image: UIImage, quality: ImageQuality) {
         super.init()
         loadFromCache(image, quality: quality)
     }
 
-    public init(_ data: Data, quality: ImageQuality, breadcrumbs: Breadcrumbs) {
+    public init(_ data: Data, quality: ImageQuality) {
         super.init()
         dispatch(quality == .thumbnails ? .user : .medium) { [self] in
             let downsampledImage = downsample(data, quality)

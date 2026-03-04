@@ -24,7 +24,6 @@ final class GalleryViewController: ViewController<GalleryView> {
     var crossfade: Bool = false
 
     @injected private var watermarker: Watermarker
-    private let breadcrumbs = Breadcrumbs()
 
     override func prepare() {
         statusBarStyle = .lightContent
