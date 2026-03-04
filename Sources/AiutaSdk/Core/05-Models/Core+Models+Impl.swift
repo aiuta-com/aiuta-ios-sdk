@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import AiutaConfig
 @_spi(Aiuta) import AiutaKit
 import Alamofire
 import Foundation
@@ -26,14 +27,14 @@ extension Sdk.Core {
         var predefinedModels: Sdk.Core.Api.Models
 
         @injected private var api: ApiService
-        @injected private var config: Sdk.Configuration
+        @injected private var config: Aiuta.Configuration
 
         func load() {
             Task { await load() }
         }
 
         @MainActor func load() async {
-            guard config.features.imagePicker.hasPredefinedModels else { return }
+            guard config.features.imagePicker.predefinedModels != nil else { return }
             let (models, headers): (Sdk.Core.Api.Models, HTTPHeaders?)
             do {
                 (models, headers) = try await api.request(Sdk.Core.Api.Models.Get(etag: _predefinedModels.etag))

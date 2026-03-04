@@ -47,8 +47,8 @@ extension Sdk {
         public static func showHistory() async -> Bool {
             guard let currentViewController else { return false }
             guard Register.ensureConfigured() else { return false }
-            @injected var configuration: Sdk.Configuration
-            guard configuration.features.tryOn.hasGenerationsHistory else { return false }
+            @injected var configuration: Aiuta.Configuration
+            guard configuration.features.tryOn.generationsHistory != nil else { return false }
             @injected var session: Sdk.Core.Session
             session.start()
             @injected var tracker: AnalyticTracker

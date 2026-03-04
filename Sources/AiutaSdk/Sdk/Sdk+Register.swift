@@ -38,30 +38,27 @@ extension Sdk {
 
         @available(iOS 13.0.0, *)
         private func setup(_ configuration: Aiuta.Configuration) {
+            let isDebug = configuration.debugSettings.isLoggingEnabled
             setDefaults(apiKey: configuration.keyToDefaults)
-
-            let config = Configuration(configuration)
-            let isDebug = config.settings.isLoggingEnabled
-
             trace(isEnabled: isDebug)
             scope.reset()
 
             AiutaKit.register(
-                ds: { Theme(config) },
-                imageTraits: { Configuration.Images.Traits() },
+                ds: { Theme(configuration) },
+                imageTraits: { Theme.Traits() },
             )
 
             resolver.register {
-                config
+                configuration
             }.scope(scope)
 
             resolver.register {
-                RestService(Core.Api.Provider(auth: config.auth.type),
+                RestService(Core.Api.Provider(auth: configuration.auth),
                             isDebug: isDebug)
             }.implements(ApiService.self).scope(scope)
 
             resolver.register {
-                Configuration.Images.Watermarker(config.images)
+                Theme.Watermarker(configuration)
             }.implements(Watermarker.self).scope(scope)
 
             resolver.register {
@@ -69,7 +66,7 @@ extension Sdk {
             }.implements(Core.Analytics.Env.self).scope(scope)
 
             resolver.register {
-                AnalyticRouter(.ordinary(Core.Analytics.Target(config.auth.type)))
+                AnalyticRouter(.ordinary(Core.Analytics.Target(configuration.auth)))
             }.implements(AnalyticTracker.self).scope(scope)
 
             resolver.register { Core.OnboardingImpl() }.implements(Core.Onboarding.self).scope(scope)

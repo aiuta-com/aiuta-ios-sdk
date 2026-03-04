@@ -21,7 +21,7 @@ import Foundation
 extension Sdk.Core {
     final class SessionImpl: Session {
         @injected var tracker: AnalyticTracker
-        @injected var config: Sdk.Configuration
+        @injected var config: Aiuta.Configuration
 
         var products: Aiuta.Products = []
 
@@ -36,7 +36,7 @@ extension Sdk.Core {
         func finish(addingToCart products: Aiuta.Products?) {
             guard let products else { return }
             if let product = products.first,
-               let cartHandler = config.features.tryOn.cartHandler {
+               let cartHandler = config.features.tryOn.cart?.handler {
                 Task { await cartHandler.addToCart(productId: product.id) }
             }
         }

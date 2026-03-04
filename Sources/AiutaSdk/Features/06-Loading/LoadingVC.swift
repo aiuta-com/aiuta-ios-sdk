@@ -25,7 +25,7 @@ final class ProcessingViewController: ViewController<ProcessingView> {
     @injected private var tryOn: Sdk.Core.TryOn
     @injected private var history: Sdk.Core.History
     @injected private var session: Sdk.Core.Session
-    @injected private var config: Sdk.Configuration
+    @injected private var config: Aiuta.Configuration
     @injected private var tracker: AnalyticTracker
 
     private var source: ImageSource?
@@ -60,7 +60,7 @@ final class ProcessingViewController: ViewController<ProcessingView> {
             Task { await start() }
         }
 
-        if #available(iOS 15.0.0, *), config.features.tryOn.tryGeneratePersonSegmentation {
+        if #available(iOS 15.0.0, *), config.features.tryOn.toggles.tryGeneratePersonSegmentation {
             ui.animator.imageView.gotImage.subscribe(with: self) { [unowned self] in
                 generatePersonSegmentation()
             }
@@ -88,16 +88,16 @@ final class ProcessingViewController: ViewController<ProcessingView> {
                 
                 switch status {
                     case .uploadingImage:
-                        self.ui.status.text = self.config.strings.tryOnLoadingStatusUploadingImage
+                        self.ui.status.text = self.ds.strings.tryOnLoadingStatusUploadingImage
                     case .imageUploaded:
                         self.tracker.track(.tryOn(event: .photoUploaded,
                                                   pageId: .loading, productIds: products.ids))
                     case .scanningBody:
-                        self.ui.status.text = self.config.strings.tryOnLoadingStatusScanningBody
+                        self.ui.status.text = self.ds.strings.tryOnLoadingStatusScanningBody
                         self.tracker.track(.tryOn(event: .tryOnStarted(origin: origin),
                                                   pageId: .loading, productIds: products.ids))
                     case .generatingOutfit:
-                        self.ui.status.text = self.config.strings.tryOnLoadingStatusGeneratingOutfit
+                        self.ui.status.text = self.ds.strings.tryOnLoadingStatusGeneratingOutfit
                 }
             }
 
@@ -122,8 +122,8 @@ final class ProcessingViewController: ViewController<ProcessingView> {
             tracker.track(.tryOn(event: .tryOnAborted(reason: .operationAborted),
                                  pageId: page, productIds: session.products.ids))
 
-            showAlert(message: config.strings.invalidInputImageDescription) { alert in
-                alert.addAction(title: config.strings.invalidInputImageChangePhotoButton,
+            showAlert(message: ds.strings.invalidInputImageDescription) { alert in
+                alert.addAction(title: self.ds.strings.invalidInputImageChangePhotoButton,
                                 style: .cancel).subscribe(with: self) { [unowned self] in
                     replace(with: Sdk.Features.TryOn(), crossFadeDuration: .quarterOfSecond)
                 }

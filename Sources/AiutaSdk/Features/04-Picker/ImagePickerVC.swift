@@ -22,7 +22,7 @@ import UIKit
 final class PhotoSelectorController: ComponentController<ContentBase> {
     let didPick = Signal<ImageSource>()
 
-    @injected private var config: Sdk.Configuration
+    @injected private var config: Aiuta.Configuration
     @injected private var history: Sdk.Core.History
     @injected private var tracker: AnalyticTracker
     @injected private var session: Sdk.Core.Session
@@ -130,7 +130,7 @@ final class PhotoSelectorController: ComponentController<ContentBase> {
 
     private func showSelectorIfCameraAvailableOrPicker() {
         if cameraUsageDescription.isSomeAndNotEmpty,
-           ds.features.imagePicker.hasCamera {
+           config.features.imagePicker.camera != nil {
             showBulletin(selectPhotoBulletin)
         } else {
             pickOrChooseFromLibrary()
@@ -201,7 +201,7 @@ private extension PhotoSelectorController {
         picker.modalTransitionStyle = .coverVertical
         picker.delegate = imagePickerDelegate
         picker.sourceType = .camera
-        picker.overrideUserInterfaceStyle = config.colors.scheme.userInterfaceStyle
+        picker.overrideUserInterfaceStyle = ds.colors.scheme.userInterfaceStyle
         vc?.present(picker, animated: true)
         tracker.track(.picker(event: .cameraOpened, pageId: page, productIds: session.products.ids))
     }
@@ -212,7 +212,7 @@ private extension PhotoSelectorController {
         picker.modalPresentationStyle = .pageSheet
         picker.delegate = imagePickerDelegate
         picker.sourceType = .photoLibrary
-        picker.overrideUserInterfaceStyle = config.colors.scheme.userInterfaceStyle
+        picker.overrideUserInterfaceStyle = ds.colors.scheme.userInterfaceStyle
         vc?.popover(picker)
         tracker.track(.picker(event: .photoGalleryOpened, pageId: page, productIds: session.products.ids))
     }

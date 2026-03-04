@@ -46,13 +46,13 @@ extension Sdk.Core.Analytics {
 
 extension AnalyticTracker {
     func track(_ event: Aiuta.Event) {
-        @injected var config: Sdk.Configuration
+        @injected var config: Aiuta.Configuration
         track(AnalyticEvent(event.name(), event.parameters()))
-        if config.settings.isLoggingEnabled, let data = try? JSONEncoder().encode(event) {
+        if config.debugSettings.isLoggingEnabled, let data = try? JSONEncoder().encode(event) {
             trace(i: "○", event.rawQualifier, "\n\n\(String(decoding: data, as: UTF8.self))\n")
         }
         guard #available(iOS 13.0, *),
-              let handler = config.features.analytics.handler else { return }
+              let handler = config.analytics.handler else { return }
         Task { await handler.onAnalyticsEvent(event) }
     }
 }

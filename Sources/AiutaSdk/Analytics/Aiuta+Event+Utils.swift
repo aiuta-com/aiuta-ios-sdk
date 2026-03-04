@@ -206,23 +206,25 @@ private extension Aiuta.Auth {
     }
 }
 
-private extension Sdk.Configuration.Features.Consent {
+private extension Aiuta.Configuration.Features.Consent {
     /// Represents the raw values for consent feature types.
     enum Raw: String {
         case embeddedIntoOnboarding, standaloneOnboardingPage, standaloneImagePickerPage
     }
 
     /// Retrieves the raw value for the consent feature type.
-    var rawValue: String? {
-        type?.rawValue
+    var analyticsRawValue: String? {
+        analyticsType?.rawValue
     }
 
     /// Simplified representation of the consent feature type.
-    var type: Raw? {
-        if isEmbedded { return .embeddedIntoOnboarding }
-        if isOnboarding { return .standaloneOnboardingPage }
-        if isUploadButton { return .standaloneImagePickerPage }
-        return nil
+    var analyticsType: Raw? {
+        switch self {
+            case .none: return nil
+            case .embeddedIntoOnboarding: return .embeddedIntoOnboarding
+            case .standaloneOnboardingPage: return .standaloneOnboardingPage
+            case .standaloneImagePickerPage: return .standaloneImagePickerPage
+        }
     }
 }
 
@@ -298,24 +300,24 @@ extension Aiuta.Event: Encodable {
     private func eventParameters() -> [CodingKeys: Any?] {
         switch self {
             case .configure:
-                @injected var config: Sdk.Configuration
+                @injected var config: Aiuta.Configuration
                 return [
-                    .authType: config.auth.type.rawValue,
-                    .consentFeatureType: config.features.consent.type?.rawValue,
-                    .welcomeScreenFeatureEnabled: config.features.welcomeScreen.isEnabled,
-                    .onboardingFeatureEnabled: config.features.onboarding.isEnabled,
-                    .onboardingBestResultsPageFeatureEnabled: config.features.onboarding.hasBestResults,
-                    .imagePickerCameraFeatureEnabled: config.features.imagePicker.hasCamera,
-                    .imagePickerPredefinedModelFeatureEnabled: config.features.imagePicker.hasPredefinedModels,
-                    .imagePickerUploadsHistoryFeatureEnabled: config.features.imagePicker.hasUploadsHistory,
-                    .tryOnFitDisclaimerFeatureEnabled: config.features.tryOn.showsFitDisclaimerOnResults,
-                    .tryOnFeedbackFeatureEnabled: config.features.tryOn.askForUserFeedbackOnResults,
-                    .tryOnFeedbackOtherFeatureEnabled: config.features.tryOn.askForOtherFeedbackOnResults,
-                    .tryOnGenerationsHistoryFeatureEnabled: config.features.tryOn.hasGenerationsHistory,
-                    .tryOnWithOtherPhotoFeatureEnabled: config.features.tryOn.canContinueWithOtherPhoto,
-                    .shareFeatureEnabled: config.features.share.isEnabled,
-                    .shareWatermarkFeatureEnabled: config.features.share.isEnabled && config.images.shareWatermark.isSome,
-                    .wishlistFeatureEnabled: config.features.wishlist.isEnabled,
+                    .authType: config.auth.rawValue,
+                    .consentFeatureType: config.features.consent.analyticsRawValue,
+                    .welcomeScreenFeatureEnabled: config.features.welcomeScreen != nil,
+                    .onboardingFeatureEnabled: config.features.onboarding != nil,
+                    .onboardingBestResultsPageFeatureEnabled: config.features.onboarding?.bestResults != nil,
+                    .imagePickerCameraFeatureEnabled: config.features.imagePicker.camera != nil,
+                    .imagePickerPredefinedModelFeatureEnabled: config.features.imagePicker.predefinedModels != nil,
+                    .imagePickerUploadsHistoryFeatureEnabled: config.features.imagePicker.uploadsHistory != nil,
+                    .tryOnFitDisclaimerFeatureEnabled: config.features.tryOn.fitDisclaimer != nil,
+                    .tryOnFeedbackFeatureEnabled: config.features.tryOn.feedback != nil,
+                    .tryOnFeedbackOtherFeatureEnabled: config.features.tryOn.feedback?.other != nil,
+                    .tryOnGenerationsHistoryFeatureEnabled: config.features.tryOn.generationsHistory != nil,
+                    .tryOnWithOtherPhotoFeatureEnabled: true,
+                    .shareFeatureEnabled: config.features.share != nil,
+                    .shareWatermarkFeatureEnabled: config.features.share?.hasWatermark ?? false,
+                    .wishlistFeatureEnabled: config.features.wishlist != nil,
                 ]
 
             case let .session(flow, productIds): return [

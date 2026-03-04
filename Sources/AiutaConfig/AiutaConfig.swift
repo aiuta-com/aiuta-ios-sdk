@@ -59,26 +59,5 @@ extension Aiuta {
             self.analytics = analytics
             self.debugSettings = debugSettings
         }
-
-//        /// A default configuration for the SDK.
-//        ///
-//        /// This configuration includes all recommended features and settings for use.
-//        /// It requires an auth configuration, and supports a custom terms of service URL,
-//        /// color scheme, brand color, and validation policy to be set for debug and release
-//        /// builds. It is suitable for production use and provides a good balance
-//        /// between functionality and performance.
-//        ///
-//        /// - Parameters:
-//        ///   - auth: Specifies the authentication method to be used by the SDK.
-//        ///   - consent: Configures user consent options for data processing.
-//        ///   - theme: Configures the appearance and behavior of the SDK's user interface.
-//        ///   - analytics: Configures how analytics events are handled within the SDK.
-//        ///   - debugSettings: Configures the debug settings for the SDK.
-//        ///     The default value is `.release`, which applies production-ready settings.
-//        case `default`(auth: Aiuta.Auth,
-//                       consent: Features.Consent = .none,
-//                       theme: UserInterface.ColorTheme = .default,
-//                       analytics: Aiuta.Analytics = .none,
-//                       debugSettings: DebugSettings = .release)
     }
 }

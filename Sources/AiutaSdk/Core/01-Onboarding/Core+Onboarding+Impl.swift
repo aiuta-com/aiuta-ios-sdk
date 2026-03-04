@@ -19,38 +19,48 @@ import AiutaCore
 @available(iOS 13.0.0, *)
 extension Sdk.Core {
     actor OnboardingImpl: Onboarding {
-        @injected var config: Sdk.Configuration
+        @injected var config: Aiuta.Configuration
 
         var needsWelcome: Bool {
             get async {
-                guard config.features.welcomeScreen.isEnabled else { return false }
-                guard config.features.onboarding.isEnabled else { return true }
-                return await !config.features.onboarding.dataProvider.isOnboardingCompleted
+                guard config.features.welcomeScreen != nil else { return false }
+                guard let onboarding = config.features.onboarding else { return true }
+                return await !onboarding.dataProvider.isOnboardingCompleted
             }
         }
 
         var needsOnboarding: Bool {
             get async {
-                guard config.features.onboarding.isEnabled else { return false }
-                return await !config.features.onboarding.dataProvider.isOnboardingCompleted
+                guard let onboarding = config.features.onboarding else { return false }
+                return await !onboarding.dataProvider.isOnboardingCompleted
             }
         }
 
         func complete() async {
-            await config.features.onboarding.dataProvider.completeOnboarding()
+            guard let onboarding = config.features.onboarding else { return }
+            await onboarding.dataProvider.completeOnboarding()
         }
     }
 }
 
-extension Sdk.Configuration.Features.Onboarding {
-    final class DefaultsDataProvider: Aiuta.Configuration.Features.Onboarding.DataProvider {
-        @MainActor
-        @defaults(key: "isOnboardingCompleted", defaultValue: false)
-        var isOnboardingCompleted: Bool
-
-        @MainActor
-        func completeOnboarding() {
-            isOnboardingCompleted = true
+extension Aiuta.Configuration.Features.Onboarding {
+    var dataProvider: DataProvider {
+        switch data {
+            case .userDefaults:
+                return OnboardingDefaultsDataProvider()
+            case let .dataProvider(provider):
+                return provider
         }
+    }
+}
+
+fileprivate final class OnboardingDefaultsDataProvider: Aiuta.Configuration.Features.Onboarding.DataProvider {
+    @MainActor
+    @defaults(key: "isOnboardingCompleted", defaultValue: false)
+    var isOnboardingCompleted: Bool
+
+    @MainActor
+    func completeOnboarding() {
+        isOnboardingCompleted = true
     }
 }

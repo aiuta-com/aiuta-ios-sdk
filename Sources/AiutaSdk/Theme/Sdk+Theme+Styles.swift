@@ -18,25 +18,32 @@ import AiutaCore
 import Resolver
 import UIKit
 
-extension Sdk.Configuration {
+extension Sdk.Theme {
     struct Styles {
-        var presentationStyle: Aiuta.Configuration.UserInterface.PresentationStyle = .pageSheet
-        var swipeToDismissPolicy: Aiuta.Configuration.UserInterface.SwipeToDismissPolicy = .protectTheNecessaryPages
-        var preferCloseButtonOnTheRight: Bool = false
-        var extendDelimitersToTheRight: Bool = false
-        var extendDelimitersToTheLeft: Bool = false
-        var applyProductFirstImageExtraPadding: Bool = false
-        var reduceOnboardingShadows: Bool = false
-        var drawBordersAroundConsents: Bool = false
-        var displayProductPrices: Bool = true
-        var loadingStatusStyle: Aiuta.Configuration.UserInterface.ComponentStyle = .blurred(hasOutline: false)
-        var changePhotoButtonStyle: Aiuta.Configuration.UserInterface.ComponentStyle = .blurred(hasOutline: false)
-        var activityIndicatorDelay: TimeInterval = 0.5.seconds
-        var activityIndicatorDuration: TimeInterval = 1.5.seconds
+        let config: Aiuta.Configuration
+        private var theme: Aiuta.Configuration.UserInterface.Theme { config.userInterface.theme }
+
+        var presentationStyle: Aiuta.Configuration.UserInterface.PresentationStyle { config.userInterface.presentationStyle }
+        var swipeToDismissPolicy: Aiuta.Configuration.UserInterface.SwipeToDismissPolicy { config.userInterface.swipeToDismissPolicy }
+        var preferCloseButtonOnTheRight: Bool { theme.pageBar.settings.preferCloseButtonOnTheRight }
+        var extendDelimitersToTheRight: Bool { theme.bottomSheet.settings.extendDelimitersToTheRight }
+        var extendDelimitersToTheLeft: Bool { theme.bottomSheet.settings.extendDelimitersToTheLeft }
+        var applyProductFirstImageExtraPadding: Bool { theme.productBar.settings.applyProductFirstImageExtraPadding }
+        var reduceOnboardingShadows: Bool { config.features.onboarding?.bestResults?.toggles.reduceShadows ?? false }
+
+        var drawBordersAroundConsents: Bool {
+            config.features.consent.standalone?.styles.drawBordersAroundConsents ?? false
+        }
+
+        var displayProductPrices: Bool { theme.productBar.prices != nil }
+        var loadingStatusStyle: Aiuta.Configuration.UserInterface.ComponentStyle { config.features.tryOn.loadingPage.styles.statusStyle }
+        var changePhotoButtonStyle: Aiuta.Configuration.UserInterface.ComponentStyle { config.features.imagePicker.uploadsHistory?.styles.changePhotoButtonStyle ?? .blurred(hasOutline: false) }
+        var activityIndicatorDelay: TimeInterval { TimeInterval(theme.activityIndicator.settings.indicationDelay) / 1000 }
+        var activityIndicatorDuration: TimeInterval { TimeInterval(theme.activityIndicator.settings.spinDuration) / 1000 }
     }
 }
 
-extension Sdk.Configuration.Styles {
+extension Sdk.Theme.Styles {
     var modalPresentationStyle: UIModalPresentationStyle {
         switch presentationStyle {
             case .pageSheet, .bottomSheet: return .pageSheet

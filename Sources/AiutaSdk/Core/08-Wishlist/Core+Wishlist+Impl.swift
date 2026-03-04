@@ -19,7 +19,7 @@
 @available(iOS 13.0.0, *)
 extension Sdk.Core {
     final class WishlistImpl: Wishlist {
-        @injected var config: Sdk.Configuration
+        @injected var config: Aiuta.Configuration
 
         let onWishlistChange = Signal<Void>()
         private var wishlistProductIds: Set<String> = []
@@ -47,7 +47,7 @@ extension Sdk.Core {
         }
 
         @MainActor func subscribeForChanges() async {
-            let wishlist = await config.features.wishlist.dataProvider?.wishlistProductIds
+            let wishlist = await config.features.wishlist?.dataProvider.wishlistProductIds
             guard let wishlist else { return }
 
             wishlist.didChange.subscribePast(with: self) { [weak self] newValue in
@@ -58,7 +58,7 @@ extension Sdk.Core {
         }
 
         @MainActor func setProductInWishlist(productIds: [String], inWishlist: Bool) async {
-            guard let dataProvider = config.features.wishlist.dataProvider else { return }
+            guard let dataProvider = config.features.wishlist?.dataProvider else { return }
             await dataProvider.setProductInWishlist(productIds: productIds, inWishlist: inWishlist)
         }
     }

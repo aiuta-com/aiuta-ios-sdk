@@ -17,38 +17,41 @@ import AiutaCore
 @_spi(Aiuta) import AiutaKit
 import UIKit
 
-extension Sdk.Configuration {
+extension Sdk.Theme {
     struct Shapes {
+        let config: Aiuta.Configuration
+        private var theme: Aiuta.Configuration.UserInterface.Theme { config.userInterface.theme }
+
         // MARK: - Image
 
-        var imageL: Aiuta.Shape = .continuous(radius: 24)
-        var imageM: Aiuta.Shape = .continuous(radius: 16)
-        var imageS: Aiuta.Shape = .continuous(radius: 8)
+        var imageL: Aiuta.Shape { theme.image.shapes.imageL }
+        var imageM: Aiuta.Shape { theme.image.shapes.imageM }
+        var imageS: Aiuta.Shape { .continuous(radius: 8) }
 
         // MARK: - Button
 
-        var buttonL: Aiuta.Shape = .continuous(radius: 16)
-        var buttonM: Aiuta.Shape = .continuous(radius: 8)
-        var buttonS: Aiuta.Shape = .continuous(radius: 8)
+        var buttonL: Aiuta.Shape { .continuous(radius: 16) }
+        var buttonM: Aiuta.Shape { theme.button.shapes.buttonM }
+        var buttonS: Aiuta.Shape { theme.button.shapes.buttonS }
 
         // MARK: - BottomSheet
 
-        var bottomSheet: Aiuta.Shape = .continuous(radius: 16)
+        var bottomSheet: Aiuta.Shape { theme.bottomSheet.shapes.bottomSheet }
 
         // MARK: - BottomSheet.Grabber
 
-        var grabberWidth: CGFloat = 36
-        var grabberHeight: CGFloat = 3
-        var grabberOffset: CGFloat = 6
+        var grabberWidth: CGFloat { theme.bottomSheet.grabber.width }
+        var grabberHeight: CGFloat { theme.bottomSheet.grabber.height }
+        var grabberOffset: CGFloat { theme.bottomSheet.grabber.offset }
 
         // MARK: - Onboarding
 
-        var onboardingImageL: Aiuta.Shape = .continuous(radius: 16)
-        var onboardingImageS: Aiuta.Shape = .continuous(radius: 16)
+        var onboardingImageL: Aiuta.Shape { config.features.onboarding?.shapes.onboardingImageL ?? .continuous(radius: 16) }
+        var onboardingImageS: Aiuta.Shape { config.features.onboarding?.shapes.onboardingImageS ?? .continuous(radius: 16) }
 
         // MARK: - TryOn.Feedback
 
-        var feedbackButton: Aiuta.Shape = .continuous(radius: .infinity)
+        var feedbackButton: Aiuta.Shape { config.features.tryOn.feedback?.shapes.feedbackButton ?? .continuous(radius: .infinity) }
     }
 }
 

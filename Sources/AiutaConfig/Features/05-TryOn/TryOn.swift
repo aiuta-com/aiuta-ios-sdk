@@ -39,7 +39,7 @@ extension Aiuta.Configuration.Features {
         public let generationsHistory: GenerationsHistory?
         
         /// Continue with different photo configuration.
-        public let otherPhoto: ContinueWithOtherPhoto
+        public let otherPhoto: ContinueWithOtherPhoto?
         
         /// TryOn magic button icon.
         public let icons: Icons
@@ -73,7 +73,7 @@ extension Aiuta.Configuration.Features {
                     fitDisclaimer: FitDisclaimer?,
                     feedback: Feedback?,
                     generationsHistory: GenerationsHistory?,
-                    otherPhoto: ContinueWithOtherPhoto,
+                    otherPhoto: ContinueWithOtherPhoto?,
                     icons: Icons,
                     styles: Styles,
                     strings: Strings,

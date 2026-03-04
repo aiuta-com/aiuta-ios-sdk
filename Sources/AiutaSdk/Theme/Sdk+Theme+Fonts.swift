@@ -17,56 +17,80 @@ import AiutaCore
 @_spi(Aiuta) import AiutaKit
 import UIKit
 
-extension Sdk.Configuration {
+extension Sdk.Theme {
     struct Fonts {
+        let config: Aiuta.Configuration
+        private var theme: Aiuta.Configuration.UserInterface.Theme { config.userInterface.theme }
+
         // MARK: - Label
 
-        var titleL: Sdk.Configuration.Font = .system(size: 24, weight: .bold)
-        var titleM: Sdk.Configuration.Font = .system(size: 20, weight: .semibold, kern: -0.4)
-        var regular: Sdk.Configuration.Font = .system(size: 17, weight: .medium, kern: -0.51, lhm: 1.08)
-        var subtle: Sdk.Configuration.Font = .system(size: 15, weight: .regular, kern: -0.15, lhm: 1.01)
+        var titleL: Sdk.Theme.Font { Font(theme.label.typography.titleL) }
+        var titleM: Sdk.Theme.Font { Font(theme.label.typography.titleM) }
+        var regular: Sdk.Theme.Font { Font(theme.label.typography.regular) }
+        var subtle: Sdk.Theme.Font { Font(theme.label.typography.subtle) }
 
         // MARK: - Button
 
-        var buttonM: Sdk.Configuration.Font = .system(size: 17, weight: .semibold, kern: -0.17, lhm: 0.89)
-        var buttonS: Sdk.Configuration.Font = .system(size: 13, weight: .semibold, kern: -0.13, lhm: 1.16)
+        var buttonM: Sdk.Theme.Font { Font(theme.button.typography.buttonM) }
+        var buttonS: Sdk.Theme.Font { Font(theme.button.typography.buttonS) }
 
         // MARK: - PageBar
 
-        var pageTitle: Sdk.Configuration.Font = .system(size: 17, weight: .medium, kern: -0.51, lhm: 1.08)
+        var pageTitle: Sdk.Theme.Font { Font(theme.pageBar.typography.pageTitle) }
 
         // MARK: - BottomSheet
 
-        var iconButton: Sdk.Configuration.Font = .system(size: 17, weight: .medium, kern: -0.17)
+        var iconButton: Sdk.Theme.Font { Font(theme.bottomSheet.typography.iconButton) }
 
         // MARK: - ProductBar
 
-        var product: Sdk.Configuration.Font = .system(size: 13, weight: .regular)
-        var brand: Sdk.Configuration.Font = .system(size: 12, weight: .medium, kern: -0.12)
-        var price: Sdk.Configuration.Font = .system(size: 14, weight: .bold, kern: -0.14)
+        var product: Sdk.Theme.Font { Font(theme.productBar.typography.product) }
+        var brand: Sdk.Theme.Font { Font(theme.productBar.typography.brand) }
+        var price: Sdk.Theme.Font {
+            if let prices = theme.productBar.prices {
+                return Font(prices.typography.price)
+            }
+            return .system(size: 14, weight: .bold, kern: -0.14)
+        }
 
         // MARK: - Welcome Screen
 
-        var welcomeTitle: Sdk.Configuration.Font = .system(size: 40, weight: .heavy, lhm: 0.92)
-        var welcomeDescription: Sdk.Configuration.Font = .system(size: 16, weight: .medium, lhm: 1.18)
+        var welcomeTitle: Sdk.Theme.Font {
+            if let ws = config.features.welcomeScreen {
+                return Font(ws.typography.welcomeTitle)
+            }
+            return .system(size: 40, weight: .heavy, lhm: 0.92)
+        }
+
+        var welcomeDescription: Sdk.Theme.Font {
+            if let ws = config.features.welcomeScreen {
+                return Font(ws.typography.welcomeDescription)
+            }
+            return .system(size: 16, weight: .medium, lhm: 1.18)
+        }
 
         // MARK: - TryOn.FitDisclaimer
 
-        var disclaimer: Sdk.Configuration.Font = .system(size: 12, weight: .regular, kern: -0.12)
+        var disclaimer: Sdk.Theme.Font {
+            if let fd = config.features.tryOn.fitDisclaimer {
+                return Font(fd.typography.disclaimer)
+            }
+            return .system(size: 12, weight: .regular, kern: -0.12)
+        }
 
         // MARK: - TryOn.Feedback
 
-        var gratitudeEmoji: Sdk.Configuration.Font = .system(size: 40, weight: .medium)
+        var gratitudeEmoji: Sdk.Theme.Font { .system(size: 40, weight: .medium) }
 
         // MARK: - SizeFit
 
-        var sizeRecommendation: Sdk.Configuration.Font = .system(size: 132, weight: .medium, kern: -3.94)
+        var sizeRecommendation: Sdk.Theme.Font { .system(size: 132, weight: .medium, kern: -3.94) }
     }
 }
 
 // MARK: - Kit FontRef implementation
 
-extension Sdk.Configuration {
+extension Sdk.Theme {
     struct Font: FontRef {
         let font: UIFont
         let family: String
@@ -82,7 +106,7 @@ extension Sdk.Configuration {
         static func system(size: CGFloat,
                            weight: UIFont.Weight,
                            kern: CGFloat? = nil,
-                           lhm: CGFloat? = nil) -> Sdk.Configuration.Font {
+                           lhm: CGFloat? = nil) -> Sdk.Theme.Font {
             .init(.init(size: size, weight: weight, kern: kern, lineHeightMultiple: lhm))
         }
 

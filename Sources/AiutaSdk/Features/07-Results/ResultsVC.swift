@@ -25,7 +25,7 @@ final class ResulstsViewController: ViewController<ResultsView> {
     @injected private var wishlist: Sdk.Core.Wishlist
     @injected private var tracker: AnalyticTracker
     @injected private var watermarker: Watermarker
-    @injected private var config: Sdk.Configuration
+    @injected private var config: Aiuta.Configuration
 
     private var selector: PhotoSelectorController?
     private var originalPresenterAlpha: CGFloat = 1
@@ -167,7 +167,7 @@ final class ResulstsViewController: ViewController<ResultsView> {
 
             tracker.track(.share(event: .initiated, pageId: page, productIds: produtcs.ids))
             ui.canBlackout = false
-            let attachment = try? await config.features.share.additionalTextProvider?.getShareText(productIds: produtcs.ids)
+            let attachment = try? await config.features.share?.additionalTextProvider?.getShareText(productIds: produtcs.ids)
             ui.pager.currentPage?.shadowControls.share.activity.stop()
 
             let result = await share(image: watermarker.watermark(image),
@@ -196,7 +196,7 @@ final class ResulstsViewController: ViewController<ResultsView> {
 
                 let productIds = tryOn.sessionResults.items[safe: index]?.products.ids ?? []
                 tracker.track(.share(event: .initiated, pageId: page, productIds: productIds))
-                let attachment = try? await config.features.share.additionalTextProvider?.getShareText(productIds: productIds)
+                let attachment = try? await config.features.share?.additionalTextProvider?.getShareText(productIds: productIds)
                 gallery.ui.activity.stop()
 
                 let result = await vc.share(image: watermarker.watermark(image),

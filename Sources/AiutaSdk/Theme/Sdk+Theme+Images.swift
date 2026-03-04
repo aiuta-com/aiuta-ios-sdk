@@ -19,39 +19,38 @@ import AiutaCore
 import Resolver
 import UIKit
 
-extension Sdk.Configuration {
+extension Sdk.Theme {
     struct Images {
+        let config: Aiuta.Configuration
+
         // MARK: - Welcome Screen
 
-        var welcomeBackground: UIImage?
+        var welcomeBackground: UIImage? { config.features.welcomeScreen?.images.welcomeBackground }
 
         // MARK: - Onboarding
 
-        var onboardingHowItWorksItems: [(photo: UIImage?, preview: UIImage?)] = [
-            (photo: AiutaAssets.bundleImage("aiutaImageBoardHow1L"), preview: AiutaAssets.bundleImage("aiutaImageBoardHow1S")),
-            (photo: AiutaAssets.bundleImage("aiutaImageBoardHow2L"), preview: AiutaAssets.bundleImage("aiutaImageBoardHow2S")),
-            (photo: AiutaAssets.bundleImage("aiutaImageBoardHow3L"), preview: AiutaAssets.bundleImage("aiutaImageBoardHow3S")),
-        ]
+        var onboardingHowItWorksItems: [(photo: UIImage?, preview: UIImage?)] {
+            config.features.onboarding?.howItWorks.images.onboardingHowItWorksItems.map {
+                (photo: $0.itemPhoto, preview: $0.itemPreview)
+            } ?? []
+        }
 
-        var onboardingBestResultsGood: [UIImage] = []
-        var onboardingBestResultsBad: [UIImage] = []
+        var onboardingBestResultsGood: [UIImage] { config.features.onboarding?.bestResults?.images.onboardingBestResultsGood ?? [] }
+        var onboardingBestResultsBad: [UIImage] { config.features.onboarding?.bestResults?.images.onboardingBestResultsBad ?? [] }
 
         // MARK: - ImagePicker
 
-        var imagePickerExamples: [UIImage] = [
-            AiutaAssets.bundleImage("aiutaImagePickerSample1"),
-            AiutaAssets.bundleImage("aiutaImagePickerSample2"),
-        ].compactMap { $0 }
+        var imagePickerExamples: [UIImage] { config.features.imagePicker.images.imagePickerExamples }
 
         // MARK: - Share
 
-        var shareWatermark: UIImage?
+        var shareWatermark: UIImage? { config.features.share?.watermark.image }
     }
 }
 
 // MARK: - Image Traits
 
-extension Sdk.Configuration.Images {
+extension Sdk.Theme {
     final class Traits: ImageTraits {
         func largestSize(for quality: ImageQuality) -> CGFloat {
             switch quality {
@@ -74,10 +73,10 @@ extension Sdk.Configuration.Images {
 
 // MARK: - Watermark
 
-extension Sdk.Configuration.Images {
+extension Sdk.Theme {
     final class Watermarker: FitAreaWatermarker {
-        init(_ configuration: Sdk.Configuration.Images) {
-            super.init(configuration.shareWatermark,
+        init(_ config: Aiuta.Configuration) {
+            super.init(config.features.share?.watermark.image,
                        area: .init(x: 0.5, y: 0.82, width: 0.45, height: 0.14),
                        xAlign: .max, yAlign: .max)
         }

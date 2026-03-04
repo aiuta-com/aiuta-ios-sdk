@@ -24,7 +24,7 @@ extension Sdk.Core {
         let onChange = Signal<Void>()
 
         @injected private var api: ApiService
-        @injected private var config: Sdk.Configuration
+        @injected private var config: Aiuta.Configuration
         @injected private var session: Sdk.Core.Session
 
         @defaults(key: "fitSurvey", defaultValue: nil)
@@ -32,7 +32,7 @@ extension Sdk.Core {
 
         var isAvailable: Bool {
             guard let product = session.products.first else { return false }
-            guard config.features.sizeFit.isSome else { return false }
+            guard config.features.sizeFit != nil else { return false }
             return product.sizeChart.isSome
         }
 

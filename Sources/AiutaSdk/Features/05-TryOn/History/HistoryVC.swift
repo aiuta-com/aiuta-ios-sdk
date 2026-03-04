@@ -23,7 +23,7 @@ final class HistoryVC: ViewController<HistoryUI> {
     @injected private var session: Sdk.Core.Session
     @injected private var tracker: AnalyticTracker
     @injected private var watermarker: Watermarker
-    @injected private var config: Sdk.Configuration
+    @injected private var config: Aiuta.Configuration
 
     override func setup() {
         ui.navBar.onBack.subscribe(with: self) { [unowned self] in
@@ -168,7 +168,7 @@ final class HistoryVC: ViewController<HistoryUI> {
         }
         let productIds = selection.compactMap { $0.productIds }.flatMap { $0 }.uniqued()
         tracker.track(.share(event: .initiated, pageId: page, productIds: productIds))
-        let attachment = try? await config.features.share.additionalTextProvider?.getShareText(productIds: productIds)
+        let attachment = try? await config.features.share?.additionalTextProvider?.getShareText(productIds: productIds)
         ui.selectionSnackbar.bar.shareButton.activity.stop()
 
         let result = await share(images: imagesToShare.map { watermarker.watermark($0) },
@@ -198,7 +198,7 @@ final class HistoryVC: ViewController<HistoryUI> {
 
                 let productIds = (generatedImage as? Aiuta.GeneratedImage)?.productIds ?? []
                 tracker.track(.share(event: .initiated, pageId: page, productIds: productIds))
-                let attachment = try? await config.features.share.additionalTextProvider?.getShareText(productIds: productIds)
+                let attachment = try? await config.features.share?.additionalTextProvider?.getShareText(productIds: productIds)
                 gallery.ui.activity.stop()
 
                 let result = await gallery.share(image: watermarker.watermark(image),

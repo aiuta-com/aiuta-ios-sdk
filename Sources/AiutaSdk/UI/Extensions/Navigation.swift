@@ -12,13 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import AiutaConfig
 @_spi(Aiuta) import AiutaKit
 import UIKit
 
 extension UIViewController {
     func popoverOrCover(_ vc: UIViewController) {
-        @injected var config: Sdk.Configuration
-        if config.styles.isFullScreen {
+        @injected var config: Aiuta.Configuration
+        if case .fullScreen = config.userInterface.presentationStyle {
             cover(vc)
         } else {
             (navigationController ?? self).popover(vc)

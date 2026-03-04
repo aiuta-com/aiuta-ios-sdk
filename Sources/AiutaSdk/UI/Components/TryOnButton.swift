@@ -29,7 +29,7 @@ final class TryOnButton: PlainButton {
 
     override func setup() {
         view.backgroundColor = ds.colors.brand
-        if ds.colors.tryOnButtonGradient.isNil {
+        if ds.colors.tryOnButtonGradient.isEmpty {
             gradient.removeFromParent()
         }
     }
