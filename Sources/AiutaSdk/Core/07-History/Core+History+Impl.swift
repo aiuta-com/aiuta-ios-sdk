@@ -29,20 +29,27 @@ extension Sdk.Core {
         var hasUploads: Bool { !uploaded.isEmpty }
         var hasGenerations: Bool { !generated.isEmpty }
 
+        private var uploadsProvider: Aiuta.Configuration.Features.ImagePicker.UploadsHistory.DataProvider?
+        private var generationsProvider: Aiuta.Configuration.Features.TryOn.GenerationsHistory.DataProvider?
+
         init() {
             Task { await subscribeForChanges() }
         }
 
         @MainActor func subscribeForChanges() async {
             if let uploadsHistory = config.features.imagePicker.uploadsHistory {
-                let uploads = await uploadsHistory.dataProvider.uploaded
+                let provider = uploadsHistory.resolveDataProvider()
+                uploadsProvider = provider
+                let uploads = await provider.uploaded
                 uploads.didChange.subscribePast(with: self) { [weak self] newValue in
                     self?.uploaded.items = newValue
                 }
             }
 
             if let generationsHistory = config.features.tryOn.generationsHistory {
-                let generations = await generationsHistory.dataProvider.generated
+                let provider = generationsHistory.resolveDataProvider()
+                generationsProvider = provider
+                let generations = await provider.generated
                 generations.didChange.subscribePast(with: self) { [weak self] newValue in
                     self?.generated.items = newValue
                 }
@@ -50,43 +57,43 @@ extension Sdk.Core {
         }
 
         @MainActor func addUploaded(_ image: Aiuta.UserImage) async throws {
-            guard let uploadsHistory = config.features.imagePicker.uploadsHistory else { return }
-            try await uploadsHistory.dataProvider.add(uploaded: [image])
+            guard let uploadsProvider else { return }
+            try await uploadsProvider.add(uploaded: [image])
         }
 
         @MainActor func touchUploaded(with id: String) async throws -> Bool {
-            guard let uploadsHistory = config.features.imagePicker.uploadsHistory else { return true }
-            guard let selectedImage = await uploadsHistory.dataProvider.uploaded.value.first(where: { $0.id == id }) else {
+            guard let uploadsProvider else { return true }
+            guard let selectedImage = await uploadsProvider.uploaded.value.first(where: { $0.id == id }) else {
                 return false
             }
-            try await uploadsHistory.dataProvider.select(uploaded: selectedImage)
+            try await uploadsProvider.select(uploaded: selectedImage)
             return true
         }
 
         @MainActor func removeUploaded(_ image: Aiuta.UserImage) async throws {
-            guard let uploadsHistory = config.features.imagePicker.uploadsHistory else { return }
+            guard let uploadsProvider else { return }
             deletingUploaded.items.append(image)
             defer { deletingUploaded.removeAll(where: { $0.id == image.id }) }
-            try await uploadsHistory.dataProvider.delete(uploaded: [image])
+            try await uploadsProvider.delete(uploaded: [image])
         }
 
         @MainActor func addGenerated(_ images: [Aiuta.UserImage], for products: Aiuta.Products) async throws {
-            guard let generationsHistory = config.features.tryOn.generationsHistory else { return }
+            guard let generationsProvider else { return }
             let generatedImages = images.map { Aiuta.GeneratedImage(image: $0, productIds: products.ids) }
-            try await generationsHistory.dataProvider.add(generated: generatedImages)
+            try await generationsProvider.add(generated: generatedImages)
         }
 
         @MainActor func removeGenerated(_ selection: [Aiuta.GeneratedImage]) async throws {
-            guard let generationsHistory = config.features.tryOn.generationsHistory else { return }
+            guard let generationsProvider else { return }
             deletingGenerated.items.append(contentsOf: selection)
             defer { deletingGenerated.removeAll { selection.contains($0) } }
-            try await generationsHistory.dataProvider.delete(generated: selection)
+            try await generationsProvider.delete(generated: selection)
         }
     }
 }
 
 extension Aiuta.Configuration.Features.ImagePicker.UploadsHistory {
-    var dataProvider: DataProvider {
+    func resolveDataProvider() -> DataProvider {
         switch history {
             case .userDefaults:
                 return UploadsDefaultsDataProvider()
@@ -97,7 +104,7 @@ extension Aiuta.Configuration.Features.ImagePicker.UploadsHistory {
 }
 
 extension Aiuta.Configuration.Features.TryOn.GenerationsHistory {
-    var dataProvider: DataProvider {
+    func resolveDataProvider() -> DataProvider {
         switch history {
             case .userDefaults:
                 return GenerationsDefaultsDataProvider()
@@ -115,23 +122,25 @@ fileprivate final class UploadsDefaultsDataProvider: Aiuta.Configuration.Feature
     @available(iOS 13.0.0, *)
     @MainActor
     func add(uploaded images: [Aiuta.InputImage]) async throws {
-        uploaded.value.insert(contentsOf: images, at: 0)
+        uploaded.value = images + uploaded.value
         _uploaded.write()
     }
 
     @available(iOS 13.0.0, *)
     @MainActor
     func delete(uploaded images: [Aiuta.InputImage]) async throws {
-        uploaded.value.removeAll { image in images.contains(image) }
+        uploaded.value = uploaded.value.filter { image in !images.contains(image) }
         _uploaded.write()
     }
 
     @available(iOS 13.0.0, *)
     @MainActor
     func select(uploaded image: Aiuta.InputImage) async throws {
-        guard let index = uploaded.value.firstIndex(where: { $0.id == image.id }) else { return }
-        let selectedImage = uploaded.value.remove(at: index)
-        uploaded.value.insert(selectedImage, at: 0)
+        var items = uploaded.value
+        guard let index = items.firstIndex(where: { $0.id == image.id }) else { return }
+        let selectedImage = items.remove(at: index)
+        items.insert(selectedImage, at: 0)
+        uploaded.value = items
         _uploaded.write()
     }
 
@@ -165,14 +174,14 @@ fileprivate final class GenerationsDefaultsDataProvider: Aiuta.Configuration.Fea
     @available(iOS 13.0.0, *)
     @MainActor
     func add(generated images: [Aiuta.GeneratedImage]) async throws {
-        generated.value.insert(contentsOf: images, at: 0)
+        generated.value = images + generated.value
         _generated.write()
     }
 
     @available(iOS 13.0.0, *)
     @MainActor
     func delete(generated images: [Aiuta.GeneratedImage]) async throws {
-        generated.value.removeAll { image in images.contains(image) }
+        generated.value = generated.value.filter { image in !images.contains(image) }
         _generated.write()
     }
 }
