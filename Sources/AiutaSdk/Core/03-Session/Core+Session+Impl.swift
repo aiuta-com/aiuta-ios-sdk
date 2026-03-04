@@ -1,0 +1,54 @@
+// Copyright 2024 Aiuta USA, Inc
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+#if SWIFT_PACKAGE
+import AiutaConfig
+import AiutaCore
+@_spi(Aiuta) import AiutaKit
+#endif
+import Foundation
+
+@available(iOS 13.0.0, *)
+extension Sdk.Core {
+    final class SessionImpl: Session {
+        @injected var tracker: AnalyticTracker
+        @injected var config: Aiuta.Configuration
+
+        var products: Aiuta.Products = []
+
+        func start() {
+            products = []
+        }
+
+        func start(with products: Aiuta.Products) {
+            self.products = products
+        }
+
+        func finish(addingToCart products: Aiuta.Products?) {
+            guard let products else { return }
+            if let product = products.first,
+               let cartHandler = config.features.tryOn.cart?.handler {
+                Task { await cartHandler.addToCart(productId: product.id) }
+            }
+        }
+
+        func finish(recommendingSize recommendation: Aiuta.SizeRecommendation?) {
+            if let product = products.first,
+               let size = recommendation?.recommendedSizeName,
+               let sizeHandler = config.features.sizeFit?.handler {
+                Task { await sizeHandler.reccomendation(productId: product.id, size: size) }
+            }
+        }
+    }
+}

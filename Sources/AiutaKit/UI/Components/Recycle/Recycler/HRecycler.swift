@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if SWIFT_PACKAGE
+@_spi(Aiuta) import AiutaCore
+#endif
 import UIKit
 
 @_spi(Aiuta) open class HRecycler<RecycleViewType, RecycleDataType>: Content<PlainView> where RecycleViewType: Recycle<RecycleDataType>, RecycleDataType: Equatable {
@@ -285,8 +288,6 @@ import UIKit
                 firstVisibleIndex = item.index.item
                 firstVisible = item.data
             }
-            item.transitions.isReferenceActive = isIntersects
-            item.subcontents.forEach { $0.transitions.isReferenceActive = isIntersects }
             item.setFocus(isPartialVisible: isIntersects, isFullVisible: isContains)
         }
     }

@@ -20,8 +20,6 @@ import UIKit
         static var isAppearing: Bool = false
         static var isDeparting: Bool = false
 
-        static var willTransitInteractive: Bool = false
-        static var hasTransitionUpdates: Bool = false
         static var statusBarStyle: Void?
 
         static var bulletinManager: Void?
@@ -73,16 +71,6 @@ import UIKit
     }
 
     public func dropBackstack() { backstackController = nil }
-
-    var willTransitInteractive: Bool {
-        get { getAssociatedProperty(&Property.willTransitInteractive, defaultValue: Property.willTransitInteractive) }
-        set { setAssociatedProperty(&Property.willTransitInteractive, newValue: newValue) }
-    }
-
-    var hasTransitionUpdates: Bool {
-        get { getAssociatedProperty(&Property.hasTransitionUpdates, defaultValue: Property.hasTransitionUpdates) }
-        set { setAssociatedProperty(&Property.hasTransitionUpdates, newValue: newValue) }
-    }
 
     public var childViewController: UIViewController? {
         (self as? UITabBarController)?.selectedViewController

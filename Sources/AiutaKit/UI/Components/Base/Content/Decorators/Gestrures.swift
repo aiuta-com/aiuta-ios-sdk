@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if SWIFT_PACKAGE
+@_spi(Aiuta) import AiutaCore
+#endif
 import UIKit
 
 @_spi(Aiuta) public final class Gestures {
@@ -52,8 +55,11 @@ import UIKit
 // MARK: Taps
 
 public extension Gestures {
-    func onTap(with target: AnyObject, callback: @escaping Signal<UITapGestureRecognizer>.SyncCallback) {
-        on(&tap, target: target, callback: callback)
+    func onTap(cancelsTouchesInView: Bool = true, with target: AnyObject, callback: @escaping Signal<UITapGestureRecognizer>.SyncCallback) {
+        let config = { (tap: UITapGestureRecognizer) in
+            tap.cancelsTouchesInView = cancelsTouchesInView
+        }
+        on(&tap, target: target, callback: callback, configurator: config)
     }
 
     func offTap(for target: AnyObject) {

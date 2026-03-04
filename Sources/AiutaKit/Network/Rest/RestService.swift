@@ -18,7 +18,7 @@ import Foundation
 @available(iOS 13.0.0, *)
 @_spi(Aiuta) public actor RestService {
     private let provider: ApiProvider
-    private let debugger: ApiDebugger?
+    private let isDebug: Bool
 
     private let responseDecoder = JSONDecoder()
     private let parameterEncoder = JSONParameterEncoder()
@@ -28,9 +28,9 @@ import Foundation
     private let codeOk = 200
     private let codeNotModified = 304
 
-    public init(_ provider: ApiProvider, debugger: ApiDebugger? = nil) {
+    public init(_ provider: ApiProvider, isDebug: Bool = false) {
         self.provider = provider
-        self.debugger = debugger
+        self.isDebug = isDebug
 
         let dateFormatter = DateFormatter { it in
             it.calendar = Calendar(identifier: .iso8601)
@@ -80,8 +80,7 @@ import Foundation
 
 @available(iOS 13.0.0, *)
 private extension RestService {
-    @MainActor func sendRequest<Request: ApiRequest & Encodable, Response: Decodable>(_ request: Request, tryCount: Int,
-                                                                                      debugger debugOperation: ApiDebuggerOperation?) async throws -> ApiResponse<Response> {
+    func sendRequest<Request: ApiRequest & Encodable, Response: Decodable>(_ request: Request, tryCount: Int) async throws -> ApiResponse<Response> {
         /// request
 
         let url = try await buildUrl(request)
@@ -90,13 +89,10 @@ private extension RestService {
 
         var shortUrl: String?
         var requestBody: String?
-        var requestDebugger: ApiDebuggerRequest?
-        let isDebug = await debugger?.isEnabled == true
 
         if isDebug {
             shortUrl = try await shortenUrl(url)
             if request.hasBody { requestBody = String(decoding: try parameterEncoder.encoder.encode(request), as: UTF8.self) }
-            requestDebugger = await buildDebugger(request, body: requestBody, shortUrl: shortUrl, debugger: debugOperation)
         }
 
         let session = Session.default
@@ -129,8 +125,6 @@ private extension RestService {
                                "\n\n ▷", request.method.rawValue, shortUrl, headers.keys, requestBody ?? "",
                                "\n ◁", statusCode,
                                "\n") }
-
-            requestDebugger?.responseBody = "<not modified>"
             throw ApiError.notModified
         }
 
@@ -156,17 +150,7 @@ private extension RestService {
             }
         }
 
-        var rawErrorString: String?
-        if isDebug, let error = rawResponse.error {
-            rawErrorString = String(describing: error)
-        }
-
-        requestDebugger?.responseCode = statusCode
-        requestDebugger?.responseError = rawErrorString
-        requestDebugger?.responseBody = rawResponse.value
-
         guard let statusCode else {
-            requestDebugger?.responseError = "<no response>"
             if tryCount < request.retryCount {
                 throw ApiError.retry
             } else {
@@ -176,19 +160,17 @@ private extension RestService {
 
         guard statusCode == codeOk else {
             let errorInfo = await dataRequest.decodeResponse(of: ApiError.Info.self, decoder: responseDecoder)
-            requestDebugger?.responseError = errorInfo.value?.error ?? rawErrorString
             throw ApiError(statusCode, with: errorInfo.value?.error ?? shortenString(rawResponse.value, maxLength: 300))
         }
 
         let response = await dataRequest.decodeResponse(of: Response.self, decoder: responseDecoder)
-        if isDebug, let error = response.error { requestDebugger?.responseError = rawErrorString ?? String(describing: error) }
         guard let result = response.value else { throw ApiError(response.error) }
         return (response: result, headers: response.response?.headers)
     }
 }
 
 @available(iOS 13.0.0, *)
-@MainActor private extension RestService {
+private extension RestService {
     func buildUrl(_ request: ApiRequest) async throws -> String {
         let urlString = "\(try await provider.baseUrl)/\(request.urlPath)"
         guard var urlComponents = URLComponents(string: urlString) else {
@@ -207,21 +189,6 @@ private extension RestService {
         return headers
     }
 
-    func buildDebugger(_ request: ApiRequest, body: String?, shortUrl: String?,
-                       debugger debugOperation: ApiDebuggerOperation?) async -> ApiDebuggerRequest? {
-        var debugOperation = debugOperation
-        if debugOperation.isNil {
-            debugOperation = await debugger?.startOperation(id: request.idString,
-                                                            title: request.title,
-                                                            subtitle: request.subtitle)
-        }
-        return await debugOperation?.addRequest(
-            method: request.method.rawValue,
-            url: shortUrl,
-            body: body
-        )
-    }
-
     func shortenUrl(_ urlString: String) async throws -> String {
         urlString.replacingOccurrences(of: try await provider.baseUrl, with: "")
     }
@@ -235,25 +202,15 @@ private extension RestService {
 
 @available(iOS 13.0.0, *)
 @_spi(Aiuta) extension RestService: ApiService {
-    @MainActor public func request<Request: ApiRequest & Encodable, Response: Decodable>(_ request: Request,
-                                                                                         debugger debugOperation: ApiDebuggerOperation?,
-                                                                                         breadcrumbs: Breadcrumbs?) async throws -> ApiResponse<Response> {
-        let source = String(reflecting: type(of: request))
-        breadcrumbs?.add(on: source)
+    public func request<Request: ApiRequest & Encodable, Response: Decodable>(_ request: Request) async throws -> ApiResponse<Response> {
         var tryCount = 0
         while true {
             do {
-                return try await sendRequest(request, tryCount: tryCount, debugger: debugOperation)
+                return try await sendRequest(request, tryCount: tryCount)
             } catch ApiError.retry {
                 await asleep(.oneSecond)
                 tryCount += 1
                 continue
-            } catch ApiError.notModified {
-                throw ApiError.notModified
-            } catch {
-                let breadcrumbs = breadcrumbs ?? Breadcrumbs(on: source)
-                breadcrumbs.fire(error, label: error.localizedDescription, on: source)
-                throw error
             }
         }
     }

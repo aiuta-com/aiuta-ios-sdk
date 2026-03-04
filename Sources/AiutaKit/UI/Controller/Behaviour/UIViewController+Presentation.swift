@@ -13,7 +13,6 @@
 // limitations under the License.
 
 import PhotosUI
-import Resolver
 import UIKit
 
 @_spi(Aiuta) public extension UIViewController {
@@ -28,18 +27,11 @@ import UIKit
             return
         }
 
-        @Injected var heroic: Heroic
-        heroic.finish(animate: false)
-
         whenPushback()
 
-        heroic.copyAnimation(from: viewController, to: navigationController)
         viewController.backstackController = backstack
 
-        guard let navigationController else {
-            heroic.replace(self, with: viewController)
-            return
-        }
+        guard let navigationController else { return }
 
         if navigationController.viewControllers.contains(viewController) {
             navigationController.popToViewController(viewController, animated: true)
@@ -49,7 +41,10 @@ import UIKit
                 vcs.removeAll(where: { $0 === backstackController })
                 navigationController.setViewControllers(vcs, animated: false)
             }
-            heroic.replace(self, with: viewController)
+            var vcs = navigationController.children
+            if !vcs.isEmpty { vcs.removeLast() }
+            vcs.append(viewController)
+            navigationController.setViewControllers(vcs, animated: true)
         }
     }
 
@@ -82,12 +77,7 @@ import UIKit
             return
         }
 
-        @Injected var heroic: Heroic
-        heroic.finish(animate: false)
-
         whenPushback()
-
-        heroic.copyAnimation(from: viewController, to: navigationController)
 
 //        if viewController is UIImagePickerController {
 //            viewController.modalPresentationStyle = .popover
@@ -129,12 +119,7 @@ import UIKit
     }
 
     func dismiss() {
-        @Injected var heroic: Heroic
-        heroic.finish(animate: false)
-
         if !isDeparting { whenDismiss(interactive: false) }
-
-        heroic.copyAnimation(from: self, to: navigationController)
 
         guard let navigationController else {
             dismiss(animated: true) { [weak self] in

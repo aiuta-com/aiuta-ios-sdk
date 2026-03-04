@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if SWIFT_PACKAGE
+@_spi(Aiuta) import AiutaCore
+#endif
 import Foundation
 import Kingfisher
 import Resolver
@@ -21,23 +24,23 @@ import UIKit
     private let urlFetcher: UrlFetcher
     private var downsampler: Downsampler?
 
-    public init(_ string: String, quality: ImageQuality, isRounded: Bool = false, breadcrumbs: Breadcrumbs) {
-        urlFetcher = UrlFetcher(string, quality: .hiResImage, isRounded: isRounded, breadcrumbs: breadcrumbs)
+    public init(_ string: String, quality: ImageQuality, isRounded: Bool = false) {
+        urlFetcher = UrlFetcher(string, quality: .hiResImage, isRounded: isRounded)
         super.init()
-        load(quality, breadcrumbs: breadcrumbs)
+        load(quality)
     }
 
-    public init(_ url: URL, quality: ImageQuality, isRounded: Bool = false, breadcrumbs: Breadcrumbs) {
-        urlFetcher = UrlFetcher(url, quality: .hiResImage, isRounded: isRounded, breadcrumbs: breadcrumbs)
+    public init(_ url: URL, quality: ImageQuality, isRounded: Bool = false) {
+        urlFetcher = UrlFetcher(url, quality: .hiResImage, isRounded: isRounded)
         super.init()
-        load(quality, breadcrumbs: breadcrumbs)
+        load(quality)
     }
 }
 
 private extension ThumbFetcher {
-    func load(_ quality: ImageQuality, breadcrumbs: Breadcrumbs) {
+    func load(_ quality: ImageQuality) {
         switch quality {
-            case .thumbnails: waitOriginalAndDownsample(breadcrumbs: breadcrumbs)
+            case .thumbnails: waitOriginalAndDownsample()
             case .hiResImage: forwardOriginal()
         }
     }
@@ -48,13 +51,13 @@ private extension ThumbFetcher {
         }
     }
 
-    private func waitOriginalAndDownsample(breadcrumbs: Breadcrumbs) {
+    private func waitOriginalAndDownsample() {
         urlFetcher.onImage.subscribePast(with: self) { [unowned self] original in
             guard let original else {
                 onImage.fire(nil)
                 return
             }
-            downsampler = Downsampler(original, quality: .thumbnails, breadcrumbs: breadcrumbs)
+            downsampler = Downsampler(original, quality: .thumbnails)
             downsampler?.onImage.subscribePastOnce(with: self) { [unowned self] downsampledImage in
                 let resultImage = downsampledImage ?? original
                 onImage.fire(resultImage)

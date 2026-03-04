@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if SWIFT_PACKAGE
+@_spi(Aiuta) import AiutaCore
+#endif
 import Kingfisher
 import Resolver
 import UIKit
@@ -19,10 +22,8 @@ import UIKit
 @_spi(Aiuta) public final class UrlFetcher: BaseFetcher {
     private var downloadTask: DownloadTask?
     private let fetcher = KingfisherManager.shared
-    private let breadcrumbs: Breadcrumbs
 
-    public init(_ string: String, quality: ImageQuality, isRounded: Bool = false, breadcrumbs: Breadcrumbs) {
-        self.breadcrumbs = breadcrumbs
+    public init(_ string: String, quality: ImageQuality, isRounded: Bool = false) {
         super.init()
         guard let url = URL(string: string) else {
             onImage.fire(nil)
@@ -32,8 +33,7 @@ import UIKit
         load(url, quality: quality, isRounded: isRounded)
     }
 
-    public init(_ url: URL, quality: ImageQuality, isRounded: Bool = false, breadcrumbs: Breadcrumbs) {
-        self.breadcrumbs = breadcrumbs
+    public init(_ url: URL, quality: ImageQuality, isRounded: Bool = false) {
         super.init()
         load(url, quality: quality, isRounded: isRounded)
     }
@@ -67,7 +67,6 @@ private extension UrlFetcher {
                     onError.fire()
                     load(url, quality: quality, isRounded: isRounded, retry: maxRetry)
                 } else {
-                    breadcrumbs.fire(error, label: "Failed to fetch image from url")
                     onImage.fire(nil)
                 }
         }

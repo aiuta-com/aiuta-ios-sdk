@@ -12,7 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import Resolver
+#if SWIFT_PACKAGE
+@_spi(Aiuta) import AiutaCore
+#endif
 import UIKit
 
 @_spi(Aiuta) public extension Image {
@@ -50,7 +52,6 @@ import UIKit
     private struct Property {
         static var source: Void?
         static var loader: Void?
-        static var breadcrumbs: Void?
         static var desiredQuality: ImageQuality = .hiResImage
         static var retrievedQuality: Void?
         static var keepCurrentImage: Bool = false
@@ -65,8 +66,6 @@ import UIKit
             loader?.onImage.cancelSubscription(for: self)
             setAssociatedProperty(&Property.loader, newValue: newValue)
             onChange.fire()
-
-            @Injected var heroic: Heroic
 
             isAutoSize = false
             retrievedQuality = nil
@@ -86,7 +85,7 @@ import UIKit
 
                 guard image != newImage else { return }
                 image = newImage
-                guard crossDissolveChanges, !heroic.isTransitioning, !layout.visibleBounds.size.isAnyZero else { return }
+                guard crossDissolveChanges, !layout.visibleBounds.size.isAnyZero else { return }
                 animations.transition(.transitionCrossDissolve, duration: .thirdOfSecond)
             }
 
@@ -94,7 +93,7 @@ import UIKit
                 onError.fire()
             }
 
-            newValue?.load(desiredQuality, breadcrumbs: breadcrumbs.fork())
+            newValue?.load(desiredQuality)
         }
     }
 
@@ -103,11 +102,4 @@ import UIKit
         set { setAssociatedProperty(&Property.retrievedQuality, newValue: newValue) }
     }
 
-    public var breadcrumbs: Breadcrumbs {
-        get {
-            getAssociatedProperty(&Property.breadcrumbs, ofType: Breadcrumbs.self) ??
-                setAssociatedProperty(&Property.breadcrumbs, newValue: Breadcrumbs())
-        }
-        set { setAssociatedProperty(&Property.breadcrumbs, newValue: newValue) }
-    }
 }

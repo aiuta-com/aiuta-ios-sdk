@@ -12,11 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import Resolver
 import UIKit
 
 @_spi(Aiuta) public final class Animations {
-    @Injected private var heroic: Heroic
     private let view: UIView
 
     init(target: UIView) {
@@ -43,7 +41,7 @@ import UIKit
     }
 
     public func animate(time duration: AsyncDelayTime = .quarterOfSecond, curve: UIView.AnimationOptions = .curveEaseInOut, changes: @escaping AsyncCallback, complete completion: AsyncCallback? = nil) {
-        guard !heroic.isTransitioning, view.window.isSome, duration != .instant else {
+        guard view.window.isSome, duration != .instant else {
             changes()
             completion?()
             return
@@ -52,7 +50,7 @@ import UIKit
     }
 
     public func animate(dampingRatio ratio: CGFloat, time duration: TimeInterval? = nil, delay: AsyncDelayTime? = nil, changes: @escaping AsyncCallback, complete completion: AsyncCallback? = nil) {
-        guard !heroic.isTransitioning, view.window.isSome else {
+        guard view.window.isSome else {
             changes()
             completion?()
             return
@@ -67,7 +65,7 @@ import UIKit
     }
 
     public func transition(_ options: UIView.AnimationOptions, duration: AsyncDelayTime = .oneSecond, complete completion: AsyncCallback? = nil) {
-        guard !heroic.isTransitioning, view.window.isSome else {
+        guard view.window.isSome else {
             completion?()
             return
         }
@@ -111,16 +109,12 @@ import UIKit
     }
 
     public func shake() {
-        guard !heroic.isTransitioning, view.window.isSome else {
-            return
-        }
+        guard view.window.isSome else { return }
         view.shake()
     }
 
     public func rotate(duration: Double) {
-        guard !heroic.isTransitioning, view.window.isSome else {
-            return
-        }
+        guard view.window.isSome else { return }
         view.rotate(duration: duration)
     }
 

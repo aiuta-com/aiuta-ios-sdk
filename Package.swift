@@ -10,8 +10,24 @@ let package = Package(
     ],
     products: [
         .library(
+            name: "AiutaCore",
+            targets: ["AiutaCore"]
+        ),
+        .library(
             name: "AiutaKit",
             targets: ["AiutaKit"]
+        ),
+        .library(
+            name: "AiutaConfig",
+            targets: ["AiutaConfig"]
+        ),
+        .library(
+            name: "AiutaDefaults",
+            targets: ["AiutaDefaults"]
+        ),
+        .library(
+            name: "AiutaAssets",
+            targets: ["AiutaAssets"]
         ),
         .library(
             name: "AiutaSdk",
@@ -25,8 +41,15 @@ let package = Package(
     ],
     targets: [
         .target(
+            name: "AiutaCore",
+            resources: [
+                .process("Resources")
+            ]
+        ),
+        .target(
             name: "AiutaKit",
             dependencies: [
+                "AiutaCore",
                 "Alamofire",
                 "Kingfisher",
                 "Resolver",
@@ -36,9 +59,40 @@ let package = Package(
             ]
         ),
         .target(
+            name: "AiutaConfig",
+            dependencies: [
+                "AiutaCore",
+            ],
+            resources: [
+                .process("Resources")
+            ]
+        ),
+        .target(
+            name: "AiutaDefaults",
+            dependencies: [
+                "AiutaConfig",
+            ],
+            resources: [
+                .process("Resources")
+            ]
+        ),
+        .target(
+            name: "AiutaAssets",
+            dependencies: [
+                "AiutaDefaults",
+            ],
+            resources: [
+                .process("Resources")
+            ]
+        ),
+        .target(
             name: "AiutaSdk",
             dependencies: [
+                "AiutaCore",
+                "AiutaConfig",
+                "AiutaDefaults",
                 "AiutaKit",
+                "AiutaAssets",
                 "Alamofire",
                 "Kingfisher",
                 "Resolver",

@@ -12,12 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if SWIFT_PACKAGE
+@_spi(Aiuta) import AiutaCore
+#endif
 import UIKit
 
 @_spi(Aiuta) public final class FailFetcher: BaseFetcher {
-    public init(breadcrumbs: Breadcrumbs) {
+    public override init() {
         super.init()
         onImage.fire(nil)
-        breadcrumbs.fire(nil, label: "Fail fetcher used")
     }
 }

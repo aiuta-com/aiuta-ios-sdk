@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if SWIFT_PACKAGE
+@_spi(Aiuta) import AiutaCore
+#endif
 import Foundation
 import Resolver
 import UIKit
@@ -30,6 +33,8 @@ import UIKit
 
     @notification(UIResponder.keyboardWillChangeFrameNotification)
     private var keyboardWillChangeFrame: Signal<Void>
+
+    public var animateKeyboardChanges: Bool = false
 
     convenience init() {
         self.init(nibName: nil, bundle: nil)
@@ -100,7 +105,13 @@ import UIKit
 
         let keyboardHandler = { [unowned self] in
             guard isAppearing, isViewLoaded else { return }
-            ui.updateLayoutRecursive()
+            if animateKeyboardChanges {
+                animate { [ui] in
+                    ui.updateLayoutRecursive()
+                }
+            } else {
+                ui.updateLayoutRecursive()
+            }
         }
 
         keyboardWillShow.subscribe(with: self, callback: keyboardHandler)

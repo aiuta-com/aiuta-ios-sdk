@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if SWIFT_PACKAGE
+@_spi(Aiuta) import AiutaCore
+#endif
 import Resolver
 import UIKit
 
@@ -56,7 +59,6 @@ import UIKit
     public private(set) lazy var layout = Layouts(self, target: container)
     public private(set) lazy var gestures = Gestures(target: container)
     public private(set) lazy var animations = Animations(target: container)
-    public private(set) lazy var transitions = Transitions(target: container)
 
     public required init() {}
 

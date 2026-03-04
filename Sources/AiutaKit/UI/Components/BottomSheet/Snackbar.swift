@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import Resolver
 import UIKit
 
 @_spi(Aiuta) public final class Snackbar<Body: Plane>: PlainButton {
@@ -63,33 +62,15 @@ import UIKit
     }
 
     private func autoHide() {
-        if #available(iOS 13.0, *) {
-            Task { [weak self] in
-                @Injected var heroic: Heroic
-                await heroic.completeTransition()
-                self?.isVisible = false
-            }
-        } else {
-            isVisible = false
-        }
+        isVisible = false
     }
 
     override func setupInternal() {
         view.isUserInteractionEnabled = isVisible
-        transitions.make { make in
-            make.translate(y: 200)
-            make.fade()
-            make.global()
-        }
     }
 
     public var bottomInset: CGFloat = 0 {
         didSet {
-            transitions.make { make in
-                make.translate(y: bottomInset + 200)
-                make.fade()
-                make.global()
-            }
             guard oldValue != bottomInset, isVisible else { return }
             animations.updateLayout()
         }

@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if SWIFT_PACKAGE
+@_spi(Aiuta) import AiutaCore
+#endif
 import Kingfisher
 import Resolver
 import UIKit
@@ -19,12 +22,12 @@ import UIKit
 @_spi(Aiuta) public final class Downsampler: BaseFetcher {
     private let imageCache: ImageCache = KingfisherManager.shared.cache
 
-    public init(_ image: UIImage, quality: ImageQuality, breadcrumbs: Breadcrumbs) {
+    public init(_ image: UIImage, quality: ImageQuality) {
         super.init()
         loadFromCache(image, quality: quality)
     }
 
-    public init(_ data: Data, quality: ImageQuality, breadcrumbs: Breadcrumbs) {
+    public init(_ data: Data, quality: ImageQuality) {
         super.init()
         dispatch(quality == .thumbnails ? .user : .medium) { [self] in
             let downsampledImage = downsample(data, quality)

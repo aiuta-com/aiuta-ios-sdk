@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if SWIFT_PACKAGE
+@_spi(Aiuta) import AiutaCore
+#endif
 import UIKit
 
 @_spi(Aiuta) public final class ImageLoader {
@@ -25,10 +28,10 @@ import UIKit
         self.source = source
     }
 
-    func load(_ quality: ImageQuality, breadcrumbs: Breadcrumbs) {
-        if quality > .thumbnails && fetchers[.thumbnails].isNil { load(.thumbnails, breadcrumbs: breadcrumbs) }
+    func load(_ quality: ImageQuality) {
+        if quality > .thumbnails && fetchers[.thumbnails].isNil { load(.thumbnails) }
 
-        let fetcher: ImageFetcher = fetchers[quality] ?? source.fetcher(for: quality, breadcrumbs: breadcrumbs)
+        let fetcher: ImageFetcher = fetchers[quality] ?? source.fetcher(for: quality)
 
         fetchers[quality] = fetcher
         fetcher.onImage.cancelSubscription(for: self)
@@ -42,13 +45,13 @@ import UIKit
     }
 
     @available(iOS 13.0.0, *)
-    @MainActor func prefetch(_ quality: ImageQuality = .thumbnails, breadcrumbs: Breadcrumbs) async throws {
-        _ = try await fetch(quality, breadcrumbs: breadcrumbs)
+    @MainActor func prefetch(_ quality: ImageQuality = .thumbnails) async throws {
+        _ = try await fetch(quality)
     }
 
     @available(iOS 13.0.0, *)
-    @MainActor func fetch(_ quality: ImageQuality = .hiResImage, breadcrumbs: Breadcrumbs) async throws -> UIImage {
-        let fetcher: ImageFetcher = fetchers[quality] ?? source.fetcher(for: quality, breadcrumbs: breadcrumbs)
+    @MainActor func fetch(_ quality: ImageQuality = .hiResImage) async throws -> UIImage {
+        let fetcher: ImageFetcher = fetchers[quality] ?? source.fetcher(for: quality)
         fetchers[quality] = fetcher
         return try await fetcher.fetch()
     }
