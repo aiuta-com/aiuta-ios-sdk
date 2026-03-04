@@ -56,7 +56,8 @@ extension Aiuta.Configuration {
                     image: .init(
                         shapes: .init(
                             imageL: shapes.imageL,
-                            imageM: shapes.imageM
+                            imageM: shapes.imageM,
+                            imageS: shapes.imageS
                         ),
                         icons: .init(
                             imageError36: icons.imageError36
@@ -68,6 +69,7 @@ extension Aiuta.Configuration {
                             buttonS: typography.buttonS
                         ),
                         shapes: .init(
+                            buttonL: shapes.buttonL,
                             buttonM: shapes.buttonM,
                             buttonS: shapes.buttonS
                         )

@@ -44,19 +44,25 @@ extension Aiuta.Configuration.UserInterface.ImageTheme {
     public struct Shapes: Sendable {
         /// Shape style for large image views.
         public let imageL: Aiuta.Shape
-        
-        /// Shape style for medium and small image views.
+
+        /// Shape style for medium image views.
         public let imageM: Aiuta.Shape
-        
+
+        /// Shape style for small image views.
+        public let imageS: Aiuta.Shape
+
         /// Creates custom image shapes.
         ///
         /// - Parameters:
         ///   - imageL: Shape style for large image views.
-        ///   - imageM: Shape style for medium and small image views.
+        ///   - imageM: Shape style for medium image views.
+        ///   - imageS: Shape style for small image views.
         public init(imageL: Aiuta.Shape,
-                    imageM: Aiuta.Shape) {
+                    imageM: Aiuta.Shape,
+                    imageS: Aiuta.Shape) {
             self.imageL = imageL
             self.imageM = imageM
+            self.imageS = imageS
         }
     }
 }

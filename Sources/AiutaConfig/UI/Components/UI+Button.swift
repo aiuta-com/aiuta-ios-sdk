@@ -42,19 +42,25 @@ extension Aiuta.Configuration.UserInterface {
 extension Aiuta.Configuration.UserInterface.ButtonTheme {
     /// Shape styles for button containers.
     public struct Shapes: Sendable {
+        /// Shape style for large buttons.
+        public let buttonL: Aiuta.Shape
+
         /// Shape style for medium-sized buttons.
         public let buttonM: Aiuta.Shape
-        
+
         /// Shape style for small buttons.
         public let buttonS: Aiuta.Shape
-        
+
         /// Creates custom button shapes.
         ///
         /// - Parameters:
+        ///   - buttonL: Shape style for large buttons.
         ///   - buttonM: Shape style for medium-sized buttons.
         ///   - buttonS: Shape style for small buttons.
-        public init(buttonM: Aiuta.Shape,
+        public init(buttonL: Aiuta.Shape,
+                    buttonM: Aiuta.Shape,
                     buttonS: Aiuta.Shape) {
+            self.buttonL = buttonL
             self.buttonM = buttonM
             self.buttonS = buttonS
         }

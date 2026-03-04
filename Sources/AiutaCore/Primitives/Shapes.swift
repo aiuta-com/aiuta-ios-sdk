@@ -38,6 +38,13 @@ extension Aiuta {
         /// Typical usage: small buttons, tags, chips, or when you want a crisp circular rounding.
         case circular(radius: CGFloat)
 
+        /// A capsule shape where the corner radius equals half the view's height.
+        ///
+        /// Produces fully rounded ends (stadium / pill shape).
+        ///
+        /// Typical usage: pill buttons, tags, search bars.
+        case capsule
+
         /// A rectangular shape with sharp corners (no rounding).
         ///
         /// Typical usage: utility bars, tables, or when the design calls for strict geometry.

@@ -18,6 +18,8 @@ import Foundation
 public struct ShapesPack: Sendable {
     public let imageL: Aiuta.Shape
     public let imageM: Aiuta.Shape
+    public let imageS: Aiuta.Shape
+    public let buttonL: Aiuta.Shape
     public let buttonM: Aiuta.Shape
     public let buttonS: Aiuta.Shape
     public let bottomSheet: Aiuta.Shape
@@ -27,14 +29,18 @@ public struct ShapesPack: Sendable {
 
     public init(imageL: Aiuta.Shape = .continuous(radius: 24),
                 imageM: Aiuta.Shape = .continuous(radius: 16),
+                imageS: Aiuta.Shape = .continuous(radius: 8),
+                buttonL: Aiuta.Shape = .continuous(radius: 16),
                 buttonM: Aiuta.Shape = .continuous(radius: 8),
                 buttonS: Aiuta.Shape = .continuous(radius: 8),
                 bottomSheet: Aiuta.Shape = .continuous(radius: 16),
                 onboardingImageL: Aiuta.Shape = .continuous(radius: 16),
                 onboardingImageS: Aiuta.Shape = .continuous(radius: 16),
-                feedbackButton: Aiuta.Shape = .continuous(radius: .infinity)) {
+                feedbackButton: Aiuta.Shape = .capsule) {
         self.imageL = imageL
         self.imageM = imageM
+        self.imageS = imageS
+        self.buttonL = buttonL
         self.buttonM = buttonM
         self.buttonS = buttonS
         self.bottomSheet = bottomSheet

@@ -26,11 +26,11 @@ extension Sdk.Theme {
 
         var imageL: Aiuta.Shape { theme.image.shapes.imageL }
         var imageM: Aiuta.Shape { theme.image.shapes.imageM }
-        var imageS: Aiuta.Shape { .continuous(radius: 8) }
+        var imageS: Aiuta.Shape { theme.image.shapes.imageS }
 
         // MARK: - Button
 
-        var buttonL: Aiuta.Shape { .continuous(radius: 16) }
+        var buttonL: Aiuta.Shape { theme.button.shapes.buttonL }
         var buttonM: Aiuta.Shape { theme.button.shapes.buttonM }
         var buttonS: Aiuta.Shape { theme.button.shapes.buttonS }
 
@@ -46,12 +46,12 @@ extension Sdk.Theme {
 
         // MARK: - Onboarding
 
-        var onboardingImageL: Aiuta.Shape { config.features.onboarding?.shapes.onboardingImageL ?? .continuous(radius: 16) }
-        var onboardingImageS: Aiuta.Shape { config.features.onboarding?.shapes.onboardingImageS ?? .continuous(radius: 16) }
+        var onboardingImageL: Aiuta.Shape { config.features.onboarding?.shapes.onboardingImageL ?? imageL }
+        var onboardingImageS: Aiuta.Shape { config.features.onboarding?.shapes.onboardingImageS ?? imageS }
 
         // MARK: - TryOn.Feedback
 
-        var feedbackButton: Aiuta.Shape { config.features.tryOn.feedback?.shapes.feedbackButton ?? .continuous(radius: .infinity) }
+        var feedbackButton: Aiuta.Shape { config.features.tryOn.feedback?.shapes.feedbackButton ?? .capsule }
     }
 }
 
@@ -68,6 +68,9 @@ extension LayoutMaker {
                 case let .circular(radius):
                     self.radius = radius
                     continuousCurve = false
+                case .capsule:
+                    self.radius = .infinity
+                    continuousCurve = true
                 case .rectangular:
                     radius = 0
             }
@@ -80,6 +83,7 @@ extension Aiuta.Shape {
         switch self {
             case let .continuous(radius): return radius
             case let .circular(radius): return radius
+            case .capsule: return .infinity
             case .rectangular: return 0
         }
     }
