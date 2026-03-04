@@ -12,8 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if SWIFT_PACKAGE
 @_exported import AiutaConfig
 @_exported import AiutaCore
+#endif
 import UIKit
 
 // MARK: - Configuration

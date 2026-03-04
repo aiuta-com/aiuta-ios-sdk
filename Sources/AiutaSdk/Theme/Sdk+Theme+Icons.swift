@@ -12,9 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if SWIFT_PACKAGE
 @_spi(Aiuta) import AiutaAssets
 import AiutaConfig
 import AiutaCore
+#endif
 import UIKit
 
 extension Sdk.Theme {

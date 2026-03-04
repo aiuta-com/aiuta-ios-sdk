@@ -12,9 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if SWIFT_PACKAGE
 @_spi(Aiuta) import AiutaConfig
 @_spi(Aiuta) import AiutaCore
 @_spi(Aiuta) import AiutaKit
+#endif
 
 @available(iOS 13.0.0, *)
 extension Sdk.Core {

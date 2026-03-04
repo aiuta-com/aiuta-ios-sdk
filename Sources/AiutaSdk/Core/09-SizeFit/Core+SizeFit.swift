@@ -12,15 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if SWIFT_PACKAGE
 import AiutaConfig
 import AiutaCore
 @_spi(Aiuta) import AiutaKit
+#endif
 import Foundation
 
+@available(iOS 13.0.0, *)
 extension Sdk.Core {
     protocol SizeFit {
         var onChange: Signal<Void> { get }
-        
+
         var isAvailable: Bool { get }
         var lastSurvey: Aiuta.FitSurvey? { get }
 

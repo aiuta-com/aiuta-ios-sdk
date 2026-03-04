@@ -12,11 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if SWIFT_PACKAGE
 import AiutaConfig
 import AiutaCore
 @_spi(Aiuta) import AiutaKit
+#endif
 import UIKit
 
+@available(iOS 13.0.0, *)
 final class SizeFitBar: PlainButton {
     @injected private var sizeFit: Sdk.Core.SizeFit
     private let isEnabled = false

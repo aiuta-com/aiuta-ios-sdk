@@ -12,8 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if SWIFT_PACKAGE
 import AiutaCore
 import AiutaCore
+#endif
 
 extension Aiuta.Configuration.UserInterface {
     /// Defines the color scheme for the SDK's user interface.

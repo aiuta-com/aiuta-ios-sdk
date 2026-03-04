@@ -2,7 +2,9 @@
 //  Created by nGrey on 06.12.2023.
 //
 
+#if SWIFT_PACKAGE
 @_spi(Aiuta) import AiutaCore
+#endif
 import Foundation
 import PhotosUI
 import Resolver

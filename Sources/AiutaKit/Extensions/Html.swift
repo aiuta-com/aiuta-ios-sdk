@@ -84,16 +84,18 @@ import UIKit
             result.addAttributes(viewAttributes, range: range)
 
             // Find all links and track if they contain or are inside underline tags
-            let links = detectUnderlinedLinks(input)
+            if #available(iOS 13.0, *) {
+                let links = detectUnderlinedLinks(input)
 
-            // Apply underline to links in the attributed string
-            var linkIndex = 0
-            result.enumerateAttribute(.link, in: range, options: []) { value, linkRange, _ in
-                if value is URL, linkIndex < links.count {
-                    if !links[linkIndex].shouldUnderline {
-                        result.removeAttribute(.underlineStyle, range: linkRange)
+                // Apply underline to links in the attributed string
+                var linkIndex = 0
+                result.enumerateAttribute(.link, in: range, options: []) { value, linkRange, _ in
+                    if value is URL, linkIndex < links.count {
+                        if !links[linkIndex].shouldUnderline {
+                            result.removeAttribute(.underlineStyle, range: linkRange)
+                        }
+                        linkIndex += 1
                     }
-                    linkIndex += 1
                 }
             }
 
@@ -107,6 +109,7 @@ import UIKit
     }
 
     // Find all links and track if they contain or are inside underline tags
+    @available(iOS 13.0, *)
     private func detectUnderlinedLinks(_ input: String) -> [(url: String, shouldUnderline: Bool)] {
         var links = [(url: String, shouldUnderline: Bool)]()
         var tagStack = [String]()

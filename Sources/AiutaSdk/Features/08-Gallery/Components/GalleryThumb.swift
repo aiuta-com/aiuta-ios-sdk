@@ -12,9 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if SWIFT_PACKAGE
 @_spi(Aiuta) import AiutaKit
 import AiutaConfig
 import AiutaCore
+#endif
 import Resolver
 
 extension GalleryView {

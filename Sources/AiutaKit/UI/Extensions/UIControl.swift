@@ -2,7 +2,9 @@
 //  Copyright (c) 2014 - 2017 Tuomas Artman. All rights reserved.
 //
 
+#if SWIFT_PACKAGE
 @_spi(Aiuta) import AiutaCore
+#endif
 import ObjectiveC
 import UIKit
 

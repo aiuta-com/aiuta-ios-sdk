@@ -12,7 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if SWIFT_PACKAGE
 import AiutaCore
+#endif
 
 extension Aiuta.Configuration.Features.TryOn {
     /// Loading page configuration for the TryOn feature.
