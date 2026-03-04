@@ -17,10 +17,6 @@ import AiutaCore
 @_spi(Aiuta) import AiutaKit
 import Foundation
 
-@_spi(Aiuta) extension Aiuta.UserImage: TransitionRef {
-    public var transitionId: String { url }
-}
-
 @_spi(Aiuta) extension Aiuta.UserImage: ImageSource {
     public var knownRemoteId: String? { id }
 

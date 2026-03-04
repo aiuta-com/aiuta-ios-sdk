@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import Resolver
 import UIKit
 
 extension UIViewController {
@@ -20,10 +19,6 @@ extension UIViewController {
         modalPresentationStyle = .fullScreen
         modalTransitionStyle = .crossDissolve
         navigationItem.hidesBackButton = true
-
-        @Injected var heroic: Heroic
-        heroic.customize(for: self)
-        // heroic.setEnabled(for: self, value: true)
     }
 
     func customizeAppearing() {

@@ -286,8 +286,6 @@ import UIKit
                 firstVisibleIndex = item.index.item
                 firstVisible = item.data
             }
-            item.transitions.isReferenceActive = isIntersects
-            item.subcontents.forEach { $0.transitions.isReferenceActive = isIntersects }
             item.setFocus(isPartialVisible: isIntersects, isFullVisible: isContains)
         }
     }

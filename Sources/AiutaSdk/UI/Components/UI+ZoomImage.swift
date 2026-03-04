@@ -66,9 +66,6 @@ final class ZoomImage: Content<UIScrollView> {
             make.delegate = delegate
             make.backgroundColor = .clear
         }
-        imageView.transitions.make { make in
-            make.noFade()
-        }
         imageView.gotImage.subscribe(with: self) { [unowned self] in
             setImageSize()
             updateInsets()

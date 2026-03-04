@@ -57,7 +57,6 @@ import UIKit
     public private(set) lazy var layout = Layouts(self, target: container)
     public private(set) lazy var gestures = Gestures(target: container)
     public private(set) lazy var animations = Animations(target: container)
-    public private(set) lazy var transitions = Transitions(target: container)
 
     public required init() {}
 

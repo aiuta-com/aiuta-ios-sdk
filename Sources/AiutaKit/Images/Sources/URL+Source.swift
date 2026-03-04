@@ -16,7 +16,6 @@ import Foundation
 
 @_spi(Aiuta) extension URL: ImageSource {
     public var knownRemoteId: String? { nil }
-    public var transitionId: String { absoluteString }
 
     public func fetcher(for quality: ImageQuality) -> ImageFetcher {
         ThumbFetcher(self, quality: quality)
@@ -25,7 +24,6 @@ import Foundation
 
 @_spi(Aiuta) extension String: ImageSource {
     public var knownRemoteId: String? { nil }
-    public var transitionId: String { self }
 
     public func fetcher(for quality: ImageQuality) -> ImageFetcher {
         ThumbFetcher(self, quality: quality)

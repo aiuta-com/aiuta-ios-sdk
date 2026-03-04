@@ -13,7 +13,6 @@
 // limitations under the License.
 
 @_spi(Aiuta) import AiutaCore
-import Resolver
 import UIKit
 
 @_spi(Aiuta) public extension Image {
@@ -66,8 +65,6 @@ import UIKit
             setAssociatedProperty(&Property.loader, newValue: newValue)
             onChange.fire()
 
-            @Injected var heroic: Heroic
-
             isAutoSize = false
             retrievedQuality = nil
             if !keepCurrentImage || loader.isNil { image = nil }
@@ -86,7 +83,7 @@ import UIKit
 
                 guard image != newImage else { return }
                 image = newImage
-                guard crossDissolveChanges, !heroic.isTransitioning, !layout.visibleBounds.size.isAnyZero else { return }
+                guard crossDissolveChanges, !layout.visibleBounds.size.isAnyZero else { return }
                 animations.transition(.transitionCrossDissolve, duration: .thirdOfSecond)
             }
 

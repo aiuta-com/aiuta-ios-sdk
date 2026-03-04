@@ -14,7 +14,7 @@
 
 import UIKit
 
-@_spi(Aiuta) public protocol ImageSource: TransitionRef {
+@_spi(Aiuta) public protocol ImageSource {
     var knownRemoteId: String? { get }
     var backgroundColor: UIColor? { get }
 
