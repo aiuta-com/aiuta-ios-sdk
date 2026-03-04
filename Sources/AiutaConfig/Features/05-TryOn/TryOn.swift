@@ -117,13 +117,13 @@ extension Aiuta.Configuration.Features.TryOn {
     /// Visual styles for the TryOn interface.
     public struct Styles: Sendable {
         /// Gradient style for the TryOn magic button.
-        public let tryOnButtonGradient: [UIColor]
+        public let tryOnButtonGradient: [Aiuta.Color]
         
         /// Creates custom styles.
         ///
         /// - Parameters:
         ///   - tryOnButtonGradient: Gradient style for the TryOn magic button.
-        public init(tryOnButtonGradient: [UIColor]) {
+        public init(tryOnButtonGradient: [Aiuta.Color]) {
             self.tryOnButtonGradient = tryOnButtonGradient
         }
     }

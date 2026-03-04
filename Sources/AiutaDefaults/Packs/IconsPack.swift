@@ -28,7 +28,7 @@ public struct IconsPack: Sendable {
     // ProductBar
     public let arrow16: UIImage
     // ActivityIndicator
-    public let loading14: UIImage
+    public let loading14: UIImage?
     // ImagePicker
     public let camera24: UIImage
     public let gallery24: UIImage
@@ -50,7 +50,7 @@ public struct IconsPack: Sendable {
                 error36: UIImage,
                 imageError36: UIImage,
                 arrow16: UIImage,
-                loading14: UIImage,
+                loading14: UIImage?,
                 camera24: UIImage,
                 gallery24: UIImage,
                 selectModels24: UIImage,

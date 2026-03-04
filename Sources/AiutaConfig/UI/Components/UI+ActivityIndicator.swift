@@ -49,13 +49,13 @@ extension Aiuta.Configuration.UserInterface.ActivityIndicatorTheme {
     /// Icon configuration for the activity indicator.
     public struct Icons: Sendable {
         /// The icon for the 14px loading indicator.
-        public let loading14: UIImage
+        public let loading14: UIImage?
         
         /// Creates custom icon configuration.
         ///
         /// - Parameters:
         ///   - loading14: The icon for the 14px loading indicator.
-        public init(loading14: UIImage) {
+        public init(loading14: UIImage?) {
             self.loading14 = loading14
         }
     }
@@ -67,13 +67,13 @@ extension Aiuta.Configuration.UserInterface.ActivityIndicatorTheme {
     /// Color scheme for the activity indicator.
     public struct Colors: Sendable {
         /// The overlay color.
-        public let overlay: UIColor
+        public let overlay: Aiuta.Color
         
         /// Creates custom color configuration.
         ///
         /// - Parameters:
         ///   - overlay: The overlay color.
-        public init(overlay: UIColor) {
+        public init(overlay: Aiuta.Color) {
             self.overlay = overlay
         }
     }

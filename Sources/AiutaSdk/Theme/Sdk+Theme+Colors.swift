@@ -26,50 +26,50 @@ extension Sdk.Theme {
         // MARK: - General
 
         var scheme: Aiuta.Configuration.UserInterface.ColorScheme { color.scheme }
-        var brand: UIColor { color.brand }
-        var primary: UIColor { color.primary }
-        var secondary: UIColor { color.secondary }
-        var onDark: UIColor { color.onDark }
-        var onLight: UIColor { color.onLight }
-        var background: UIColor { color.background }
-        var screen: UIColor { color.screen ?? 0x000000FF.uiColor }
-        var neutral: UIColor { color.neutral }
-        var border: UIColor { color.border }
+        var brand: UIColor { color.brand.uiColor }
+        var primary: UIColor { color.primary.uiColor }
+        var secondary: UIColor { color.secondary.uiColor }
+        var onDark: UIColor { color.onDark.uiColor }
+        var onLight: UIColor { color.onLight.uiColor }
+        var background: UIColor { color.background.uiColor }
+        var screen: UIColor { color.screen?.uiColor ?? UIColor.black }
+        var neutral: UIColor { color.neutral.uiColor }
+        var border: UIColor { color.border.uiColor }
         var link: UIColor { 0x4000FFFF.uiColor }
 
         // MARK: - Selection
 
-        var selectionBackground: UIColor { theme.selectionSnackbar.colors.selectionBackground }
+        var selectionBackground: UIColor { theme.selectionSnackbar.colors.selectionBackground.uiColor }
 
         // MARK: - Error
 
-        var errorBackground: UIColor { theme.errorSnackbar.colors.errorBackground }
-        var errorPrimary: UIColor { theme.errorSnackbar.colors.errorPrimary }
+        var errorBackground: UIColor { theme.errorSnackbar.colors.errorBackground.uiColor }
+        var errorPrimary: UIColor { theme.errorSnackbar.colors.errorPrimary.uiColor }
 
         // MARK: - ProductBar.Price
 
-        var discountedPrice: UIColor { theme.productBar.prices?.colors.discountedPrice ?? 0xFB1010FF.uiColor }
+        var discountedPrice: UIColor { theme.productBar.prices?.colors.discountedPrice.uiColor ?? 0xFB1010FF.uiColor }
 
         // MARK: - PowerBar
 
         var aiuta: UIColor {
             switch theme.powerBar.colors.aiuta {
-                case .default: return 0x000000FF.uiColor
-                case .primary: return color.primary
+                case .default: return UIColor.black
+                case .primary: return color.primary.uiColor
             }
         }
 
         // MARK: - Activity
 
-        var activityOverlay: UIColor { theme.activityIndicator.colors.overlay }
+        var activityOverlay: UIColor { theme.activityIndicator.colors.overlay.uiColor }
 
         // MARK: - TryOn
 
-        var tryOnButtonGradient: [UIColor] { config.features.tryOn.styles.tryOnButtonGradient }
+        var tryOnButtonGradient: [UIColor] { config.features.tryOn.styles.tryOnButtonGradient.map(\.uiColor) }
 
         // MARK: - TryOn.Loading
 
-        var tryOnBackgroundGradient: [UIColor] { config.features.tryOn.loadingPage.styles.backgroundGradient }
+        var tryOnBackgroundGradient: [UIColor] { config.features.tryOn.loadingPage.styles.backgroundGradient.map(\.uiColor) }
     }
 }
 

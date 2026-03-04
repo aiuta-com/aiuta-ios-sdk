@@ -12,44 +12,44 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import UIKit
+import AiutaCore
 
 public struct ColorsPack: Sendable {
     // Theme
-    public let brand: UIColor
-    public let primary: UIColor
-    public let secondary: UIColor
-    public let onDark: UIColor
-    public let onLight: UIColor
-    public let background: UIColor
-    public let neutral: UIColor
-    public let border: UIColor
+    public let brand: Aiuta.Color
+    public let primary: Aiuta.Color
+    public let secondary: Aiuta.Color
+    public let onDark: Aiuta.Color
+    public let onLight: Aiuta.Color
+    public let background: Aiuta.Color
+    public let neutral: Aiuta.Color
+    public let border: Aiuta.Color
     // Component
-    public let overlay: UIColor
-    public let selectionBackground: UIColor
-    public let errorBackground: UIColor
-    public let errorPrimary: UIColor
-    public let discountedPrice: UIColor
+    public let overlay: Aiuta.Color
+    public let selectionBackground: Aiuta.Color
+    public let errorBackground: Aiuta.Color
+    public let errorPrimary: Aiuta.Color
+    public let discountedPrice: Aiuta.Color
     // Loading
-    public let loadingGradient: [UIColor]
+    public let loadingGradient: [Aiuta.Color]
 
-    public init(brand: UIColor = UIColor(red: 0, green: 0, blue: 0, alpha: 1),
-                primary: UIColor = UIColor(red: 0, green: 0, blue: 0, alpha: 1),
-                secondary: UIColor = UIColor(red: 0x9F / 255.0, green: 0x9F / 255.0, blue: 0x9F / 255.0, alpha: 1),
-                onDark: UIColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1),
-                onLight: UIColor = UIColor(red: 0, green: 0, blue: 0, alpha: 1),
-                background: UIColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1),
-                neutral: UIColor = UIColor(red: 0xF2 / 255.0, green: 0xF2 / 255.0, blue: 0xF7 / 255.0, alpha: 1),
-                border: UIColor = UIColor(red: 0xE5 / 255.0, green: 0xE5 / 255.0, blue: 0xEA / 255.0, alpha: 1),
-                overlay: UIColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0x99 / 255.0),
-                selectionBackground: UIColor = UIColor(red: 0, green: 0, blue: 0, alpha: 1),
-                errorBackground: UIColor = UIColor(red: 0xEF / 255.0, green: 0x57 / 255.0, blue: 0x54 / 255.0, alpha: 1),
-                errorPrimary: UIColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1),
-                discountedPrice: UIColor = UIColor(red: 0xFB / 255.0, green: 0x10 / 255.0, blue: 0x10 / 255.0, alpha: 1),
-                loadingGradient: [UIColor] = [
-                    UIColor(red: 0x40 / 255.0, green: 0, blue: 1, alpha: 1),
-                    UIColor(red: 0x40 / 255.0, green: 0, blue: 1, alpha: 0.5),
-                    UIColor(red: 0x40 / 255.0, green: 0, blue: 1, alpha: 0),
+    public init(brand: Aiuta.Color = "#FF000000",
+                primary: Aiuta.Color = "#FF000000",
+                secondary: Aiuta.Color = "#FF9F9F9F",
+                onDark: Aiuta.Color = "#FFFFFFFF",
+                onLight: Aiuta.Color = "#FF000000",
+                background: Aiuta.Color = "#FFFFFFFF",
+                neutral: Aiuta.Color = "#FFF2F2F7",
+                border: Aiuta.Color = "#FFE5E5EA",
+                overlay: Aiuta.Color = "#99000000",
+                selectionBackground: Aiuta.Color = "#FF000000",
+                errorBackground: Aiuta.Color = "#FFEF5754",
+                errorPrimary: Aiuta.Color = "#FFFFFFFF",
+                discountedPrice: Aiuta.Color = "#FFFB1010",
+                loadingGradient: [Aiuta.Color] = [
+                    "#FF4000FF",
+                    "#804000FF",
+                    "#004000FF",
                 ]) {
         self.brand = brand
         self.primary = primary

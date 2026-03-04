@@ -13,7 +13,6 @@
 // limitations under the License.
 
 import AiutaCore
-import UIKit
 
 extension Aiuta.Configuration.UserInterface.ProductBarTheme {
     /// Pricing configuration for the product bar.
@@ -61,13 +60,13 @@ extension Aiuta.Configuration.UserInterface.ProductBarTheme.Prices {
     /// Color scheme for product bar prices.
     public struct Colors: Sendable {
         /// The color for discounted prices.
-        public let discountedPrice: UIColor
+        public let discountedPrice: Aiuta.Color
         
         /// Creates custom color configuration.
         ///
         /// - Parameters:
         ///   - discountedPrice: The color for discounted prices.
-        public init(discountedPrice: UIColor) {
+        public init(discountedPrice: Aiuta.Color) {
             self.discountedPrice = discountedPrice
         }
     }

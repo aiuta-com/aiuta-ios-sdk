@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import AiutaCore
-import UIKit
+import AiutaCore
 
 extension Aiuta.Configuration.UserInterface {
     /// Defines the color scheme for the SDK's user interface.
@@ -41,33 +41,33 @@ extension Aiuta.Configuration.UserInterface {
         public let scheme: ColorScheme
         
         /// Main accent color for primary action buttons and highlights.
-        public let brand: UIColor
+        public let brand: Aiuta.Color
         
         /// Color for primary text elements.
-        public let primary: UIColor
+        public let primary: Aiuta.Color
         
         /// Color for secondary text elements.
-        public let secondary: UIColor
+        public let secondary: Aiuta.Color
         
         /// Light color to use on dark, brand, and neutral backgrounds.
-        public let onDark: UIColor
+        public let onDark: Aiuta.Color
         
         /// Dark color to use on light backgrounds.
-        public let onLight: UIColor
+        public let onLight: Aiuta.Color
         
         /// Main background color for the SDK and bottom sheets.
-        public let background: UIColor
+        public let background: Aiuta.Color
         
         /// Background color for full-screen mode.
         /// Bottom sheets will still use the `background` color.
         /// If not provided, the `background` color will be used.
-        public let screen: UIColor?
+        public let screen: Aiuta.Color?
         
         /// Neutral background color for UI components.
-        public let neutral: UIColor
+        public let neutral: Aiuta.Color
         
         /// Border color for UI components.
-        public let border: UIColor
+        public let border: Aiuta.Color
         
         /// Creates a fully customized color theme.
         ///
@@ -90,15 +90,15 @@ extension Aiuta.Configuration.UserInterface {
         ///   - neutral: A neutral background color used for components.
         ///   - border: The color used for component borders.
         public init(scheme: ColorScheme,
-                    brand: UIColor,
-                    primary: UIColor,
-                    secondary: UIColor,
-                    onDark: UIColor,
-                    onLight: UIColor,
-                    background: UIColor,
-                    screen: UIColor?,
-                    neutral: UIColor,
-                    border: UIColor) {
+                    brand: Aiuta.Color,
+                    primary: Aiuta.Color,
+                    secondary: Aiuta.Color,
+                    onDark: Aiuta.Color,
+                    onLight: Aiuta.Color,
+                    background: Aiuta.Color,
+                    screen: Aiuta.Color?,
+                    neutral: Aiuta.Color,
+                    border: Aiuta.Color) {
             self.scheme = scheme
             self.brand = brand
             self.primary = primary

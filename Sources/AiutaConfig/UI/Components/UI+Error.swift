@@ -91,18 +91,18 @@ extension Aiuta.Configuration.UserInterface.ErrorSnackbarTheme {
     /// Color scheme for the error snackbar.
     public struct Colors: Sendable {
         /// The background color for the snackbar.
-        public let errorBackground: UIColor
+        public let errorBackground: Aiuta.Color
         
         /// The primary color for the snackbar.
-        public let errorPrimary: UIColor
+        public let errorPrimary: Aiuta.Color
         
         /// Creates custom color configuration.
         ///
         /// - Parameters:
         ///   - errorBackground: The background color for the snackbar.
         ///   - errorPrimary: The primary color for the snackbar.
-        public init(errorBackground: UIColor,
-                    errorPrimary: UIColor) {
+        public init(errorBackground: Aiuta.Color,
+                    errorPrimary: Aiuta.Color) {
             self.errorBackground = errorBackground
             self.errorPrimary = errorPrimary
         }

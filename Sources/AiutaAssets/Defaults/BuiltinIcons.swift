@@ -25,7 +25,7 @@ extension IconsPack {
             error36: AiutaAssets.bundleImage("aiutaIcon36Error")!,
             imageError36: AiutaAssets.bundleImage("aiutaIcon36ImageError")!,
             arrow16: AiutaAssets.bundleImage("aiutaIcon16Arrow")!,
-            loading14: AiutaAssets.bundleImage("aiutaIcon14Loading") ?? UIImage(),
+            loading14: nil,
             camera24: AiutaAssets.bundleImage("aiutaIcon24Camera")!,
             gallery24: AiutaAssets.bundleImage("aiutaIcon24Gallery")!,
             selectModels24: AiutaAssets.bundleImage("aiutaIcon24Model")!,

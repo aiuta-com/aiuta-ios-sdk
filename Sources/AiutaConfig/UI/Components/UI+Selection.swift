@@ -109,13 +109,13 @@ extension Aiuta.Configuration.UserInterface.SelectionSnackbarTheme {
     /// Color scheme for the selection snackbar.
     public struct Colors: Sendable {
         /// The background color for the snackbar.
-        public let selectionBackground: UIColor
+        public let selectionBackground: Aiuta.Color
         
         /// Creates custom color configuration.
         ///
         /// - Parameters:
         ///   - selectionBackground: The background color for the snackbar.
-        public init(selectionBackground: UIColor) {
+        public init(selectionBackground: Aiuta.Color) {
             self.selectionBackground = selectionBackground
         }
     }

@@ -173,6 +173,31 @@ extension Aiuta {
     }
 }
 
+// MARK: - Codable
+
+extension Aiuta.Color: Codable {
+    public var hexString: String {
+        var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
+        uiColor.getRed(&r, green: &g, blue: &b, alpha: &a)
+        return String(format: "#%02X%02X%02X%02X",
+                      Int(round(a * 255)),
+                      Int(round(r * 255)),
+                      Int(round(g * 255)),
+                      Int(round(b * 255)))
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(hexString)
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let hex = try container.decode(String.self)
+        self.init(hex: hex)
+    }
+}
+
 // MARK: - Literal support
 
 extension Aiuta.Color: ExpressibleByStringLiteral {

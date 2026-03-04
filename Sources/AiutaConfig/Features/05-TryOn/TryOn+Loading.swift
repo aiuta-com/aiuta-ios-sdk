@@ -13,7 +13,6 @@
 // limitations under the License.
 
 import AiutaCore
-import UIKit
 
 extension Aiuta.Configuration.Features.TryOn {
     /// Loading page configuration for the TryOn feature.
@@ -73,7 +72,7 @@ extension Aiuta.Configuration.Features.TryOn.LoadingPage {
     /// Visual styles for the loading page.
     public struct Styles: Sendable {
         /// Gradient background for the loading page.
-        public let backgroundGradient: [UIColor]
+        public let backgroundGradient: [Aiuta.Color]
         
         /// Style for the status indicator.
         public let statusStyle: Aiuta.Configuration.UserInterface.ComponentStyle
@@ -83,7 +82,7 @@ extension Aiuta.Configuration.Features.TryOn.LoadingPage {
         /// - Parameters:
         ///   - backgroundGradient: Gradient background for the loading page.
         ///   - statusStyle: Style for the status indicator.
-        public init(backgroundGradient: [UIColor],
+        public init(backgroundGradient: [Aiuta.Color],
                     statusStyle: Aiuta.Configuration.UserInterface.ComponentStyle) {
             self.backgroundGradient = backgroundGradient
             self.statusStyle = statusStyle

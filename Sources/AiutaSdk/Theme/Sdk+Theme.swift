@@ -47,13 +47,13 @@ extension Sdk.Theme {
         let configuration: Aiuta.Configuration
 
         var style: UIUserInterfaceStyle { configuration.userInterface.theme.color.scheme.userInterfaceStyle }
-        var ground: UIColor { configuration.userInterface.theme.color.background }
-        var popup: UIColor { configuration.userInterface.theme.color.background }
-        var item: UIColor { configuration.userInterface.theme.color.background }
-        var accent: UIColor { configuration.userInterface.theme.color.brand }
-        var tint: UIColor { configuration.userInterface.theme.color.primary }
-        var highlight: UIColor { configuration.userInterface.theme.color.brand }
-        var error: UIColor { configuration.userInterface.theme.errorSnackbar.colors.errorBackground }
+        var ground: UIColor { configuration.userInterface.theme.color.background.uiColor }
+        var popup: UIColor { configuration.userInterface.theme.color.background.uiColor }
+        var item: UIColor { configuration.userInterface.theme.color.background.uiColor }
+        var accent: UIColor { configuration.userInterface.theme.color.brand.uiColor }
+        var tint: UIColor { configuration.userInterface.theme.color.primary.uiColor }
+        var highlight: UIColor { configuration.userInterface.theme.color.brand.uiColor }
+        var error: UIColor { configuration.userInterface.theme.errorSnackbar.colors.errorBackground.uiColor }
         var font: FontRef { Sdk.Theme.Font(configuration.userInterface.theme.label.typography.regular) }
     }
 }
