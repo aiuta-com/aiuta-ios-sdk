@@ -17,20 +17,12 @@ import Foundation
 
 @available(iOS 13.0.0, *)
 @_spi(Aiuta) public protocol ApiService {
-    func request<Request: ApiRequest & Encodable, Response: Decodable>(_ request: Request, debugger: ApiDebuggerOperation?) async throws -> ApiResponse<Response>
+    func request<Request: ApiRequest & Encodable, Response: Decodable>(_ request: Request) async throws -> ApiResponse<Response>
 }
 
 @available(iOS 13.0.0, *)
 @_spi(Aiuta) public extension ApiService {
-    func request<Request: ApiRequest & Encodable, Response: Decodable>(_ request: Request, debugger: ApiDebuggerOperation?) async throws -> Response {
-        try await self.request(request, debugger: debugger).response
-    }
-
-    func request<Request: ApiRequest & Encodable, Response: Decodable>(_ request: Request) async throws -> ApiResponse<Response> {
-        try await self.request(request, debugger: nil)
-    }
-
     func request<Request: ApiRequest & Encodable, Response: Decodable>(_ request: Request) async throws -> Response {
-        try await self.request(request, debugger: nil).response
+        try await self.request(request).response
     }
 }

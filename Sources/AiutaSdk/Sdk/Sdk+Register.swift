@@ -57,7 +57,7 @@ extension Sdk {
 
             resolver.register {
                 RestService(Core.Api.Provider(auth: config.auth.type),
-                            debugger: Core.Api.Debugger(isEnabled: isDebug))
+                            isDebug: isDebug)
             }.implements(ApiService.self).scope(scope)
 
             resolver.register {

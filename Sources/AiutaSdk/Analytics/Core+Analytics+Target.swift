@@ -30,7 +30,7 @@ extension Sdk.Core.Analytics {
                 auth: auth,
                 baseUrl: baseUrl,
                 keyCodingStrategy: keyCodingStrategy
-            ), debugger: Debugger())
+            ))
         }
 
         func eventOccured(_ event: AnalyticEvent) {
@@ -41,17 +41,6 @@ extension Sdk.Core.Analytics {
         func postEvent(_ event: AnalyticEvent) async -> Response? {
             try? await api.request(Post(event))
         }
-    }
-}
-
-@available(iOS 13.0.0, *)
-extension Sdk.Core.Analytics {
-    struct Debugger: ApiDebugger {
-        let isEnabled: Bool = false
-        func startOperation(id: String?,
-                            title: String,
-                            subtitle: String?
-        ) async -> ApiDebuggerOperation? { nil }
     }
 }
 
