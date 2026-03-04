@@ -44,7 +44,7 @@ extension Sdk.Theme {
 
         // MARK: - Share
 
-        var shareWatermark: UIImage? { config.features.share?.watermark.image }
+        var shareWatermark: UIImage? { config.features.share?.watermark?.images.watermark }
     }
 }
 
@@ -76,7 +76,7 @@ extension Sdk.Theme {
 extension Sdk.Theme {
     final class Watermarker: FitAreaWatermarker {
         init(_ config: Aiuta.Configuration) {
-            super.init(config.features.share?.watermark.image,
+            super.init(config.features.share?.watermark?.images.watermark,
                        area: .init(x: 0.5, y: 0.82, width: 0.45, height: 0.14),
                        xAlign: .max, yAlign: .max)
         }

@@ -19,7 +19,7 @@ import AiutaDefaults
 extension Aiuta.Configuration {
     public static func `default`(
         auth: Aiuta.Auth,
-        analytics: Aiuta.Analytics = .none,
+        analytics: Aiuta.Analytics? = nil,
         debugSettings: DebugSettings = .release,
         localization: LocalizationPack = .init(),
         colors: ColorsPack = .init(),

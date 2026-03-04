@@ -167,7 +167,7 @@ final class ResulstsViewController: ViewController<ResultsView> {
 
             tracker.track(.share(event: .initiated, pageId: page, productIds: produtcs.ids))
             ui.canBlackout = false
-            let attachment = try? await config.features.share?.additionalTextProvider?.getShareText(productIds: produtcs.ids)
+            let attachment = try? await config.features.share?.dataProvider?.getShareText(productIds: produtcs.ids)
             ui.pager.currentPage?.shadowControls.share.activity.stop()
 
             let result = await share(image: watermarker.watermark(image),
@@ -196,7 +196,7 @@ final class ResulstsViewController: ViewController<ResultsView> {
 
                 let productIds = tryOn.sessionResults.items[safe: index]?.products.ids ?? []
                 tracker.track(.share(event: .initiated, pageId: page, productIds: productIds))
-                let attachment = try? await config.features.share?.additionalTextProvider?.getShareText(productIds: productIds)
+                let attachment = try? await config.features.share?.dataProvider?.getShareText(productIds: productIds)
                 gallery.ui.activity.stop()
 
                 let result = await vc.share(image: watermarker.watermark(image),

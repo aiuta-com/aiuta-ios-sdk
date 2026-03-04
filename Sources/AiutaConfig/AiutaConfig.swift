@@ -28,7 +28,7 @@ extension Aiuta {
         public let auth: Aiuta.Auth
         public let userInterface: UserInterface
         public let features: Features
-        public let analytics: Aiuta.Analytics
+        public let analytics: Aiuta.Analytics?
         public let debugSettings: DebugSettings
         
         /// A fully customizable configuration for the SDK.
@@ -45,13 +45,13 @@ extension Aiuta {
         ///   - features: Configures the set of features enabled in the SDK.
         ///     The default value is `.default`, which enables all standard features.
         ///   - analytics: Configures how analytics events are handled within the SDK.
-        ///     The default value is `.none`, which disables analytics tracking.
+        ///     The default value is `nil`, which disables analytics tracking.
         ///   - debugSettings: Configures the debug settings for the SDK.
         ///     The default value is `.release`, which applies production-ready settings.
         public init(auth: Aiuta.Auth,
                     userInterface: UserInterface,
                     features: Features,
-                    analytics: Aiuta.Analytics,
+                    analytics: Aiuta.Analytics? = nil,
                     debugSettings: DebugSettings) {
             self.auth = auth
             self.userInterface = userInterface

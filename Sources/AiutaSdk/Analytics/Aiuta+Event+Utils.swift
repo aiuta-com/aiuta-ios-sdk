@@ -316,7 +316,7 @@ extension Aiuta.Event: Encodable {
                     .tryOnGenerationsHistoryFeatureEnabled: config.features.tryOn.generationsHistory != nil,
                     .tryOnWithOtherPhotoFeatureEnabled: true,
                     .shareFeatureEnabled: config.features.share != nil,
-                    .shareWatermarkFeatureEnabled: config.features.share?.hasWatermark ?? false,
+                    .shareWatermarkFeatureEnabled: config.features.share?.watermark != nil,
                     .wishlistFeatureEnabled: config.features.wishlist != nil,
                 ]
 

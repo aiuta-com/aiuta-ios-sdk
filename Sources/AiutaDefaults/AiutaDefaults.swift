@@ -19,7 +19,7 @@ import UIKit
 extension Aiuta.Configuration {
     public static func `default`(
         auth: Aiuta.Auth,
-        analytics: Aiuta.Analytics = .none,
+        analytics: Aiuta.Analytics? = nil,
         debugSettings: DebugSettings = .release,
         localization: LocalizationPack = .init(),
         colors: ColorsPack = .init(),
@@ -320,8 +320,6 @@ extension Aiuta.Configuration {
                     )
                 ),
                 share: .init(
-                    watermark: .none,
-                    text: .none,
                     icons: .init(
                         share24: icons.share24
                     ),

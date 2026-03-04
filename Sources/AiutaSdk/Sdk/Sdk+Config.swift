@@ -28,17 +28,6 @@ extension Aiuta.Configuration {
     }
 }
 
-// MARK: - Analytics
-
-extension Aiuta.Analytics {
-    var handler: Handler? {
-        switch self {
-            case .none: return nil
-            case let .handler(handler): return handler
-        }
-    }
-}
-
 // MARK: - Consent
 
 extension Aiuta.Configuration.Features.Consent {
@@ -106,36 +95,6 @@ extension Aiuta.Configuration.Features.Consent {
             case let .standaloneOnboardingPage(s): return s
             case let .standaloneImagePickerPage(s): return s
             default: return nil
-        }
-    }
-}
-
-// MARK: - Share Watermark
-
-extension Aiuta.Configuration.Features.Share.Watermark {
-    var image: UIImage? {
-        switch self {
-            case .none: return nil
-            case let .custom(shareWatermark): return shareWatermark
-            case let .provider(provider): return provider.shareWatermark
-        }
-    }
-}
-
-// MARK: - Share
-
-extension Aiuta.Configuration.Features.Share {
-    var additionalTextProvider: DataProvider? {
-        switch text {
-            case .none: return nil
-            case let .dataProvider(provider): return provider
-        }
-    }
-
-    var hasWatermark: Bool {
-        switch watermark {
-            case .none: return false
-            case .custom, .provider: return true
         }
     }
 }

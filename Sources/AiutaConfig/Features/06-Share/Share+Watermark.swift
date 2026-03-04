@@ -18,32 +18,36 @@ import UIKit
 // MARK: - Watermark
 
 extension Aiuta.Configuration.Features.Share {
-    /// Configures the watermark for the Share feature. You can choose to disable
-    /// the watermark, use a custom image, or provide a dynamic watermark through
-    /// a custom provider.
-    public enum Watermark {
-        /// No watermark will be applied to the shared content.
-        case none
+    /// Configures the watermark for the Share feature.
+    /// Set to `nil` on the parent `Share` to disable watermarking.
+    public struct Watermark: Sendable {
+        /// Images for the watermark feature.
+        public let images: Images
 
-        /// Use a custom watermark image for the shared content.
+        /// Creates a watermark configuration.
         ///
         /// - Parameters:
-        ///   - shareWatermark: The logo image to be used as the watermark.
-        case custom(shareWatermark: UIImage)
-
-        /// Use a custom provider to supply watermark images dynamically.
-        ///
-        /// - Parameters:
-        ///   - provider: A provider that supplies the custom watermark images.
-        case provider(Provider)
+        ///   - images: Images for the watermark feature.
+        public init(images: Images) {
+            self.images = images
+        }
     }
 }
 
+// MARK: - Watermark Images
+
 extension Aiuta.Configuration.Features.Share.Watermark {
-    /// A protocol for supplying watermark for the shared images. Implement this
-    /// protocol to provide custom watermark images for the Share feature.
-    public protocol Provider {
+    /// Images for the watermark feature.
+    public struct Images: Sendable {
         /// The logo image to be used as the watermark.
-        var shareWatermark: UIImage { get }
+        public let watermark: UIImage
+
+        /// Creates watermark images.
+        ///
+        /// - Parameters:
+        ///   - watermark: The logo image to be used as the watermark.
+        public init(watermark: UIImage) {
+            self.watermark = watermark
+        }
     }
 }

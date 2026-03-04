@@ -52,7 +52,7 @@ extension AnalyticTracker {
             trace(i: "○", event.rawQualifier, "\n\n\(String(decoding: data, as: UTF8.self))\n")
         }
         guard #available(iOS 13.0, *),
-              let handler = config.analytics.handler else { return }
+              let handler = config.analytics?.handler else { return }
         Task { await handler.onAnalyticsEvent(event) }
     }
 }

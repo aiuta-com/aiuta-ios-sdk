@@ -19,30 +19,30 @@ extension Aiuta.Configuration.Features {
     /// Optional share feature configuration.
     public struct Share: Sendable {
         /// Optional watermark configuration for shared content.
-        public let watermark: Watermark
-        
-        /// Configuration for providing additional text to share.
-        public let text: AdditionalTextProvider
-        
+        public let watermark: Watermark?
+
+        /// Optional provider for additional text to share along with the generated image.
+        public let dataProvider: DataProvider?
+
         /// Icons for the share feature.
         public let icons: Icons
-        
+
         /// Text content for the share feature.
         public let strings: Strings
-        
+
         /// Creates a share feature configuration.
         ///
         /// - Parameters:
         ///   - watermark: Optional watermark configuration for shared content.
-        ///   - text: Configuration for providing additional text to share.
+        ///   - dataProvider: Optional provider for additional text to share.
         ///   - icons: Icons for the share feature.
         ///   - strings: Text content for the share feature.
-        public init(watermark: Watermark,
-                    text: AdditionalTextProvider,
+        public init(watermark: Watermark? = nil,
+                    dataProvider: DataProvider? = nil,
                     icons: Icons,
                     strings: Strings) {
             self.watermark = watermark
-            self.text = text
+            self.dataProvider = dataProvider
             self.icons = icons
             self.strings = strings
         }
@@ -56,7 +56,7 @@ extension Aiuta.Configuration.Features.Share {
     public struct Icons: Sendable {
         /// Icon displayed for the share button.
         public let share24: UIImage
-        
+
         /// Creates custom icons.
         ///
         /// - Parameters:
@@ -74,7 +74,7 @@ extension Aiuta.Configuration.Features.Share {
     public struct Strings: Sendable {
         /// Label for the share button in the fullscreen gallery.
         public let shareButton: String
-        
+
         /// Creates custom text content.
         ///
         /// - Parameters:
@@ -86,17 +86,6 @@ extension Aiuta.Configuration.Features.Share {
 }
 
 // MARK: - Data Provider
-
-extension Aiuta.Configuration.Features.Share {
-    /// Configuration for additional text to be shared along with the generated image.
-    public enum AdditionalTextProvider {
-        /// No additional text will be added to the shared content.
-        case none
-
-        /// Uses a custom provider to generate additional share text dynamically.
-        case dataProvider(DataProvider)
-    }
-}
 
 extension Aiuta.Configuration.Features.Share {
     /// Protocol for providing custom share text dynamically.
