@@ -30,27 +30,32 @@ extension Aiuta.Configuration.Features {
         /// Predefined models configuration. Set to `nil` to disable.
         public let predefinedModels: PredefinedModels?
         
+        /// Protection disclaimer configuration. Set to `nil` to disable.
+        public let protectionDisclaimer: ProtectionDisclaimer?
+        
         /// Uploads history configuration. Set to `nil` to disable.
         public let uploadsHistory: UploadsHistory?
-        
+
         /// Example images displayed in the picker.
         public let images: Images
-        
+
         /// Text content for the image picker.
         public let strings: Strings
-        
+
         /// Creates a custom image picker configuration.
         ///
         /// - Parameters:
         ///   - camera: Camera functionality configuration. Set to `nil` to disable.
         ///   - photoGallery: Photo gallery configuration.
         ///   - predefinedModels: Predefined models configuration. Set to `nil` to disable.
+        ///   - protectionDisclaimer: Protection disclaimer configuration. Set to `nil` to disable.   
         ///   - uploadsHistory: Uploads history configuration. Set to `nil` to disable.
         ///   - images: Example images displayed in the picker.
         ///   - strings: Text content for the image picker.
         public init(camera: Camera?,
                     photoGallery: Gallery,
                     predefinedModels: PredefinedModels?,
+                    protectionDisclaimer: ProtectionDisclaimer?,
                     uploadsHistory: UploadsHistory?,
                     images: Images,
                     strings: Strings) {
@@ -58,6 +63,7 @@ extension Aiuta.Configuration.Features {
             self.photoGallery = photoGallery
             self.predefinedModels = predefinedModels
             self.uploadsHistory = uploadsHistory
+            self.protectionDisclaimer = protectionDisclaimer
             self.images = images
             self.strings = strings
         }

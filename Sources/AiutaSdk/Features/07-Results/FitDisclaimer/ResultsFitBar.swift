@@ -36,7 +36,7 @@ extension ResultsView {
 
     final class FitButton: PlainButton {
         let label = Label { it, ds in
-            it.font = ds.fonts.disclaimer
+            it.font = ds.fonts.footnote
             it.color = ds.colors.primary
             it.text = ds.strings.fitDisclaimerTitle
         }

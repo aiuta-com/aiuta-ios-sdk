@@ -20,24 +20,18 @@ extension Aiuta.Configuration.Features.TryOn {
     public struct FitDisclaimer: Sendable {
         /// Text content for the fit disclaimer.
         public let strings: Strings
-        
-        /// Typography for the fit disclaimer.
-        public let typography: Typography
-        
+
         /// Icons for the fit disclaimer.
         public let icons: Icons
-        
+
         /// Creates a fit disclaimer configuration.
         ///
         /// - Parameters:
         ///   - strings: Text content for the fit disclaimer.
-        ///   - typography: Typography for the fit disclaimer.
         ///   - icons: Icons for the fit disclaimer.
         public init(strings: Strings,
-                    typography: Typography,
                     icons: Icons) {
             self.strings = strings
-            self.typography = typography
             self.icons = icons
         }
     }
@@ -50,13 +44,13 @@ extension Aiuta.Configuration.Features.TryOn.FitDisclaimer {
     public struct Strings: Sendable {
         /// Title displayed in the fit disclaimer.
         public let fitDisclaimerTitle: String
-        
+
         /// Description text in the fit disclaimer.
         public let fitDisclaimerDescription: String
-        
+
         /// Label for the close button.
         public let fitDisclaimerCloseButton: String
-        
+
         /// Creates custom text content.
         ///
         /// - Parameters:
@@ -73,24 +67,6 @@ extension Aiuta.Configuration.Features.TryOn.FitDisclaimer {
     }
 }
 
-// MARK: - Typography
-
-extension Aiuta.Configuration.Features.TryOn.FitDisclaimer {
-    /// Typography for the fit disclaimer.
-    public struct Typography: Sendable {
-        /// Text style for the disclaimer text.
-        public let disclaimer: Aiuta.TextStyle
-        
-        /// Creates custom typography.
-        ///
-        /// - Parameters:
-        ///   - disclaimer: Text style for the disclaimer text.
-        public init(disclaimer: Aiuta.TextStyle) {
-            self.disclaimer = disclaimer
-        }
-    }
-}
-
 // MARK: - Icons
 
 extension Aiuta.Configuration.Features.TryOn.FitDisclaimer {
@@ -98,7 +74,7 @@ extension Aiuta.Configuration.Features.TryOn.FitDisclaimer {
     public struct Icons: Sendable {
         /// Icon displayed in the fit disclaimer.
         public let info20: UIImage?
-        
+
         /// Creates custom icons.
         ///
         /// - Parameters:

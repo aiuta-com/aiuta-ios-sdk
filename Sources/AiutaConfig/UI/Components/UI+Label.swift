@@ -45,7 +45,10 @@ extension Aiuta.Configuration.UserInterface.LabelTheme {
         
         /// Text style for subtle/secondary text.
         public let subtle: Aiuta.TextStyle
-        
+
+        /// Text style for footnotes and disclaimers.
+        public let footnote: Aiuta.TextStyle
+
         /// Creates custom typography styles.
         ///
         /// - Parameters:
@@ -53,14 +56,17 @@ extension Aiuta.Configuration.UserInterface.LabelTheme {
         ///   - titleM: Text style for medium titles.
         ///   - regular: Text style for regular body text.
         ///   - subtle: Text style for subtle/secondary text.
+        ///   - footnote: Text style for footnotes and disclaimers.
         public init(titleL: Aiuta.TextStyle,
                     titleM: Aiuta.TextStyle,
                     regular: Aiuta.TextStyle,
-                    subtle: Aiuta.TextStyle) {
+                    subtle: Aiuta.TextStyle,
+                    footnote: Aiuta.TextStyle) {
             self.titleL = titleL
             self.titleM = titleM
             self.regular = regular
             self.subtle = subtle
+            self.footnote = footnote
         }
     }
 }

@@ -92,7 +92,7 @@ final class FitSurveyUI: Plane {
         it.isHtml = true
         it.isMultiline = true
         it.alignment = .center
-        it.font = ds.fonts.disclaimer
+        it.font = ds.fonts.footnote
         it.color = ds.colors.secondary
         it.text = "Your data will be processed under our \(Html("Privacy Policy", .underline))"
     }

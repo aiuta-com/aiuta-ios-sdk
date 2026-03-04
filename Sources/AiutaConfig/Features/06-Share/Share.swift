@@ -37,8 +37,8 @@ extension Aiuta.Configuration.Features {
         ///   - dataProvider: Optional provider for additional text to share.
         ///   - icons: Icons for the share feature.
         ///   - strings: Text content for the share feature.
-        public init(watermark: Watermark? = nil,
-                    dataProvider: DataProvider? = nil,
+        public init(watermark: Watermark?,
+                    dataProvider: DataProvider?,
                     icons: Icons,
                     strings: Strings) {
             self.watermark = watermark

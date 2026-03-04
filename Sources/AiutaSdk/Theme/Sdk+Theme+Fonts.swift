@@ -28,6 +28,7 @@ extension Sdk.Theme {
         var titleM: Sdk.Theme.Font { Font(theme.label.typography.titleM) }
         var regular: Sdk.Theme.Font { Font(theme.label.typography.regular) }
         var subtle: Sdk.Theme.Font { Font(theme.label.typography.subtle) }
+        var footnote: Sdk.Theme.Font { Font(theme.label.typography.footnote) }
 
         // MARK: - Button
 
@@ -67,15 +68,6 @@ extension Sdk.Theme {
                 return Font(ws.typography.welcomeDescription)
             }
             return .system(size: 16, weight: .medium, lhm: 1.18)
-        }
-
-        // MARK: - TryOn.FitDisclaimer
-
-        var disclaimer: Sdk.Theme.Font {
-            if let fd = config.features.tryOn.fitDisclaimer {
-                return Font(fd.typography.disclaimer)
-            }
-            return .system(size: 12, weight: .regular, kern: -0.12)
         }
 
         // MARK: - TryOn.Feedback

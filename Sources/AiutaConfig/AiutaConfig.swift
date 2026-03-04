@@ -51,7 +51,7 @@ extension Aiuta {
         public init(auth: Aiuta.Auth,
                     userInterface: UserInterface,
                     features: Features,
-                    analytics: Aiuta.Analytics? = nil,
+                    analytics: Aiuta.Analytics?,
                     debugSettings: DebugSettings) {
             self.auth = auth
             self.userInterface = userInterface

@@ -49,7 +49,8 @@ extension Aiuta.Configuration {
                             titleL: typography.titleL,
                             titleM: typography.titleM,
                             regular: typography.regular,
-                            subtle: typography.subtle
+                            subtle: typography.subtle,
+                            footnote: typography.footnote
                         )
                     ),
                     image: .init(
@@ -217,6 +218,7 @@ extension Aiuta.Configuration {
                             predefinedModelsCategories: localization.predefinedModelsCategories
                         )
                     ),
+                    protectionDisclaimer: nil,
                     uploadsHistory: .init(
                         strings: .init(
                             uploadsHistoryButtonNewPhoto: localization.uploadsHistoryButtonNewPhoto,
@@ -261,9 +263,6 @@ extension Aiuta.Configuration {
                             fitDisclaimerTitle: localization.fitDisclaimerTitle,
                             fitDisclaimerDescription: localization.fitDisclaimerDescription,
                             fitDisclaimerCloseButton: localization.fitDisclaimerCloseButton
-                        ),
-                        typography: .init(
-                            disclaimer: typography.disclaimer
                         ),
                         icons: .init(info20: nil)
                     ),
@@ -320,6 +319,8 @@ extension Aiuta.Configuration {
                     )
                 ),
                 share: .init(
+                    watermark: nil,
+                    dataProvider: nil,
                     icons: .init(
                         share24: icons.share24
                     ),
