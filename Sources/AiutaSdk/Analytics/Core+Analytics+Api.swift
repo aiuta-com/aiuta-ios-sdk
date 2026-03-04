@@ -24,7 +24,7 @@ extension Sdk.Core.Analytics {
 
         struct EnvData: Encodable {
             let platform = "ios"
-            let sdkVersion = Sdk.version
+            let sdkVersion = Aiuta.version
             let hostId: String?
             let hostVersion: String
             let installationId: String

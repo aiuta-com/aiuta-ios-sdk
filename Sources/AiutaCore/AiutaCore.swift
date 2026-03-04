@@ -29,43 +29,9 @@ import Foundation
 ///
 /// - Author: [Aiuta Team](https://aiuta.com)
 public enum Aiuta {
-    /// Marker class used to locate the correct bundle for the Aiuta SDK.
-    private final class _BundleMarker {}
-
     /// The semantic version string of the **Aiuta SDK**.
-    ///
-    /// This constant reflects the version of the SDK package as defined by the
-    /// Swift Package Manager or build system.
-    ///
-    /// When the SDK is integrated as a Swift Package dependency, this value is
-    /// automatically populated from the Git tag used to resolve the package
-    /// (for example, `"1.2.3"`).
-    /// If the package is built from a local path or an untagged branch, the value
-    /// falls back to `"dev"`.
-    ///
-    /// Use this property for:
-    /// - Displaying the SDK version in diagnostic or debug information.
-    /// - Reporting the SDK version in API requests or analytics events.
-    /// - Verifying compatibility between Aiuta modules.
-    ///
-    /// ```swift
-    /// print("Aiuta SDK version:", Aiuta.version)
-    /// // Aiuta SDK version: 1.2.3
-    /// ```
-    ///
-    /// - Important:
-    /// This version string corresponds to the semantic version of the package,
-    /// not to individual module or binary versions. All Aiuta submodules share
-    /// the same semantic version number.
     ///
     /// - SeeAlso:
     /// [Semantic Versioning Specification](https://semver.org)
-    public static let version: String = {
-        #if SWIFTPM_PACKAGE_VERSION
-            SWIFTPM_PACKAGE_VERSION
-        #else
-            let bundle = Bundle(for: _BundleMarker.self)
-            return bundle.infoDictionary?["CFBundleShortVersionString"] as? String ?? "dev"
-        #endif
-    }()
+    public static let version = "4.4.0"
 }

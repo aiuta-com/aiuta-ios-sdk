@@ -89,11 +89,6 @@ import UIKit
 
 /// Extension to check the current state of the Aiuta SDK.
 public extension Aiuta {
-    /// The current version of the SDK.
-    static var sdkVersion: String {
-        Sdk.version
-    }
-
     /// Indicates whether the SDK is currently displayed in the foreground.
     @available(iOS 13.0.0, *)
     @MainActor static var isForeground: Bool {
