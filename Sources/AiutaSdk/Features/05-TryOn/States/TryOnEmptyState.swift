@@ -37,6 +37,16 @@ extension Sdk.UI.TryOn {
             it.text = ds.strings.imagePickerDescription
         }
 
+        let protectionDisclaimer = Label { it, ds in
+            it.font = ds.fonts.footnote
+            it.color = ds.colors.secondary
+            it.isMultiline = true
+            it.alignment = .center
+            it.text = ds.strings.protectionDisclaimer
+            it.attach(ds.icons.protection16, bounds: .init(x: 0, y: -3, width: 16, height: 16))
+            it.view.isVisible = ds.features.imagePicker.hasProtectionDisclaimer
+        }
+
         let uploadButton = LabelButton { it, ds in
             it.font = ds.fonts.buttonM
             it.color = ds.colors.brand
@@ -101,9 +111,18 @@ extension Sdk.UI.TryOn {
                 make.shape = ds.shapes.buttonM
             }
 
-            description.layout.make { make in
+            protectionDisclaimer.layout.make { make in
                 make.leftRight = 40 + area.layout.left
                 make.bottom = uploadButton.layout.topPin + 32
+            }
+
+            description.layout.make { make in
+                make.leftRight = 40 + area.layout.left
+                if protectionDisclaimer.view.isVisible {
+                    make.bottom = protectionDisclaimer.layout.topPin + 16
+                } else {
+                    make.bottom = uploadButton.layout.topPin + 32
+                }
             }
 
             title.layout.make { make in
@@ -112,7 +131,11 @@ extension Sdk.UI.TryOn {
             }
 
             sample.layout.make { make in
-                make.top = area.layout.top + 57
+                if protectionDisclaimer.view.isVisible {
+                    make.top = area.layout.top + 37
+                } else {
+                    make.top = area.layout.top + 57
+                }
                 make.bottom = title.layout.topPin + 30
             }
         }

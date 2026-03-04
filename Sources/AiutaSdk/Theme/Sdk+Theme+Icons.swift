@@ -74,6 +74,10 @@ extension Sdk.Theme {
 
         var selectModels24: UIImage? { features.imagePicker.predefinedModels?.icons.selectModels24 }
 
+        // MARK: - ImagePicker.ProtectionDisclaimer
+
+        var protection16: UIImage? { features.imagePicker.protectionDisclaimer?.icons.protection16 }
+
         // MARK: - TryOn
 
         var magic20: UIImage? { features.tryOn.icons.magic20 }

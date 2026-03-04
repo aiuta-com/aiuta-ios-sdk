@@ -50,6 +50,7 @@ extension Sdk.Theme.Features {
         let config: Aiuta.Configuration
 
         var hasPredefinedModels: Bool { config.features.imagePicker.predefinedModels != nil }
+        var hasProtectionDisclaimer: Bool { config.features.imagePicker.protectionDisclaimer != nil }
         var preferredPredefinedModelsCategoryId: String? { config.features.imagePicker.predefinedModels?.data.preferredCategoryId }
     }
 

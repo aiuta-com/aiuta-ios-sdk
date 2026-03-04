@@ -94,6 +94,10 @@ extension Sdk.Theme {
         var uploadsHistoryTitle: String { features.imagePicker.uploadsHistory?.strings.uploadsHistoryTitle ?? "" }
         var uploadsHistoryButtonChangePhoto: String { features.imagePicker.uploadsHistory?.strings.uploadsHistoryButtonChangePhoto ?? "" }
 
+        // MARK: - ImagePicker.ProtectionDisclaimer
+
+        var protectionDisclaimer: String { features.imagePicker.protectionDisclaimer?.strings.protectionDisclaimer ?? "" }
+
         // MARK: - TryOn
 
         var tryOnPageTitle: String { features.tryOn.strings.tryOnPageTitle }
