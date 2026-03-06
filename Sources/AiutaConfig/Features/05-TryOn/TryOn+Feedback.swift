@@ -104,18 +104,18 @@ extension Aiuta.Configuration.Features.TryOn.Feedback {
         /// Icon for the "Dislike" feedback option.
         public let dislike36: UIImage
         
-        /// Icon displayed after feedback is sent.
-        public let gratitude40: UIImage
-        
+        /// Icon displayed after feedback is sent. When nil, an emoji will be shown instead.
+        public let gratitude40: UIImage?
+
         /// Creates custom icons.
         ///
         /// - Parameters:
         ///   - like36: Icon for the "Like" feedback option.
         ///   - dislike36: Icon for the "Dislike" feedback option.
-        ///   - gratitude40: Icon displayed after feedback is sent.
+        ///   - gratitude40: Icon displayed after feedback is sent. When nil, an emoji will be shown instead.
         public init(like36: UIImage,
                     dislike36: UIImage,
-                    gratitude40: UIImage) {
+                    gratitude40: UIImage?) {
             self.like36 = like36
             self.dislike36 = dislike36
             self.gratitude40 = gratitude40

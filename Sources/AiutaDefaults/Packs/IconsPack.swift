@@ -40,6 +40,7 @@ public struct IconsPack: Sendable {
     // Feedback
     public let like36: UIImage
     public let dislike36: UIImage
+    public let gratitude40: UIImage? // 🧡 when nil
     // Share
     public let share24: UIImage
     // Wishlist (optional — feature is disabled by default)
@@ -62,6 +63,7 @@ public struct IconsPack: Sendable {
                 history24: UIImage,
                 like36: UIImage,
                 dislike36: UIImage,
+                gratitude40: UIImage? = nil,
                 share24: UIImage,
                 wishlist24: UIImage? = nil,
                 wishlistFill24: UIImage? = nil) {
@@ -81,6 +83,7 @@ public struct IconsPack: Sendable {
         self.history24 = history24
         self.like36 = like36
         self.dislike36 = dislike36
+        self.gratitude40 = gratitude40
         self.share24 = share24
         self.wishlist24 = wishlist24
         self.wishlistFill24 = wishlistFill24

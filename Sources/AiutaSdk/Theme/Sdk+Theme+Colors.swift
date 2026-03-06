@@ -71,7 +71,12 @@ extension Sdk.Theme {
 
         // MARK: - TryOn.Loading
 
-        var tryOnBackgroundGradient: [UIColor] { config.features.tryOn.loadingPage.styles.backgroundGradient.map(\.uiColor) }
+        var tryOnBackgroundGradient: [UIColor] {
+            if let colors = config.features.tryOn.loadingPage.styles.backgroundGradient, !colors.isEmpty {
+                return colors.map(\.uiColor)
+            }
+            return [brand.withAlphaComponent(1), brand.withAlphaComponent(0.5), brand.withAlphaComponent(0)]
+        }
     }
 }
 
