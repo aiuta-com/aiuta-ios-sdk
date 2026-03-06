@@ -41,7 +41,8 @@ final class PhotoSelectorController: ComponentController<ContentBase> {
     private var cameraUsageDescription: String?
 
     func choosePhoto(withHistoryPrefered: Bool = true, canSelectPredefinedModel: Bool = true) {
-        selectPhotoBulletin.selectPredefindeModel.view.isVisible = canSelectPredefinedModel
+        selectPhotoBulletin.selectPredefindeModel.view.isVisible = canSelectPredefinedModel &&
+            config.features.imagePicker.predefinedModels.isSome
         let minHistoryItemsToPreferHistory = withHistoryPrefered ? 1 : 2
         if history.uploaded.items.count >= minHistoryItemsToPreferHistory {
             showBulletin(photoHistoryBulletin)
