@@ -47,7 +47,7 @@ extension Sdk.Features {
 
             ui.button.onTouchUpInside.task(with: self) { [unowned self] in
                 if ui.consent.isConsentGiven {
-                    tracker.track(.onboarding(event: .consentsGiven(consentIds: ui.consent.givenConsents),
+                    tracker.track(.onboarding(event: .consentGiven(consentIds: ui.consent.givenConsents),
                                               pageId: page, productIds: session.products.ids))
                     if onConsentGiven.observers.isEmpty {
                         replace(with: TryOn())
