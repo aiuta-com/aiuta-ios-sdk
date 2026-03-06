@@ -42,6 +42,9 @@ public struct IconsPack: Sendable {
     public let dislike36: UIImage
     // Share
     public let share24: UIImage
+    // Wishlist (optional — feature is disabled by default)
+    public let wishlist24: UIImage?
+    public let wishlistFill24: UIImage?
 
     public init(back24: UIImage,
                 close24: UIImage,
@@ -59,7 +62,9 @@ public struct IconsPack: Sendable {
                 history24: UIImage,
                 like36: UIImage,
                 dislike36: UIImage,
-                share24: UIImage) {
+                share24: UIImage,
+                wishlist24: UIImage? = nil,
+                wishlistFill24: UIImage? = nil) {
         self.back24 = back24
         self.close24 = close24
         self.trash24 = trash24
@@ -77,5 +82,7 @@ public struct IconsPack: Sendable {
         self.like36 = like36
         self.dislike36 = dislike36
         self.share24 = share24
+        self.wishlist24 = wishlist24
+        self.wishlistFill24 = wishlistFill24
     }
 }

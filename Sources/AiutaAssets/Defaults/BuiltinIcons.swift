@@ -36,7 +36,9 @@ extension IconsPack {
             history24: AiutaAssets.bundleImage("aiutaIcon24History")!,
             like36: AiutaAssets.bundleImage("aiutaIcon36Like")!,
             dislike36: AiutaAssets.bundleImage("aiutaIcon36Dislike")!,
-            share24: AiutaAssets.bundleImage("aiutaIcon24Share")!
+            share24: AiutaAssets.bundleImage("aiutaIcon24Share")!,
+            wishlist24: AiutaAssets.bundleImage("aiutaIcon24Wishlist")!,
+            wishlistFill24: AiutaAssets.bundleImage("aiutaIcon24WishlistFill")!
         )
     }
 }
