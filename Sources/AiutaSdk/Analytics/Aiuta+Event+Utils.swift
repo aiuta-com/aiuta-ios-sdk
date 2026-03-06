@@ -147,7 +147,7 @@ private extension Aiuta.Event.Feedback {
 private extension Aiuta.Event.Onboarding {
     /// Represents the raw values for onboarding events.
     enum Raw: String {
-        case welcomeStartClicked, consentsGiven, onboardingFinished
+        case welcomeStartClicked, consentGiven, onboardingFinished
     }
 
     /// Retrieves the raw value for the onboarding event.
@@ -159,7 +159,7 @@ private extension Aiuta.Event.Onboarding {
     var type: Raw {
         switch self {
             case .welcomeStartClicked: return .welcomeStartClicked
-            case .consentsGiven: return .consentsGiven
+            case .consentGiven: return .consentGiven
             case .onboardingFinished: return .onboardingFinished
         }
     }
@@ -340,7 +340,7 @@ extension Aiuta.Event: Encodable {
                             .pageId: pageId.rawValue,
                             .productIds: productIds,
                         ]
-                    case let .consentsGiven(consentIds): return [
+                    case let .consentGiven(consentIds): return [
                             .event: event.rawValue,
                             .pageId: pageId.rawValue,
                             .productIds: productIds,

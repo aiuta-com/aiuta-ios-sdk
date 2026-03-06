@@ -72,7 +72,7 @@ extension Sdk.Features {
                         let consentIds = ui.scroll.consent?.givenConsents
 
                         if let consentIds {
-                            tracker.track(.onboarding(event: .consentsGiven(consentIds: consentIds),
+                            tracker.track(.onboarding(event: .consentGiven(consentIds: consentIds),
                                                       pageId: page, productIds: session.products.ids))
                         }
                         tracker.track(.onboarding(event: .onboardingFinished, pageId: page, productIds: session.products.ids))

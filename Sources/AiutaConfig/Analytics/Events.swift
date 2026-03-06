@@ -190,7 +190,7 @@ extension Aiuta.Event {
         case onboardingFinished
 
         /// The user provided consents.
-        case consentsGiven(consentIds: [String])
+        case consentGiven(consentIds: [String])
     }
 }
 

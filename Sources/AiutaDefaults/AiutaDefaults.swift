@@ -88,9 +88,6 @@ extension Aiuta.Configuration {
                         settings: .init(preferCloseButtonOnTheRight: false)
                     ),
                     bottomSheet: .init(
-                        typography: .init(
-                            iconButton: typography.iconButton
-                        ),
                         shapes: .init(
                             bottomSheet: shapes.bottomSheet
                         ),
@@ -294,7 +291,7 @@ extension Aiuta.Configuration {
                         icons: .init(
                             like36: icons.like36,
                             dislike36: icons.dislike36,
-                            gratitude40: UIImage()
+                            gratitude40: icons.gratitude40
                         ),
                         shapes: .init(
                             feedbackButton: shapes.feedbackButton

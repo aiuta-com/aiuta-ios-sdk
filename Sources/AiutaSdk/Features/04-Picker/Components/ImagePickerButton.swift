@@ -25,7 +25,7 @@ extension PhotoSelectorBulletin {
         }
 
         let title = Label { it, ds in
-            it.font = ds.fonts.iconButton
+            it.font = ds.fonts.regular
             it.color = ds.colors.primary
         }
 

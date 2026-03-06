@@ -73,18 +73,19 @@ extension Aiuta.Configuration.Features.TryOn.LoadingPage {
 extension Aiuta.Configuration.Features.TryOn.LoadingPage {
     /// Visual styles for the loading page.
     public struct Styles: Sendable {
-        /// Gradient background for the loading page.
-        public let backgroundGradient: [Aiuta.Color]
-        
+        /// Custom gradient background for the loading page.
+        /// When nil or empty, a gradient based on the brand color will be used.
+        public let backgroundGradient: [Aiuta.Color]?
+
         /// Style for the status indicator.
         public let statusStyle: Aiuta.Configuration.UserInterface.ComponentStyle
-        
+
         /// Creates custom styles.
         ///
         /// - Parameters:
-        ///   - backgroundGradient: Gradient background for the loading page.
+        ///   - backgroundGradient: Custom gradient background for the loading page. When nil or empty, a gradient based on the brand color will be used.
         ///   - statusStyle: Style for the status indicator.
-        public init(backgroundGradient: [Aiuta.Color],
+        public init(backgroundGradient: [Aiuta.Color]?,
                     statusStyle: Aiuta.Configuration.UserInterface.ComponentStyle) {
             self.backgroundGradient = backgroundGradient
             self.statusStyle = statusStyle
