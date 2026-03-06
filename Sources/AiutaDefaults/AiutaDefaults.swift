@@ -88,9 +88,6 @@ extension Aiuta.Configuration {
                         settings: .init(preferCloseButtonOnTheRight: false)
                     ),
                     bottomSheet: .init(
-                        typography: .init(
-                            iconButton: typography.iconButton
-                        ),
                         shapes: .init(
                             bottomSheet: shapes.bottomSheet
                         ),

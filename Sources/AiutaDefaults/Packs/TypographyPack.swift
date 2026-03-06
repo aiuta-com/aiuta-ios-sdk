@@ -25,7 +25,6 @@ public struct TypographyPack: Sendable {
     public let buttonM: Aiuta.TextStyle
     public let buttonS: Aiuta.TextStyle
     public let pageTitle: Aiuta.TextStyle
-    public let iconButton: Aiuta.TextStyle
     public let product: Aiuta.TextStyle
     public let brand: Aiuta.TextStyle
     public let price: Aiuta.TextStyle
@@ -38,7 +37,6 @@ public struct TypographyPack: Sendable {
                 buttonM: Aiuta.TextStyle = .init(size: 17, weight: .semibold, kern: -0.17, lineHeightMultiple: 0.89),
                 buttonS: Aiuta.TextStyle = .init(size: 13, weight: .semibold, kern: -0.13, lineHeightMultiple: 1.16),
                 pageTitle: Aiuta.TextStyle = .init(size: 17, weight: .medium, kern: -0.51, lineHeightMultiple: 1.08),
-                iconButton: Aiuta.TextStyle = .init(size: 17, weight: .medium, kern: -0.17),
                 product: Aiuta.TextStyle = .init(size: 13, weight: .regular),
                 brand: Aiuta.TextStyle = .init(size: 12, weight: .medium, kern: -0.12),
                 price: Aiuta.TextStyle = .init(size: 14, weight: .bold, kern: -0.14),
@@ -50,7 +48,6 @@ public struct TypographyPack: Sendable {
         self.buttonM = buttonM
         self.buttonS = buttonS
         self.pageTitle = pageTitle
-        self.iconButton = iconButton
         self.product = product
         self.brand = brand
         self.price = price

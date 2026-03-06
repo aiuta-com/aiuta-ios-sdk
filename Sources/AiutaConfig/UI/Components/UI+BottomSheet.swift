@@ -20,51 +20,27 @@ import UIKit
 extension Aiuta.Configuration.UserInterface {
     /// Bottom sheet theme configuration.
     public struct BottomSheetTheme: Sendable {
-        /// Text style for icon buttons within the bottom sheet.
-        public let typography: Typography
-        
         /// Corner radius for the bottom sheet container.
         public let shapes: Shapes
-        
+
         /// Drag indicator at the top of the bottom sheet.
         public let grabber: Grabber
-        
+
         /// Delimiter positioning (visual boundaries within the sheet).
         public let settings: Settings
-        
+
         /// Creates a custom bottom sheet theme.
         ///
         /// - Parameters:
-        ///   - typography: Text style for icon buttons within the bottom sheet.
         ///   - shapes: Corner radius for the bottom sheet container.
         ///   - grabber: Drag indicator at the top of the bottom sheet.
         ///   - settings: Delimiter positioning (visual boundaries within the sheet).
-        public init(typography: Typography,
-                    shapes: Shapes,
+        public init(shapes: Shapes,
                     grabber: Grabber,
                     settings: Settings) {
-            self.typography = typography
             self.shapes = shapes
             self.grabber = grabber
             self.settings = settings
-        }
-    }
-}
-
-// MARK: - Typography
-
-extension Aiuta.Configuration.UserInterface.BottomSheetTheme {
-    /// Typography for bottom sheet text elements.
-    public struct Typography: Sendable {
-        /// Text style for icon buttons (buttons with both icon and text).
-        public let iconButton: Aiuta.TextStyle
-        
-        /// Creates custom typography.
-        ///
-        /// - Parameters:
-        ///   - iconButton: Text style for icon buttons (buttons with both icon and text).
-        public init(iconButton: Aiuta.TextStyle) {
-            self.iconButton = iconButton
         }
     }
 }

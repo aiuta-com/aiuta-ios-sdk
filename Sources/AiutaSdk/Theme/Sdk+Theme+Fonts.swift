@@ -41,10 +41,6 @@ extension Sdk.Theme {
 
         var pageTitle: Sdk.Theme.Font { Font(theme.pageBar.typography.pageTitle) }
 
-        // MARK: - BottomSheet
-
-        var iconButton: Sdk.Theme.Font { Font(theme.bottomSheet.typography.iconButton) }
-
         // MARK: - ProductBar
 
         var product: Sdk.Theme.Font { Font(theme.productBar.typography.product) }
