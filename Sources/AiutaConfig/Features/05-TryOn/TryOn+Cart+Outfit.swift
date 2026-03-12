@@ -68,6 +68,7 @@ extension Aiuta.Configuration.Features.TryOn.Cart.Outfit {
         ///
         /// - Parameters:
         ///   - productIds: List of product IDs to include in the outfit.
+        @available(iOS 13.0.0, *)
         func addToCartOutfit(productIds: [String]) async
     }
 }
