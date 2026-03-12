@@ -40,6 +40,7 @@ extension Sdk {
 
         @available(iOS 13.0.0, *)
         private func setup(_ configuration: Aiuta.Configuration) {
+            Validator.validate(configuration)
             let isDebug = configuration.debugSettings.isLoggingEnabled
             setDefaults(apiKey: configuration.keyToDefaults)
             trace(isEnabled: isDebug)

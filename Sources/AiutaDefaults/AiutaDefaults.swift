@@ -312,7 +312,7 @@ extension Aiuta.Configuration {
                     icons: .init(
                         magic20: icons.magic20
                     ),
-                    styles: .init(tryOnButtonGradient: []),
+                    styles: .init(tryOnButtonGradient: nil),
                     strings: .init(
                         tryOnPageTitle: localization.tryOnPageTitle,
                         tryOn: localization.tryOn
