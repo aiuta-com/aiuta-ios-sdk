@@ -91,7 +91,7 @@ extension Aiuta.Configuration.Features.Share {
 
 extension Aiuta.Configuration.Features.Share {
     /// Protocol for providing custom share text dynamically.
-    public protocol DataProvider {
+    public protocol DataProvider: Sendable {
         /// Generates additional share text for the given product IDs.
         ///
         /// - Parameters:

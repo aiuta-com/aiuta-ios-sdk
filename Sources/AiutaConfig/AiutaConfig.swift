@@ -43,13 +43,9 @@ extension Aiuta {
         /// - Parameters:
         ///   - auth: Specifies the authentication method to be used by the SDK.
         ///   - userInterface: Configures the appearance and behavior of the SDK's user interface.
-        ///     The default value is `.default`, which applies the standard UI settings.
         ///   - features: Configures the set of features enabled in the SDK.
-        ///     The default value is `.default`, which enables all standard features.
         ///   - analytics: Configures how analytics events are handled within the SDK.
-        ///     The default value is `nil`, which disables analytics tracking.
         ///   - debugSettings: Configures the debug settings for the SDK.
-        ///     The default value is `.release`, which applies production-ready settings.
         public init(auth: Aiuta.Auth,
                     userInterface: UserInterface,
                     features: Features,

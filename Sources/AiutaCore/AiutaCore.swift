@@ -33,5 +33,5 @@ public enum Aiuta {
     ///
     /// - SeeAlso:
     /// [Semantic Versioning Specification](https://semver.org)
-    public static let version = "4.4.1"
+    public static let version = "4.4.2"
 }

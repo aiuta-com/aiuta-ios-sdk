@@ -52,13 +52,19 @@ extension Aiuta.Configuration.UserInterface.BottomSheetTheme {
     public struct Shapes: Sendable {
         /// Corner radius and shape applied to the bottom sheet container.
         public let bottomSheet: Aiuta.Shape
-        
+
+        /// Corner radius and shape applied to chips buttons inside bottom sheets.
+        public let chipsButton: Aiuta.Shape
+
         /// Creates custom shape.
         ///
         /// - Parameters:
         ///   - bottomSheet: Corner radius and shape applied to the bottom sheet container.
-        public init(bottomSheet: Aiuta.Shape) {
+        ///   - chipsButton: Corner radius and shape applied to chips buttons inside bottom sheets.
+        public init(bottomSheet: Aiuta.Shape,
+                    chipsButton: Aiuta.Shape) {
             self.bottomSheet = bottomSheet
+            self.chipsButton = chipsButton
         }
     }
 }

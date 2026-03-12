@@ -67,7 +67,7 @@ extension Sdk.Theme {
 
         // MARK: - TryOn
 
-        var tryOnButtonGradient: [UIColor] { config.features.tryOn.styles.tryOnButtonGradient.map(\.uiColor) }
+        var tryOnButtonGradient: [UIColor] { config.features.tryOn.styles.tryOnButtonGradient?.map(\.uiColor) ?? [] }
 
         // MARK: - TryOn.Loading
 

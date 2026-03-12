@@ -51,9 +51,9 @@ extension Sdk.Theme {
         var onboardingImageL: Aiuta.Shape { config.features.onboarding?.shapes.onboardingImageL ?? imageL }
         var onboardingImageS: Aiuta.Shape { config.features.onboarding?.shapes.onboardingImageS ?? imageS }
 
-        // MARK: - TryOn.Feedback
+        // MARK: - BottomSheet.ChipsButton
 
-        var feedbackButton: Aiuta.Shape { config.features.tryOn.feedback?.shapes.feedbackButton ?? .capsule }
+        var chipsButton: Aiuta.Shape { theme.bottomSheet.shapes.chipsButton }
     }
 }
 

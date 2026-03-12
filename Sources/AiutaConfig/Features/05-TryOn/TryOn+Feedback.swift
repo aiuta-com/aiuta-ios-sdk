@@ -25,28 +25,22 @@ extension Aiuta.Configuration.Features.TryOn {
         
         /// Text content for feedback-related actions.
         public let strings: Strings
-        
+
         /// Icons for feedback-related actions.
         public let icons: Icons
-        
-        /// Shapes for feedback-related actions.
-        public let shapes: Shapes
-        
+
         /// Creates a feedback configuration.
         ///
         /// - Parameters:
         ///   - other: Optional additional feedback feature.
         ///   - strings: Text content for feedback-related actions.
         ///   - icons: Icons for feedback-related actions.
-        ///   - shapes: Shapes for feedback-related actions.
         public init(other: Other?,
                     strings: Strings,
-                    icons: Icons,
-                    shapes: Shapes) {
+                    icons: Icons) {
             self.other = other
             self.strings = strings
             self.icons = icons
-            self.shapes = shapes
         }
     }
 }
@@ -123,20 +117,3 @@ extension Aiuta.Configuration.Features.TryOn.Feedback {
     }
 }
 
-// MARK: - Shapes
-
-extension Aiuta.Configuration.Features.TryOn.Feedback {
-    /// Shapes for feedback functionality.
-    public struct Shapes: Sendable {
-        /// Shape for the feedback button.
-        public let feedbackButton: Aiuta.Shape
-        
-        /// Creates custom shapes.
-        ///
-        /// - Parameters:
-        ///   - feedbackButton: Shape for the feedback button.
-        public init(feedbackButton: Aiuta.Shape) {
-            self.feedbackButton = feedbackButton
-        }
-    }
-}

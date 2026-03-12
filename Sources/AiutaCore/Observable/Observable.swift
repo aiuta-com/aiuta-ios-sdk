@@ -17,13 +17,14 @@ import Foundation
 extension Aiuta {
     /// A generic wrapper for a value that can be observed for changes. This is
     /// needed fot Aiuta SDK to monitor a value and react to its changes.
-    public final class Observable<Value: Sendable>: @unchecked Sendable {
+    public final class Observable<Value: Equatable & Sendable>: @unchecked Sendable {
         @_spi(Aiuta) public let didChange = Signal<Value>(retainLastData: true)
 
         /// The value being observed. When this value is updated, all observers
         /// are automatically notified through the `didChange` signal.
         public var value: Value {
             didSet {
+                guard oldValue != value else { return }
                 didChange.fire(value)
             }
         }
