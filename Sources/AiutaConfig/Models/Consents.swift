@@ -20,7 +20,7 @@ extension Aiuta {
     /// Represents the consent information required by the SDK.
     /// This includes details about the consent type, its unique identifier,
     /// and the HTML content that describes the consent.
-    public struct Consent {
+    public struct Consent: Sendable {
         /// A unique identifier for the consent.
         public let id: String
 
@@ -49,7 +49,7 @@ extension Aiuta.Consent {
     /// Defines the methods for obtaining consent to process user photos.
     /// This includes implicit consent (e.g., pressing an `Accept` button)
     /// and explicit consent (e.g., checking a checkbox).
-    public enum ObtainType {
+    public enum ObtainType: Sendable {
         /// Represents implicit consent, where the user provides consent
         /// by pressing an `Accept` button, not check box. This may optionally
         /// include a disabled (pre-selected) checkbox for additional clarity.

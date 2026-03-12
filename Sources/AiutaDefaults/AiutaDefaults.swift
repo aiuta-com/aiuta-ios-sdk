@@ -89,7 +89,8 @@ extension Aiuta.Configuration {
                     ),
                     bottomSheet: .init(
                         shapes: .init(
-                            bottomSheet: shapes.bottomSheet
+                            bottomSheet: shapes.bottomSheet,
+                            chipsButton: shapes.chipsButton
                         ),
                         grabber: .init(width: 36, height: 3, offset: 6),
                         settings: .init(extendDelimitersToTheRight: false, extendDelimitersToTheLeft: false)
@@ -292,9 +293,6 @@ extension Aiuta.Configuration {
                             like36: icons.like36,
                             dislike36: icons.dislike36,
                             gratitude40: icons.gratitude40
-                        ),
-                        shapes: .init(
-                            feedbackButton: shapes.feedbackButton
                         )
                     ),
                     generationsHistory: .init(

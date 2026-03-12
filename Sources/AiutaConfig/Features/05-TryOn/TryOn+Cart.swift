@@ -69,7 +69,7 @@ extension Aiuta.Configuration.Features.TryOn.Cart {
     /// A protocol for managing cart-related actions in the TryOn feature.
     ///
     /// Implement this protocol to handle when products are added to the cart.
-    public protocol Handler {
+    public protocol Handler: Sendable {
         /// Adds a product to the cart.
         ///
         /// - Parameters:

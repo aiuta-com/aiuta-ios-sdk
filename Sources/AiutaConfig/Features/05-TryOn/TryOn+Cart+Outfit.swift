@@ -63,11 +63,11 @@ extension Aiuta.Configuration.Features.TryOn.Cart.Outfit {
 
 extension Aiuta.Configuration.Features.TryOn.Cart.Outfit {
     /// Protocol for managing outfit cart actions.
-    public protocol Handler {
+    public protocol Handler: Sendable {
         /// Handles the "Shop the Look" action by processing multiple product IDs.
         ///
         /// - Parameters:
         ///   - productIds: List of product IDs to include in the outfit.
-        func addToCartOutfit(productIds: [String])
+        func addToCartOutfit(productIds: [String]) async
     }
 }

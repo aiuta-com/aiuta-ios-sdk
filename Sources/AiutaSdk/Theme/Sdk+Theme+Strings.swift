@@ -64,7 +64,6 @@ extension Sdk.Theme {
         var consentDescriptionHtml: String? { features.consent.standalone?.strings.consentDescriptionHtml }
         var consentFooterHtml: String? { features.consent.standalone?.strings.consentFooterHtml }
         var consentButtonAccept: String? { features.consent.standalone?.strings.consentButtonAccept }
-        var consentButtonReject: String? { features.consent.standalone?.strings.consentButtonReject }
 
         // MARK: - ImagePicker
 

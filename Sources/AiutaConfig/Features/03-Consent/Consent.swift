@@ -24,7 +24,7 @@ extension Aiuta.Configuration.Features {
     /// can be integrated into onboarding, displayed as a standalone page, or shown
     /// in a bottom sheet when specific actions are performed. You can choose the
     /// option that best fits your app's flow.
-    public enum Consent {
+    public enum Consent: Sendable {
         /// No consent is required.
         case none
 

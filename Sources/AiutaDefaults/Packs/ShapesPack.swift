@@ -13,7 +13,7 @@
 // limitations under the License.
 
 #if SWIFT_PACKAGE
-import AiutaCore
+    import AiutaCore
 #endif
 import Foundation
 
@@ -25,9 +25,9 @@ public struct ShapesPack: Sendable {
     public let buttonM: Aiuta.Shape
     public let buttonS: Aiuta.Shape
     public let bottomSheet: Aiuta.Shape
+    public let chipsButton: Aiuta.Shape
     public let onboardingImageL: Aiuta.Shape
     public let onboardingImageS: Aiuta.Shape
-    public let feedbackButton: Aiuta.Shape
 
     public init(imageL: Aiuta.Shape = .continuous(radius: 24),
                 imageM: Aiuta.Shape = .continuous(radius: 16),
@@ -36,9 +36,9 @@ public struct ShapesPack: Sendable {
                 buttonM: Aiuta.Shape = .continuous(radius: 8),
                 buttonS: Aiuta.Shape = .continuous(radius: 8),
                 bottomSheet: Aiuta.Shape = .continuous(radius: 16),
+                chipsButton: Aiuta.Shape = .capsule,
                 onboardingImageL: Aiuta.Shape = .continuous(radius: 16),
-                onboardingImageS: Aiuta.Shape = .continuous(radius: 16),
-                feedbackButton: Aiuta.Shape = .capsule) {
+                onboardingImageS: Aiuta.Shape = .continuous(radius: 16)) {
         self.imageL = imageL
         self.imageM = imageM
         self.imageS = imageS
@@ -46,8 +46,8 @@ public struct ShapesPack: Sendable {
         self.buttonM = buttonM
         self.buttonS = buttonS
         self.bottomSheet = bottomSheet
+        self.chipsButton = chipsButton
         self.onboardingImageL = onboardingImageL
         self.onboardingImageS = onboardingImageS
-        self.feedbackButton = feedbackButton
     }
 }

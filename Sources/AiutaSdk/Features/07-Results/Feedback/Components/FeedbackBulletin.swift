@@ -154,7 +154,7 @@ final class FeedbackBulletin: ResultBulletin<FeedbackResult?> {
                 make.top = top
                 make.centerX = 0
                 make.height = 40
-                make.shape = ds.shapes.feedbackButton
+                make.shape = ds.shapes.chipsButton
             }
 
             top = button.layout.bottomPin + 12
@@ -165,7 +165,7 @@ final class FeedbackBulletin: ResultBulletin<FeedbackResult?> {
                 make.top = top
                 make.centerX = 0
                 make.height = 40
-                make.shape = ds.shapes.feedbackButton
+                make.shape = ds.shapes.chipsButton
             }
 
             top = plainOption.layout.bottomPin + 35

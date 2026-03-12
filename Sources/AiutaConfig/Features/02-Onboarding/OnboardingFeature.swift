@@ -121,7 +121,7 @@ extension Aiuta.Configuration.Features.Onboarding {
     /// Provider for storing onboarding completion status.
     ///
     /// This determines how the SDK tracks whether a user has completed onboarding.
-    public enum StateProvider {
+    public enum StateProvider: Sendable {
         /// Use the built-in `userDefaults` provider to store onboarding completion status.
         case userDefaults
         
@@ -138,7 +138,7 @@ extension Aiuta.Configuration.Features.Onboarding {
     ///
     /// This protocol allows you to define how the SDK tracks whether onboarding
     /// has been completed.
-    public protocol DataProvider {
+    public protocol DataProvider: Sendable {
         /// Indicates whether onboarding has been completed.
         @available(iOS 13.0.0, *)
         var isOnboardingCompleted: Bool { get async }

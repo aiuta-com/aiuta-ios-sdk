@@ -102,7 +102,7 @@ extension Aiuta.Configuration.Features.ImagePicker.UploadsHistory {
     /// Data provider for the uploads history feature.
     ///
     /// Manages how history data is stored and retrieved.
-    public enum HistoryProvider {
+    public enum HistoryProvider: Sendable {
         /// Use built-in `userDefaults` to store the uploads history.
         case userDefaults
         
@@ -119,7 +119,7 @@ extension Aiuta.Configuration.Features.ImagePicker.UploadsHistory {
     ///
     /// Implement this protocol to control how the history is stored, updated,
     /// and accessed.
-    public protocol DataProvider {
+    public protocol DataProvider: Sendable {
         /// History of images uploaded by the user for virtual try-on.
         /// The most recently used image should appear first in the array.
         @available(iOS 13.0.0, *)

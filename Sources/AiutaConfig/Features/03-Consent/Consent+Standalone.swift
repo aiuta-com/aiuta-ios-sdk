@@ -70,12 +70,7 @@ extension Aiuta.Configuration.Features.Consent.Standalone {
         
         /// Text for the "Accept" button.
         public let consentButtonAccept: String
-        
-        /// Optional text for the "Reject" button. If `nil`, the button will not
-        /// be shown or used in `standaloneOnboardingPage` mode.
-        /// If `nil`, the button will not be shown or used in `standaloneOnboardingPage` mode.
-        public let consentButtonReject: String?
-        
+
         /// Creates custom text content for the standalone consent page.
         ///
         /// - Parameters:
@@ -84,21 +79,16 @@ extension Aiuta.Configuration.Features.Consent.Standalone {
         ///   - consentDescriptionHtml: HTML content describing the consent.
         ///   - consentFooterHtml: Optional HTML footer for the consent page.
         ///   - consentButtonAccept: Text for the "Accept" button.
-        ///   - consentButtonReject: Optional text for the "Reject" button. 
-        ///         If `nil`, the button will not be shown 
-        ///         and used in `standaloneOnboardingPage` mode.
         public init(consentPageTitle: String?,
                     consentTitle: String,
                     consentDescriptionHtml: String,
                     consentFooterHtml: String?,
-                    consentButtonAccept: String,
-                    consentButtonReject: String?) {
+                    consentButtonAccept: String) {
             self.consentPageTitle = consentPageTitle
             self.consentTitle = consentTitle
             self.consentDescriptionHtml = consentDescriptionHtml
             self.consentFooterHtml = consentFooterHtml
             self.consentButtonAccept = consentButtonAccept
-            self.consentButtonReject = consentButtonReject
         }
     }
 }
@@ -145,7 +135,7 @@ extension Aiuta.Configuration.Features.Consent.Standalone {
     /// Data provider for the standalone consent screen.
     ///
     /// Manages how consent data is stored and retrieved.
-    public enum ConsentProvider {
+    public enum ConsentProvider: Sendable {
         /// Use built-in `userDefaults` to store information about the consents
         /// obtained from the user.
         ///
@@ -164,7 +154,7 @@ extension Aiuta.Configuration.Features.Consent.Standalone {
         ///   - onObtain: Callback triggered when the user has given consents
         ///     and pressed the "Continue" button.
         case userDefaultsWithCallback(consents: [Aiuta.Consent],
-                                      onObtain: ([String]) -> Void)
+                                      onObtain: @Sendable ([String]) -> Void)
         
         /// Use a custom data provider for the standalone consent screen.
         ///
@@ -183,7 +173,7 @@ extension Aiuta.Configuration.Features.Consent.Standalone {
     ///
     /// Implement this protocol to manage the consent data, including storing
     /// obtained consents and handling user interactions.
-    public protocol DataProvider {
+    public protocol DataProvider: Sendable {
         /// List of consent identifiers already obtained from the user.
         @available(iOS 13.0.0, *)
         var obtainedConsentsIds: Aiuta.Observable<[String]> { get async }
@@ -200,3 +190,4 @@ extension Aiuta.Configuration.Features.Consent.Standalone {
         func obtain(consentsIds: [String]) async
     }
 }
+
