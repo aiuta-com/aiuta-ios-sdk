@@ -31,7 +31,6 @@ public struct ColorsPack: Sendable {
     public let selectionBackground: Aiuta.Color
     public let errorBackground: Aiuta.Color
     public let errorPrimary: Aiuta.Color
-    public let discountedPrice: Aiuta.Color
     // Loading
     public let loadingGradient: [Aiuta.Color]
 
@@ -47,7 +46,6 @@ public struct ColorsPack: Sendable {
                 selectionBackground: Aiuta.Color = "#FF000000",
                 errorBackground: Aiuta.Color = "#FFEF5754",
                 errorPrimary: Aiuta.Color = "#FFFFFFFF",
-                discountedPrice: Aiuta.Color = "#FFFB1010",
                 loadingGradient: [Aiuta.Color] = [
                     "#FF4000FF",
                     "#804000FF",
@@ -65,7 +63,6 @@ public struct ColorsPack: Sendable {
         self.selectionBackground = selectionBackground
         self.errorBackground = errorBackground
         self.errorPrimary = errorPrimary
-        self.discountedPrice = discountedPrice
         self.loadingGradient = loadingGradient
     }
 }

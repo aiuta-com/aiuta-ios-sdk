@@ -233,7 +233,7 @@ extension ResultsView {
         let title = Label { it, ds in
             it.font = ds.fonts.titleM
             it.color = ds.colors.primary
-            it.text = ds.strings.outfitItemsTitle
+            it.text = ds.strings.outfitTitle
         }
 
         let gallery = HScroll { it, _ in
@@ -248,7 +248,7 @@ extension ResultsView {
             it.color = ds.colors.brand
             it.label.color = ds.colors.onDark
             it.text = ds.strings.shopTheLook
-            it.view.isVisible = ds.features.tryOn.hasCart
+            it.view.isVisible = ds.strings.shopTheLook.isSomeAndNotEmpty
         }
 
         override func setup() {

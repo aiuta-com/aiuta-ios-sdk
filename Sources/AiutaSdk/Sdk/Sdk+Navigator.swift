@@ -31,6 +31,7 @@ extension Sdk {
         @notification(UIApplication.userDidTakeScreenshotNotification)
         private var userDidTakeScreenshot: Signal<Void>
 
+        private let didDismiss = Signal<Void>()
         private let touchesDismissAreaHeight: CGFloat = 52
         private var touchesBeganInsideDismissArea: Bool?
         private var bulletinWall: BulletinWall?
@@ -80,6 +81,15 @@ extension Sdk {
             }
             if let page = (visibleViewController as? PageRepresentable)?.page {
                 tracker.track(.exit(pageId: page, productIds: session.products.ids))
+            }
+            didDismiss.fire()
+        }
+
+        func awaitDismiss() async {
+            await withCheckedContinuation { continuation in
+                didDismiss.subscribeOnce(with: self) {
+                    continuation.resume()
+                }
             }
         }
 

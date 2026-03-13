@@ -13,7 +13,7 @@
 // limitations under the License.
 
 #if SWIFT_PACKAGE
-@_spi(Aiuta) import AiutaCore
+    @_spi(Aiuta) import AiutaCore
 #endif
 import Kingfisher
 import Resolver
@@ -61,7 +61,7 @@ private extension UrlFetcher {
         switch result {
             case let .success(result):
                 onImage.fire(result.image)
-            case let .failure(error):
+            case .failure:
                 let maxRetry = imageTraits.retryCount(for: quality)
                 if retry < maxRetry {
                     onError.fire()

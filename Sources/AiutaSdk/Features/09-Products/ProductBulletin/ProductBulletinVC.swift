@@ -36,9 +36,8 @@ extension Sdk.Features {
             ui.cartButton.onTouchUpInside.subscribe(with: self) { [unowned self] in
                 guard let sku = ui.product, let page = (vc as? PageRepresentable)?.page else { return }
                 tracker.track(.results(event: .productAddToCart, pageId: page, productIds: [sku.id]))
-                vc?.dismissAll { [session] in
-                    session.finish(addingToCart: [sku])
-                }
+                session.finish(addingToCart: [sku])
+                vc?.dismissAll()
             }
 
             ui.wishButton.onTouchUpInside.subscribe(with: self) { [unowned self] in

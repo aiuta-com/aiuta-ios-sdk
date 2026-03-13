@@ -28,5 +28,8 @@ extension Sdk.Core {
 
         func finish(addingToCart: Aiuta.Products?)
         func finish(recommendingSize: Aiuta.SizeRecommendation?)
+
+        func flushTryOnResult() -> Aiuta.TryOnResult
+        func flushSizeFitResult() -> Aiuta.SizeFitResult
     }
 }

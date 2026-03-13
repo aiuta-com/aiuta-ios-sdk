@@ -18,7 +18,7 @@
 import UIKit
 
 extension Sdk.UI {
-    final class Consent: Plane {
+    final class Consent: PlainButton {
         private let blurTop = Blur { it, ds in
             it.style = ds.colors.scheme.safeBlurStyle
             it.backgroundColor = ds.colors.background.withAlphaComponent(0.75)

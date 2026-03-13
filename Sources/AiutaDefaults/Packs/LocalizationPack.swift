@@ -40,9 +40,11 @@ public struct LocalizationPack: Sendable {
     public let uploadsHistoryButtonChangePhoto: String
     // Cart
     public let addToCart: String
+    public let addToCartOutfit: String?
     // TryOn
     public let tryOnPageTitle: String
     public let tryOn: String
+    public let outfitTitle: String
     public let tryOnLoadingStatusUploadingImage: String
     public let tryOnLoadingStatusScanningBody: String
     public let tryOnLoadingStatusGeneratingOutfit: String
@@ -101,8 +103,10 @@ public struct LocalizationPack: Sendable {
                 uploadsHistoryTitle: String = "Previously used",
                 uploadsHistoryButtonChangePhoto: String = "Change photo",
                 addToCart: String = "Add to cart",
+                addToCartOutfit: String? = "Shop the look",
                 tryOnPageTitle: String = "Virtual Try-on",
                 tryOn: String = "Try on",
+                outfitTitle: String = "Items from the outfit",
                 tryOnLoadingStatusUploadingImage: String = "Uploading image",
                 tryOnLoadingStatusScanningBody: String = "Scanning the body",
                 tryOnLoadingStatusGeneratingOutfit: String = "Generating outfit",
@@ -150,8 +154,10 @@ public struct LocalizationPack: Sendable {
         self.uploadsHistoryTitle = uploadsHistoryTitle
         self.uploadsHistoryButtonChangePhoto = uploadsHistoryButtonChangePhoto
         self.addToCart = addToCart
+        self.addToCartOutfit = addToCartOutfit
         self.tryOnPageTitle = tryOnPageTitle
         self.tryOn = tryOn
+        self.outfitTitle = outfitTitle
         self.tryOnLoadingStatusUploadingImage = tryOnLoadingStatusUploadingImage
         self.tryOnLoadingStatusScanningBody = tryOnLoadingStatusScanningBody
         self.tryOnLoadingStatusGeneratingOutfit = tryOnLoadingStatusGeneratingOutfit

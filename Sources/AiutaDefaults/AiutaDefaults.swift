@@ -13,15 +13,14 @@
 // limitations under the License.
 
 #if SWIFT_PACKAGE
-import AiutaConfig
-import AiutaCore
+    import AiutaConfig
+    import AiutaCore
 #endif
 import UIKit
 
 extension Aiuta.Configuration {
     public static func `default`(
         auth: Aiuta.Auth,
-        cartHandler: Aiuta.Configuration.Features.TryOn.Cart.Handler,
         analytics: Aiuta.Analytics? = nil,
         debugSettings: DebugSettings = .release,
         localization: LocalizationPack = .init(),
@@ -141,14 +140,7 @@ extension Aiuta.Configuration {
                             brand: typography.brand
                         ),
                         settings: .init(applyProductFirstImageExtraPadding: false),
-                        prices: .init(
-                            typography: .init(
-                                price: typography.price
-                            ),
-                            colors: .init(
-                                discountedPrice: colors.discountedPrice
-                            )
-                        )
+                        prices: nil
                     ),
                     powerBar: .init(
                         strings: .init(poweredByAiuta: localization.poweredByAiuta),
@@ -262,8 +254,13 @@ extension Aiuta.Configuration {
                         strings: .init(
                             addToCart: localization.addToCart
                         ),
-                        handler: cartHandler,
-                        outfit: nil
+                        handler: nil,
+                        outfit: .init(
+                            strings: .init(
+                                addToCartOutfit: localization.addToCartOutfit
+                            ),
+                            handler: nil
+                        )
                     ),
                     fitDisclaimer: .init(
                         strings: .init(
@@ -315,7 +312,8 @@ extension Aiuta.Configuration {
                     styles: .init(tryOnButtonGradient: nil),
                     strings: .init(
                         tryOnPageTitle: localization.tryOnPageTitle,
-                        tryOn: localization.tryOn
+                        tryOn: localization.tryOn,
+                        outfitTitle: localization.outfitTitle
                     ),
                     toggles: .init(
                         allowsBackgroundExecution: true,

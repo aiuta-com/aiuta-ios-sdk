@@ -21,7 +21,6 @@ import AiutaDefaults
 extension Aiuta.Configuration {
     public static func `default`(
         auth: Aiuta.Auth,
-        cartHandler: Aiuta.Configuration.Features.TryOn.Cart.Handler,
         analytics: Aiuta.Analytics? = nil,
         debugSettings: DebugSettings = .release,
         localization: LocalizationPack = .init(),
@@ -31,7 +30,6 @@ extension Aiuta.Configuration {
     ) -> Self {
         .default(
             auth: auth,
-            cartHandler: cartHandler,
             analytics: analytics,
             debugSettings: debugSettings,
             localization: localization,

@@ -18,7 +18,7 @@
 import UIKit
 
 extension Sdk.UI {
-    final class Onboarding: Plane {
+    final class Onboarding: PlainButton {
         let scroll = StickyScroll()
 
         private let blurTop = Blur { it, ds in

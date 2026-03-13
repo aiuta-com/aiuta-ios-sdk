@@ -17,7 +17,7 @@
 #endif
 import UIKit
 
-final class ProcessingView: Plane {
+final class ProcessingView: PlainButton {
     let navBar = NavBar { it, ds in
         if ds.styles.preferCloseButtonOnTheRight {
             it.style = .actionTitleClose

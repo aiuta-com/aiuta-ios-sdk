@@ -20,7 +20,7 @@ import AiutaCore
 import UIKit
 
 @available(iOS 13.0.0, *)
-final class FitSurveyUI: Plane {
+final class FitSurveyUI: PlainButton {
     enum Step: Equatable {
         case main, shape, bra
     }

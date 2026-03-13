@@ -94,17 +94,15 @@ final class ResulstsViewController: ViewController<ResultsView> {
         ui.skuSheet.content.singleItemContent.addToCart.onTouchUpInside.subscribe(with: self) { [unowned self] in
             guard let products = ui.pager.currentItem?.products else { return }
             tracker.track(.results(event: .productAddToCart, pageId: page, productIds: products.ids))
-            dismissAll { [session] in
-                session.finish(addingToCart: products)
-            }
+            session.finish(addingToCart: products)
+            dismissAll()
         }
 
         ui.skuSheet.content.multiItemContent.addToCart.onTouchUpInside.subscribe(with: self) { [unowned self] in
             guard let products = ui.pager.currentItem?.products else { return }
             tracker.track(.results(event: .productAddToCart, pageId: page, productIds: products.ids))
-            dismissAll { [session] in
-                session.finish(addingToCart: products)
-            }
+            session.finish(addingToCart: products)
+            dismissAll()
         }
 
         ui.skuSheet.content.multiItemContent.onTapProduct.subscribe(with: self) { [unowned self] product in

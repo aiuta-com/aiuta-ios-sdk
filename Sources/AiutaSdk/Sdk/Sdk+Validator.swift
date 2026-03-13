@@ -56,6 +56,7 @@ extension Sdk {
             let tryOn = features.tryOn
             validate(string: tryOn.strings.tryOnPageTitle, name: "tryOn.strings.tryOnPageTitle", policy: policy)
             validate(string: tryOn.strings.tryOn, name: "tryOn.strings.tryOn", policy: policy)
+            validate(string: tryOn.strings.outfitTitle, name: "tryOn.strings.outfitTitle", policy: policy)
 
             // TryOn - Loading Page
             let loading = tryOn.loadingPage.strings
@@ -71,8 +72,8 @@ extension Sdk {
             // TryOn - Cart
             if let cart = tryOn.cart {
                 validate(string: cart.strings.addToCart, name: "tryOn.cart.strings.addToCart", policy: policy)
-                if let outfit = cart.outfit {
-                    validate(string: outfit.strings.addToCartOutfit, name: "tryOn.cart.outfit.strings.addToCartOutfit", policy: policy)
+                if let addToCartOutfit = cart.outfit?.strings.addToCartOutfit {
+                    validate(string: addToCartOutfit, name: "tryOn.cart.outfit.strings.addToCartOutfit", policy: policy)
                 }
             }
 
