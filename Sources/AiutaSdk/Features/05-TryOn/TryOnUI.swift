@@ -18,7 +18,7 @@
 import UIKit
 
 extension Sdk.UI {
-    final class TryOn: PlainButton {
+    final class TryOn: Plane {
         let navBar = NavBar { it, ds in
             if ds.styles.preferCloseButtonOnTheRight {
                 it.style = .actionTitleClose

@@ -18,7 +18,7 @@
 import UIKit
 
 @available(iOS 13.0.0, *)
-final class ResultsView: PlainButton {
+final class ResultsView: Plane {
     let didBlackout = Signal<CGFloat>()
 
     let navBar = NavBar { it, ds in

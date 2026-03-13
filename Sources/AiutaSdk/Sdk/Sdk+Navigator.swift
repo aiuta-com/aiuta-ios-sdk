@@ -13,9 +13,9 @@
 // limitations under the License.
 
 #if SWIFT_PACKAGE
-@_spi(Aiuta) import AiutaKit
-import AiutaConfig
-import AiutaCore
+    import AiutaConfig
+    import AiutaCore
+    @_spi(Aiuta) import AiutaKit
 #endif
 import Resolver
 import UIKit
@@ -103,13 +103,13 @@ extension Sdk {
             } else {
                 touchesBeganInsideDismissArea = nil
             }
-            super.touchesBegan(touches, with: event)
         }
 
-        override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-            touchesBeganInsideDismissArea = nil
-            super.touchesEnded(touches, with: event)
-        }
+        override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {}
+
+        override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {}
+
+        override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {}
     }
 }
 

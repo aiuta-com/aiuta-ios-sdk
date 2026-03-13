@@ -18,7 +18,7 @@
 import UIKit
 
 extension Sdk.UI {
-    final class WelcomeScreen: PlainButton {
+    final class WelcomeScreen: Plane {
         let ground = Image { it, ds in
             it.isAutoSize = false
             it.contentMode = .scaleAspectFill
