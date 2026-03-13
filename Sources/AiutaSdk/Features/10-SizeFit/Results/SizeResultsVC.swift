@@ -37,9 +37,8 @@ final class SizeResultsVC: ViewController<SizeResultsUI> {
         }
 
         ui.acknowledge.onTouchUpInside.subscribe(with: self) { [unowned self] in
-            dismissAll { [session, recommendation] in
-                session.finish(recommendingSize: recommendation)
-            }
+            session.finish(recommendingSize: recommendation)
+            dismissAll()
         }
 
         ui.changeButton.onTouchUpInside.subscribe(with: self) { [unowned self] in

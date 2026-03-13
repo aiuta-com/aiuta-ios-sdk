@@ -91,7 +91,7 @@ extension Aiuta.Configuration.Features.Wishlist {
 
 extension Aiuta.Configuration.Features.Wishlist {
     /// Protocol for managing the data flow and operations of the Wishlist feature.
-    public protocol DataProvider {
+    public protocol DataProvider: Sendable {
         /// List of product IDs currently in the Wishlist.
         @available(iOS 13.0.0, *)
         var wishlistProductIds: Aiuta.Observable<[String]> { get async }

@@ -13,9 +13,9 @@
 // limitations under the License.
 
 #if SWIFT_PACKAGE
-@_spi(Aiuta) import AiutaKit
-import AiutaConfig
-import AiutaCore
+    import AiutaConfig
+    import AiutaCore
+    @_spi(Aiuta) import AiutaKit
 #endif
 import Resolver
 import UIKit
@@ -31,6 +31,7 @@ extension Sdk {
         @notification(UIApplication.userDidTakeScreenshotNotification)
         private var userDidTakeScreenshot: Signal<Void>
 
+        private let didDismiss = Signal<Void>()
         private let touchesDismissAreaHeight: CGFloat = 52
         private var touchesBeganInsideDismissArea: Bool?
         private var bulletinWall: BulletinWall?
@@ -81,6 +82,15 @@ extension Sdk {
             if let page = (visibleViewController as? PageRepresentable)?.page {
                 tracker.track(.exit(pageId: page, productIds: session.products.ids))
             }
+            didDismiss.fire()
+        }
+
+        func awaitDismiss() async {
+            await withCheckedContinuation { continuation in
+                didDismiss.subscribeOnce(with: self) {
+                    continuation.resume()
+                }
+            }
         }
 
         required init?(coder aDecoder: NSCoder) {
@@ -93,13 +103,13 @@ extension Sdk {
             } else {
                 touchesBeganInsideDismissArea = nil
             }
-            super.touchesBegan(touches, with: event)
         }
 
-        override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-            touchesBeganInsideDismissArea = nil
-            super.touchesEnded(touches, with: event)
-        }
+        override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {}
+
+        override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {}
+
+        override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {}
     }
 }
 

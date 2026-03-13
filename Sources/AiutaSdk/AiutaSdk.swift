@@ -49,9 +49,12 @@ import UIKit
     /// - Parameters:
     ///   - product: The `Product` that users will try on.
     ///
+    /// - Returns: A `TryOnResult` indicating how the session ended.
+    ///
     /// Please refer to the [Product sheme](https://docs.aiuta.com/sdk/developer/product/)
     /// for more details on how to pass the product to the SDK.
-    static func tryOn(product: Product) async {
+    @discardableResult
+    static func tryOn(product: Product) async -> TryOnResult {
         await Sdk.Presenter.tryOn(products: [product])
     }
 
@@ -61,9 +64,12 @@ import UIKit
     /// - Parameters:
     ///   - products: The list of `Product` that users will try on.
     ///
+    /// - Returns: A `TryOnResult` indicating how the session ended.
+    ///
     /// Please refer to the [Product sheme](https://docs.aiuta.com/sdk/developer/product/)
     /// for more details on how to pass the product to the SDK.
-    static func tryOn(products: [Product]) async {
+    @discardableResult
+    static func tryOn(products: [Product]) async -> TryOnResult {
         await Sdk.Presenter.tryOn(products: products)
     }
 }
@@ -82,7 +88,9 @@ import UIKit
 
 @available(iOS 13.0.0, *)
 @MainActor public extension Aiuta {
-    static func sizeFit(product: Product) async {
+    /// - Returns: A `SizeFitResult` indicating how the session ended.
+    @discardableResult
+    static func sizeFit(product: Product) async -> SizeFitResult {
         await Sdk.Presenter.sizeFit(product: product)
     }
 }

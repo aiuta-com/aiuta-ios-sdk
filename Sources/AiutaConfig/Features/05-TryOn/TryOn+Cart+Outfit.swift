@@ -26,7 +26,7 @@ extension Aiuta.Configuration.Features.TryOn.Cart {
         public let strings: Strings
         
         /// Handler responsible for managing outfit cart actions.
-        public let handler: Handler
+        public let handler: Handler?
         
         /// Creates an outfit cart configuration.
         ///
@@ -34,7 +34,7 @@ extension Aiuta.Configuration.Features.TryOn.Cart {
         ///   - strings: Text content for outfit cart actions.
         ///   - handler: Handler responsible for managing outfit cart actions.
         public init(strings: Strings,
-                    handler: Handler) {
+                    handler: Handler?) {
             self.strings = strings
             self.handler = handler
         }
@@ -47,13 +47,13 @@ extension Aiuta.Configuration.Features.TryOn.Cart.Outfit {
     /// Text content for outfit cart actions.
     public struct Strings: Sendable {
         /// Label for the "Shop the Look" action.
-        public let addToCartOutfit: String
+        public let addToCartOutfit: String?
         
         /// Creates custom text content.
         ///
         /// - Parameters:
         ///   - addToCartOutfit: Label for the "Shop the Look" action.
-        public init(addToCartOutfit: String) {
+        public init(addToCartOutfit: String?) {
             self.addToCartOutfit = addToCartOutfit
         }
     }

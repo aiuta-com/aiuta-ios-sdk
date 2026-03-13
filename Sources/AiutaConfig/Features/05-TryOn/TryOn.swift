@@ -140,19 +140,25 @@ extension Aiuta.Configuration.Features.TryOn {
     public struct Strings: Sendable {
         /// Title displayed on the TryOn page.
         public let tryOnPageTitle: String
-        
+
         /// Label for the "Try On" button.
         public let tryOn: String
-        
+
+        /// Title displayed above outfit items in multi-product try-on.
+        public let outfitTitle: String
+
         /// Creates custom text content.
         ///
         /// - Parameters:
         ///   - tryOnPageTitle: Title displayed on the TryOn page.
         ///   - tryOn: Label for the "Try On" button.
+        ///   - outfitTitle: Title displayed above outfit items.
         public init(tryOnPageTitle: String,
-                    tryOn: String) {
+                    tryOn: String,
+                    outfitTitle: String) {
             self.tryOnPageTitle = tryOnPageTitle
             self.tryOn = tryOn
+            self.outfitTitle = outfitTitle
         }
     }
 }

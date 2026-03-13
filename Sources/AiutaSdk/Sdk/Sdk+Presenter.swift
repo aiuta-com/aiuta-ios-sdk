@@ -23,30 +23,42 @@ import UIKit
 extension Sdk {
     @MainActor enum Presenter {
         public static var isForeground: Bool = false
+        private(set) static weak var activeNavigator: Navigator?
 
-        public static func tryOn(products: Aiuta.Products) async {
-            guard let currentViewController else { return }
-            guard Register.ensureConfigured() else { return }
+        public static func tryOn(products: Aiuta.Products) async -> Aiuta.TryOnResult {
+            await dismissActiveNavigator()
+            guard let currentViewController else { return .exit }
+            guard Register.ensureConfigured() else { return .exit }
             @injected var session: Sdk.Core.Session
             session.start(with: products)
             @injected var tryOn: Sdk.Core.TryOn
             tryOn.sessionResults.removeAll()
             @injected var tracker: AnalyticTracker
             tracker.track(.session(flow: .tryOn, productIds: session.products.ids))
-            currentViewController.present(Navigator(rootViewController: await entryViewController()), animated: true)
+            let navigator = Navigator(rootViewController: await entryViewController())
+            activeNavigator = navigator
+            currentViewController.present(navigator, animated: true)
+            await navigator.awaitDismiss()
+            return session.flushTryOnResult()
         }
-        
-        public static func sizeFit(product: Aiuta.Product) async {
-            guard let currentViewController else { return }
-            guard Register.ensureConfigured() else { return }
+
+        public static func sizeFit(product: Aiuta.Product) async -> Aiuta.SizeFitResult {
+            await dismissActiveNavigator()
+            guard let currentViewController else { return .exit }
+            guard Register.ensureConfigured() else { return .exit }
             @injected var session: Sdk.Core.Session
             session.start(with: [product])
             @injected var tracker: AnalyticTracker
             tracker.track(.session(flow: .sizeFit, productIds: session.products.ids))
-            currentViewController.present(Navigator(rootViewController: FitSurveyVC()), animated: true)
+            let navigator = Navigator(rootViewController: FitSurveyVC())
+            activeNavigator = navigator
+            currentViewController.present(navigator, animated: true)
+            await navigator.awaitDismiss()
+            return session.flushSizeFitResult()
         }
 
         public static func showHistory() async -> Bool {
+            await dismissActiveNavigator()
             guard let currentViewController else { return false }
             guard Register.ensureConfigured() else { return false }
             @injected var configuration: Aiuta.Configuration
@@ -55,8 +67,23 @@ extension Sdk {
             session.start()
             @injected var tracker: AnalyticTracker
             tracker.track(.session(flow: .history, productIds: []))
-            currentViewController.present(Navigator(rootViewController: HistoryVC()), animated: true)
+            let navigator = Navigator(rootViewController: HistoryVC())
+            activeNavigator = navigator
+            currentViewController.present(navigator, animated: true)
+            await navigator.awaitDismiss()
             return true
+        }
+
+        private static func dismissActiveNavigator() async {
+            guard let activeNavigator, activeNavigator.presentingViewController != nil else { return }
+            activeNavigator.sdkWillDismiss()
+            await withCheckedContinuation { continuation in
+                activeNavigator.dismiss(animated: true) {
+                    continuation.resume()
+                }
+            }
+            activeNavigator.sdkDidDismiss()
+            self.activeNavigator = nil
         }
     }
 }

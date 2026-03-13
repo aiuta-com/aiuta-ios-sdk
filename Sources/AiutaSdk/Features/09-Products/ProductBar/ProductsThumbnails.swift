@@ -44,7 +44,7 @@ extension Sdk.UI.Products {
         let title = Label { it, ds in
             it.font = ds.fonts.product
             it.color = ds.colors.primary
-            it.text = ds.strings.outfitItemsTitle
+            it.text = ds.strings.outfitTitle
         }
         
         let gallery = HScroll { it, _ in

@@ -13,15 +13,16 @@
 // limitations under the License.
 
 #if SWIFT_PACKAGE
-@_spi(Aiuta) import AiutaKit
+    @_spi(Aiuta) import AiutaKit
 #endif
 import UIKit
 
 final class FeedbackCommentView: Plane {
     let navBar = NavBar { it, ds in
         it.style = .actionTitleClose
-        if !ds.styles.preferCloseButtonOnTheRight {
-            it.closeStyle = .label(ds.strings.otherFeedbackButtonCancel)
+        if !ds.styles.preferCloseButtonOnTheRight,
+           let cancel = ds.strings.otherFeedbackButtonCancel {
+            it.closeStyle = .label(cancel)
         }
     }
 

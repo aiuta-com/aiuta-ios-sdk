@@ -33,14 +33,14 @@ extension Sdk.Theme {
 
         // MARK: - Onboarding
 
-        var onboardingButtonNext: String { features.onboarding?.strings.onboardingButtonNext ?? "" }
-        var onboardingButtonStart: String { features.onboarding?.strings.onboardingButtonStart ?? "" }
+        var onboardingButtonNext: String? { features.onboarding?.strings.onboardingButtonNext }
+        var onboardingButtonStart: String? { features.onboarding?.strings.onboardingButtonStart }
 
         // MARK: - Onboarding.HowItWorks
 
         var onboardingHowItWorksPageTitle: String? { features.onboarding?.howItWorks.strings.onboardingHowItWorksPageTitle }
-        var onboardingHowItWorksTitle: String { features.onboarding?.howItWorks.strings.onboardingHowItWorksTitle ?? "" }
-        var onboardingHowItWorksDescription: String { features.onboarding?.howItWorks.strings.onboardingHowItWorksDescription ?? "" }
+        var onboardingHowItWorksTitle: String? { features.onboarding?.howItWorks.strings.onboardingHowItWorksTitle }
+        var onboardingHowItWorksDescription: String? { features.onboarding?.howItWorks.strings.onboardingHowItWorksDescription }
 
         // MARK: - Onboarding.BestResults
 
@@ -50,11 +50,11 @@ extension Sdk.Theme {
 
         // MARK: - Consent.Embedded
 
-        var consentHtml: String {
+        var consentHtml: String? {
             if case let .embeddedIntoOnboarding(embedded) = features.consent {
                 return embedded.strings.consentHtml
             }
-            return ""
+            return nil
         }
 
         // MARK: - Consent.Standalone
@@ -73,10 +73,10 @@ extension Sdk.Theme {
 
         // MARK: - ImagePicker.Camera
 
-        var cameraButtonTakePhoto: String { features.imagePicker.camera?.strings.cameraButtonTakePhoto ?? "" }
-        var cameraPermissionTitle: String { features.imagePicker.camera?.strings.cameraPermissionTitle ?? "" }
-        var cameraPermissionDescription: String { features.imagePicker.camera?.strings.cameraPermissionDescription ?? "" }
-        var cameraPermissionButtonOpenSettings: String { features.imagePicker.camera?.strings.cameraPermissionButtonOpenSettings ?? "" }
+        var cameraButtonTakePhoto: String? { features.imagePicker.camera?.strings.cameraButtonTakePhoto }
+        var cameraPermissionTitle: String? { features.imagePicker.camera?.strings.cameraPermissionTitle }
+        var cameraPermissionDescription: String? { features.imagePicker.camera?.strings.cameraPermissionDescription }
+        var cameraPermissionButtonOpenSettings: String? { features.imagePicker.camera?.strings.cameraPermissionButtonOpenSettings }
 
         // MARK: - ImagePicker.Gallery
 
@@ -84,26 +84,26 @@ extension Sdk.Theme {
 
         // MARK: - ImagePicker.PredefinedModel
 
-        var predefinedModelsTitle: String { features.imagePicker.predefinedModels?.strings.predefinedModelsTitle ?? "" }
-        var predefinedModelsOr: String { features.imagePicker.predefinedModels?.strings.predefinedModelsOr ?? "" }
-        var predefinedModelsEmptyListError: String { features.imagePicker.predefinedModels?.strings.predefinedModelsEmptyListError ?? "" }
+        var predefinedModelsTitle: String? { features.imagePicker.predefinedModels?.strings.predefinedModelsTitle }
+        var predefinedModelsOr: String? { features.imagePicker.predefinedModels?.strings.predefinedModelsOr }
+        var predefinedModelsEmptyListError: String? { features.imagePicker.predefinedModels?.strings.predefinedModelsEmptyListError }
         var predefinedModelsCategories: [String: String] { features.imagePicker.predefinedModels?.strings.predefinedModelsCategories ?? [:] }
 
         // MARK: - ImagePicker.UploadsHistory
 
-        var uploadsHistoryButtonNewPhoto: String { features.imagePicker.uploadsHistory?.strings.uploadsHistoryButtonNewPhoto ?? "" }
-        var uploadsHistoryTitle: String { features.imagePicker.uploadsHistory?.strings.uploadsHistoryTitle ?? "" }
-        var uploadsHistoryButtonChangePhoto: String { features.imagePicker.uploadsHistory?.strings.uploadsHistoryButtonChangePhoto ?? "" }
+        var uploadsHistoryButtonNewPhoto: String? { features.imagePicker.uploadsHistory?.strings.uploadsHistoryButtonNewPhoto }
+        var uploadsHistoryTitle: String? { features.imagePicker.uploadsHistory?.strings.uploadsHistoryTitle }
+        var uploadsHistoryButtonChangePhoto: String? { features.imagePicker.uploadsHistory?.strings.uploadsHistoryButtonChangePhoto }
 
         // MARK: - ImagePicker.ProtectionDisclaimer
 
-        var protectionDisclaimer: String { features.imagePicker.protectionDisclaimer?.strings.protectionDisclaimer ?? "" }
+        var protectionDisclaimer: String? { features.imagePicker.protectionDisclaimer?.strings.protectionDisclaimer }
 
         // MARK: - TryOn
 
         var tryOnPageTitle: String { features.tryOn.strings.tryOnPageTitle }
         var tryOn: String { features.tryOn.strings.tryOn }
-        var outfitItemsTitle: String { "Items from the outfit" }
+        var outfitTitle: String { features.tryOn.strings.outfitTitle }
 
         // MARK: - TryOn.Loading
 
@@ -118,41 +118,41 @@ extension Sdk.Theme {
 
         // MARK: - TryOn.Cart
 
-        var addToCart: String { features.tryOn.cart?.strings.addToCart ?? "" }
-        var shopTheLook: String { features.tryOn.cart?.outfit?.strings.addToCartOutfit ?? "Shop the look" }
+        var addToCart: String? { features.tryOn.cart?.strings.addToCart }
+        var shopTheLook: String? { features.tryOn.cart?.outfit?.strings.addToCartOutfit }
 
         // MARK: - TryOn.FitDisclaimer
 
-        var fitDisclaimerTitle: String { features.tryOn.fitDisclaimer?.strings.fitDisclaimerTitle ?? "" }
-        var fitDisclaimerDescription: String { features.tryOn.fitDisclaimer?.strings.fitDisclaimerDescription ?? "" }
-        var fitDisclaimerCloseButton: String { features.tryOn.fitDisclaimer?.strings.fitDisclaimerCloseButton ?? "" }
+        var fitDisclaimerTitle: String? { features.tryOn.fitDisclaimer?.strings.fitDisclaimerTitle }
+        var fitDisclaimerDescription: String? { features.tryOn.fitDisclaimer?.strings.fitDisclaimerDescription }
+        var fitDisclaimerCloseButton: String? { features.tryOn.fitDisclaimer?.strings.fitDisclaimerCloseButton }
 
         // MARK: - TryOn.Feedback
 
-        var feedbackTitle: String { features.tryOn.feedback?.strings.feedbackTitle ?? "" }
+        var feedbackTitle: String? { features.tryOn.feedback?.strings.feedbackTitle }
         var feedbackOptions: [String] { features.tryOn.feedback?.strings.feedbackOptions ?? [] }
-        var feedbackButtonSkip: String { features.tryOn.feedback?.strings.feedbackButtonSkip ?? "" }
-        var feedbackButtonSend: String { features.tryOn.feedback?.strings.feedbackButtonSend ?? "" }
-        var feedbackGratitudeText: String { features.tryOn.feedback?.strings.feedbackGratitudeText ?? "" }
+        var feedbackButtonSkip: String? { features.tryOn.feedback?.strings.feedbackButtonSkip }
+        var feedbackButtonSend: String? { features.tryOn.feedback?.strings.feedbackButtonSend }
+        var feedbackGratitudeText: String? { features.tryOn.feedback?.strings.feedbackGratitudeText }
 
         // MARK: - TryOn.Feedback.Other
 
-        var feedbackOptionOther: String { features.tryOn.feedback?.other?.strings.feedbackOptionOther ?? "" }
-        var otherFeedbackTitle: String { features.tryOn.feedback?.other?.strings.otherFeedbackTitle ?? "" }
-        var otherFeedbackButtonSend: String { features.tryOn.feedback?.other?.strings.otherFeedbackButtonSend ?? "" }
-        var otherFeedbackButtonCancel: String { features.tryOn.feedback?.other?.strings.otherFeedbackButtonCancel ?? "" }
+        var feedbackOptionOther: String? { features.tryOn.feedback?.other?.strings.feedbackOptionOther }
+        var otherFeedbackTitle: String? { features.tryOn.feedback?.other?.strings.otherFeedbackTitle }
+        var otherFeedbackButtonSend: String? { features.tryOn.feedback?.other?.strings.otherFeedbackButtonSend }
+        var otherFeedbackButtonCancel: String? { features.tryOn.feedback?.other?.strings.otherFeedbackButtonCancel }
 
         // MARK: - TryOn.History
 
-        var generationsHistoryPageTitle: String { features.tryOn.generationsHistory?.strings.generationsHistoryPageTitle ?? "" }
+        var generationsHistoryPageTitle: String? { features.tryOn.generationsHistory?.strings.generationsHistoryPageTitle }
 
         // MARK: - Share
 
-        var shareButton: String { features.share?.strings.shareButton ?? "" }
+        var shareButton: String? { features.share?.strings.shareButton }
 
         // MARK: - Wishlist
 
-        var wishlistButtonAdd: String { features.wishlist?.strings.wishlistButtonAdd ?? "" }
+        var wishlistButtonAdd: String? { features.wishlist?.strings.wishlistButtonAdd }
 
         // MARK: - Selection
 

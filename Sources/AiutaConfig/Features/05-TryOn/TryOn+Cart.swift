@@ -24,7 +24,7 @@ extension Aiuta.Configuration.Features.TryOn {
         public let strings: Strings
         
         /// Handler responsible for managing cart actions.
-        public let handler: Handler
+        public let handler: Handler?
         
         /// Optional outfit/multi-item cart functionality ("Shop the Look").
         public let outfit: Outfit?
@@ -36,7 +36,7 @@ extension Aiuta.Configuration.Features.TryOn {
         ///   - handler: Handler responsible for managing cart actions.
         ///   - outfit: Optional outfit/multi-item cart functionality.
         public init(strings: Strings,
-                    handler: Handler,
+                    handler: Handler?,
                     outfit: Outfit?) {
             self.strings = strings
             self.handler = handler

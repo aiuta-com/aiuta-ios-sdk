@@ -37,8 +37,8 @@ public struct ShapesPack: Sendable {
                 buttonS: Aiuta.Shape = .continuous(radius: 8),
                 bottomSheet: Aiuta.Shape = .continuous(radius: 16),
                 chipsButton: Aiuta.Shape = .capsule,
-                onboardingImageL: Aiuta.Shape = .continuous(radius: 16),
-                onboardingImageS: Aiuta.Shape = .continuous(radius: 16)) {
+                onboardingImageL: Aiuta.Shape? = nil,
+                onboardingImageS: Aiuta.Shape? = nil) {
         self.imageL = imageL
         self.imageM = imageM
         self.imageS = imageS
@@ -47,7 +47,7 @@ public struct ShapesPack: Sendable {
         self.buttonS = buttonS
         self.bottomSheet = bottomSheet
         self.chipsButton = chipsButton
-        self.onboardingImageL = onboardingImageL
-        self.onboardingImageS = onboardingImageS
+        self.onboardingImageL = onboardingImageL ?? imageM
+        self.onboardingImageS = onboardingImageS ?? imageM
     }
 }
