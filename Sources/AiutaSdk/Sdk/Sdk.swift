@@ -30,7 +30,7 @@ extension Sdk {
         }
 
         enum Api {
-            static let baseUrl = "\(Sdk.Core.baseUrl)/digital-try-on/v1"
+            static let baseUrl = "\(Sdk.Core.baseUrl)/v1"
             static let sizeFit = "https://api.naiz.fit"
         }
     }
