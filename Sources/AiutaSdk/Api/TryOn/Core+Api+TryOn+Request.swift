@@ -22,7 +22,7 @@ import Resolver
 
 extension Aiuta.TryOnStart {
     struct Post: Encodable, ApiRequest {
-        var urlPath: String { "sku_images_operations" }
+        var urlPath: String { "sku_try_on_operations" }
         var method: HTTPMethod { .post }
 
         let uploadedImageId: String
@@ -44,7 +44,7 @@ extension Aiuta.TryOnStart {
 
 extension Aiuta.TryOnOperation {
     struct Get: Encodable, ApiRequest {
-        var urlPath: String { "sku_images_operations/\(operationId)" }
+        var urlPath: String { "sku_try_on_operations/\(operationId)" }
 
         let operationId: String
 

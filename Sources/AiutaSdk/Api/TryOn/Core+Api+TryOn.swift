@@ -23,7 +23,7 @@ extension Aiuta {
     struct TryOnStart: Codable {
         let operationId: String
         let details: String?
-        let errors: [String]
+        let errors: [String]?
     }
 
     struct TryOnOperation: Codable, Equatable {
